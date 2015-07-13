@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You can set the version of Project Manager here and then build the new jar.-->
+<project name="ProjectManager" default="dist" basedir=".">
+    <description>Builds, tests, and runs the project ProjectManager.</description>
+    
+    <!-- this is netbeans generated code -->
+    <import file="nbproject/build-impl.xml"/>
+    
+    <!-- set the version of ProjectManager here -->
+    <property name="version" value="ProjectManager-0.6.0"/>
+    
+    <!-- this create the jar that we want with the included dependancies -->
+    <target name="-post-jar"> 
+      <delete dir="target"/>
+      <jar jarfile="target/${version}.jar">
+        <zipfileset src="${dist.jar}" excludes="META-INF/*" />
+        <zipfileset src="lib/mysql-connector-java-5.1.23-bin.jar" excludes="META-INF/*" />
+        <manifest>
+            <attribute name="Main-Class" value="projectmanager_gui.GUI"/>
+        </manifest>
+      </jar>
+      <delete dir="dist"/>
+    </target>
+    <!-- The new jar will be in the target folder in ProjectManager --> 
+</project>
