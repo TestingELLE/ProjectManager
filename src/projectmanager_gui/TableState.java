@@ -5,37 +5,10 @@
  */
 package projectmanager_gui;
 
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.JTextComponent;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JViewport;
-import javax.swing.RowFilter;
-import javax.swing.RowSorter;
-//import com.ezware.oxbow.swingbits.table.filter.TableRowFilterSupport;
-//import elle_GUI.CreateDocumentFilter;
-import java.awt.*;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 
 import java.util.*;
-import java.util.Date;
-import java.util.Arrays;
 
 /**
  *
