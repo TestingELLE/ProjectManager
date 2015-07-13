@@ -9,7 +9,11 @@
     <!-- set the version of ProjectManager here -->
     <property name="version" value="ProjectManager-0.6.0"/>
     
-    <!-- this create the jar that we want with the included dependancies -->
+    <!-- This creates the jar that we want with the included dependancies -->
+    <!-- There should be no need to edit this code -->
+    <!-- other than adding or removing dependancies-->
+    <!-- Dependancies are kept in the lib folder in ProjectManager-->
+    <!-- The new jar will be in the target folder in ProjectManager --> 
     <target name="-post-jar"> 
       <delete dir="target"/>
       <jar jarfile="target/${version}.jar">
@@ -20,6 +24,5 @@
         </manifest>
       </jar>
       <delete dir="dist"/>
-    </target>
-    <!-- The new jar will be in the target folder in ProjectManager --> 
+    </target> 
 </project>
