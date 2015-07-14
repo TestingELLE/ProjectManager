@@ -14,6 +14,12 @@ import javax.swing.DefaultComboBoxModel;
  */
 public class TableEditor extends javax.swing.JFrame {
     
+    // attribute
+    ProjectManager analyster;    
+    String newString;
+    String category;
+    String[] reportsList = {"symbol", "author", "analysisDate", "docFile", "docExcel", "notes"};
+    
     /**
      * Creates new form TableEdit
      */
@@ -21,9 +27,11 @@ public class TableEditor extends javax.swing.JFrame {
         initComponents();
         analyster = a;
         // set the interface to the middle of the window
-        this.setLocationRelativeTo(null);   
-        
+        this.setLocationRelativeTo(null);          
         this.setTitle("Table Editor");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // I think this is useless
         if (selectedTable.equals("Reports")) {
             // Reload the list for combobox  ** Important
             jComboBox1.setModel(new DefaultComboBoxModel(reportsList));
@@ -157,7 +165,8 @@ public class TableEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_jConfirmActionPerformed
 
     private void jQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jQuitActionPerformed
-        this.setVisible(false);
+        //this.setVisible(false);
+        dispose();
     }//GEN-LAST:event_jQuitActionPerformed
 
     private void jStringActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jStringActionPerformed
@@ -203,11 +212,6 @@ public class TableEditor extends javax.swing.JFrame {
 //        });
 //    }
     
-    ProjectManager analyster;
-    
-    String newString;
-    String category;
-    String[] reportsList = {"symbol", "author", "analysisDate", "docFile", "docExcel", "notes"};
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jClear;
