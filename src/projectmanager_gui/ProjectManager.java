@@ -1211,17 +1211,30 @@ public class ProjectManager extends javax.swing.JFrame {
 
     // Keep the float in Table Editor by separating editing part out here
     public void batchEdit(TableEditor editor) {
-        int row[], col = 1, i, j, num;
+        int row[];
+        int col = 1;
+        int i;
+        int j;
+        int num;
+        
         TableState ts = getTableState();
         JTable table = getSelectedTable();   // current table
         Vector data = ts.getData();
-        Vector newRow = new Vector(), temp1 = new Vector(), temp2 = new Vector();    // used for updating the vector
-        String oldString, newString, columnName;
+        
+        // used for updating the vector
+        Vector newRow = new Vector();
+        Vector temp1 = new Vector();
+        Vector temp2 = new Vector();   
+        
+        String oldString;
+        String newString;
+        String columnName;
 
         newString = editor.newString;
         row = table.getSelectedRows();
         num = table.getSelectedRowCount();
         columnName = editor.category;
+        
         for (i = 0; i < 30; i++) {
             if (columnName.equals(table.getColumnName(i))) {
                 col = i;
