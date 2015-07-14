@@ -6,18 +6,6 @@
 package projectmanager_gui;
 
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -27,21 +15,10 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
-
-import javax.swing.AbstractButton;
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JOptionPane;
-import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
+
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.WindowConstants;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -50,7 +27,11 @@ import javax.swing.table.TableColumn;
  * @author Tina
  */
 public class ReportWin extends javax.swing.JDialog {
-
+    
+    // attribute
+    private Statement stmt;
+    private final String sqlC = "select * from Suggestions";
+    
     /**
      * Creates new form ReportWin
      */
@@ -58,6 +39,8 @@ public class ReportWin extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         connection(sqlC);
+        // After we click close, we need to close this process.
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     public ReportWin() {
@@ -67,6 +50,9 @@ public class ReportWin extends javax.swing.JDialog {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
+            //Add the following code to the event-dispatching thread before creating the graphical user interface (GUI)
+            //The first line of code retrieves the list of all installed look and feel implementations for the platform 
+            //and then iterates through the list to determine if Nimbus is available. If so, Nimbus is set as the look and feel.
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -357,91 +343,68 @@ public class ReportWin extends javax.swing.JDialog {
             //logwind.sendMessages(ex.getMessage());
         }
     }//GEN-LAST:event_tableMouseClicked
+    
     public void connection(String sql) {
-        stmt = null;
+        
 		//String sql="select * from Suggesions";
         //System.out.println(sql);
+        
+        stmt = null;
         Vector columnNames = new Vector();
-
         Vector data = new Vector();
-
         int columns = 0;
-
-		// panel_display = new JPanel();
-        String db_url, username, password;
-
+        String db_url;
+        String username;
+        String password;
         String jdbc_driver = "com.mysql.jdbc.Driver";
-
         db_url = "jdbc:mysql://elle.csndtbcukajz.us-west-2.rds.amazonaws.com:3306/ELLE_Fundamentals";
-
         username = "dbashicheng";
-
         password = "shicheng1221";
-
+        
+		// panel_display = new JPanel();
+        
         try {
-
             Class.forName(jdbc_driver);
-
 			//logwind.sendMessages("\nStart to connect AWS...");
             Connection con = DriverManager.getConnection(db_url, username, password);
-
 			//logwind.sendMessages("Connect successfully!\n");
             stmt = con.createStatement();
-
             System.out.println("Report Connection successfully");
-
         } catch (Exception ex) {
-
             System.out.println("Cannot open AWS database -- make sure AWS is configured properly.");
             //logwind.sendMessages(ex.getMessage());
-            System.exit(1);
-
+          
+            // Maybe we should try dispose();
+            //System.exit(1);
+            dispose();
         }
 
         ResultSet rs = null;
-
         ResultSetMetaData metaData = null;
 
         try {
-
             rs = stmt.executeQuery(sql);
-
             metaData = rs.getMetaData();
-
         } catch (Exception ex) {
-
             System.out.println("Error: " + ex);
-
         }
 
         try {
-
             columns = metaData.getColumnCount();
-
             for (int i = 1; i <= columns; i++) {
-
                 columnNames.addElement(metaData.getColumnName(i));
-
             }
-
+            
             while (rs.next()) {
-
                 Vector row = new Vector(columns);
-
                 for (int i = 1; i <= columns; i++) {
-
                     row.addElement(rs.getObject(i));
-
                 }
-
                 data.addElement(row);
 				//System.out.println(data.size());
                 //System.out.println(row.size());
-
             }
-
             rs.close();
-
 			//stmt.close();
         } catch (SQLException ex) {
 			//logwind.sendMessages(ex.getMessage());
@@ -473,6 +436,7 @@ public class ReportWin extends javax.swing.JDialog {
 
          }*/
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        
         for (int col = 0; col < table.getColumnCount(); col++) {
             TableColumn tableColumn = table.getColumnModel().getColumn(col);
             int preferredWidth = tableColumn.getMinWidth();
@@ -544,8 +508,7 @@ public class ReportWin extends javax.swing.JDialog {
      });
      }*/
     //private Container c;
-    private Statement stmt;
-    private final String sqlC = "select * from Suggestions";
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addNew;
