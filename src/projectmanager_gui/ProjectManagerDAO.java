@@ -18,7 +18,8 @@ import javax.swing.JTable;
  */
 public class ProjectManagerDAO {
 
-    public void insert(JTable table, Vector columnNames, AddRecordsTable info, String tableName, ProjectManager ana, LogWindow log) throws SQLException {
+    public void insert(JTable table, Vector columnNames, AddRecordsTable info, String tableName, ProjectManager ana, LogWindow log) 
+            throws SQLException {
         Vector data, row = new Vector();
         String title = " (";    // element of Sql statement
         ArrayList<String> rows = new ArrayList<String>();
