@@ -50,9 +50,10 @@ public class ReportWin extends javax.swing.JDialog {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            //Add the following code to the event-dispatching thread before creating the graphical user interface (GUI)
-            //The first line of code retrieves the list of all installed look and feel implementations for the platform 
-            //and then iterates through the list to determine if Nimbus is available. If so, Nimbus is set as the look and feel.
+            // ??????Why do we need to do that? Why does netbeans not do that automatically?
+            // Add the following code to the event-dispatching thread before creating the graphical user interface (GUI)
+            // The first line of code retrieves the list of all installed look and feel implementations for the platform 
+            // and then iterates through the list to determine if Nimbus is available. If so, Nimbus is set as the look and feel.
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
