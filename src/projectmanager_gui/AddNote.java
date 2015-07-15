@@ -24,8 +24,17 @@ import javax.swing.table.DefaultTableModel;
  * @author Louis W.
  */
 public class AddNote extends javax.swing.JFrame {
+    
+    // attributes
     private final  Integer selectedTask;
-
+    private Statement stmt;
+    private final String sqlC = "select * from Suggestions";
+    private ProjectManager ana = new ProjectManager();
+    private LogWindow log = new LogWindow();
+    private Vector columnNames = new Vector();
+    private String tableName;
+    private AddRecordsTable info = new AddRecordsTable();
+    
     /**
      * Creates new form ReportWin
      */
@@ -271,13 +280,7 @@ public class AddNote extends javax.swing.JFrame {
 
     }
    
-    private Statement stmt;
-    private final String sqlC = "select * from Suggestions";
-    private ProjectManager ana = new ProjectManager();
-    private LogWindow log = new LogWindow();
-    private Vector columnNames = new Vector();
-    private String tableName;
-    private AddRecordsTable info = new AddRecordsTable();
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAddRow;
     private javax.swing.JButton jCancel;
