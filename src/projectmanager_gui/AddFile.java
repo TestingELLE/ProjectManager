@@ -24,7 +24,17 @@ import javax.swing.table.DefaultTableModel;
  * @author Louis W.
  */
 public class AddFile extends javax.swing.JFrame {
- private final  Integer selectedTask;
+    
+    // attributes
+    private final Integer selectedTask;
+    private Statement stmt;
+    private final String sqlC = "select * from Suggestions";
+    private ProjectManager ana = new ProjectManager();
+    private LogWindow log = new LogWindow();
+    private Vector columnNames = new Vector();
+    private String tableName;
+    private AddRecordsTable info = new AddRecordsTable();
+    
     /**
      * Creates new form ReportWin
      */
@@ -256,7 +266,7 @@ public class AddFile extends javax.swing.JFrame {
 //        this.dispose();
         ProjectManagerDAO analyzerDao = new ProjectManagerDAO();
         try {
-            analyzerDao.insert(table,columnNames,info, tableName,ana,log);
+            analyzerDao.insert(table, columnNames, info, tableName, ana, log);
         } catch (SQLException ex) {
             Logger.getLogger(AddFile.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -343,13 +353,7 @@ public class AddFile extends javax.swing.JFrame {
 
     }
    
-    private Statement stmt;
-    private final String sqlC = "select * from Suggestions";
-    private ProjectManager ana = new ProjectManager();
-    private LogWindow log = new LogWindow();
-    private Vector columnNames = new Vector();
-    private String tableName;
-    private AddRecordsTable info = new AddRecordsTable();
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAddRow;
     private javax.swing.JButton jCancel;
