@@ -246,7 +246,7 @@ public class ProjectManager extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "taskNum", "task_title", "step", "description", "instruction", "programmer", "date_assigned", "priority", "completed", "completition_date"
+                "taskID", "taskNum", "task_title", "step", "description", "instruction", "programmer", "dateAssigned", "Rk", "done?", "dateDone"
             }
         ) {
             Class[] types = new Class [] {
@@ -264,7 +264,6 @@ public class ProjectManager extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tableTasks.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tableTasks.setMinimumSize(new java.awt.Dimension(10, 240));
         tableTasks.setName(""); // NOI18N
         tableTasks.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -279,6 +278,35 @@ public class ProjectManager extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tableTasks);
+        if (tableTasks.getColumnModel().getColumnCount() > 0) {
+            tableTasks.getColumnModel().getColumn(0).setMinWidth(48);
+            tableTasks.getColumnModel().getColumn(0).setPreferredWidth(48);
+            tableTasks.getColumnModel().getColumn(0).setMaxWidth(48);
+            tableTasks.getColumnModel().getColumn(1).setMinWidth(56);
+            tableTasks.getColumnModel().getColumn(1).setPreferredWidth(56);
+            tableTasks.getColumnModel().getColumn(1).setMaxWidth(56);
+            tableTasks.getColumnModel().getColumn(2).setPreferredWidth(30);
+            tableTasks.getColumnModel().getColumn(3).setMinWidth(32);
+            tableTasks.getColumnModel().getColumn(3).setPreferredWidth(32);
+            tableTasks.getColumnModel().getColumn(3).setMaxWidth(32);
+            tableTasks.getColumnModel().getColumn(4).setPreferredWidth(50);
+            tableTasks.getColumnModel().getColumn(5).setPreferredWidth(50);
+            tableTasks.getColumnModel().getColumn(6).setMinWidth(80);
+            tableTasks.getColumnModel().getColumn(6).setPreferredWidth(80);
+            tableTasks.getColumnModel().getColumn(6).setMaxWidth(80);
+            tableTasks.getColumnModel().getColumn(7).setMinWidth(96);
+            tableTasks.getColumnModel().getColumn(7).setPreferredWidth(96);
+            tableTasks.getColumnModel().getColumn(7).setMaxWidth(96);
+            tableTasks.getColumnModel().getColumn(8).setMinWidth(16);
+            tableTasks.getColumnModel().getColumn(8).setPreferredWidth(20);
+            tableTasks.getColumnModel().getColumn(8).setMaxWidth(16);
+            tableTasks.getColumnModel().getColumn(9).setMinWidth(40);
+            tableTasks.getColumnModel().getColumn(9).setPreferredWidth(40);
+            tableTasks.getColumnModel().getColumn(9).setMaxWidth(40);
+            tableTasks.getColumnModel().getColumn(10).setMinWidth(80);
+            tableTasks.getColumnModel().getColumn(10).setPreferredWidth(80);
+            tableTasks.getColumnModel().getColumn(10).setMaxWidth(80);
+        }
 
         tabbedPane.addTab("tasks", jScrollPane1);
 
@@ -631,11 +659,16 @@ public class ProjectManager extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    // Edit the version and date it was created for new archives and jars
+    private final String CREATION_DATE = "2015-07-14";
+    private final String VERSION = "0.6.0a";
+    
     private void menuItemVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemVersionActionPerformed
         // TODO add your handling code here:
         JOptionPane.showMessageDialog(this, "Creation Date: "
-                + "2015-07-10" + "\n"
-                + "Version: " + "0.6.0");
+                + CREATION_DATE + "\n"
+                + "Version: " + VERSION);
     }//GEN-LAST:event_menuItemVersionActionPerformed
 
     private void menuItemLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLogActionPerformed
@@ -1142,8 +1175,8 @@ public class ProjectManager extends javax.swing.JFrame {
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         //Center column header
 
-         JTableHeader header = table.getTableHeader();
-         header.setDefaultRenderer(new AlignmentTableHeaderCellRenderer(header.getDefaultRenderer()));
+        JTableHeader header = table.getTableHeader();
+        header.setDefaultRenderer(new AlignmentTableHeaderCellRenderer(header.getDefaultRenderer()));
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int tW = screenSize.width;
@@ -1161,26 +1194,26 @@ public class ProjectManager extends javax.swing.JFrame {
 
     class AlignmentTableHeaderCellRenderer implements TableCellRenderer {
  
-  private final TableCellRenderer wrappedRenderer;
-  private final JLabel label;
- 
-  public AlignmentTableHeaderCellRenderer(TableCellRenderer wrappedRenderer) {
-    if (!(wrappedRenderer instanceof JLabel)) {
-      throw new IllegalArgumentException("The supplied renderer must inherit from JLabel");
-    }
-    this.wrappedRenderer = wrappedRenderer;
-    this.label = (JLabel) wrappedRenderer;
-  }
+        private final TableCellRenderer wrappedRenderer;
+        private final JLabel label;
 
-     @Override
-  public Component getTableCellRendererComponent(JTable table, Object value,
-          boolean isSelected, boolean hasFocus, int row, int column) {
-    wrappedRenderer.getTableCellRendererComponent(table, value,
-            isSelected, hasFocus, row, column);
-    label.setHorizontalAlignment(column == table.getColumnCount()-1 ? JLabel.LEFT : JLabel.CENTER);
-    return label;
-  }
-}
+        public AlignmentTableHeaderCellRenderer(TableCellRenderer wrappedRenderer) {
+            if (!(wrappedRenderer instanceof JLabel)) {
+                throw new IllegalArgumentException("The supplied renderer must inherit from JLabel");
+            }
+            this.wrappedRenderer = wrappedRenderer;
+            this.label = (JLabel) wrappedRenderer;
+        }
+
+           @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+            boolean isSelected, boolean hasFocus, int row, int column) {
+            wrappedRenderer.getTableCellRendererComponent(table, value,
+                  isSelected, hasFocus, row, column);
+            label.setHorizontalAlignment(column == table.getColumnCount()-1 ? JLabel.LEFT : JLabel.CENTER);
+            return label;
+        }
+    }
 
     private void setToolTipText(JTable table, int columnCount) {
 
@@ -1468,6 +1501,10 @@ public class ProjectManager extends javax.swing.JFrame {
 
 //declaration for table 3 Project Manager//
 }
+
+
+
+
 
 class MyTableModel extends DefaultTableModel {
 
