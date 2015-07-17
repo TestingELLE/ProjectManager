@@ -22,6 +22,10 @@ import java.io.BufferedReader;
  * @author Louis W.
  */
 public class LoginWindow extends javax.swing.JFrame {
+    
+    // Attributes
+    public LogWindow logwind = new LogWindow();
+    private ProjectManager analyster = new ProjectManager();
 
     /*public LoginWindow(String db_url, String username, char[] password) {
      //String[] connect_type = new String[] { "Local", "AWS" };
@@ -131,6 +135,7 @@ public class LoginWindow extends javax.swing.JFrame {
             }
         });
 
+        jUsername.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jUsername.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jUsernameActionPerformed(evt);
@@ -390,7 +395,7 @@ public class LoginWindow extends javax.swing.JFrame {
             logwind.sendMessages("Connect successfully!\n");
             GUI.stmt = GUI.con.createStatement();
 //            JOptionPane.showMessageDialog(null,GUI.stmt);
-            System.out.println("Connection successfully");
+            System.out.println("Connection successfully!");
             GUI.status = true;
             analyster.loadData();
             analyster.setLastUpdateTime();
@@ -446,8 +451,7 @@ public class LoginWindow extends javax.swing.JFrame {
 //            }
 //        });
 //    }
-    public LogWindow logwind = new LogWindow();
-    private ProjectManager analyster = new ProjectManager();
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jButtonPanel;
     private javax.swing.JComboBox jDatabase;
