@@ -38,6 +38,29 @@ import javax.swing.table.TableCellRenderer;
  * @author Tina & Louis W.
  */
 public class ProjectManager extends javax.swing.JFrame {
+    
+    // Attributes
+    public TableState tasks = new TableState();
+    public TableState task_files = new TableState();
+    public TableState task_notes = new TableState();
+    public EnterButton enterButton = new EnterButton();
+    public LogWindow logwind = new LogWindow();
+    protected static boolean isFiltering = true;
+    private ArrayList changedCell = new ArrayList();    // record the locations of changed cell
+    
+    // though Vector is obsolete, it is used and required by table model
+//    public Vector columnNames1 = new Vector(); // column names for table1
+//    public Vector columnNames2 = new Vector();
+//    public Vector data1 = new Vector();    // data for table1
+//    public Vector data2 = new Vector();    // data for table2
+
+//    public TableRowSorter sorter1;         // sorter for table1
+//    public TableRowSorter sorter2;         // sorter for table2
+//    public long table1Rows = 0;
+//    public long table2Rows = 0;
+//    public long table1Records = 0;
+//    public long table2Records = 0;
+      
 
 //    protected static String jdbc_driver;
 //    protected static Connection conn;
@@ -52,10 +75,12 @@ public class ProjectManager extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
 
         this.setTitle("Project Manager");
+        
+        // When Initiating the ProjectManager, before choosing Swich Button, we set some buttons invisible.
         btnUploadChange.setVisible(false);
         btnEnter.setVisible(false);
         btnCancelSQL.setVisible(false);
-        btnCancel.setVisible(false);
+        btnCancelEdit.setVisible(false);
         btnBatchEdit.setVisible(false);
 
     }
@@ -90,7 +115,7 @@ public class ProjectManager extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         btnEditModeSwitch = new javax.swing.JButton();
         jLabelEdit = new javax.swing.JLabel();
-        btnCancel = new javax.swing.JButton();
+        btnCancelEdit = new javax.swing.JButton();
         btnBatchEdit = new javax.swing.JButton();
         btnAddRecord = new javax.swing.JButton();
         btnAddFile = new javax.swing.JButton();
@@ -226,7 +251,6 @@ public class ProjectManager extends javax.swing.JFrame {
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(254, 404));
 
-        tableTasks.setAutoCreateRowSorter(true);
         tableTasks.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null, null},
@@ -264,6 +288,7 @@ public class ProjectManager extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tableTasks.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         tableTasks.setMinimumSize(new java.awt.Dimension(10, 240));
         tableTasks.setName(""); // NOI18N
         tableTasks.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -278,35 +303,6 @@ public class ProjectManager extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tableTasks);
-        if (tableTasks.getColumnModel().getColumnCount() > 0) {
-            tableTasks.getColumnModel().getColumn(0).setMinWidth(48);
-            tableTasks.getColumnModel().getColumn(0).setPreferredWidth(48);
-            tableTasks.getColumnModel().getColumn(0).setMaxWidth(48);
-            tableTasks.getColumnModel().getColumn(1).setMinWidth(56);
-            tableTasks.getColumnModel().getColumn(1).setPreferredWidth(56);
-            tableTasks.getColumnModel().getColumn(1).setMaxWidth(56);
-            tableTasks.getColumnModel().getColumn(2).setPreferredWidth(30);
-            tableTasks.getColumnModel().getColumn(3).setMinWidth(32);
-            tableTasks.getColumnModel().getColumn(3).setPreferredWidth(32);
-            tableTasks.getColumnModel().getColumn(3).setMaxWidth(32);
-            tableTasks.getColumnModel().getColumn(4).setPreferredWidth(50);
-            tableTasks.getColumnModel().getColumn(5).setPreferredWidth(50);
-            tableTasks.getColumnModel().getColumn(6).setMinWidth(80);
-            tableTasks.getColumnModel().getColumn(6).setPreferredWidth(80);
-            tableTasks.getColumnModel().getColumn(6).setMaxWidth(80);
-            tableTasks.getColumnModel().getColumn(7).setMinWidth(96);
-            tableTasks.getColumnModel().getColumn(7).setPreferredWidth(96);
-            tableTasks.getColumnModel().getColumn(7).setMaxWidth(96);
-            tableTasks.getColumnModel().getColumn(8).setMinWidth(16);
-            tableTasks.getColumnModel().getColumn(8).setPreferredWidth(20);
-            tableTasks.getColumnModel().getColumn(8).setMaxWidth(16);
-            tableTasks.getColumnModel().getColumn(9).setMinWidth(40);
-            tableTasks.getColumnModel().getColumn(9).setPreferredWidth(40);
-            tableTasks.getColumnModel().getColumn(9).setMaxWidth(40);
-            tableTasks.getColumnModel().getColumn(10).setMinWidth(80);
-            tableTasks.getColumnModel().getColumn(10).setPreferredWidth(80);
-            tableTasks.getColumnModel().getColumn(10).setMaxWidth(80);
-        }
 
         tabbedPane.addTab("tasks", jScrollPane1);
 
@@ -383,10 +379,10 @@ public class ProjectManager extends javax.swing.JFrame {
 
         jLabelEdit.setText("OFF");
 
-        btnCancel.setText("Cancel");
-        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+        btnCancelEdit.setText("Cancel");
+        btnCancelEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelActionPerformed(evt);
+                btnCancelEditActionPerformed(evt);
             }
         });
 
@@ -439,7 +435,7 @@ public class ProjectManager extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBatchEdit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnCancel)
+                .addComponent(btnCancelEdit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnUploadChange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -454,7 +450,7 @@ public class ProjectManager extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(btnEditModeSwitch)
                     .addComponent(jLabelEdit)
-                    .addComponent(btnCancel)
+                    .addComponent(btnCancelEdit)
                     .addComponent(btnBatchEdit)
                     .addComponent(btnAddRecord)
                     .addComponent(btnAddFile)
@@ -658,10 +654,10 @@ public class ProjectManager extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+   
     
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-07-14";
+    private final String CREATION_DATE = "2015-07-15";
     private final String VERSION = "0.6.0a";
     
     private void menuItemVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemVersionActionPerformed
@@ -671,6 +667,7 @@ public class ProjectManager extends javax.swing.JFrame {
                 + "Version: " + VERSION);
     }//GEN-LAST:event_menuItemVersionActionPerformed
 
+    
     private void menuItemLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLogActionPerformed
         // TODO add your handling code here:
         logwind.showLogWindow();
@@ -739,12 +736,18 @@ public class ProjectManager extends javax.swing.JFrame {
     }
 
     public void uploadChanges(JTable table) throws SQLException {
-        int i, j, row, col, id;
+        
+        int i;
+        int j;
+        int row;
+        int col;
+        int id;
         boolean flag = false;   // if upload successfully, flag turns to true
         TableState ts = getTableState(table);
         Vector columnNames = ts.getColumnNames();
         String tableName = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());;
-
+        
+        // ????? I don't understand how it works.
         for (i = 0; i < changedCell.size(); i = i + 2) {
             id = (int) (changedCell.get(i));
             row = -1;
@@ -786,12 +789,19 @@ public class ProjectManager extends javax.swing.JFrame {
         }
     }
 
-
+    /*
+     * Open the reoport window and report a bug
+     * @param evt
+    */
     private void menuItemReportBugActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReportBugActionPerformed
         // TODO add your handling code here:
         new ReportWin();
     }//GEN-LAST:event_menuItemReportBugActionPerformed
-
+    
+    /*
+     * Set the Debug Mode on or off
+     * @param evt
+    */
     private void btnDebugModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDebugModeActionPerformed
 
         if (jLabelDebug.getText().equals("OFF")) {
@@ -807,6 +817,10 @@ public class ProjectManager extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnDebugModeActionPerformed
 
+    /*
+     * Set the Edit Mode on or off
+     * @param evt
+    */    
     private void btnEditModeSwitchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditModeSwitchActionPerformed
 //        String selectedTab= jTabbedPane1.getTitleAt(jTabbedPane1.getSelectedIndex()); 
 //        JTable table = tableState.getSelectedTable();
@@ -816,24 +830,41 @@ public class ProjectManager extends javax.swing.JFrame {
         if (jLabelEdit.getText().equals("OFF")) {
             jLabelEdit.setText("ON");
             btnUploadChange.setVisible(true);
-            btnCancel.setVisible(true);
+            btnCancelEdit.setVisible(true);
             btnBatchEdit.setVisible(true);
             isFiltering = false;
 //            loadData();
-            tableReload(tableTasks, tasks.getData(), tasks.getColumnNames());
-            tableReload(tableTask_Files, task_files.getData(), task_files.getColumnNames());
-            tableReload(tableTask_Notes, task_notes.getData(), task_notes.getColumnNames());
+            
+//            SwingUtilities.invokeLater(new Runnable(){
+//                public void run(){
+//                    tableReload(tableTask_Files, task_files.getData(), task_files.getColumnNames());
+//                }
+//            });
+//            SwingUtilities.invokeLater(new Runnable(){
+//                public void run(){
+//                    tableReload(tableTasks, tasks.getData(), tasks.getColumnNames());
+//                }
+//            });            
+//            SwingUtilities.invokeLater(new Runnable(){
+//                public void run(){
+//                    tableReload(tableTask_Notes, task_notes.getData(), task_notes.getColumnNames());
+//                }
+//            });    
+            
+//            tableReload(tableTasks, tasks.getData(), tasks.getColumnNames()); 
+//            tableReload(tableTask_Files, task_files.getData(), task_files.getColumnNames());
+//            tableReload(tableTask_Notes, task_notes.getData(), task_notes.getColumnNames());
 
         } else {
             jLabelEdit.setText("OFF");
             btnUploadChange.setVisible(false);
-            btnCancel.setVisible(false);
+            btnCancelEdit.setVisible(false);
             btnBatchEdit.setVisible(false);
             isFiltering = true;
 //            loadData();
-            tableReload(tableTasks, tasks.getData(), tasks.getColumnNames());
-            tableReload(tableTask_Files, task_files.getData(), task_files.getColumnNames());
-            tableReload(tableTask_Notes, task_notes.getData(), task_notes.getColumnNames());
+//            tableReload(tableTasks, tasks.getData(), tasks.getColumnNames());
+//            tableReload(tableTask_Files, task_files.getData(), task_files.getColumnNames());
+//            tableReload(tableTask_Notes, task_notes.getData(), task_notes.getColumnNames());
         }
     }//GEN-LAST:event_btnEditModeSwitchActionPerformed
 
@@ -862,12 +893,12 @@ public class ProjectManager extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tableTasksMouseClicked
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+    private void btnCancelEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelEditActionPerformed
 
 //        tableState.setData(jTabbedPane1.getName().toString(), new Vector());   // vanish former changes to the table
         loadData();
 
-    }//GEN-LAST:event_btnCancelActionPerformed
+    }//GEN-LAST:event_btnCancelEditActionPerformed
 
     private void tabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPaneStateChanged
         TableState ts = getTableState();
@@ -1064,6 +1095,7 @@ public class ProjectManager extends javax.swing.JFrame {
     }
 
     public void connection(String sql, JTable table) {
+        
         Vector data = new Vector();
         Vector columnNames = new Vector();
         TableState ts = getTableState(table);
@@ -1118,12 +1150,15 @@ public class ProjectManager extends javax.swing.JFrame {
 
     public void loadData() {
         System.out.println("Connection");
-        String sqlT = "select * from tasks ORDER BY taskID DESC";
-        
+        String sqlT = "select * from tasks ORDER BY taskID DESC";       
         connection(sqlT, tableTasks);
-        //Sum 100%
-        float[] columnWidthPercentage1 = {5.0f, 5.0f, 11.0f, 4.0f, 20.0f, 20.0f, 6.0f, 8.0f, 4.0f, 5.0f, 10.0f};
-        setColumnFormat(columnWidthPercentage1, tableTasks);
+        
+        // Set the column Width percentage of the the first table--Tasks
+        // Sum 89%
+        // Change the name 
+        float[] columnWidthOfTableTasks = {4.0f, 5.0f, 13.0f, 3.5f, 20.0f, 20.0f, 6.5f, 7.0f, 2.0f, 4.0f, 7.0f};
+        
+        setColumnFormat(columnWidthOfTableTasks, tableTasks);
         setToolTipText(tableTasks, 11); //Shows tooltip for columns which text are bigger than width
         tasks.init(tableTasks, new String[]{"programmer", "date_assigned", "completed", "priority"});
         numOfRecords1.setText("N of records in tasks:" + tasks.getRowsNumber());
@@ -1131,8 +1166,13 @@ public class ProjectManager extends javax.swing.JFrame {
         System.out.println("Connection");
         String sqlF = "select * from task_files ORDER BY taskID DESC";
         connection(sqlF, tableTask_Files);
-        float[] columnWidthPercentage2 = {3.0f, 4.0f, 5.0f, 3.0f, 7.0f, 28.0f, 25.0f, 25.0f};
-        setColumnFormat(columnWidthPercentage2, tableTask_Files);
+        
+        // Set the column Width percentage of the the first table--Task_Files
+        // Sum 85%
+        // Change the name 
+        float[] columnWidthOfTableTaskFiles = {4.0f, 4.0f, 6.0f, 3.5f, 7.0f, 20.0f, 20.0f, 20.5f};
+        
+        setColumnFormat(columnWidthOfTableTaskFiles, tableTask_Files);
         setToolTipText(tableTask_Files, 8);
         task_files.init(tableTask_Files, new String[]{"submitter"});
         numOfRecords2.setText("N of records in task_files: " + task_files.getRowsNumber());
@@ -1140,10 +1180,13 @@ public class ProjectManager extends javax.swing.JFrame {
         System.out.println("Connection");
         String sqlN = "select * from task_notes ORDER BY taskID DESC";
         connection(sqlN, tableTask_Notes);
-
-        float[] columnWidthPercentage3 = {5.0f, 5.0f, 10.0f, 60.0f, 20.0f};
-        setColumnFormat(columnWidthPercentage3, tableTask_Notes);
-
+        
+        // Set the column Width percentage of the the first table--Task_Notes
+        // Sum 71%
+        // Change the name 
+        float[] columnWidthOfTableTaskNotes = {4.0f, 4.0f, 6.0f, 50.0f, 7.0f};
+        
+        setColumnFormat(columnWidthOfTableTaskNotes, tableTask_Notes);
         setToolTipText(tableTask_Notes, 5);
         task_notes.init(tableTask_Notes, new String[]{"submitter"});
         numOfRecords3.setText("N of records in task_notes: " + task_notes.getRowsNumber());
@@ -1151,6 +1194,8 @@ public class ProjectManager extends javax.swing.JFrame {
     }
 
     public void tableReload(JTable table, Vector data, Vector columnNames) {
+        
+        // After logging in, isFiltering is true. And set the model default.
         MyTableModel model = new MyTableModel(data, columnNames, isFiltering);
         TableRowSorter sorter = new TableRowSorter<MyTableModel>(model);
         model.addTableModelListener(new TableModelListener() {  // add table model listener every time the table model reloaded
@@ -1161,12 +1206,15 @@ public class ProjectManager extends javax.swing.JFrame {
         });
 
         table.setModel(model);
-        table.setRowSorter(sorter);
+        table.setRowSorter(sorter);       
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         TableCellRenderer rendererFromHeader = table.getTableHeader().getDefaultRenderer();
+        
+        // ???????????I don't understand what it is going to do.
         JLabel headerLabel = (JLabel) rendererFromHeader;
         headerLabel.setHorizontalAlignment(JLabel.CENTER);
+        
     }
 
      private void setColumnFormat(float[] width, JTable table) {
@@ -1184,12 +1232,17 @@ public class ProjectManager extends javax.swing.JFrame {
         for (int i = 0; i < width.length; i++) {
             int pWidth = Math.round((width[i] / 100) * tW);
             table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+            
+            // Test to fix the width of columns
+            //table.getColumnModel().getColumn(i).setMinWidth(pWidth);
+            //table.getColumnModel().getColumn(i).setMaxWidth(pWidth);
+            
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
             
         }
         table.setMinimumSize(new Dimension(1000, 300));
         table.setPreferredScrollableViewportSize(new Dimension(1000, 300));
-
+              
     }
 
     class AlignmentTableHeaderCellRenderer implements TableCellRenderer {
@@ -1424,31 +1477,14 @@ public class ProjectManager extends javax.swing.JFrame {
         return columnNames;
     }
 
-    public TableState tasks = new TableState();
-    public TableState task_files = new TableState();
-    public TableState task_notes = new TableState();
-    // though Vector is obsolete, it is used and required by table model
-//    public Vector columnNames1 = new Vector(); // column names for table1
-//    public Vector columnNames2 = new Vector();
-//    public Vector data1 = new Vector();    // data for table1
-//    public Vector data2 = new Vector();    // data for table2
-    public EnterButton enterButton = new EnterButton();
-    public LogWindow logwind = new LogWindow();
-//    public TableRowSorter sorter1;         // sorter for table1
-//    public TableRowSorter sorter2;         // sorter for table2
-//    public long table1Rows = 0;
-//    public long table2Rows = 0;
-//    public long table1Records = 0;
-//    public long table2Records = 0;
-    protected static boolean isFiltering = true;
-    private ArrayList changedCell = new ArrayList();    // record the locations of changed cell
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel addPanel_control;
     private javax.swing.JButton btnAddFile;
     private javax.swing.JButton btnAddNote;
     private javax.swing.JButton btnAddRecord;
     private javax.swing.JButton btnBatchEdit;
-    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnCancelEdit;
     private javax.swing.JButton btnCancelSQL;
     private javax.swing.JButton btnDebugMode;
     private javax.swing.JButton btnEditModeSwitch;
@@ -1516,6 +1552,8 @@ class MyTableModel extends DefaultTableModel {
     }
 
     public MyTableModel(Vector data, Vector columnNames, boolean filteringStatus) {
+        
+        // Set the default table model to establish a table to store the data.
         super(data, columnNames);
         isFiltering = filteringStatus;
     }
