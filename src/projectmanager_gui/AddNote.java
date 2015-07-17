@@ -193,7 +193,7 @@ public class AddNote extends javax.swing.JFrame {
     private void jSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSubmitActionPerformed
         ProjectManagerDAO analyzerDao = new ProjectManagerDAO();
         try {
-            analyzerDao.insert(table,columnNames,info, tableName,ana,log);
+            analyzerDao.insert(table, columnNames, info, tableName, ana, log);
         } catch (SQLException ex) {
             Logger.getLogger(AddNote.class.getName()).log(Level.SEVERE, null, ex);
         }
