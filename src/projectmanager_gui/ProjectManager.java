@@ -42,7 +42,7 @@ public class ProjectManager extends javax.swing.JFrame {
 //    protected static String jdbc_driver;
 //    protected static Connection conn;
     /**
-     * Creates new form Analyster
+     * Creates new form ProjectManager
      */
     public ProjectManager() {
         initComponents();
@@ -1085,7 +1085,7 @@ public class ProjectManager extends javax.swing.JFrame {
 
     public void loadData() {
         System.out.println("Connection");
-        String sqlT = "select * from tasks ORDER BY taskID DESC";
+        String sqlT = "select * from tasks ORDER BY ID DESC";
         
         connection(sqlT, tableTasks);
         //Sum 100%
@@ -1096,7 +1096,7 @@ public class ProjectManager extends javax.swing.JFrame {
         numOfRecords1.setText("N of records in tasks:" + tasks.getRowsNumber());
 
         System.out.println("Connection");
-        String sqlF = "select * from task_files ORDER BY taskID DESC";
+        String sqlF = "select * from task_files ORDER BY fileID DESC";
         connection(sqlF, tableTask_Files);
         float[] columnWidthPercentage2 = {3.0f, 4.0f, 5.0f, 3.0f, 7.0f, 28.0f, 25.0f, 25.0f};
         setColumnFormat(columnWidthPercentage2, tableTask_Files);
@@ -1105,7 +1105,7 @@ public class ProjectManager extends javax.swing.JFrame {
         numOfRecords2.setText("N of records in task_files: " + task_files.getRowsNumber());
 
         System.out.println("Connection");
-        String sqlN = "select * from task_notes ORDER BY taskID DESC";
+        String sqlN = "select * from task_notes ORDER BY noteID DESC";
         connection(sqlN, tableTask_Notes);
 
         float[] columnWidthPercentage3 = {5.0f, 5.0f, 10.0f, 60.0f, 20.0f};

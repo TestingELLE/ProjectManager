@@ -50,9 +50,9 @@ public class GUI {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                     
-                ProjectManager analyster = new ProjectManager();
-                analyster.setVisible(true);
-                new LoginWindow(analyster).setVisible(true);
+                ProjectManager projectManager = new ProjectManager();
+                projectManager.setVisible(true);
+                new LoginWindow(projectManager).setVisible(true);
                
             }
         });
