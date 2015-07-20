@@ -5,9 +5,7 @@
  */
 package projectmanager_gui;
 
-import static projectmanager_gui.ITableConstants.TASKFILES_TABLE_NAME;
-import static projectmanager_gui.ITableConstants.TASKNOTES_TABLE_NAME;
-import static projectmanager_gui.ITableConstants.TASKS_TABLE_NAME;
+import static projectmanager_gui.ITableConstants.*;
 
 /**
  *
@@ -38,7 +36,7 @@ public class AddRecordsTable {
         } else if (tableName.equals(TASKFILES_TABLE_NAME)) {
             return "date_";
         } else {
-            return "status_date";
+            return "_date";
         }
     }
 

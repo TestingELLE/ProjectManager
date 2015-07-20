@@ -22,7 +22,7 @@ public interface ITableConstants {
     public static final float[] COL_WIDTH_PER_TASKNOTESD = {4.0f, 4.0f, 6.0f, 50.0f, 7.0f};
     
     // search fields for the comboBox for each table
-    public static final String[] TASKS_SEARCH_FIELDS = {"programmer", "dateAssigned", "done", "rank"};
+    public static final String[] TASKS_SEARCH_FIELDS = {"programmer", "dateAssigned", "done", "rk"};
     public static final String[] TASKFILES_SEARCH_FIELDS = {"submitter"};
     public static final String[] TASKNOTES_SEARCH_FIELDS = {"submitter"};
     

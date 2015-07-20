@@ -396,15 +396,15 @@
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="11" rowCount="15">
-                        <Column editable="false" title="ID" type="java.lang.Integer"/>
-                        <Column editable="true" title="taskNum" type="java.lang.Integer"/>
+                        <Column editable="false" title="taskID" type="java.lang.Integer"/>
+                        <Column editable="true" title="num" type="java.lang.Integer"/>
                         <Column editable="true" title="title" type="java.lang.String"/>
                         <Column editable="true" title="step" type="java.lang.Object"/>
                         <Column editable="true" title="description" type="java.lang.String"/>
                         <Column editable="true" title="instructions" type="java.lang.Object"/>
                         <Column editable="true" title="programmer" type="java.lang.Object"/>
                         <Column editable="true" title="dateAssigned" type="java.lang.Object"/>
-                        <Column editable="true" title="rank" type="java.lang.Object"/>
+                        <Column editable="true" title="rk" type="java.lang.Object"/>
                         <Column editable="true" title="done" type="java.lang.Object"/>
                         <Column editable="true" title="dateDone" type="java.lang.Object"/>
                       </Table>
@@ -508,8 +508,8 @@
                         <Column editable="true" title="submitter" type="java.lang.String"/>
                         <Column editable="true" title="step" type="java.lang.Object"/>
                         <Column editable="true" title="date_" type="java.lang.Object"/>
-                        <Column editable="true" title="file" type="java.lang.Object"/>
-                        <Column editable="true" title="folder" type="java.lang.Object"/>
+                        <Column editable="true" title="files" type="java.lang.Object"/>
+                        <Column editable="true" title="path" type="java.lang.Object"/>
                         <Column editable="true" title="notes" type="java.lang.Object"/>
                       </Table>
                     </Property>
@@ -591,7 +591,7 @@
                         <Column editable="true" title="taskID" type="java.lang.Integer"/>
                         <Column editable="true" title="submitter" type="java.lang.String"/>
                         <Column editable="true" title="status_notes" type="java.lang.Object"/>
-                        <Column editable="true" title="status_date" type="java.lang.Object"/>
+                        <Column editable="true" title="_date" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
