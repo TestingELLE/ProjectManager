@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import static projectmanager_gui.ITableConstants.TASKFILES_TABLE_NAME;
-import static projectmanager_gui.ITableConstants.TASKNOTES_TABLE_NAME;
-import static projectmanager_gui.ITableConstants.TASKS_TABLE_NAME;
+import static projectmanager_gui.ITableConstants.*;
 
 /**
  *

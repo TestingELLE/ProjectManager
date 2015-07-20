@@ -32,15 +32,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-import static projectmanager_gui.ITableConstants.COL_WIDTH_PER_TASKFILES;
-import static projectmanager_gui.ITableConstants.COL_WIDTH_PER_TASKNOTESD;
-import static projectmanager_gui.ITableConstants.COL_WIDTH_PER_TASKS;
-import static projectmanager_gui.ITableConstants.TASKFILES_SEARCH_FIELDS;
-import static projectmanager_gui.ITableConstants.TASKFILES_TABLE_NAME;
-import static projectmanager_gui.ITableConstants.TASKNOTES_SEARCH_FIELDS;
-import static projectmanager_gui.ITableConstants.TASKNOTES_TABLE_NAME;
-import static projectmanager_gui.ITableConstants.TASKS_SEARCH_FIELDS;
-import static projectmanager_gui.ITableConstants.TASKS_TABLE_NAME;
+import static projectmanager_gui.ITableConstants.*;
+
 
 /**
  *

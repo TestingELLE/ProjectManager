@@ -5,9 +5,7 @@
  */
 package projectmanager_gui;
 
-import static projectmanager_gui.ITableConstants.TASKFILES_TABLE_NAME;
-import static projectmanager_gui.ITableConstants.TASKNOTES_TABLE_NAME;
-import static projectmanager_gui.ITableConstants.TASKS_TABLE_NAME;
+import static projectmanager_gui.ITableConstants.*;
 
 /**
  *
