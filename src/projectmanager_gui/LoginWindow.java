@@ -25,9 +25,6 @@ public class LoginWindow extends javax.swing.JFrame {
     
     // Attributes
     public LogWindow logwind = new LogWindow();
-    private ProjectManager analyster = new ProjectManager();
-
-    public LogWindow logwind = new LogWindow();
     private ProjectManager projectManager = new ProjectManager();
     
     /*public LoginWindow(String db_url, String username, char[] password) {
