@@ -5,6 +5,10 @@
  */
 package projectmanager_gui;
 
+import static projectmanager_gui.ITableConstants.TASKFILES_TABLE_NAME;
+import static projectmanager_gui.ITableConstants.TASKNOTES_TABLE_NAME;
+import static projectmanager_gui.ITableConstants.TASKS_TABLE_NAME;
+
 /**
  *
  * @author Louis W.
@@ -29,9 +33,9 @@ public class AddRecordsTable {
     }
 
     public String getDateName() {
-        if (tableName.equals("tasks")) {
-            return "date_assigned";
-        } else if (tableName.equals("task_files")) {
+        if (tableName.equals(TASKS_TABLE_NAME)) {
+            return "dateAssigned";
+        } else if (tableName.equals(TASKFILES_TABLE_NAME)) {
             return "date_";
         } else {
             return "status_date";
@@ -43,7 +47,7 @@ public class AddRecordsTable {
         String dateName = getDateName();
         int i;
 
-        if (tableName.equals("tasks")) {
+        if (tableName.equals(TASKS_TABLE_NAME)) {
             columnNames = ana.getColumnNames(1);
             for (i = 0; i < columnNames.length; i++) {
                 if (columnNames[i].equals(dateName)) {
@@ -51,7 +55,7 @@ public class AddRecordsTable {
                 }
             }
             return -1;
-        } else if (tableName.equals("task_files")) {
+        } else if (tableName.equals(TASKFILES_TABLE_NAME)) {
             columnNames = ana.getColumnNames(2);
             for (i = 0; i < columnNames.length; i++) {
                 if (columnNames[i].equals(dateName)) {
@@ -71,9 +75,9 @@ public class AddRecordsTable {
     }
 
     public int getLastColumn() {
-        if (tableName.equals("tasks")) {
+        if (tableName.equals(TASKS_TABLE_NAME)) {
             return ana.getColumnNames(1).length - 1;    // -1 because array starts from 0
-        } else if (tableName.equals("task_files")) {
+        } else if (tableName.equals(TASKFILES_TABLE_NAME)) {
             return ana.getColumnNames(2).length - 1;
         } else {
             return ana.getColumnNames(3).length - 1;
@@ -81,9 +85,9 @@ public class AddRecordsTable {
     }
 
     public long getIdNum() {
-        if (tableName.equals("tasks")) {
+        if (tableName.equals(TASKS_TABLE_NAME)) {
             return ana.tasks.getRecordsNumber();
-        } else if (tableName.equals("task_files")) {
+        } else if (tableName.equals(TASKFILES_TABLE_NAME)) {
             return ana.task_files.getRecordsNumber();
         } else {
             return ana.task_notes.getRecordsNumber();
@@ -94,11 +98,11 @@ public class AddRecordsTable {
 //        String[] assignments = {"symbol", "analyst", "priority", "dateAssigned", "note"},
 //                 reports = {"symbol", "author", "analysisDate", "path", "document", "notes", "notesL"};
         switch (tableName) {
-            case "tasks":
+            case TASKS_TABLE_NAME:
                 return ana.getColumnNames(1);
-            case "task_files":
+            case TASKFILES_TABLE_NAME:
                 return ana.getColumnNames(2);
-            case "task_notes":
+            case TASKNOTES_TABLE_NAME:
                 return ana.getColumnNames(3);
         }
         return null;
@@ -109,11 +113,11 @@ public class AddRecordsTable {
                 table2 = {"", "", "", "", "", "", ""},
                 table3 = {"", "", "", ""};
         switch (tableName) {
-            case "tasks":
+            case TASKS_TABLE_NAME:
                 return table1;
-            case "task_files":
+            case TASKFILES_TABLE_NAME:
                 return table2;
-            case "task_notes":
+            case TASKNOTES_TABLE_NAME:
                 return table3;
         }
         return null;
