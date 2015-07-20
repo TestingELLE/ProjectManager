@@ -25,8 +25,8 @@ public class LoginWindow extends javax.swing.JFrame {
     
     // Attributes
     public LogWindow logwind = new LogWindow();
-    private ProjectManager analyster = new ProjectManager();
-
+    private ProjectManager projectManager = new ProjectManager();
+    
     /*public LoginWindow(String db_url, String username, char[] password) {
      //String[] connect_type = new String[] { "Local", "AWS" };
      //local
@@ -41,13 +41,13 @@ public class LoginWindow extends javax.swing.JFrame {
         loadList();    // did not find suitable event
     }
 
-    public LoginWindow(ProjectManager a) {
+    public LoginWindow(ProjectManager projectManager) {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setTitle("Log in");
 //        jNewDB.setVisible(false);
 
-        analyster = a;
+        this.projectManager = projectManager;
 
         loadList();    // did not find suitable event
     }
@@ -397,8 +397,8 @@ public class LoginWindow extends javax.swing.JFrame {
 //            JOptionPane.showMessageDialog(null,GUI.stmt);
             System.out.println("Connection successfully!");
             GUI.status = true;
-            analyster.loadData();
-            analyster.setLastUpdateTime();
+            projectManager.loadData();
+            projectManager.setLastUpdateTime();
             dispose();
         } catch (Exception ex) {
 //            JOptionPane.showMessageDialog(null, GUI.username + GUI.password + GUI.db_url);

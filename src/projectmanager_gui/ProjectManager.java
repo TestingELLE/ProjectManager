@@ -71,7 +71,7 @@ public class ProjectManager extends javax.swing.JFrame{
 //    protected static String jdbc_driver;
 //    protected static Connection conn;
     /**
-     * Creates new form Analyster
+     * Creates new form ProjectManager
      */
     public ProjectManager() {
         initComponents();
