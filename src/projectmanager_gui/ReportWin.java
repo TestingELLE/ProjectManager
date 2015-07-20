@@ -318,7 +318,7 @@ public class ReportWin extends javax.swing.JDialog {
         int row = table.getSelectedRow();
         ResultSet rs = null;
         try {
-            String sqlView = "select * from Suggestions where ID= " + table.getValueAt(row, 0) + ";";
+            String sqlView = "select * from Suggestions where taskID= " + table.getValueAt(row, 0) + ";";
             //System.out.println(sqlView);
             rs = stmt.executeQuery(sqlView);
             /*int size= 0;

@@ -36,7 +36,7 @@ public class AddRecordsTable {
         } else if (tableName.equals(TASKFILES_TABLE_NAME)) {
             return "date_";
         } else {
-            return "status_date";
+            return "_date";
         }
     }
 

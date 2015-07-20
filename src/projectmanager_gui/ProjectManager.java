@@ -276,7 +276,7 @@ public class ProjectManager extends javax.swing.JFrame{
                 {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "taskNum", "title", "step", "description", "instructions", "programmer", "dateAssigned", "rank", "done", "dateDone"
+                "taskID", "num", "title", "step", "description", "instructions", "programmer", "dateAssigned", "rk", "done", "dateDone"
             }
         ) {
             Class[] types = new Class [] {
@@ -331,7 +331,7 @@ public class ProjectManager extends javax.swing.JFrame{
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "fileID", "taskID", "submitter", "step", "date_", "file", "folder", "notes"
+                "fileID", "taskID", "submitter", "step", "date_", "files", "path", "notes"
             }
         ) {
             Class[] types = new Class [] {
@@ -357,7 +357,7 @@ public class ProjectManager extends javax.swing.JFrame{
                 {null, null, null, null, null}
             },
             new String [] {
-                "noteID", "taskID", "submitter", "status_notes", "status_date"
+                "noteID", "taskID", "submitter", "status_notes", "_date"
             }
         ) {
             Class[] types = new Class [] {
@@ -760,13 +760,13 @@ public class ProjectManager extends javax.swing.JFrame{
                 }
             }
             if (row == -1) {  // cannot find
-                JOptionPane.showMessageDialog(null, "id:" + id);
+                JOptionPane.showMessageDialog(null, "taskID:" + id);
                 return;
             }
             table.getValueAt(1, 0);
             try {
                 String sqlChange = "UPDATE " + tableName + " SET " + columnNames.get(col)
-                        + " = '" + table.getValueAt(row, col) + "' where ID = " + table.getValueAt(row, 0) + ";";
+                        + " = '" + table.getValueAt(row, col) + "' where taskID = " + table.getValueAt(row, 0) + ";";
                 System.out.println(sqlChange);
                 GUI.stmt.executeUpdate(sqlChange);
 //                connection(sqlC, table);
@@ -907,7 +907,7 @@ public class ProjectManager extends javax.swing.JFrame{
         String[] field = ts.getSearchFields();
 
         if (field == null) {
-            jField.setModel(new DefaultComboBoxModel(new String[]{"ID", "title"}));
+            jField.setModel(new DefaultComboBoxModel(new String[]{"taskID", "title"}));
         } else {
             jField.setModel(new DefaultComboBoxModel(field));
         }
@@ -1154,7 +1154,7 @@ public class ProjectManager extends javax.swing.JFrame{
         
         // Load data for the table Tasks and Set the column Width percentage
         System.out.println("Connection");
-        String sqlT = "select * from tasks ORDER BY ID DESC";       
+        String sqlT = "select * from tasks ORDER BY taskID DESC";       
         connection(sqlT, tableTasks);        
         setColumnFormat(COL_WIDTH_PER_TASKS, tableTasks);
         setToolTipText(tableTasks, 11); //Shows tooltip for columns which text are bigger than width
@@ -1172,7 +1172,7 @@ public class ProjectManager extends javax.swing.JFrame{
 
         // Load data for the table Task_Notes and Set the column Width percentage
         System.out.println("Connection");
-        String sqlN = "select * from task_notes ORDER BY taskID DESC";
+        String sqlN = "select * from task_notes ORDER BY noteID DESC";
         connection(sqlN, tableTask_Notes);
         setColumnFormat(COL_WIDTH_PER_TASKNOTESD, tableTask_Notes);
         setToolTipText(tableTask_Notes, 5);
