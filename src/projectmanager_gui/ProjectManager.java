@@ -36,8 +36,11 @@ import static projectmanager_gui.ITableConstants.COL_WIDTH_PER_TASKFILES;
 import static projectmanager_gui.ITableConstants.COL_WIDTH_PER_TASKNOTESD;
 import static projectmanager_gui.ITableConstants.COL_WIDTH_PER_TASKS;
 import static projectmanager_gui.ITableConstants.TASKFILES_SEARCH_FIELDS;
+import static projectmanager_gui.ITableConstants.TASKFILES_TABLE_NAME;
 import static projectmanager_gui.ITableConstants.TASKNOTES_SEARCH_FIELDS;
+import static projectmanager_gui.ITableConstants.TASKNOTES_TABLE_NAME;
 import static projectmanager_gui.ITableConstants.TASKS_SEARCH_FIELDS;
+import static projectmanager_gui.ITableConstants.TASKS_TABLE_NAME;
 
 /**
  *
@@ -770,7 +773,7 @@ public class ProjectManager extends javax.swing.JFrame{
             table.getValueAt(1, 0);
             try {
                 String sqlChange = "UPDATE " + tableName + " SET " + columnNames.get(col)
-                        + " = '" + table.getValueAt(row, col) + "' where taskID = " + table.getValueAt(row, 0) + ";";
+                        + " = '" + table.getValueAt(row, col) + "' where ID = " + table.getValueAt(row, 0) + ";";
                 System.out.println(sqlChange);
                 GUI.stmt.executeUpdate(sqlChange);
 //                connection(sqlC, table);
@@ -911,7 +914,7 @@ public class ProjectManager extends javax.swing.JFrame{
         String[] field = ts.getSearchFields();
 
         if (field == null) {
-            jField.setModel(new DefaultComboBoxModel(new String[]{"taskID", "task_title"}));
+            jField.setModel(new DefaultComboBoxModel(new String[]{"ID", "title"}));
         } else {
             jField.setModel(new DefaultComboBoxModel(field));
         }
@@ -1377,11 +1380,11 @@ public class ProjectManager extends javax.swing.JFrame{
 
     public JTable getSelectedTable() {
         String selectedTab = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());;
-        if (selectedTab.equals("tasks")) {
+        if (selectedTab.equals(TASKS_TABLE_NAME)) {
             return tableTasks;
-        } else if (selectedTab.equals("task_files")) {
+        } else if (selectedTab.equals(TASKFILES_TABLE_NAME)) {
             return tableTask_Files;
-        } else if (selectedTab.equals("task_notes")) {
+        } else if (selectedTab.equals(TASKNOTES_TABLE_NAME)) {
             return tableTask_Notes;
         } else {
             JOptionPane.showMessageDialog(null, "TableSelected not found!");
@@ -1395,11 +1398,11 @@ public class ProjectManager extends javax.swing.JFrame{
 
         //  A switch works with the byte, short, char, and int primitive data types.
         switch (selectedTab) {
-            case "tasks":
+            case TASKS_TABLE_NAME:
                 return tasks;
-            case "task_files":
+            case TASKFILES_TABLE_NAME:
                 return task_files;
-            case "task_notes":
+            case TASKNOTES_TABLE_NAME:
                 return task_notes;
             default:
                 return null;
