@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import static projectmanager_gui.ITableConstants.TASKFILES_TABLE_NAME;
+import static projectmanager_gui.ITableConstants.TASKNOTES_TABLE_NAME;
+import static projectmanager_gui.ITableConstants.TASKS_TABLE_NAME;
 
 /**
  *
@@ -32,11 +35,11 @@ public class ProjectManagerDAO {
         long taskid = info.getIdNum();
 //        long id = ana.tableState.getRecordsNumber(ana.getTable(jTables.getSelectedItem().toString()));
         // complete title from columnNames
-        if (tableName.equals("tasks")) {
-            title += "taskID" + ",";
-        } else if (tableName.equals("task_notes")) {
+        if (tableName.equals(TASKS_TABLE_NAME)) {
+            title += "ID" + ",";
+        } else if (tableName.equals(TASKNOTES_TABLE_NAME)) {
             title += "noteID" + ",";
-        } else if (tableName.equals("task_files")) {
+        } else if (tableName.equals(TASKFILES_TABLE_NAME)) {
             title += "fileID" + ",";
         }
         // The extra column is the ID which will not display
@@ -85,7 +88,8 @@ public class ProjectManagerDAO {
 
     }
 
-    public int checkingDate(int rowNum, JTable table, long taskid, String rowData, int j, int colNum, Vector columnNames, AddRecordsTable info, ArrayList<String> rows) throws HeadlessException {
+    public int checkingDate(int rowNum, JTable table, long taskid, String rowData, int j, int colNum, Vector columnNames, 
+            AddRecordsTable info, ArrayList<String> rows) throws HeadlessException {
         while (rowNum != table.getRowCount() && !table.getValueAt(rowNum, 0).equals("")) {    // within accessible rows && not null next line
 //            JOptionPane.showMessageDialog(null, table.getValueAt(i, 0));
             taskid++;   // go to the last line plus one

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
+import static projectmanager_gui.ITableConstants.TASKFILES_TABLE_NAME;
 
 /**
  *
@@ -44,7 +45,7 @@ public class AddFile extends javax.swing.JFrame {
         this.selectedTask=selectedTask;
         initComponents();
         this.setLocationRelativeTo(null);
-        info.update("task_files", ana);
+        info.update(TASKFILES_TABLE_NAME, ana);
         initTable(1);   // without this, date column in assignments will be object with no type (instead of string object)
         /*
         No Tab key-pressed or key-released events are received by the key event listener. This is because the focus subsystem 
@@ -334,7 +335,7 @@ public class AddFile extends javax.swing.JFrame {
     }//GEN-LAST:event_tableKeyPressed
 
     private void initTable(int rows) {
-        tableName = "task_files";
+        tableName = TASKFILES_TABLE_NAME;
         Vector tableDefault, table0;    // default content of table which includes empty rows
         List list = new ArrayList();
 

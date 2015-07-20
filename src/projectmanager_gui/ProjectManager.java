@@ -32,12 +32,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
+import static projectmanager_gui.ITableConstants.COL_WIDTH_PER_TASKFILES;
+import static projectmanager_gui.ITableConstants.COL_WIDTH_PER_TASKNOTESD;
+import static projectmanager_gui.ITableConstants.COL_WIDTH_PER_TASKS;
+import static projectmanager_gui.ITableConstants.TASKFILES_SEARCH_FIELDS;
+import static projectmanager_gui.ITableConstants.TASKNOTES_SEARCH_FIELDS;
+import static projectmanager_gui.ITableConstants.TASKS_SEARCH_FIELDS;
 
 /**
  *
  * @author Tina & Louis W.
  */
-public class ProjectManager extends javax.swing.JFrame {
+public class ProjectManager extends javax.swing.JFrame{
+          
+    // Edit the version and date it was created for new archives and jars
+    private final String CREATION_DATE = "2015-07-18";
+    private final String VERSION = "0.6.0c";
     
     // Attributes
     public TableState tasks = new TableState();
@@ -270,7 +280,7 @@ public class ProjectManager extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "taskNum", "task_title", "step", "description", "instruction", "programmer", "dateAssigned", "Rk", "done?", "dateDone"
+                "ID", "taskNum", "title", "step", "description", "instructions", "programmer", "dateAssigned", "rank", "done", "dateDone"
             }
         ) {
             Class[] types = new Class [] {
@@ -654,11 +664,7 @@ public class ProjectManager extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-   
-    
-    // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-07-15";
-    private final String VERSION = "0.6.0a";
+
     
     private void menuItemVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemVersionActionPerformed
         // TODO add your handling code here:
@@ -1149,46 +1155,32 @@ public class ProjectManager extends javax.swing.JFrame {
     }
 
     public void loadData() {
+        
+        // Load data for the table Tasks and Set the column Width percentage
         System.out.println("Connection");
-        String sqlT = "select * from tasks ORDER BY taskID DESC";       
-        connection(sqlT, tableTasks);
-        
-        // Set the column Width percentage of the the first table--Tasks
-        // Sum 89%
-        // Change the name 
-        float[] columnWidthOfTableTasks = {4.0f, 5.0f, 13.0f, 3.5f, 20.0f, 20.0f, 6.5f, 7.0f, 2.0f, 4.0f, 7.0f};
-        
-        setColumnFormat(columnWidthOfTableTasks, tableTasks);
+        String sqlT = "select * from tasks ORDER BY ID DESC";       
+        connection(sqlT, tableTasks);        
+        setColumnFormat(COL_WIDTH_PER_TASKS, tableTasks);
         setToolTipText(tableTasks, 11); //Shows tooltip for columns which text are bigger than width
-        tasks.init(tableTasks, new String[]{"programmer", "date_assigned", "completed", "priority"});
+        tasks.init(tableTasks, TASKS_SEARCH_FIELDS);
         numOfRecords1.setText("N of records in tasks:" + tasks.getRowsNumber());
 
+        // Load data for the table Task_Files and Set the column Width percentage
         System.out.println("Connection");
-        String sqlF = "select * from task_files ORDER BY taskID DESC";
-        connection(sqlF, tableTask_Files);
-        
-        // Set the column Width percentage of the the first table--Task_Files
-        // Sum 85%
-        // Change the name 
-        float[] columnWidthOfTableTaskFiles = {4.0f, 4.0f, 6.0f, 3.5f, 7.0f, 20.0f, 20.0f, 20.5f};
-        
-        setColumnFormat(columnWidthOfTableTaskFiles, tableTask_Files);
+        String sqlF = "select * from task_files ORDER BY fileID DESC";
+        connection(sqlF, tableTask_Files);         
+        setColumnFormat(COL_WIDTH_PER_TASKFILES, tableTask_Files);
         setToolTipText(tableTask_Files, 8);
-        task_files.init(tableTask_Files, new String[]{"submitter"});
+        task_files.init(tableTask_Files, TASKFILES_SEARCH_FIELDS);
         numOfRecords2.setText("N of records in task_files: " + task_files.getRowsNumber());
 
+        // Load data for the table Task_Notes and Set the column Width percentage
         System.out.println("Connection");
         String sqlN = "select * from task_notes ORDER BY taskID DESC";
         connection(sqlN, tableTask_Notes);
-        
-        // Set the column Width percentage of the the first table--Task_Notes
-        // Sum 71%
-        // Change the name 
-        float[] columnWidthOfTableTaskNotes = {4.0f, 4.0f, 6.0f, 50.0f, 7.0f};
-        
-        setColumnFormat(columnWidthOfTableTaskNotes, tableTask_Notes);
+        setColumnFormat(COL_WIDTH_PER_TASKNOTESD, tableTask_Notes);
         setToolTipText(tableTask_Notes, 5);
-        task_notes.init(tableTask_Notes, new String[]{"submitter"});
+        task_notes.init(tableTask_Notes, TASKNOTES_SEARCH_FIELDS);
         numOfRecords3.setText("N of records in task_notes: " + task_notes.getRowsNumber());
 
     }
@@ -1206,7 +1198,7 @@ public class ProjectManager extends javax.swing.JFrame {
         });
 
         table.setModel(model);
-        table.setRowSorter(sorter);       
+        table.setRowSorter(sorter);              
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         TableCellRenderer rendererFromHeader = table.getTableHeader().getDefaultRenderer();
@@ -1233,9 +1225,9 @@ public class ProjectManager extends javax.swing.JFrame {
             int pWidth = Math.round((width[i] / 100) * tW);
             table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
             
-            // Test to fix the width of columns
-            //table.getColumnModel().getColumn(i).setMinWidth(pWidth);
-            //table.getColumnModel().getColumn(i).setMaxWidth(pWidth);
+//            // Test to fix the width of columns
+//            table.getColumnModel().getColumn(i).setMinWidth(pWidth);
+//            table.getColumnModel().getColumn(i).setMaxWidth(pWidth);
             
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
             
@@ -1536,74 +1528,4 @@ public class ProjectManager extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
 //declaration for table 3 Project Manager//
-}
-
-
-
-
-
-class MyTableModel extends DefaultTableModel {
-
-    boolean isFiltering;
-
-    public MyTableModel(Object rowData[][], Object columnNames[], boolean filteringStatus) {
-        super(rowData, columnNames);
-        isFiltering = filteringStatus;
-    }
-
-    public MyTableModel(Vector data, Vector columnNames, boolean filteringStatus) {
-        
-        // Set the default table model to establish a table to store the data.
-        super(data, columnNames);
-        isFiltering = filteringStatus;
-    }
-
-//    public MyTableModel(Vector data, boolean filteringStatus) {
-//        isFiltering = filteringStatus;
-//    }
-    public MyTableModel(boolean filteringStatus) {
-        isFiltering = filteringStatus;
-    }
-
-    @Override
-    public Class getColumnClass(int col) {
-        /*if (col == 0 || col == 2) // second column accepts only Integer values
-         return Integer.class;
-         else if (col == 3 || col == 5)
-         return SimpleDateFormat.class;
-         else
-         return String.class; // other columns accept String values
-         */
-        if (col == 0) {
-            return Integer.class;
-        } else {
-            return Object.class;
-        }
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int col) {
-//        JOptionPane.showMessageDialog(null, isFiltering);
-        if (col == 0) // first column will be uneditable
-        {
-            return false;
-        } else if (isFiltering == true) // when edit mode is off
-        {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-//    @Override
-//    public void setValueAt(Object value, int row, int col) {
-//        data[row][col] = ((Integer) value).intValue();   // originalBoard: name of array
-//        System.out.println("Setting value");
-//        fireTableCellUpdated(row, col);
-//  // return true;
-//    }
-//        public void setCellEditable(int row, int col, boolean value) {
-//            this. editable_cells[row][col] = value; // set cell true/false
-//            this. fireTableCellUpdated(row, col);
-//        }
 }
