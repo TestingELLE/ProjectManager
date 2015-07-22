@@ -5,12 +5,16 @@
  */
 package projectmanager_gui;
 
+import java.util.logging.Logger;
+
 /**
  *
  * @author shanxijin
  */
 public class LoadTables implements ITableConstants{
     
-    // this one is from analyster line 1825
-//    private Analyster ana = Analyster.getInstance();
+    private ProjectManager projectManager = ProjectManager.getInstance();
+//    JLabel rcordsLabel = projectManager.getRecordsLabel;
+
+    
 }

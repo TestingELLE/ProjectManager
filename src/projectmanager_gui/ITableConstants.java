@@ -17,9 +17,9 @@ public interface ITableConstants {
     
     
     // column width percent constants
-    public static final float[] COL_WIDTH_PER_TASKS = {2.0f, 5.0f, 14.0f, 3.0f, 21.0f, 21.0f, 6.5f, 7.0f, 3.0f, 4.0f, 7.0f};
-    public static final float[] COL_WIDTH_PER_TASKFILES = {4.0f, 4.0f, 6.0f, 3.5f, 7.0f, 20.0f, 20.0f, 20.5f};
-    public static final float[] COL_WIDTH_PER_TASKNOTESD = {4.0f, 4.0f, 6.0f, 50.0f, 7.0f};
+    public static final float[] COL_WIDTH_PER_TASKS = {60, 50, 170, 50, 245, 260, 95, 100, 35, 50, 95};
+    public static final float[] COL_WIDTH_PER_TASKFILES = {55, 60, 115, 60, 95, 275, 135, 398};
+    public static final float[] COL_WIDTH_PER_TASKNOTES = {60, 60, 115, 855, 95};
     
     // search fields for the comboBox for each table
     public static final String[] TASKS_SEARCH_FIELDS = {"programmer", "dateAssigned", "done", "rk"};

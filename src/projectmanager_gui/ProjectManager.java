@@ -40,10 +40,10 @@ import static projectmanager_gui.ITableConstants.*;
  * @author Tina & Louis W.
  */
 public class ProjectManager extends javax.swing.JFrame{
-          
+   
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-07-18";
-    private final String VERSION = "0.6.0c";
+    private final String CREATION_DATE = "2015-07-21";
+    private final String VERSION = "0.6.1";
     
     // Attributes
     public TableState tasks = new TableState();
@@ -52,8 +52,9 @@ public class ProjectManager extends javax.swing.JFrame{
     public EnterButton enterButton = new EnterButton();
     public LogWindow logwind = new LogWindow();
     protected static boolean isFiltering = true;
-    private ArrayList changedCell = new ArrayList();    // record the locations of changed cell
-    
+    private ArrayList changedCell = new ArrayList();    // record the locations of changed cell        
+    private JTableHeader header;
+        
     // though Vector is obsolete, it is used and required by table model
 //    public Vector columnNames1 = new Vector(); // column names for table1
 //    public Vector columnNames2 = new Vector();
@@ -156,6 +157,7 @@ public class ProjectManager extends javax.swing.JFrame{
         menuItemReportBug = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(1205, 730));
 
         addPanel_control.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -238,7 +240,7 @@ public class ProjectManager extends javax.swing.JFrame{
                 .addGap(7, 7, 7))
         );
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(204, 0, 153)));
+        jPanel5.setBorder(new javax.swing.border.MatteBorder(null));
 
         btnUploadChange.setText("Upload Changes");
         btnUploadChange.setMaximumSize(new java.awt.Dimension(95, 30));
@@ -249,6 +251,8 @@ public class ProjectManager extends javax.swing.JFrame{
             }
         });
 
+        tabbedPane.setMinimumSize(new java.awt.Dimension(0, 0));
+        tabbedPane.setPreferredSize(new java.awt.Dimension(1185, 330));
         tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 tabbedPaneStateChanged(evt);
@@ -294,9 +298,10 @@ public class ProjectManager extends javax.swing.JFrame{
                 return canEdit [columnIndex];
             }
         });
-        tableTasks.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        tableTasks.setMinimumSize(new java.awt.Dimension(10, 240));
-        tableTasks.setName(""); // NOI18N
+        tableTasks.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tableTasks.setMinimumSize(new java.awt.Dimension(0, 0));
+        tableTasks.setName("tasks"); // NOI18N
+        tableTasks.setPreferredSize(new java.awt.Dimension(1185, 330));
         tableTasks.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tableTasksMousePressed(evt);
@@ -342,9 +347,12 @@ public class ProjectManager extends javax.swing.JFrame{
                 return types [columnIndex];
             }
         });
-        tableTask_Files.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        tableTask_Files.setMinimumSize(new java.awt.Dimension(10, 240));
+        tableTask_Files.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tableTask_Files.setMinimumSize(new java.awt.Dimension(0, 0));
+        tableTask_Files.setName("task_files"); // NOI18N
+        tableTask_Files.setPreferredSize(new java.awt.Dimension(1185, 330));
         tableTask_Files.setShowGrid(false);
+        tableTask_Files.setSize(new java.awt.Dimension(1185, 330));
         jScrollPane4.setViewportView(tableTask_Files);
 
         tabbedPane.addTab("task_files", jScrollPane4);
@@ -368,8 +376,12 @@ public class ProjectManager extends javax.swing.JFrame{
                 return types [columnIndex];
             }
         });
+        tableTask_Notes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tableTask_Notes.setMaximumSize(new java.awt.Dimension(2147483647, 240));
-        tableTask_Notes.setMinimumSize(new java.awt.Dimension(10, 240));
+        tableTask_Notes.setMinimumSize(new java.awt.Dimension(0, 0));
+        tableTask_Notes.setName("task_notes"); // NOI18N
+        tableTask_Notes.setPreferredSize(new java.awt.Dimension(1185, 330));
+        tableTask_Notes.setSize(new java.awt.Dimension(1185, 330));
         jScrollPane3.setViewportView(tableTask_Notes);
 
         tabbedPane.addTab("task_notes", jScrollPane3);
@@ -424,7 +436,7 @@ public class ProjectManager extends javax.swing.JFrame{
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane)
+            .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
@@ -450,7 +462,7 @@ public class ProjectManager extends javax.swing.JFrame{
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnUploadChange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
@@ -835,24 +847,7 @@ public class ProjectManager extends javax.swing.JFrame{
             btnCancelEdit.setVisible(true);
             btnBatchEdit.setVisible(true);
             isFiltering = false;
-//            loadData();
-            
-//            SwingUtilities.invokeLater(new Runnable(){
-//                public void run(){
-//                    tableReload(tableTask_Files, task_files.getData(), task_files.getColumnNames());
-//                }
-//            });
-//            SwingUtilities.invokeLater(new Runnable(){
-//                public void run(){
-//                    tableReload(tableTasks, tasks.getData(), tasks.getColumnNames());
-//                }
-//            });            
-//            SwingUtilities.invokeLater(new Runnable(){
-//                public void run(){
-//                    tableReload(tableTask_Notes, task_notes.getData(), task_notes.getColumnNames());
-//                }
-//            });    
-            
+//            loadData();           
 //            tableReload(tableTasks, tasks.getData(), tasks.getColumnNames()); 
 //            tableReload(tableTask_Files, task_files.getData(), task_files.getColumnNames());
 //            tableReload(tableTask_Notes, task_notes.getData(), task_notes.getColumnNames());
@@ -914,7 +909,7 @@ public class ProjectManager extends javax.swing.JFrame{
 
         tableRowsCount();
 
-        changedCell.clear();    // when selected table changed, clear former edit history
+        changedCell.clear();    // when selected table changed, clear former edit history    
     }//GEN-LAST:event_tabbedPaneStateChanged
 
     private void btnBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatchEditActionPerformed
@@ -1157,7 +1152,7 @@ public class ProjectManager extends javax.swing.JFrame{
         String sqlT = "select * from tasks ORDER BY taskID DESC";       
         connection(sqlT, tableTasks);        
         setColumnFormat(COL_WIDTH_PER_TASKS, tableTasks);
-        setToolTipText(tableTasks, 11); //Shows tooltip for columns which text are bigger than width
+//        setToolTipText(tableTasks, 11); //Shows tooltip for columns which text are bigger than width
         tasks.init(tableTasks, TASKS_SEARCH_FIELDS);
         numOfRecords1.setText("N of records in tasks:" + tasks.getRowsNumber());
 
@@ -1166,7 +1161,7 @@ public class ProjectManager extends javax.swing.JFrame{
         String sqlF = "select * from task_files ORDER BY fileID DESC";
         connection(sqlF, tableTask_Files);         
         setColumnFormat(COL_WIDTH_PER_TASKFILES, tableTask_Files);
-        setToolTipText(tableTask_Files, 8);
+//        setToolTipText(tableTask_Files, 8);
         task_files.init(tableTask_Files, TASKFILES_SEARCH_FIELDS);
         numOfRecords2.setText("N of records in task_files: " + task_files.getRowsNumber());
 
@@ -1174,8 +1169,8 @@ public class ProjectManager extends javax.swing.JFrame{
         System.out.println("Connection");
         String sqlN = "select * from task_notes ORDER BY noteID DESC";
         connection(sqlN, tableTask_Notes);
-        setColumnFormat(COL_WIDTH_PER_TASKNOTESD, tableTask_Notes);
-        setToolTipText(tableTask_Notes, 5);
+        setColumnFormat(COL_WIDTH_PER_TASKNOTES, tableTask_Notes);
+//        setToolTipText(tableTask_Notes, 5);
         task_notes.init(tableTask_Notes, TASKNOTES_SEARCH_FIELDS);
         numOfRecords3.setText("N of records in task_notes: " + task_notes.getRowsNumber());
 
@@ -1194,43 +1189,93 @@ public class ProjectManager extends javax.swing.JFrame{
         });
 
         table.setModel(model);
-        table.setRowSorter(sorter);              
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        TableCellRenderer rendererFromHeader = table.getTableHeader().getDefaultRenderer();
-        
+        table.setRowSorter(sorter);           
+            
+//        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+//        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+//        TableCellRenderer rendererFromHeader = table.getTableHeader().getDefaultRenderer();       
         // ???????????I don't understand what it is going to do.
-        JLabel headerLabel = (JLabel) rendererFromHeader;
-        headerLabel.setHorizontalAlignment(JLabel.CENTER);
-        
+//        JLabel headerLabel = (JLabel) rendererFromHeader;
+//        headerLabel.setHorizontalAlignment(JLabel.CENTER);       
     }
-
-     private void setColumnFormat(float[] width, JTable table) {
+    
+    private void setColumnFormat(float[] width, JTable table) {
         // Center column content
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        //Center column header
 
-        JTableHeader header = table.getTableHeader();
-        header.setDefaultRenderer(new AlignmentTableHeaderCellRenderer(header.getDefaultRenderer()));
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int tW = screenSize.width;
+        // LEFT column content
+        DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+        leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
+        
+//        JTableHeader header = table.getTableHeader();
+//        header.setDefaultRenderer(new AlignmentTableHeaderCellRenderer((TableCellRenderer)header.getDefaultRenderer()));
+        
+        // Set the format for table header
+        header = table.getTableHeader();
+        if (!(header.getDefaultRenderer() instanceof AlignmentTableHeaderCellRenderer)) {
+            header.setDefaultRenderer(new AlignmentTableHeaderCellRenderer(header.getDefaultRenderer()));
+        }       
+      
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        for (int i = 0; i < width.length; i++) {
-            int pWidth = Math.round((width[i] / 100) * tW);
-            table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+        switch (table.getName()) {
             
-//            // Test to fix the width of columns
-//            table.getColumnModel().getColumn(i).setMinWidth(pWidth);
-//            table.getColumnModel().getColumn(i).setMaxWidth(pWidth);
+            // Set the format for table tasks
+            case TASKS_TABLE_NAME: {
+                for (int i = 0; i < width.length; i++) {
+                    int pWidth = Math.round(width[i]);
+                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+                    if (i == 2 || i == 4 || i == 5 || i == 6) {
+                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
+                    } else {
+                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+//                        table.getColumnModel().getColumn(i).setMinWidth(pWidth);
+//                        table.getColumnModel().getColumn(i).setMaxWidth(pWidth);
+                    }
+                }
+                table.setMinimumSize(new Dimension(1185, 730));
+                table.setPreferredScrollableViewportSize(new Dimension(1185, 730));
+                break;
+            }
             
-            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            // Set the format for table task_files
+            case TASKFILES_TABLE_NAME: {
+                for (int i = 0; i < width.length; i++) {
+                    int pWidth = Math.round(width[i]);
+                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+                    if (i >= width.length - 3) {
+                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
+                    } else {
+                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                }
+                table.setMinimumSize(new Dimension(1185, 730));
+                table.setPreferredScrollableViewportSize(new Dimension(1185, 730));
+                break;
+            }
             
-        }
-        table.setMinimumSize(new Dimension(1000, 300));
-        table.setPreferredScrollableViewportSize(new Dimension(1000, 300));
-              
+            // Set the format for table task_notes
+            case TASKNOTES_TABLE_NAME:{
+                for (int i = 0; i < width.length; i++) {
+                    int pWidth = Math.round(width[i]);
+                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+                    if (i == 3) {
+                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
+                    } else {
+                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                }
+                table.setMinimumSize(new Dimension(1185, 730));
+                table.setPreferredScrollableViewportSize(new Dimension(1185, 730));
+                break;
+            }
+            
+            default:{
+                System.out.println("Load table errer!");
+                break;  
+            }
+        }    
+        
     }
 
     class AlignmentTableHeaderCellRenderer implements TableCellRenderer {
@@ -1255,7 +1300,8 @@ public class ProjectManager extends javax.swing.JFrame{
             return label;
         }
     }
-
+    
+    // This method is not used.
     private void setToolTipText(JTable table, int columnCount) {
 
         for (int i = 0; i < columnCount; i++) {
@@ -1524,4 +1570,18 @@ public class ProjectManager extends javax.swing.JFrame{
     // End of variables declaration//GEN-END:variables
 
 //declaration for table 3 Project Manager//
+    
+    private static ProjectManager instance;
+    static ProjectManager getInstance() {
+        if (instance == null) {
+            instance = new ProjectManager();
+        }
+        return instance;
+    }
+       
+//    public JLabel getRecordsLabel() {
+//        return labelRecords;
+//    }
+    
+    
 }
