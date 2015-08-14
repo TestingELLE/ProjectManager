@@ -43,6 +43,7 @@ public class LoginWindow extends JFrame {
  
         // show window
         this.setTitle("Log in");
+        
     }
 
     /**
@@ -368,9 +369,7 @@ public class LoginWindow extends JFrame {
         userName = textFieldUsername.getText();
         char[] pw = passwordFieldPW.getPassword();
         userPassword = String.valueOf(pw);
-        
-        userName = "Xijin";
-        userPassword = "Xijin&&&";        
+              
 
         // connect to database
         try {

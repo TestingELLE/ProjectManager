@@ -1082,3 +1082,21 @@ Start to connect local database...
 -------------------------2015-08-14 10:57:11 AM-------------------------
 
 -------------------------2015-08-14 11:42:30 AM-------------------------
+
+-------------------------2015-08-14 12:11:04 PM-------------------------
+
+-------------------------2015-08-14 12:11:24 PM-------------------------
+2015-08-14 12:11:41 PM: Start to connect local database...
+2015-08-14 12:11:44 PM: Access denied for user 'Xijin'@'128.6.37.208' (using password: YES)
+2015-08-14 12:12:04 PM: Start to connect local database...
+2015-08-14 12:12:06 PM: Access denied for user 'Xijin'@'128.6.37.208' (using password: YES)
+
+-------------------------2015-08-14 12:17:00 PM-------------------------
+
+-------------------------2015-08-14 12:31:23 PM-------------------------
+2015-08-14 12:31:42 PM: Start to connect local database...
+2015-08-14 12:31:44 PM: Access denied for user 'Xijin'@'128.6.37.208' (using password: YES)
+2015-08-14 12:31:56 PM: Start to connect local database...
+2015-08-14 12:31:58 PM: Access denied for user 'Xijin'@'128.6.37.208' (using password: YES)
+2015-08-14 12:32:44 PM: Start to connect local database...
+2015-08-14 12:32:45 PM: Connect successfully!
