@@ -168,7 +168,7 @@
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="2">
-                <StringItem index="0" value="AWS"/>
+                <StringItem index="0" value="pupone"/>
                 <StringItem index="1" value="Local"/>
               </StringArray>
             </Property>
@@ -211,9 +211,11 @@
         <Component class="javax.swing.JComboBox" name="comboBoxDatabase">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="2">
+              <StringArray count="4">
                 <StringItem index="0" value="dummy"/>
                 <StringItem index="1" value="Elle2015"/>
+                <StringItem index="2" value="pupone_dummy"/>
+                <StringItem index="3" value="pupone_Analyster"/>
               </StringArray>
             </Property>
           </Properties>

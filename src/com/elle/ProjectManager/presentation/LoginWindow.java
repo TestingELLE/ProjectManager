@@ -110,7 +110,7 @@ public class LoginWindow extends JFrame {
 
         jLabel4.setText("Server");
 
-        comboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AWS", "Local" }));
+        comboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "pupone", "Local" }));
         comboBoxServer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxServerActionPerformed(evt);
@@ -141,7 +141,7 @@ public class LoginWindow extends JFrame {
 
         jLabel5.setText("Database");
 
-        comboBoxDatabase.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "dummy", "Elle2015" }));
+        comboBoxDatabase.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "dummy", "Elle2015", "pupone_dummy", "pupone_Analyster" }));
         comboBoxDatabase.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxDatabaseActionPerformed(evt);
