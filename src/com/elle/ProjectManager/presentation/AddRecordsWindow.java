@@ -84,8 +84,8 @@ public class AddRecordsWindow extends JFrame {
         this.setTitle("Add Records to " + table.getName());
         
         // set the size for AddRecord window
-        this.setPreferredSize(new Dimension(1107,150));
-        this.setMinimumSize(new Dimension(1107, 150));    
+        this.setPreferredSize(new Dimension(1137,150));
+        this.setMinimumSize(new Dimension(1137, 150));    
         
         // set this window to appear in the middle of Analyster
         this.setLocationRelativeTo(projectManager);
