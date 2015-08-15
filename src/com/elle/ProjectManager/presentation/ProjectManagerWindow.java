@@ -211,6 +211,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
         
         // set title of window to Analyster
         this.setTitle("Project Manager");
+        
+        // set the size for project manager
+        this.setPreferredSize(new Dimension(1207, 631));
+        this.setMinimumSize(new Dimension(1207, 631));        
     }
     
     
@@ -1856,10 +1860,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
             header.setDefaultRenderer(new AlignmentTableHeaderCellRenderer(header.getDefaultRenderer()));
         }
 
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        
-        this.setPreferredSize(new Dimension(1207, 631));
-        this.setMinimumSize(new Dimension(1207, 631));              
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);              
                       
         switch (table.getName()) {
             
