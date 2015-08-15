@@ -71,6 +71,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
     private JPanel controlPopupPanel;
     private JButton confirmButtonTableCellPopup;
     private JButton cancelButtonTableCellPopup;    
+    
+    // create a jlabel to show the database used
+    private JLabel databaseLabel;
 
     /**
      * CONSTRUCTOR
@@ -214,7 +217,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
         
         // set the size for project manager
         this.setPreferredSize(new Dimension(1207, 631));
-        this.setMinimumSize(new Dimension(1207, 631));        
+        this.setMinimumSize(new Dimension(1207, 631));              
+        
     }
     
     
@@ -1941,10 +1945,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
                 if ("".equals(value)) {
                     value = null;
                     sqlChange = "UPDATE " + tableName + " SET " + columnName
-                            + " = " + value + " WHERE tasksID = " + id + ";";
+                            + " = " + value + " WHERE taskID = " + id + ";";
                 } else {
                     sqlChange = "UPDATE " + tableName + " SET " + columnName
-                            + " = '" + value + "' WHERE tasksID = " + id + ";";
+                            + " = '" + value + "' WHERE taskID = " + id + ";";
                 }
                 System.out.println(sqlChange);
                 statement.executeUpdate(sqlChange);
@@ -2111,7 +2115,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
     }
 
     public void setDatabase(String database) {
-        this.database = database;
+        this.database = database;        
+    }
+    
+    public void showDatabase(){           
+        databaseLabel = new JLabel("                                                                        "
+                + "                                                                          "  
+                + "                                                                     " + database);
+        menuBar.add(databaseLabel);
     }
 
     public void setLogWindow(LogWindow logWindow) {
