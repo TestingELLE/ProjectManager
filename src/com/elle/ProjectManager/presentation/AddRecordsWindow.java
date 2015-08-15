@@ -35,7 +35,7 @@ public class AddRecordsWindow extends JFrame {
     private Statement statement;
     
     // components
-    private ProjectManagerWindow analyster;
+    private ProjectManagerWindow projectManager;
     private LogWindow logWindow;
     private DefaultTableModel model;
     
@@ -57,13 +57,13 @@ public class AddRecordsWindow extends JFrame {
         
         // initialize components
         initComponents();
-        analyster = ProjectManagerWindow.getInstance();
-        logWindow = analyster.getLogWindow();
-        tabs = analyster.getTabs();
-        statement = analyster.getStatement();
+        projectManager = ProjectManagerWindow.getInstance();
+        logWindow = projectManager.getLogWindow();
+        tabs = projectManager.getTabs();
+        statement = projectManager.getStatement();
         
         // set the selected table name
-        table.setName(analyster.getSelectedTabName());
+        table.setName(projectManager.getSelectedTabName());
         
         // get default selected bg color
         defaultSelectedBG = table.getSelectionBackground();
@@ -88,7 +88,7 @@ public class AddRecordsWindow extends JFrame {
         this.setMinimumSize(new Dimension(1107, 150));    
         
         // set this window to appear in the middle of Analyster
-        this.setLocationRelativeTo(analyster);
+        this.setLocationRelativeTo(projectManager);
               
     }
 
@@ -313,11 +313,11 @@ public class AddRecordsWindow extends JFrame {
 
             if(numRowsAdded > 0){
                 // update table and records label
-                String tabName = analyster.getSelectedTabName();              // tab name
+                String tabName = projectManager.getSelectedTabName();              // tab name
                 Tab tab = tabs.get(tabName);                                  // selected tab
                 
                 JTable table = tab.getTable();                                // selected table
-                analyster.loadTable(table);                                   // load table data from database
+                projectManager.loadTable(table);                                   // load table data from database
                 
                 TableFilter filter = tab.getFilter();                         // table filter
                 filter.applyFilter();                                         // apply filter
@@ -327,11 +327,11 @@ public class AddRecordsWindow extends JFrame {
                 ColumnPopupMenu.loadAllCheckBoxItems();                       // refresh the data for the column pop up
                 
                 tab.addToTotalRowCount(numRowsAdded);                         // add the number of records added to the total records count
-                JLabel recordsLabel = analyster.getRecordsLabel();
+                JLabel recordsLabel = projectManager.getRecordsLabel();
                 String recordsLabelText = tab.getRecordsLabel();              // store the records label string
                 recordsLabel.setText(recordsLabelText);                       // update the records label text
                 
-                analyster.setLastUpdateTime();                                // set the last update time from database
+                projectManager.setLastUpdateTime();                                // set the last update time from database
                 
                 JOptionPane.showMessageDialog(this, 
                         numRowsAdded + " Add successfully!");                 // show dialog box that upload was successful
@@ -459,7 +459,7 @@ public class AddRecordsWindow extends JFrame {
      */
     private void createEmptyTable() {
         // get column names for selected Analyster table
-        columnNames = analyster.getTabs().get(table.getName()).getTableColNames();
+        columnNames = projectManager.getTabs().get(table.getName()).getTableColNames();
         
         // we don't want the ID column 
         columnNames = Arrays.copyOfRange(columnNames, 1, columnNames.length); 
@@ -475,7 +475,7 @@ public class AddRecordsWindow extends JFrame {
         float[] widths = tabs.get(table.getName()).getColWidthPercent();
         widths = Arrays.copyOfRange(widths, 1, widths.length);
         
-        analyster.setColumnFormat(widths, table);
+        projectManager.setColumnFormat(widths, table);
     }
     
     /**
