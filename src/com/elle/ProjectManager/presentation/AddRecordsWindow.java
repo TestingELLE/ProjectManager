@@ -83,9 +83,13 @@ public class AddRecordsWindow extends JFrame {
         // set the label header
         this.setTitle("Add Records to " + table.getName());
         
+        // set the size for AddRecord window
+        this.setPreferredSize(new Dimension(1107,150));
+        this.setMinimumSize(new Dimension(1107, 150));    
+        
         // set this window to appear in the middle of Analyster
         this.setLocationRelativeTo(analyster);
-        
+              
     }
 
     /**
@@ -172,7 +176,7 @@ public class AddRecordsWindow extends JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnAddRow)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 670, Short.MAX_VALUE)
                 .addComponent(btnSubmit)
                 .addGap(18, 18, 18)
                 .addComponent(btnCancel)
@@ -182,7 +186,7 @@ public class AddRecordsWindow extends JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(scrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                .addComponent(scrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                 .addGap(12, 12, 12)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSubmit)
