@@ -21,7 +21,7 @@ import javax.swing.JTable;
 public class BatchEditWindow extends JFrame {
     
     // attributes
-    private ProjectManagerWindow analysterWindow;
+    private ProjectManagerWindow projectManagerWindow;
     private JTable table;
     private Tab tab;
 
@@ -34,9 +34,9 @@ public class BatchEditWindow extends JFrame {
      */
     public BatchEditWindow() {
         initComponents();
-        analysterWindow = ProjectManagerWindow.getInstance();
-        Map<String,Tab> tabs = analysterWindow.getTabs();
-        String tabName = analysterWindow.getSelectedTabName();
+        projectManagerWindow = ProjectManagerWindow.getInstance();
+        Map<String,Tab> tabs = projectManagerWindow.getTabs();
+        String tabName = projectManagerWindow.getSelectedTabName();
         tab = tabs.get(tabName);
         table = tab.getTable();
         
@@ -45,7 +45,7 @@ public class BatchEditWindow extends JFrame {
         comboBoxFieldSelect.setModel(model);
         
         // set the interface to the middle of the window
-        this.setLocationRelativeTo(analysterWindow);
+        this.setLocationRelativeTo(projectManagerWindow);
         setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
         this.setTitle("Batch Editor");
     }

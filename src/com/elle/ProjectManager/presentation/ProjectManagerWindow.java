@@ -18,6 +18,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -45,8 +47,8 @@ import java.util.Vector;
 public class ProjectManagerWindow extends JFrame implements ITableConstants{
     
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-08-12";  
-    private final String VERSION = "0.8.3a";   
+    private final String CREATION_DATE = "2015-08-14";  
+    private final String VERSION = "0.8.2";   
     
     // attributes
     private Map<String,Tab> tabs; // stores individual tabName information
@@ -61,7 +63,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
     private BatchEditWindow batchEditWindow;
     private EditDatabaseWindow editDatabaseWindow;
     private ReportWindow reportWindow;
-
+    
+    // create components for the table cell popup window  
+    private JTextArea textAreatableCellPopup;
+    private JScrollPane areaScrollPanetableCellPopup;
+    private JPanel tableCellPopupPanel;
+    private JPanel controlPopupPanel;
+    private JButton confirmButtonTableCellPopup;
+    private JButton cancelButtonTableCellPopup;    
+    
+    // create a jlabel to show the database used
+    private JLabel databaseLabel;
 
     /**
      * CONSTRUCTOR
@@ -192,9 +204,216 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
         tabs.get(TASKFILES_TABLE_NAME).setTableData(new ModifiedTableData(task_filesTable));
         tabs.get(TASKNOTES_TABLE_NAME).setTableData(new ModifiedTableData(task_notesTable));
         
+        // Call the initTableCellPopup method to initiate the Table Cell Popup window
+        initTableCellPopup();
+       
+        // Set the table listener for the table cell popup window.
+        setTableListener(tasksTable);
+        setTableListener(task_filesTable);
+        setTableListener(task_notesTable);         
+        
         // set title of window to Analyster
         this.setTitle("Project Manager");
+        
+        // set the size for project manager
+        this.setPreferredSize(new Dimension(1207, 631));
+        this.setMinimumSize(new Dimension(1207, 631));              
+        
     }
+    
+    
+    /*
+     * This is to initiate the table cell popup window.
+    */ 
+    private void initTableCellPopup(){
+        
+        // initialize the textAreatableCellPopup
+        textAreatableCellPopup = new JTextArea();
+        textAreatableCellPopup.setOpaque(true);
+        textAreatableCellPopup.setBorder(BorderFactory.createLineBorder(Color.gray));
+        textAreatableCellPopup.setSize(new Dimension(500,200)); 
+        textAreatableCellPopup.setLineWrap(true);
+        textAreatableCellPopup.setWrapStyleWord(true);    
+        
+        // initialize the areaScrollPanetableCellPopup
+        areaScrollPanetableCellPopup = new JScrollPane(textAreatableCellPopup);
+        areaScrollPanetableCellPopup.setOpaque(true);       
+        areaScrollPanetableCellPopup.setSize(new Dimension(500,200));        
+        
+        // initialize the tableCellPopupPanel
+        tableCellPopupPanel = new JPanel();
+        tableCellPopupPanel.add(areaScrollPanetableCellPopup);
+        tableCellPopupPanel.setLayout(new BorderLayout());
+        tableCellPopupPanel.setOpaque(true);
+        tableCellPopupPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+        tableCellPopupPanel.setSize(500, 200);   
+        tableCellPopupPanel.setVisible(false);
+        
+        // initialize the controlPopupPanel
+        controlPopupPanel = new JPanel(new GridBagLayout());
+        controlPopupPanel.setOpaque(true);
+        controlPopupPanel.setSize(500, 35);
+        controlPopupPanel.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
+        controlPopupPanel.setVisible(false);
+
+        
+        // initialize the confirmButtonTableCellPopup                       
+        GridBagConstraints tableCellPopupConstraints = new GridBagConstraints();
+        tableCellPopupConstraints.gridx = 0;
+        tableCellPopupConstraints.gridy = 0;
+        tableCellPopupConstraints.fill = GridBagConstraints.HORIZONTAL;
+        
+        confirmButtonTableCellPopup = new JButton("Confirm");
+        confirmButtonTableCellPopup.setOpaque(true);
+        controlPopupPanel.add(confirmButtonTableCellPopup, tableCellPopupConstraints);
+
+        // initialize the cancelButtonTableCellPopup        
+        tableCellPopupConstraints.gridx = 1;
+        tableCellPopupConstraints.gridy = 0;
+        tableCellPopupConstraints.fill = GridBagConstraints.HORIZONTAL;
+        
+        cancelButtonTableCellPopup = new JButton("Cancel");
+        cancelButtonTableCellPopup.setOpaque(true);
+        controlPopupPanel.add(cancelButtonTableCellPopup, tableCellPopupConstraints);
+            
+        // set the popup_layer of projectmanager for the table cell popup window
+        this.getLayeredPane().add(tableCellPopupPanel, JLayeredPane.POPUP_LAYER);
+        this.getLayeredPane().add(controlPopupPanel, JLayeredPane.POPUP_LAYER);
+        
+    }
+
+    /*
+     * This is to set table listener for the table cell popup window.
+     * @parm table
+    */        
+    private void setTableListener(JTable table){
+        
+        table.addMouseListener(new MouseAdapter(){             
+            public void mouseClicked(MouseEvent evt){
+                int row = table.getSelectedRow();
+                int column = table.getSelectedColumn();   
+                if(table.equals(tasksTable)){                   
+                    if(column == 2 || column == 4 || column == 5){
+                        // popup table cell edit window
+                        tableCellPopup(tasksTable, row , column);
+                    }else{
+                        tableCellPopupPanel.setVisible(false);
+                        controlPopupPanel.setVisible(false);
+                    }
+                }
+                else if(table.equals(task_filesTable)){
+                    if(column == 5 || column == 6 || column == 7){
+                        // popup table cell edit window
+                        tableCellPopup(task_filesTable, row , column);
+                    }else{
+                        tableCellPopupPanel.setVisible(false);
+                        controlPopupPanel.setVisible(false);
+                    }                   
+                }
+                else if(table.equals(task_notesTable)){
+                    if(column == 3){
+                        // popup table cell edit window
+                        tableCellPopup(task_notesTable, row , column);
+                    }else{
+                        tableCellPopupPanel.setVisible(false);
+                        controlPopupPanel.setVisible(false);
+                    }                    
+                }
+            }
+        });
+        
+        table.setFocusTraversalKeysEnabled(false);
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher(){
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent evt){                
+                if(evt.getKeyCode() == KeyEvent.VK_TAB || evt.getKeyCode() == KeyEvent.VK_LEFT ||
+                        evt.getKeyCode() == KeyEvent.VK_RIGHT || evt.getKeyCode() == KeyEvent.VK_UP ||
+                        evt.getKeyCode() == KeyEvent.VK_DOWN){
+                    
+                    if (evt.getComponent() instanceof JTable){
+                        JTable table = (JTable) evt.getComponent();
+                        int row = table.getSelectedRow();                    
+                        int column = table.getSelectedColumn();   
+                        if(table.equals(tasksTable)){
+                            if(column == 2 || column == 4 || column == 5 || column == 6){
+                                // popup table cell edit window
+                                tableCellPopup(tasksTable, row , column);
+                            }else{
+                                tableCellPopupPanel.setVisible(false);
+                                controlPopupPanel.setVisible(false);
+                            }
+                        }
+                        else if(table.equals(task_filesTable)){
+                            if(column == 5 || column == 6 || column == 7){
+                                // popup table cell edit window
+                                tableCellPopup(task_filesTable, row , column);
+                            }else{
+                                tableCellPopupPanel.setVisible(false);
+                                controlPopupPanel.setVisible(false);
+                            }                   
+                        }
+                        else if(table.equals(task_notesTable)){
+                            if(column == 3){
+                                // popup table cell edit window
+                                tableCellPopup(task_notesTable, row , column);
+                            }else{
+                                tableCellPopupPanel.setVisible(false);
+                                controlPopupPanel.setVisible(false);
+                            }                    
+                        }
+                    }
+                }
+                return false; 
+            }
+        });
+    }
+        
+    
+    
+    /*
+     * This is to set the table cell popup window visible to edit.
+     * @parm selectedTable, row , column
+    */    
+    private void tableCellPopup(JTable selectedTable, int row, int column){
+        
+        // find the selected table cell 
+        Rectangle cellRect = selectedTable.getCellRect(row, column, true);
+        
+        // set the table cell popup window visible
+        tableCellPopupPanel.setVisible(true);
+        controlPopupPanel.setVisible(true); 
+   
+        // use the table cell content to set the content for textarea
+        textAreatableCellPopup.setText("");
+        textAreatableCellPopup.setText((String) selectedTable.getValueAt(row, column)); 
+    
+        // set the tableCellPopupPanel position
+        tableCellPopupPanel.setLocation(cellRect.x + 2, cellRect.y + cellRect.height + 2 + 150);  
+        
+        // set the controlPopupPanel position
+        controlPopupPanel.setLocation(cellRect.x + 2, cellRect.y + cellRect.height + 2 + 200 + 150);
+         
+        // update the table cell content and table cell popup window
+        confirmButtonTableCellPopup.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                String newTableCellValue = textAreatableCellPopup.getText();
+                tableCellPopupPanel.setVisible(false);
+                controlPopupPanel.setVisible(false);                   
+                selectedTable.setValueAt(newTableCellValue, row, column);
+                uploadChanges();
+            }
+        });
+           
+        // quit the table cell popup window
+        cancelButtonTableCellPopup.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){  
+                tableCellPopupPanel.setVisible(false);
+                controlPopupPanel.setVisible(false);                      
+            }
+        });         
+    }   
+        
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -403,7 +622,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
         tasksTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tasksTable.setMinimumSize(new java.awt.Dimension(10, 240));
         tasksTable.setName(""); // NOI18N
-        tasksTable.setRequestFocusEnabled(false);
         jScrollPane1.setViewportView(tasksTable);
 
         tabbedPanel.addTab("tasks", jScrollPane1);
@@ -1646,10 +1864,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
             header.setDefaultRenderer(new AlignmentTableHeaderCellRenderer(header.getDefaultRenderer()));
         }
 
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        
-        this.setPreferredSize(new Dimension(1207, 631));
-        this.setMinimumSize(new Dimension(1207, 631));              
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);              
                       
         switch (table.getName()) {
             
@@ -1730,10 +1945,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
                 if ("".equals(value)) {
                     value = null;
                     sqlChange = "UPDATE " + tableName + " SET " + columnName
-                            + " = " + value + " WHERE tasksID = " + id + ";";
+                            + " = " + value + " WHERE taskID = " + id + ";";
                 } else {
                     sqlChange = "UPDATE " + tableName + " SET " + columnName
-                            + " = '" + value + "' WHERE tasksID = " + id + ";";
+                            + " = '" + value + "' WHERE taskID = " + id + ";";
                 }
                 System.out.println(sqlChange);
                 statement.executeUpdate(sqlChange);
@@ -1900,7 +2115,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants{
     }
 
     public void setDatabase(String database) {
-        this.database = database;
+        this.database = database;        
+    }
+    
+    public void showDatabase(){           
+        databaseLabel = new JLabel("                                                                        "
+                + "                                                                          "  
+                + "                                                                     " + database);
+        menuBar.add(databaseLabel);
     }
 
     public void setLogWindow(LogWindow logWindow) {

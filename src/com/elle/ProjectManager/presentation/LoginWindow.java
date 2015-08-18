@@ -28,7 +28,7 @@ public class LoginWindow extends JFrame {
     private String userPassword;                // user password to login
     
     // class component instances
-    private ProjectManagerWindow analyster;
+    private ProjectManagerWindow projectManager;
     private EditDatabaseWindow editDatabaseList;
     private LogWindow logWindow;
     
@@ -389,19 +389,22 @@ public class LoginWindow extends JFrame {
             passwordFieldPW.setText("");
         }
         
-        // create an Analyster object
-        analyster = new ProjectManagerWindow();
+        // create an projectManager object
+        projectManager = new ProjectManagerWindow();
 
-        // pass the log window to analyster
-        analyster.setLogWindow(logWindow);
+        // pass the log window to projectManager
+        projectManager.setLogWindow(logWindow);
 
-        // pass the selectedDB to Analyster
+        // pass the selectedDB to projectManager
         // it is used in sql statements
-        analyster.setDatabase(selectedDB);
+        projectManager.setDatabase(selectedDB);
 
-        // show Analyster
-        analyster.setLocationRelativeTo(this);
-        analyster.setVisible(true);
+        // show the database name in menubar
+        projectManager.showDatabase();
+        
+        // show projectManager
+        projectManager.setLocationRelativeTo(this);
+        projectManager.setVisible(true);
 
         // terminate this object
         this.dispose(); // returns used resources
