@@ -377,27 +377,9 @@ public class AddRecordsWindow extends JFrame {
             public boolean dispatchKeyEvent(KeyEvent e) {
                 
                 if(e.getComponent() instanceof JTable){
-                    // ctrl + D fills in the current date
-                    if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
-                        JTable table = (JTable) e.getComponent().getParent();
-                        int column = table.getSelectedColumn();
-                        if (table.getColumnName(column).toLowerCase().contains("date")) {
-                            if (e.getID() != 401) {
-                                return false;
-                            } else {
-                                JTextField selectCom = (JTextField) e.getComponent();
-                                selectCom.requestFocusInWindow();
-                                selectCom.selectAll();
-                                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                                Date date = new Date();
-                                String today = dateFormat.format(date);
-                                selectCom.setText(today);
-                            }// default date input with today's date}
-                        }
-                    }
 
                     // this is called to either clear data or submit data
-                    else if (e.getKeyCode() == KeyEvent.VK_ENTER && !table.isEditing()) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER && !table.isEditing()) {
 
                         // clear the row(s)
                         if(e.getID() == KeyEvent.KEY_PRESSED){
@@ -448,6 +430,25 @@ public class AddRecordsWindow extends JFrame {
 
                 } // end table component condition
 
+                // ctrl + D fills in the current date
+                else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
+                    JTable table = (JTable) e.getComponent().getParent();
+                    int column = table.getSelectedColumn();
+                    if (table.getColumnName(column).toLowerCase().contains("date")) {
+                        if (e.getID() != 401) {
+                            return false;
+                        } else {
+                            JTextField selectCom = (JTextField) e.getComponent();
+                            selectCom.requestFocusInWindow();
+                            selectCom.selectAll();
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date = new Date();
+                            String today = dateFormat.format(date);
+                            selectCom.setText(today);
+                        }// default date input with today's date}
+                    }
+                }
+                    
                 return false; 
             }
         });
