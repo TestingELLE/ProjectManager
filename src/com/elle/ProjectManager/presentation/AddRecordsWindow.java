@@ -43,6 +43,8 @@ public class AddRecordsWindow extends JFrame {
 
     private ArrayList<Integer> rowsNotEmpty; // only includes rows that have data
     
+    private TableCellPopupWindow tableCellPopupWindow;
+    
     // used to notify if the table is editing
     // the table.isEditing method has issues from the tableModelListener
     private boolean isEditing;  
@@ -86,6 +88,11 @@ public class AddRecordsWindow extends JFrame {
         // set the size for AddRecord window
         this.setPreferredSize(new Dimension(1137,150));
         this.setMinimumSize(new Dimension(1137, 150));    
+        
+        // set the table cell popup window
+        tableCellPopupWindow = new TableCellPopupWindow();
+        tableCellPopupWindow.initTableCellPopup(this);
+        tableCellPopupWindow.setTableListener(table);       
         
         // set this window to appear in the middle of Analyster
         this.setLocationRelativeTo(projectManager);
