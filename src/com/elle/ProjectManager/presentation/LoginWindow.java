@@ -45,6 +45,8 @@ public class LoginWindow extends JFrame {
         comboBoxServer.setSelectedIndex(0);
         textFieldUsername.setText("pupone_Xiao");
         passwordFieldPW.setText("XiaoXXXX8");
+        login();
+        this.setVisible(false);
 //        comboBoxDatabase.setSelectedIndex(3);
         
         // show window
@@ -379,9 +381,9 @@ public class LoginWindow extends JFrame {
 
         // connect to database
         try {
-            logWindow.addMessageWithDate("Start to connect local database...");
+            logWindow.addMessageWithDate("1:Start to connect local database...");
             DBConnection.connect(selectedServer, selectedDB, userName, userPassword);
-            logWindow.addMessageWithDate("Connect successfully!");
+            logWindow.addMessageWithDate("1:Connect successfully!");
             
         } 
         catch (SQLException ex) {
@@ -390,8 +392,9 @@ public class LoginWindow extends JFrame {
                     "Invalid password. Try again.",
                     "Error Message",
                     JOptionPane.ERROR_MESSAGE);
+            String levelMessage = "1:"+ex.getMessage();
 
-            logWindow.addMessageWithDate(ex.getMessage());
+            logWindow.addMessageWithDate(levelMessage);
             passwordFieldPW.setText("");
         }
         

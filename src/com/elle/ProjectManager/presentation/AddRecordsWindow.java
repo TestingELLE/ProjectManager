@@ -307,9 +307,14 @@ public class AddRecordsWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Upload failed!");
 
                         if (statement.getWarnings().getMessage() != null) {
-                            logWindow.addMessageWithDate(statement.getWarnings().getMessage());
+                            
+                            String levelMessage = "2:"+ statement.getWarnings().getMessage(); 
+                            logWindow.addMessageWithDate(levelMessage);
 //                            logWindow.
                             System.out.println(statement.getWarnings().getMessage());
+                            
+                            System.out.println(levelMessage);//delete
+                            
                             statement.clearWarnings();
                         }
                     } // end try-catch

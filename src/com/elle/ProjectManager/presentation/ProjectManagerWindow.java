@@ -1380,7 +1380,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         Tab tab = tabs.get(tabName);
         JTable table = tab.getTable();
         String sqlDelete = deleteRecordsSelected(table);
-        logWindow.addMessageWithDate(sqlDelete);
+        String levelMessage = "3:" + sqlDelete;
+        logWindow.addMessageWithDate(levelMessage);
 //        logWindow.setLevel(deleteRecordLevel);
     }
 
@@ -1985,8 +1986,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(this, "Upload failed!");
-                logWindow.addMessageWithDate(e.getMessage());
-                logWindow.addMessageWithDate(e.getSQLState() + "\n");
+                logWindow.addMessageWithDate("3:"+e.getMessage());
+                logWindow.addMessageWithDate("3:"+e.getSQLState() + "\n");
             }
         }
 

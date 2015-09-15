@@ -357,10 +357,10 @@ public class ReportWindow extends JDialog {
             
         } catch (SQLException ex) {
 	    System.out.println("Error: " + ex);
-            logWindow.addMessageWithDate(ex.getMessage());
+            logWindow.addMessageWithDate("2:"+ex.getMessage());
         } catch (Exception ex) {
             System.out.println("Error: " + ex);
-            logWindow.addMessageWithDate(ex.getMessage());
+            logWindow.addMessageWithDate("2:"+ex.getMessage());
         }
 
         table.setModel(new EditableTableModel(data, columnNames));   
