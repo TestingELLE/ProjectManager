@@ -54,7 +54,10 @@ public class LogWindow extends JFrame{
 //                list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 //                list.add(logText);
 //                list.setVisibleRowCount(0);
-        scrollPane = new JScrollPane(logText);
+        scrollPane = new JScrollPane();
+        scrollPane.setViewportView(logText);
+        scrollPane.setPreferredSize(new Dimension(924, 900));
+        logText.setPreferredSize(new Dimension(2000, 2000));
         //scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         // change layout of frame

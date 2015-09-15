@@ -99,7 +99,7 @@ public class Tab implements ITableConstants{
     public float[] getColWidthPercent() {
         return colWidthPercent;
     }
-
+    
     public void setColWidthPercent(float[] colWidthPercent) {
         this.colWidthPercent = colWidthPercent;
     }

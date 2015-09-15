@@ -172,6 +172,7 @@ public class ColumnPopupMenu extends JPopupMenu{
 
         // Determine if mouse was clicked between column heads
         Rectangle headerRect = header.getTable().getTableHeader().getHeaderRect(vColumnIndex);
+        System.out.println(header.getTable().getTableHeader().getHeaderRect(vColumnIndex));
         if (vColumnIndex == 0) {
             headerRect.width -= 2;
         } else {

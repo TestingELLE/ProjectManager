@@ -64,7 +64,7 @@ public class DBConnection {
         }
         
         url += selectedDB;
-
+        
         // connect to server
         connection = DriverManager.getConnection(url, userName, userPassword);
         statement = connection.createStatement();

@@ -30,7 +30,7 @@ public class BatchEditWindow extends JFrame {
      * CONSTRUCTOR
      * Creates new BatchEditWindow
      * @param selectedTable
-     * @param analysterWindow
+     * @param projectManagerWindow
      */
     public BatchEditWindow() {
         initComponents();

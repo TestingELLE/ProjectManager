@@ -40,7 +40,13 @@ public class LoginWindow extends JFrame {
         
         // load selectedDB selections from the text file for the combobox
         loadDBList(); 
- 
+        
+        comboBoxDatabase.setSelectedIndex(2);
+        comboBoxServer.setSelectedIndex(0);
+        textFieldUsername.setText("pupone_Xiao");
+        passwordFieldPW.setText("XiaoXXXX8");
+//        comboBoxDatabase.setSelectedIndex(3);
+        
         // show window
         this.setTitle("Log in");
         
@@ -111,7 +117,7 @@ public class LoginWindow extends JFrame {
 
         jLabel4.setText("Server");
 
-        comboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "pupone", "Local" }));
+        comboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "pupone", "Local", "AWS" }));
         comboBoxServer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxServerActionPerformed(evt);

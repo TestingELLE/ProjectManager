@@ -11,7 +11,7 @@ import com.elle.ProjectManager.presentation.LoginWindow;
 /**
  * Main
  * This is the class that starts the application from the main method
- * @author Carlos Igreja
+ * @author shanxijin
  * @since June 10, 2015
  * @version 0.6.3
  */
