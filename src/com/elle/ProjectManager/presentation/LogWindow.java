@@ -28,8 +28,12 @@ public class LogWindow extends JFrame {
 
     private final ArrayList<LogMessage> logMessages = new ArrayList<>();
     private final JPanel panelLogWindowButtons;
+    private final JPanel panelLogWindowButtonsUp;
     private final JButton btnClearAllButToday;
     private final JButton btnDeleteAllButToday;
+    private final JButton btnLevelOne;
+    private final JButton btnLevelTwo;
+    private final JButton btnLevelThree;
     //private final JCheckBox jCheckBoxOrder;  // check box for order of dates
     private JButton showAll;
     //private final JLabel jLabelOrder; // label for checkbox order
@@ -77,6 +81,7 @@ public class LogWindow extends JFrame {
         // create a panel for buttons
         panelLogWindowButtons = new JPanel();
 
+        panelLogWindowButtonsUp = new JPanel();
         // create buttons 
         btnClearAllButToday = new JButton("Clear All But Today");
         btnClearAllButToday.addActionListener(new java.awt.event.ActionListener() {
@@ -109,6 +114,34 @@ public class LogWindow extends JFrame {
             }
         });
 
+        btnLevelOne = new JButton("Maximun");
+        btnLevelOne.addActionListener(new java.awt.event.ActionListener() {
+
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                levelOneActionPerformed(e);
+            }
+
+        });
+        btnLevelTwo = new JButton("Medium");
+        btnLevelTwo.addActionListener(new java.awt.event.ActionListener() {
+
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                levelTwoActionPerformed(e);
+            }
+
+        });
+        btnLevelThree = new JButton("Minimun");
+        btnLevelThree.addActionListener(new java.awt.event.ActionListener() {
+
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                levelThreeActionPerformed(e);
+            }
+
+        });
+
         // add buttons to panel
 //                panelLogWindowButtons.add(btnClearAll);
         panelLogWindowButtons.add(btnClearAllButToday);
@@ -116,6 +149,9 @@ public class LogWindow extends JFrame {
         //jPanelLogWindowButtons.add(jCheckBoxOrder);
         //jPanelLogWindowButtons.add(jLabelOrder);
         panelLogWindowButtons.add(showAll);
+        panelLogWindowButtonsUp.add(btnLevelOne);
+        panelLogWindowButtonsUp.add(btnLevelTwo);
+        panelLogWindowButtonsUp.add(btnLevelThree);
 
         // set constraints for the buttons panel
         GridBagConstraints buttonsPanelConstraints = new GridBagConstraints();
@@ -125,8 +161,16 @@ public class LogWindow extends JFrame {
         buttonsPanelConstraints.gridx = 0; // first col cell
         buttonsPanelConstraints.gridy = 1; // second row cell
 
+        GridBagConstraints buttonsPanelUpConstraints = new GridBagConstraints();
+        buttonsPanelUpConstraints.fill = GridBagConstraints.HORIZONTAL;
+        buttonsPanelUpConstraints.weightx = 1; // takes up whole x axis
+        buttonsPanelUpConstraints.weighty = 0; // takes up enough y axis just for buttons
+        buttonsPanelUpConstraints.gridx = 0; // first col cell
+        buttonsPanelUpConstraints.gridy = 2; // second row cell
+
         // add panel to the frame
         this.add(panelLogWindowButtons, buttonsPanelConstraints);
+        this.add(panelLogWindowButtonsUp, buttonsPanelUpConstraints);
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setPreferredSize(new Dimension(860, 540));
@@ -148,23 +192,18 @@ public class LogWindow extends JFrame {
     }
 
     public void readMessages() {
-        System.out.println("run!");
         String line = "";
         try {
             FileReader fileReader = new FileReader(FILENAME);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             line = bufferedReader.readLine();
             while (line != null) {
-
-                System.out.println(line);
-                if (line.startsWith("1:") || line.startsWith("2:") || line.startsWith("3:")) {
-                    System.out.println("enter");
-                    line = line.substring(2);
-
-                    logText.append("\n");
-                    System.out.println("second time: " + line);
-                    logText.append(line);
+                String newLine = line;
+                if (newLine.startsWith("1:") || newLine.startsWith("2:") || newLine.startsWith("3:")) {
+                    newLine = newLine.substring(2);
                 }
+                logText.append("\n");
+                logText.append(newLine);
                 line = bufferedReader.readLine();
             }
             bufferedReader.close();
@@ -213,15 +252,107 @@ public class LogWindow extends JFrame {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "yyyy-MM-dd hh:mm:ss a");
-        if (str.startsWith("1:") || (str.startsWith("2:")) || (str.startsWith("3:"))) {
-            System.out.println("string" + str);
-            String level = str.substring(0, 2);
-            System.out.println("level" + level);
-            System.out.println("new String" + str.substring(2));
-            addMessage(level + dateFormat.format(date) + ": " + str.substring(2));
-            readCurrentMessages(level + dateFormat.format(date) + ": " + str);
-        }
+        String storeStr = str;
+        String dateStr = dateFormat.format(date);
 
+        if (str.startsWith("1:") || str.startsWith("2:") || str.startsWith("3:")) {
+            dateStr = str.substring(0, 2) + dateStr;
+            storeStr = str.substring(2);
+        }
+        System.out.println(dateStr + " and " + storeStr);
+        addMessage(dateStr + ": " + storeStr);
+        readCurrentMessages(dateFormat.format(date) + ": " + storeStr);
+    }
+
+    private void levelOneActionPerformed(ActionEvent e) {
+        // store log messages in an array of log messages
+        storeLogMessages(); // get most current messages to array
+
+        // sorts by least recent date first
+        Collections.sort(logMessages, new LogMessage.SortByMostRecentDateLast());
+
+        logText.setText(""); // clear text box
+
+        // print log messages to log window text box
+        for (LogMessage logMessage : logMessages) {
+            System.out.println("message here" + logMessage.getMessage());
+
+            String message = logMessage.getMessage();
+            if (message.startsWith("\n")) {
+                if (!message.endsWith("\n")) {
+                    message = message + "\n";
+                }
+                if (message.substring(1).startsWith("1:")) {
+                    logText.append("\n");
+                    logText.append(HYPHENS + dateFormat.format(logMessage.getDate()) + HYPHENS);
+                    message = message.substring(0, 1) + message.substring(3);
+                } else {
+                    message = "";
+                }
+            }
+
+            System.out.println("level One message: " + message);
+            logText.append(message);
+        }
+    }
+
+    private void levelTwoActionPerformed(ActionEvent e) {
+        // store log messages in an array of log messages
+        storeLogMessages(); // get most current messages to array
+
+        // sorts by least recent date first
+        Collections.sort(logMessages, new LogMessage.SortByMostRecentDateLast());
+
+        logText.setText(""); // clear text box
+
+        // print log messages to log window text box
+        for (LogMessage logMessage : logMessages) {
+            String message = logMessage.getMessage();
+            if (message.startsWith("\n")) {
+                if (!message.endsWith("\n")) {
+                    message = message + "\n";
+                }
+                if (message.substring(1).startsWith("2:")) {
+                    logText.append("\n");
+                    logText.append(HYPHENS + dateFormat.format(logMessage.getDate()) + HYPHENS);
+                    message = message.substring(0, 1) + message.substring(3);
+                } else {
+                    message = "";
+                }
+            }
+            System.out.println("level two message: " + message);
+            logText.append(message);
+        }
+    }
+
+    private void levelThreeActionPerformed(ActionEvent e) {
+        // store log messages in an array of log messages
+        storeLogMessages(); // get most current messages to array
+
+        // sorts by least recent date first
+        Collections.sort(logMessages, new LogMessage.SortByMostRecentDateLast());
+
+        logText.setText(""); // clear text box
+
+        // print log messages to log window text box
+        for (LogMessage logMessage : logMessages) {
+            
+            String message = logMessage.getMessage();
+            
+            if (message.startsWith("\n")) {
+                if (!message.endsWith("\n")) {
+                    message = message + "\n";
+                }
+                if (message.substring(1).startsWith("3:")) {
+                    logText.append("\n");
+                    logText.append(HYPHENS + dateFormat.format(logMessage.getDate()) + HYPHENS);
+                    message = message.substring(0, 1) + message.substring(3);
+                } else {
+                    message = "";
+                }
+            }
+            logText.append(message);
+        }
     }
 
     /**
@@ -258,7 +389,19 @@ public class LogWindow extends JFrame {
                     && logMessage.getDate().getMonth() == date.getMonth()
                     && logMessage.getDate().getDate() == date.getDate()) {
                 logText.append(HYPHENS + dateFormat.format(logMessage.getDate()) + HYPHENS);
-                logText.append(logMessage.getMessage());
+
+                String message = logMessage.getMessage();
+
+                if (message.startsWith("\n")) {
+                    if (message.substring(1).startsWith("1:") || message.substring(1).startsWith("2:") || message.substring(1).startsWith("3:")) {
+                        message = message.substring(0, 1) + message.substring(3);
+                    }
+                    if (!message.endsWith("\n")) {
+                        message = message + "\n";
+                        System.out.println("not end with!");
+                    }
+                }
+                logText.append(message);
             }
         }
     }
@@ -300,7 +443,17 @@ public class LogWindow extends JFrame {
                     && logMessage.getDate().getMonth() == date.getMonth()
                     && logMessage.getDate().getDate() == date.getDate()) {
                 addMessage(HYPHENS + dateFormat.format(logMessage.getDate()) + HYPHENS);
-                addMessage(logMessage.getMessage());
+                String message = logMessage.getMessage();
+                if (message.startsWith("\n")) {
+                    if (message.substring(1).startsWith("1:") || message.substring(1).startsWith("2:") || message.substring(1).startsWith("3:")) {
+                        message = message.substring(0, 1) + message.substring(3);
+                    }
+                    if (!message.endsWith("\n")) {
+                        message = message + "\n";
+                        System.out.println("not end with!");
+                    }
+                }
+                logText.append(message);
             }
         }
 
@@ -351,9 +504,21 @@ public class LogWindow extends JFrame {
 
         // print log messages to log window text box
         for (LogMessage logMessage : logMessages) {
+            System.out.println("message here" + logMessage.getMessage());
             logText.append("\n");
             logText.append(HYPHENS + dateFormat.format(logMessage.getDate()) + HYPHENS);
-            logText.append(logMessage.getMessage());
+            String message = logMessage.getMessage();
+            if (message.startsWith("\n")) {
+                if (message.substring(1).startsWith("1:") || message.substring(1).startsWith("2:") || message.substring(1).startsWith("3:")) {
+                    message = message.substring(0, 1) + message.substring(3);
+                }
+            }
+            if (!message.endsWith("\n")) {
+                message = message + "\n";
+                System.out.println("not end with!");
+            }
+
+            logText.append(message);
         }
     }
 
@@ -381,6 +546,7 @@ public class LogWindow extends JFrame {
                 // and store them into the array list
                 String line = in.readLine();
                 while (line != null) {
+                    System.out.println();
                     // first get date between hyphens
                     if (line.startsWith(HYPHENS)) {
                         String[] columns = line.split(HYPHENS);

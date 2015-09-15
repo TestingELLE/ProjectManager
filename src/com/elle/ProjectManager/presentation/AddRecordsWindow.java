@@ -317,6 +317,7 @@ public class AddRecordsWindow extends JFrame {
                             
                             statement.clearWarnings();
                         }
+                        logWindow.addMessageWithDate("2:add record submit failed!");
                     } // end try-catch
                     catch (SQLException ex) {
                         // this should never be called

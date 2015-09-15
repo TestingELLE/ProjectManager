@@ -381,9 +381,9 @@ public class LoginWindow extends JFrame {
 
         // connect to database
         try {
-            logWindow.addMessageWithDate("1:Start to connect local database...");
+            logWindow.addMessageWithDate("3:Start to connect local database...");
             DBConnection.connect(selectedServer, selectedDB, userName, userPassword);
-            logWindow.addMessageWithDate("1:Connect successfully!");
+            logWindow.addMessageWithDate("Connect successfully!");
             
         } 
         catch (SQLException ex) {
