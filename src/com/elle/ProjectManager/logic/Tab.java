@@ -99,7 +99,7 @@ public class Tab implements ITableConstants{
     public float[] getColWidthPercent() {
         return colWidthPercent;
     }
-
+    
     public void setColWidthPercent(float[] colWidthPercent) {
         this.colWidthPercent = colWidthPercent;
     }
@@ -273,7 +273,7 @@ public class Tab implements ITableConstants{
                     throw new NoSuchFieldException(errorMessage);
                 } catch (NoSuchFieldException ex) {
                     // post to log.txt
-                    ProjectManagerWindow.getInstance().getLogWindow().addMessageWithDate(ex.getMessage());
+                    ProjectManagerWindow.getInstance().getLogWindow().addMessageWithDate("1:"+ex.getMessage());
                     ex.printStackTrace();
                 }
         
