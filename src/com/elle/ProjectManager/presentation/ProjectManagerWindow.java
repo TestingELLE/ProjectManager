@@ -21,8 +21,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -51,8 +49,8 @@ import java.util.Vector;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-09-12";
-    private final String VERSION = "0.8.5";
+    private final String CREATION_DATE = "2015-09-18";
+    private final String VERSION = "0.8.6";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
