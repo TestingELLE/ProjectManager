@@ -1,5 +1,6 @@
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.logic.ColumnPopupMenu;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
@@ -299,6 +300,9 @@ public class AddRecordsWindow extends JFrame {
                 try {
                     // execute the sql statement
                     if (!values.equals("VALUES (")) {      //skip if nothing was added
+                        // open connection because might time out
+                        DBConnection.open();
+                        statement = DBConnection.getStatement();
                         statement.executeUpdate(insertInto + values);
                         numRowsAdded++;   // increment the number of rows added
                     }
