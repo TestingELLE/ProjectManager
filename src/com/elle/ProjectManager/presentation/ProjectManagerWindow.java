@@ -2283,7 +2283,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // open connection because might time out
             DBConnection.open();
             statement = DBConnection.getStatement();
-            String sql = "SELECT * FROM " + table.getName() + " ORDER BY symbol ASC";
+            String sql = "SELECT * FROM " + table.getName() + " ORDER BY taskID ASC";
             loadTable(sql, table);
 
         } catch (SQLException ex) {
