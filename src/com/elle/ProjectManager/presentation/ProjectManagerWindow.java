@@ -1982,6 +1982,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             + " = '" + value + "' WHERE taskID = " + id + ";";
                 }
                 System.out.println(sqlChange);
+                
+                DBConnection.open();
+                statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlChange);
 
             } catch (SQLException e) {
