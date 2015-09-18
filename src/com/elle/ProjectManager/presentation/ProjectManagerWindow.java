@@ -2276,8 +2276,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     public JTable loadTable(JTable table) {
 
-        String sql = "SELECT * FROM " + table.getName() + " ORDER BY taskID ASC";
-        loadTable(sql, table);
+        try {
+            // open connection because might time out
+            DBConnection.open();
+            statement = DBConnection.getStatement();
+            String sql = "SELECT * FROM " + table.getName() + " ORDER BY symbol ASC";
+            loadTable(sql, table);
+
+        } catch (SQLException ex) {
+            // for debugging
+            ex.printStackTrace();
+            logWindow.addMessageWithDate(ex.getMessage());
+            
+            // notify the user that there was an issue
+            JOptionPane.showMessageDialog(this, "connection failed");
+        }
 
         return table;
     }
