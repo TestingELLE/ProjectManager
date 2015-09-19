@@ -465,9 +465,7 @@ public class AddRecordsWindow extends JFrame {
                                     popupWindowShowInRecordByDiffTable(tableSelected);
                                     
                                 }else if (e.getID()==KeyEvent.KEY_PRESSED){
-                                    
                                 }else{
-                                    
                                 }
                             }
 
@@ -480,8 +478,8 @@ public class AddRecordsWindow extends JFrame {
 
     private void popupWindowShowInRecordByDiffTable(JTable tableSelected) {
         
-        int row = tableSelected.getSelectedRow();
         int column = tableSelected.getSelectedColumn();
+        
         if (tableSelected.getName().equals(TASKS_TABLE_NAME)) {
 
             if (tableSelected.getColumnName(column).equals("title")
@@ -489,7 +487,7 @@ public class AddRecordsWindow extends JFrame {
                     || tableSelected.getColumnName(column).equals("instructions")) {
                
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(tableSelected);
+                tableCellPopupWindow.getTableCellPopup(tableSelected);
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -499,7 +497,7 @@ public class AddRecordsWindow extends JFrame {
                     || tableSelected.getColumnName(column).equals("notes")
                     || tableSelected.getColumnName(column).equals("path")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(tableSelected);
+                tableCellPopupWindow.getTableCellPopup(tableSelected);
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -507,7 +505,7 @@ public class AddRecordsWindow extends JFrame {
 
             if (tableSelected.getColumnName(column).equals("status_notes")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(tableSelected);
+                tableCellPopupWindow.getTableCellPopup(tableSelected);
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }

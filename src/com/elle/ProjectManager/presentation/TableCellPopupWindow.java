@@ -134,7 +134,7 @@ public class TableCellPopupWindow implements ITableConstants {
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
 
-                int column = table.getSelectedColumn(); 
+                int column = table.getSelectedColumn();
                 if (table.getName().equals(TASKS_TABLE_NAME)) {
                     if (table.getColumnName(column).equals("title") || table.getColumnName(column).equals("description")
                             || table.getColumnName(column).equals("instructions")) {
@@ -163,15 +163,20 @@ public class TableCellPopupWindow implements ITableConstants {
         });
         table.setFocusTraversalKeysEnabled(false);
     }
+    
+    public void getTableCellPopup(JTable table){
+        tableCellPopup(table);
+    }
     /*
      * This is to set the table cell popup window visible to edit.
      * @parm selectedTable, row , column
      */
 
-    public void tableCellPopup(JTable selectedTable) {
+    private void tableCellPopup(JTable selectedTable) {
 
         int row = selectedTable.getSelectedRow();
         int column = selectedTable.getSelectedColumn();
+        
         // find the selected table cell 
         Rectangle cellRect = selectedTable.getCellRect(row, column, true);
 
@@ -181,7 +186,7 @@ public class TableCellPopupWindow implements ITableConstants {
         // use the table cell content to set the content for textarea
         textAreatableCellPopup.setText("");
         textAreatableCellPopup.setText((String) selectedTable.getValueAt(row, column));
-        
+
         if (ProjectManagerWindow.getInstance().getAddRecordsWindowShow()) {
             // set the tableCellPopupPanel position
             tableCellPopupPanel.setLocation(cellRect.x, cellRect.y + cellRect.height + 5);
@@ -201,62 +206,34 @@ public class TableCellPopupWindow implements ITableConstants {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                if (ProjectManagerWindow.getInstance().getAddRecordsWindowShow()) {
-
-                    String newTableCellValue = textAreatableCellPopup.getText();
-                    setTableCellPopupWindowVisible(false);
-                    selectedTable.setValueAt(newTableCellValue, row, column);
-
-                } else {
-                    
-                    String newTableCellValue = textAreatableCellPopup.getText();
-                    setTableCellPopupWindowVisible(false);
-                    selectedTable.setValueAt(newTableCellValue, row, column);
-                    ProjectManagerWindow.getInstance().uploadChanges();
-
-                }
+                
+                confirmButtonActionPerformed(e, selectedTable);
                 selectedTable.changeSelection(row, column + 1, false, false);
+                
             }
         };
 
-        InputMap im = textAreatableCellPopup.getInputMap(JComponent.
-                WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        InputMap im = textAreatableCellPopup.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap am = textAreatableCellPopup.getActionMap();
 
-        KeyStroke bindingKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 
+        KeyStroke bindingKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB,
                 InputEvent.SHIFT_DOWN_MASK);
 
         im.put(bindingKey, "confirm and shift");
         am.put("confirm and shift", confirmAndShiftEvent);
 
         // update the table cell content and table cell popup window
-        if (ProjectManagerWindow.getInstance().getAddRecordsWindowShow()) {
-            // update the table cell content and table cell popup window
-            confirmButtonTableCellPopup.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
+        
+        Action confirmButtonAction = new AbstractAction(){
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
 
-                    String newTableCellValue = textAreatableCellPopup.getText();
-                    setTableCellPopupWindowVisible(false);
-                    selectedTable.setValueAt(newTableCellValue, row, column);
-                }
-            });
-        } else {
-            // update the table cell content and table cell popup window
-            confirmButtonTableCellPopup.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-
-                    String newTableCellValue = textAreatableCellPopup.getText();
-                    setTableCellPopupWindowVisible(false);
-                    selectedTable.setValueAt(newTableCellValue, row, column);
-                    ProjectManagerWindow.getInstance().uploadChanges();
-
-                }
-            });
-        }
-
+                confirmButtonActionPerformed(e, selectedTable);
+            }
+        };
+        
+        confirmButtonTableCellPopup.addActionListener(confirmButtonAction);
+        
         // quit the table cell popup window
         ActionListener cancelButtonAction = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -266,6 +243,27 @@ public class TableCellPopupWindow implements ITableConstants {
         };
         cancelButtonTableCellPopup.addActionListener(cancelButtonAction);
 
+    }
+
+    private void confirmButtonActionPerformed(java.awt.event.ActionEvent e, JTable selectedTable) {
+        int row = selectedTable.getSelectedRow();
+        int column = selectedTable.getSelectedColumn();
+        System.out.println("cell selected at: " + row + " " + column);
+        if (ProjectManagerWindow.getInstance().getAddRecordsWindowShow()) {
+
+            String newTableCellValue = textAreatableCellPopup.getText();
+            System.out.println("set value at: " + row + " " + column + " of " + newTableCellValue);
+            setTableCellPopupWindowVisible(false);
+            selectedTable.getModel().setValueAt(newTableCellValue, row, column);
+
+        } else {
+
+            String newTableCellValue = textAreatableCellPopup.getText();
+            System.out.println("set value at: " + row + " " + column + " of " + newTableCellValue);
+            setTableCellPopupWindowVisible(false);
+            selectedTable.setValueAt(newTableCellValue, row, column);
+            ProjectManagerWindow.getInstance().uploadChanges();
+        }
     }
 
     public void setTableCellPopupWindowVisible(boolean Flag) {

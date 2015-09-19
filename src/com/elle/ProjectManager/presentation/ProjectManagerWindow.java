@@ -2147,7 +2147,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     || table.getColumnName(column).equals("description")
                     || table.getColumnName(column).equals("instructions")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(table);
+                tableCellPopupWindow.getTableCellPopup(table);
 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2158,7 +2158,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     || table.getColumnName(column).equals("notes")
                     || table.getColumnName(column).equals("path")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(table);
+                tableCellPopupWindow.getTableCellPopup(table);
                 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2167,7 +2167,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             if (table.getColumnName(column).equals("status_notes")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(table);
+                tableCellPopupWindow.getTableCellPopup(table);
                 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);

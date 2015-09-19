@@ -46,11 +46,11 @@ public class LoginWindow extends JFrame {
         textFieldUsername.setText("pupone_Xiao");
         passwordFieldPW.setText("XiaoXXXX8");
         login();
-        this.setVisible(false);
 //        comboBoxDatabase.setSelectedIndex(3);
         
         // show window
         this.setTitle("Log in");
+        this.setVisible(false);
         
     }
 
