@@ -49,8 +49,8 @@ import java.util.Vector;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-09-18";
-    private final String VERSION = "0.8.6";
+    private final String CREATION_DATE = "2015-09-21";
+    private final String VERSION = "0.8.6a";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
@@ -2404,6 +2404,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             try {
 
                 // delete records from database
+                DBConnection.open();
+                statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlDelete);
 
                 // refresh tableSelected and retain filters
