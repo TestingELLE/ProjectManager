@@ -1711,7 +1711,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_btnRevertChangesBatchEditActionPerformed
 
     private void btnUploadChangesBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadChangesBatchEditActionPerformed
-        // TODO add your handling code here:
+        uploadChanges();  // upload changes to database
     }//GEN-LAST:event_btnUploadChangesBatchEditActionPerformed
 
     /**
