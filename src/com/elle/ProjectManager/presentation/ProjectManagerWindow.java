@@ -1340,6 +1340,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void btnBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatchEditActionPerformed
         batchEditWindow = new BatchEditWindow();
         batchEditWindow.setVisible(true);
+        jPanelEdit.setVisible(false);
+        panelBatchEditButtons.setVisible(true);
     }//GEN-LAST:event_btnBatchEditActionPerformed
 
     private void menuItemManageDBsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemManageDBsActionPerformed
