@@ -1707,7 +1707,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemSQLCmdChkBxActionPerformed
 
     private void btnRevertChangesBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevertChangesBatchEditActionPerformed
-        // TODO add your handling code here:
+        String tabName = getSelectedTabName();
+        Tab tab = tabs.get(tabName);
+        JTable table = tab.getTable();
+        ModifiedTableData modifiedTableData = tab.getTableData();
+        modifiedTableData.getNewData().clear();  // clear any stored changes (new data)
+        loadTable(table); // reverts the model back
+        modifiedTableData.reloadData();  // reloads data of new table (old data) to compare with new changes (new data)
     }//GEN-LAST:event_btnRevertChangesBatchEditActionPerformed
 
     private void btnUploadChangesBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadChangesBatchEditActionPerformed
