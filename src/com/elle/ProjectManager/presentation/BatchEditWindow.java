@@ -176,7 +176,6 @@ public class BatchEditWindow extends JFrame {
      */
     private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
 
-        ModifiedTableData data = tab.getTableData();                               // modified table data object
         String columnName = comboBoxFieldSelect.getSelectedItem().toString();      // column name   
         String newValue = textFieldNewValue.getText();                             // new value to replace old value(s)
         int[] rows = table.getSelectedRows();                                      // selected rows
@@ -191,20 +190,18 @@ public class BatchEditWindow extends JFrame {
             }
         }
 
+        // set the value to the table model
+        // this also envokes the TableModelListener 
+        // and adds the change to the mofified data list for the table
         for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            
-            String tableName = table.getName();
-            int id = (Integer)table.getModel().getValueAt(rows[rowIndex],0);
-            data.getNewData().add(new ModifiedData(tableName, columnName, newValue, id));
-
-            // set the value to the table model
             table.setValueAt(newValue, rows[rowIndex], columnIndex);
         }
         
-        //analysterWindow.updateTable(table, modifiedDataBatchEdit);
+        // Add any new changes to be filtered as well
+        // so that the records modified do not disappear after the upload.
+        TableFilter filter = tab.getFilter();
         
         // get the filter items for this column
-        TableFilter filter = tab.getFilter();
         ArrayList<Object> filterItems 
                 = new ArrayList<>(filter.getFilterItems().get(columnIndex));
 
@@ -218,9 +215,6 @@ public class BatchEditWindow extends JFrame {
                 filter.addFilterItems(columnIndex, filterItems);
             }
         }
-        
-        // reload table 
-        //analysterWindow.loadTable(table);
     }//GEN-LAST:event_btnConfirmActionPerformed
 
     /**
