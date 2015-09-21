@@ -46,7 +46,7 @@ public class BatchEditWindow extends JFrame {
         
         // set the interface to the middle of the window
         this.setLocationRelativeTo(projectManagerWindow);
-        setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // quit button should be used
         this.setTitle("Batch Editor");
     }
 
