@@ -21,8 +21,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -51,8 +49,8 @@ import java.util.Vector;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-09-12";
-    private final String VERSION = "0.8.5";
+    private final String CREATION_DATE = "2015-09-18";
+    private final String VERSION = "0.8.6";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
@@ -1982,6 +1980,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             + " = '" + value + "' WHERE taskID = " + id + ";";
                 }
                 System.out.println(sqlChange);
+                
+                DBConnection.open();
+                statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlChange);
 
             } catch (SQLException e) {
@@ -2147,7 +2148,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     || table.getColumnName(column).equals("description")
                     || table.getColumnName(column).equals("instructions")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.getTableCellPopup(table);
+                tableCellPopupWindow.getTableCellPopup(table, this);
 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2158,7 +2159,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     || table.getColumnName(column).equals("notes")
                     || table.getColumnName(column).equals("path")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.getTableCellPopup(table);
+                tableCellPopupWindow.getTableCellPopup(table, this);
                 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2167,7 +2168,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             if (table.getColumnName(column).equals("status_notes")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.getTableCellPopup(table);
+                tableCellPopupWindow.getTableCellPopup(table, this);
                 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2276,8 +2277,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     public JTable loadTable(JTable table) {
 
-        String sql = "SELECT * FROM " + table.getName() + " ORDER BY taskID ASC";
-        loadTable(sql, table);
+        try {
+            // open connection because might time out
+            DBConnection.open();
+            statement = DBConnection.getStatement();
+            String sql = "SELECT * FROM " + table.getName() + " ORDER BY taskID ASC";
+            loadTable(sql, table);
+
+        } catch (SQLException ex) {
+            // for debugging
+            ex.printStackTrace();
+            logWindow.addMessageWithDate(ex.getMessage());
+            
+            // notify the user that there was an issue
+            JOptionPane.showMessageDialog(this, "connection failed");
+        }
 
         return table;
     }
@@ -2481,12 +2495,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void initTableCellPopupWindow() {
 
-        tableCellPopupWindow = new TableCellPopupWindow();
-        tableCellPopupWindow.initTableCellPopup(this);
+        tableCellPopupWindow = new TableCellPopupWindow(this);
 
-        tableCellPopupWindow.setTableListener(tasksTable);
-        tableCellPopupWindow.setTableListener(task_filesTable);
-        tableCellPopupWindow.setTableListener(task_notesTable);
+        tableCellPopupWindow.setTableListener(tasksTable, this);
+        tableCellPopupWindow.setTableListener(task_filesTable, this);
+        tableCellPopupWindow.setTableListener(task_notesTable, this);
 
     }
     

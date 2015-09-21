@@ -57,6 +57,10 @@ public class TableCellPopupWindow implements ITableConstants {
     private JButton confirmButtonTableCellPopup;
     private JButton cancelButtonTableCellPopup;
 
+    public TableCellPopupWindow(JFrame frame) {
+        initTableCellPopup(frame);
+    }
+
     /*
      * This is to initiate the table cell popup window.
      */
@@ -119,7 +123,6 @@ public class TableCellPopupWindow implements ITableConstants {
             tableCellPopupPanel.setSize(400, 100);
             controlPopupPanel.setSize(400, 35);
         }
-
         // set the popup_layer of projectmanager for the table cell popup window
         frame.getLayeredPane().add(tableCellPopupPanel, JLayeredPane.POPUP_LAYER);
         frame.getLayeredPane().add(controlPopupPanel, JLayeredPane.POPUP_LAYER);
@@ -129,7 +132,7 @@ public class TableCellPopupWindow implements ITableConstants {
      * This is to set table listener for the table cell popup window.
      * @parm table
      */
-    public void setTableListener(JTable table) {
+    public void setTableListener(JTable table, JFrame frame) {
 
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
@@ -139,7 +142,7 @@ public class TableCellPopupWindow implements ITableConstants {
                     if (table.getColumnName(column).equals("title") || table.getColumnName(column).equals("description")
                             || table.getColumnName(column).equals("instructions")) {
                         // popup table cell edit window
-                        tableCellPopup(table);
+                        tableCellPopup(table, frame);
                     } else {
                         setTableCellPopupWindowVisible(false);
                     }
@@ -147,14 +150,14 @@ public class TableCellPopupWindow implements ITableConstants {
                     if (table.getColumnName(column).equals("files") || table.getColumnName(column).equals("notes")
                             || table.getColumnName(column).equals("path")) {
                         // popup table cell edit window
-                        tableCellPopup(table);
+                        tableCellPopup(table, frame);
                     } else {
                         setTableCellPopupWindowVisible(false);
                     }
                 } else if (table.getName().equals(TASKNOTES_TABLE_NAME)) {
                     if (table.getColumnName(column).equals("status_notes")) {
                         // popup table cell edit window
-                        tableCellPopup(table);
+                        tableCellPopup(table, frame);
                     } else {
                         setTableCellPopupWindowVisible(false);
                     }
@@ -163,22 +166,24 @@ public class TableCellPopupWindow implements ITableConstants {
         });
         table.setFocusTraversalKeysEnabled(false);
     }
-    
-    public void getTableCellPopup(JTable table){
-        tableCellPopup(table);
+
+    public void getTableCellPopup(JTable table, JFrame frame) {
+        tableCellPopup(table, frame);
     }
     /*
      * This is to set the table cell popup window visible to edit.
      * @parm selectedTable, row , column
      */
 
-    private void tableCellPopup(JTable selectedTable) {
+    private void tableCellPopup(JTable selectedTable, JFrame frame) {
 
         int row = selectedTable.getSelectedRow();
         int column = selectedTable.getSelectedColumn();
-        
+
         // find the selected table cell 
-        Rectangle cellRect = selectedTable.getCellRect(row, column, true);
+        Rectangle cellRectTable = selectedTable.getCellRect(row, column, true);
+        int x = cellRectTable.x;
+        int y = cellRectTable.y;
 
         // set the table cell popup window visible
         setTableCellPopupWindowVisible(true);
@@ -187,29 +192,31 @@ public class TableCellPopupWindow implements ITableConstants {
         textAreatableCellPopup.setText("");
         textAreatableCellPopup.setText((String) selectedTable.getValueAt(row, column));
 
-        if (ProjectManagerWindow.getInstance().getAddRecordsWindowShow()) {
-            // set the tableCellPopupPanel position
-            tableCellPopupPanel.setLocation(cellRect.x, cellRect.y + cellRect.height + 5);
+        int ytablePanelLocation = y + cellRectTable.height + 2 + 150; // actually table Panel's y value
+        int ycontrolPanelLocation = ytablePanelLocation + tableCellPopupPanel.getHeight();// actually control Panel's y value
 
-            // set the controlPopupPanel position
-            controlPopupPanel.setLocation(cellRect.x, cellRect.y + cellRect.height + 100 + 5);
-        } else {
-            // set the tableCellPopupPanel position
-            tableCellPopupPanel.setLocation(cellRect.x + 2, cellRect.y + cellRect.height + 2 + 150);
+        int baseLineHeight = ytablePanelLocation + tableCellPopupPanel.getHeight() + controlPopupPanel.getHeight();//the popup window botton line location's y value
+        
+        // make the location of popup window always above the frame bottom line
+        if (baseLineHeight > frame.getHeight()-10) {
+            ytablePanelLocation = frame.getHeight()-25- tableCellPopupPanel.getHeight() - controlPopupPanel.getHeight();
+            ycontrolPanelLocation = ytablePanelLocation + tableCellPopupPanel.getHeight();
+        } 
+        // set the tableCellPopupPanel position
+        tableCellPopupPanel.setLocation(x + 5, ytablePanelLocation);
 
-            // set the controlPopupPanel position
-            controlPopupPanel.setLocation(cellRect.x + 2, cellRect.y + cellRect.height + 2 + 200 + 150);
-        }
+        // set the controlPopupPanel position
+        controlPopupPanel.setLocation(x + 5, ycontrolPanelLocation);
 
         //register shift+tab to aumatically confirm and shift to the next cell
         Action confirmAndShiftEvent = new AbstractAction() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+
                 confirmButtonActionPerformed(e, selectedTable);
                 selectedTable.changeSelection(row, column + 1, false, false);
-                
+
             }
         };
 
@@ -223,17 +230,16 @@ public class TableCellPopupWindow implements ITableConstants {
         am.put("confirm and shift", confirmAndShiftEvent);
 
         // update the table cell content and table cell popup window
-        
-        Action confirmButtonAction = new AbstractAction(){
+        Action confirmButtonAction = new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
 
                 confirmButtonActionPerformed(e, selectedTable);
             }
         };
-        
+
         confirmButtonTableCellPopup.addActionListener(confirmButtonAction);
-        
+
         // quit the table cell popup window
         ActionListener cancelButtonAction = new ActionListener() {
             public void actionPerformed(ActionEvent e) {

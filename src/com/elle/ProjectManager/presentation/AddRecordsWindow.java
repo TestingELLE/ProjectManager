@@ -1,5 +1,6 @@
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.logic.ColumnPopupMenu;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
@@ -95,9 +96,8 @@ public class AddRecordsWindow extends JFrame {
         this.setMinimumSize(new Dimension(1137, 150));
 
         // set the tableSelected cell popup window
-        tableCellPopupWindow = new TableCellPopupWindow();
-        tableCellPopupWindow.initTableCellPopup(this);
-        tableCellPopupWindow.setTableListener(table);
+        tableCellPopupWindow = new TableCellPopupWindow(this);
+        tableCellPopupWindow.setTableListener(table, this);
 
         // set this window to appear in the middle of Analyster
         this.setLocationRelativeTo(projectManager);
@@ -299,6 +299,9 @@ public class AddRecordsWindow extends JFrame {
                 try {
                     // execute the sql statement
                     if (!values.equals("VALUES (")) {      //skip if nothing was added
+                        // open connection because might time out
+                        DBConnection.open();
+                        statement = DBConnection.getStatement();
                         statement.executeUpdate(insertInto + values);
                         numRowsAdded++;   // increment the number of rows added
                     }
@@ -487,7 +490,7 @@ public class AddRecordsWindow extends JFrame {
                     || tableSelected.getColumnName(column).equals("instructions")) {
                
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.getTableCellPopup(tableSelected);
+                tableCellPopupWindow.getTableCellPopup(tableSelected, this);
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -497,7 +500,7 @@ public class AddRecordsWindow extends JFrame {
                     || tableSelected.getColumnName(column).equals("notes")
                     || tableSelected.getColumnName(column).equals("path")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.getTableCellPopup(tableSelected);
+                tableCellPopupWindow.getTableCellPopup(tableSelected, this);
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -505,7 +508,7 @@ public class AddRecordsWindow extends JFrame {
 
             if (tableSelected.getColumnName(column).equals("status_notes")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.getTableCellPopup(tableSelected);
+                tableCellPopupWindow.getTableCellPopup(tableSelected, this);
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
