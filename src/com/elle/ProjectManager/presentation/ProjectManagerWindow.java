@@ -115,9 +115,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(TASKNOTES_TABLE_NAME).setSearchFields(TASKNOTES_SEARCH_FIELDS);
 
         // set the search fields for the comboBox for each tabName
-        tabs.get(TASKS_TABLE_NAME).setBatchEditFields(ASSIGNMENTS_BATCHEDIT_CB_FIELDS);
-        tabs.get(TASKFILES_TABLE_NAME).setBatchEditFields(REPORTS_BATCHEDIT_CB_FIELDS);
-        tabs.get(TASKNOTES_TABLE_NAME).setBatchEditFields(ARCHIVE_BATCHEDIT_CB_FIELDS);
+        tabs.get(TASKS_TABLE_NAME).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
+        tabs.get(TASKFILES_TABLE_NAME).setBatchEditFields(TASKFILES_BATCHEDIT_CB_FIELDS);
+        tabs.get(TASKNOTES_TABLE_NAME).setBatchEditFields(TASKNOTES_BATCHEDIT_CB_FIELDS);
 
         // set column width percents to tables of the tabName objects
         tabs.get(TASKS_TABLE_NAME).setColWidthPercent(COL_WIDTH_PER_TASKS);
