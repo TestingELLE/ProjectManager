@@ -2282,6 +2282,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return statement;
     }
 
+    public JPanel getjPanelEdit() {
+        return jPanelEdit;
+    }
+
+    public JPanel getPanelBatchEditButtons() {
+        return panelBatchEditButtons;
+    }
+
+    
+    
     /**
      * initTotalRowCounts called once to initialize the total rowIndex counts of
      * each tabs tableSelected
