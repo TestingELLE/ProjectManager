@@ -229,7 +229,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             initTableCellPopupWindow();
         }
 
-        // set title of window to Analyster
+        // set title of window to Project Manager
         this.setTitle("Project Manager");
 
         // set the size for project manager
