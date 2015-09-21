@@ -175,6 +175,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnCancelEditMode.setVisible(false);
         btnBatchEdit.setVisible(true);
         jTextAreaSQL.setVisible(true);
+        jPanelEdit.setVisible(true);
+        panelBatchEditButtons.setVisible(false);
 
         // add filters for each tableSelected
         // must be before setting ColumnPopupMenu because this is its parameter
@@ -469,6 +471,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnEnterSQL = new javax.swing.JButton();
         btnCancelSQL = new javax.swing.JButton();
         btnCloseSQL = new javax.swing.JButton();
+        panelBatchEditButtons = new javax.swing.JPanel();
+        btnRevertChangesBatchEdit = new javax.swing.JButton();
+        btnUploadChangesBatchEdit = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemVersion = new javax.swing.JMenuItem();
@@ -865,15 +870,55 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addGap(4, 4, 4))
         );
 
+        panelBatchEditButtons.setPreferredSize(new java.awt.Dimension(636, 180));
+
+        btnRevertChangesBatchEdit.setText("Revert Changes");
+        btnRevertChangesBatchEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRevertChangesBatchEditActionPerformed(evt);
+            }
+        });
+
+        btnUploadChangesBatchEdit.setText("Upload Changes");
+        btnUploadChangesBatchEdit.setMaximumSize(new java.awt.Dimension(95, 30));
+        btnUploadChangesBatchEdit.setMinimumSize(new java.awt.Dimension(95, 30));
+        btnUploadChangesBatchEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUploadChangesBatchEditActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelBatchEditButtonsLayout = new javax.swing.GroupLayout(panelBatchEditButtons);
+        panelBatchEditButtons.setLayout(panelBatchEditButtonsLayout);
+        panelBatchEditButtonsLayout.setHorizontalGroup(
+            panelBatchEditButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBatchEditButtonsLayout.createSequentialGroup()
+                .addContainerGap(312, Short.MAX_VALUE)
+                .addComponent(btnUploadChangesBatchEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnRevertChangesBatchEdit)
+                .addContainerGap(327, Short.MAX_VALUE))
+        );
+        panelBatchEditButtonsLayout.setVerticalGroup(
+            panelBatchEditButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBatchEditButtonsLayout.createSequentialGroup()
+                .addGap(4, 4, 4)
+                .addGroup(panelBatchEditButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnUploadChangesBatchEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnRevertChangesBatchEdit))
+                .addGap(4, 4, 4))
+        );
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 894, Short.MAX_VALUE)
+            .addComponent(tabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
             .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(4, 4, 4))
+            .addComponent(panelBatchEditButtons, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -881,6 +926,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelBatchEditButtons, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(4, 4, 4)
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1656,6 +1703,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             this.setSize(this.getWidth(), 560);
         }
     }//GEN-LAST:event_menuItemSQLCmdChkBxActionPerformed
+
+    private void btnRevertChangesBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevertChangesBatchEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRevertChangesBatchEditActionPerformed
+
+    private void btnUploadChangesBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadChangesBatchEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnUploadChangesBatchEditActionPerformed
 
     /**
      * loadData
@@ -2442,9 +2497,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JButton btnClearAllFilter;
     private javax.swing.JButton btnCloseSQL;
     private javax.swing.JButton btnEnterSQL;
+    private javax.swing.JButton btnRevertChangesBatchEdit;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnSwitchEditMode;
     private javax.swing.JButton btnUploadChanges;
+    private javax.swing.JButton btnUploadChangesBatchEdit;
     private javax.swing.JComboBox comboBoxSearch;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelEdit;
@@ -2486,6 +2543,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenu menuSelectConn;
     private javax.swing.JMenu menuTools;
     private javax.swing.JMenu menuView;
+    private javax.swing.JPanel panelBatchEditButtons;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JTabbedPane tabbedPanel;
     private javax.swing.JTable task_filesTable;
