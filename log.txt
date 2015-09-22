@@ -387,3 +387,20 @@
 -------------------------2015-09-20 09:33:43 PM-------------------------
 3:2015-09-20 09:33:43 PM: Start to connect local database...
 2015-09-20 09:33:44 PM: Connect successfully!
+
+-------------------------2015-09-20 11:54:50 PM-------------------------
+3:2015-09-20 11:54:50 PM: Start to connect local database...
+2015-09-20 11:54:53 PM: Connect successfully!
+
+-------------------------2015-09-20 11:55:21 PM-------------------------
+3:2015-09-20 11:55:21 PM: Start to connect local database...
+2015-09-20 11:55:23 PM: Connect successfully!
+
+-------------------------2015-09-21 01:41:25 PM-------------------------
+3:2015-09-21 01:41:26 PM: Start to connect local database...
+2015-09-21 01:41:27 PM: Connect successfully!
+
+-------------------------2015-09-21 01:58:35 PM-------------------------
+3:2015-09-21 01:58:35 PM: Start to connect local database...
+2015-09-21 01:58:37 PM: Connect successfully!
+3:2015-09-21 01:59:11 PM: DELETE FROM pupone_dummy.tasks WHERE taskID IN (31, 32, 33, 34, 35, 36);

@@ -192,7 +192,12 @@ public class TableCellPopupWindow implements ITableConstants {
         textAreatableCellPopup.setText("");
         textAreatableCellPopup.setText((String) selectedTable.getValueAt(row, column));
 
-        int ytablePanelLocation = y + cellRectTable.height + 2 + 150; // actually table Panel's y value
+        int ytablePanelLocation = y + cellRectTable.height + 2; // actually table Panel's y value
+        
+        if(!ProjectManagerWindow.getInstance().getAddRecordsWindowShow()){
+            ytablePanelLocation = ytablePanelLocation+ 150;
+        }
+        
         int ycontrolPanelLocation = ytablePanelLocation + tableCellPopupPanel.getHeight();// actually control Panel's y value
 
         int baseLineHeight = ytablePanelLocation + tableCellPopupPanel.getHeight() + controlPopupPanel.getHeight();//the popup window botton line location's y value
