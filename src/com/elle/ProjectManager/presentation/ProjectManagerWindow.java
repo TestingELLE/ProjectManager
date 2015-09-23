@@ -2234,6 +2234,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 // popup tableSelected cell edit window
                 tableCellPopupWindow.getTableCellPopup(table, this);
 
+                boolean disable = !tableCellPopupWindow.getWindowPopup();
+
+                table.setEnabled(disable);
+
+                disableProjectManagerFunction(disable);
+
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -2245,6 +2251,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 // popup tableSelected cell edit window
                 tableCellPopupWindow.getTableCellPopup(table, this);
 
+                boolean disable = !tableCellPopupWindow.getWindowPopup();
+
+                table.setEnabled(disable);
+
+                disableProjectManagerFunction(disable);
+
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -2254,10 +2266,43 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 // popup tableSelected cell edit window
                 tableCellPopupWindow.getTableCellPopup(table, this);
 
+                boolean disable = !tableCellPopupWindow.getWindowPopup();
+
+                table.setEnabled(disable);
+
+                disableProjectManagerFunction(disable);
+
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
         }
+    }
+
+    public void setDisableProjecetManagerFunction(boolean f) {
+        disableProjectManagerFunction(f);
+    }
+
+    private void disableProjectManagerFunction(boolean disable) {
+
+        System.out.println(disable + "projectmanager function disabled");
+        tabbedPanel.setEnabled(disable);
+        btnAddRecords.setEnabled(disable);
+        btnBatchEdit.setEnabled(disable);
+        btnClearAllFilter.setEnabled(disable);
+        btnCancelEditMode.setEnabled(disable);
+        btnSearch.setEnabled(disable);
+        btnSwitchEditMode.setEnabled(disable);
+        btnUploadChanges.setEnabled(disable);
+        comboBoxSearch.setEnabled(disable);
+        menuEdit.setEnabled(disable);
+        menuFile.setEnabled(disable);
+        menuFind.setEnabled(disable);
+        menuHelp.setEnabled(disable);
+        menuView.setEnabled(disable);
+        menuTools.setEnabled(disable);
+        menuReports.setEnabled(disable);
+        searchPanel.setEnabled(disable);
+        textFieldForSearch.setEnabled(disable);
     }
 
     public TableCellPopupWindow getPopupWindow() {

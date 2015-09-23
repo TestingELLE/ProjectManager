@@ -142,7 +142,11 @@ public class TableCellPopupWindow implements ITableConstants {
 
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
-                if (!windowPopup) {
+                if (windowPopup) {
+                    System.out.println(windowPopup);
+                    return;
+                }
+                else{
                     int column = table.getSelectedColumn();
                     if (table.getName().equals(TASKS_TABLE_NAME)) {
                         if (table.getColumnName(column).equals("title") || table.getColumnName(column).equals("description")
@@ -199,7 +203,8 @@ public class TableCellPopupWindow implements ITableConstants {
             // set the table cell popup window visible
             setTableCellPopupWindowVisible(true);
             windowPopup = true;
-
+            selectedTable.setEnabled(!windowPopup);
+            ProjectManagerWindow.getInstance().setDisableProjecetManagerFunction(!windowPopup);
             // use the table cell content to set the content for textarea
             textAreatableCellPopup.setText("");
             textAreatableCellPopup.setText((String) selectedTable.getValueAt(row, column));
@@ -250,9 +255,12 @@ public class TableCellPopupWindow implements ITableConstants {
             Action confirmButtonAction = new AbstractAction() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
-
-                    confirmButtonActionPerformed(e, selectedTable);
+                    //recover the other functions in project manager
                     windowPopup = false;
+                    selectedTable.setEnabled(!windowPopup);
+                    ProjectManagerWindow.getInstance().setDisableProjecetManagerFunction(!windowPopup);
+                    
+                    confirmButtonActionPerformed(e, selectedTable);
                 }
             };
 
@@ -261,8 +269,14 @@ public class TableCellPopupWindow implements ITableConstants {
             // quit the table cell popup window
             ActionListener cancelButtonAction = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+                    
                     setTableCellPopupWindowVisible(false);
+                    
                     windowPopup = false;
+                    
+                    //recover the other functions in project manager
+                    selectedTable.setEnabled(!windowPopup);
+                    ProjectManagerWindow.getInstance().setDisableProjecetManagerFunction(!windowPopup);
                     selectedTable.getComponentAt(row, column).requestFocus();
                 }
             };
