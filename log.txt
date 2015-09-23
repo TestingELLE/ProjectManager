@@ -117,410 +117,66 @@
 3:2015-09-15 10:49:30 AM: Start to connect local database...
 2015-09-15 10:49:32 AM: Connect successfully!
 
--------------------------2015-09-16 08:53:38 AM-------------------------
-3:2015-09-16 08:53:38 AM: Start to connect local database...
-1:2015-09-16 08:53:45 AM: Data source rejected establishment of connection,  message from server: "Too many connections"
-
--------------------------2015-09-16 08:54:05 AM-------------------------
-3:2015-09-16 08:54:05 AM: Start to connect local database...
-
--------------------------2015-09-16 08:55:30 AM-------------------------
-3:2015-09-16 08:55:30 AM: Start to connect local database...
-2015-09-16 08:55:50 AM: Connect successfully!
-
--------------------------2015-09-16 08:56:31 AM-------------------------
-3:2015-09-16 08:56:31 AM: Start to connect local database...
-2015-09-16 08:56:33 AM: Connect successfully!
-
--------------------------2015-09-16 09:00:09 AM-------------------------
-3:2015-09-16 09:00:09 AM: Start to connect local database...
-2015-09-16 09:00:11 AM: Connect successfully!
-
--------------------------2015-09-16 09:09:03 AM-------------------------
-3:2015-09-16 09:09:03 AM: Start to connect local database...
-2015-09-16 09:09:04 AM: Connect successfully!
-
--------------------------2015-09-16 09:13:31 AM-------------------------
-3:2015-09-16 09:13:31 AM: Start to connect local database...
-2015-09-16 09:13:32 AM: Connect successfully!
-
--------------------------2015-09-16 09:19:07 AM-------------------------
-3:2015-09-16 09:19:07 AM: Start to connect local database...
-2015-09-16 09:19:09 AM: Connect successfully!
-
--------------------------2015-09-16 09:26:15 AM-------------------------
-3:2015-09-16 09:26:15 AM: Start to connect local database...
-2015-09-16 09:26:17 AM: Connect successfully!
-
--------------------------2015-09-16 09:31:12 AM-------------------------
-3:2015-09-16 09:31:12 AM: Start to connect local database...
-2015-09-16 09:31:13 AM: Connect successfully!
-
--------------------------2015-09-16 09:32:49 AM-------------------------
-3:2015-09-16 09:32:49 AM: Start to connect local database...
-2015-09-16 09:32:50 AM: Connect successfully!
-
--------------------------2015-09-16 09:34:08 AM-------------------------
-3:2015-09-16 09:34:08 AM: Start to connect local database...
-2015-09-16 09:34:09 AM: Connect successfully!
-
--------------------------2015-09-16 09:35:16 AM-------------------------
-3:2015-09-16 09:35:16 AM: Start to connect local database...
-2015-09-16 09:35:17 AM: Connect successfully!
-
--------------------------2015-09-16 09:36:39 AM-------------------------
-3:2015-09-16 09:36:40 AM: Start to connect local database...
-2015-09-16 09:36:41 AM: Connect successfully!
-
--------------------------2015-09-16 09:37:40 AM-------------------------
-3:2015-09-16 09:37:40 AM: Start to connect local database...
-2015-09-16 09:37:42 AM: Connect successfully!
-
--------------------------2015-09-16 09:39:34 AM-------------------------
-3:2015-09-16 09:39:34 AM: Start to connect local database...
-2015-09-16 09:39:35 AM: Connect successfully!
-
--------------------------2015-09-16 09:53:17 AM-------------------------
-3:2015-09-16 09:53:17 AM: Start to connect local database...
-2015-09-16 09:53:18 AM: Connect successfully!
-
--------------------------2015-09-16 09:56:07 AM-------------------------
-3:2015-09-16 09:56:07 AM: Start to connect local database...
-2015-09-16 09:56:09 AM: Connect successfully!
-
--------------------------2015-09-16 11:40:06 AM-------------------------
-3:2015-09-16 11:40:07 AM: Start to connect local database...
-2015-09-16 11:40:08 AM: Connect successfully!
-3:2015-09-16 11:48:35 AM: No operations allowed after statement closed.
-3:2015-09-16 11:48:35 AM: 08003
-
-3:2015-09-16 11:48:37 AM: No operations allowed after statement closed.
-3:2015-09-16 11:48:37 AM: 08003
-
-3:2015-09-16 11:49:56 AM: No operations allowed after statement closed.
-3:2015-09-16 11:49:56 AM: 08003
-
-3:2015-09-16 11:49:57 AM: No operations allowed after statement closed.
-3:2015-09-16 11:49:57 AM: 08003
-
-3:2015-09-16 11:49:58 AM: No operations allowed after statement closed.
-3:2015-09-16 11:49:58 AM: 08003
-
-3:2015-09-16 11:49:59 AM: No operations allowed after statement closed.
-3:2015-09-16 11:49:59 AM: 08003
-
-3:2015-09-16 11:50:47 AM: No operations allowed after statement closed.
-3:2015-09-16 11:50:47 AM: 08003
-
-3:2015-09-16 11:50:48 AM: No operations allowed after statement closed.
-3:2015-09-16 11:50:48 AM: 08003
-
-3:2015-09-16 11:50:48 AM: No operations allowed after statement closed.
-3:2015-09-16 11:50:48 AM: 08003
-
-3:2015-09-16 11:50:48 AM: No operations allowed after statement closed.
-3:2015-09-16 11:50:49 AM: 08003
-
-3:2015-09-16 11:50:49 AM: No operations allowed after statement closed.
-3:2015-09-16 11:50:49 AM: 08003
-
-3:2015-09-16 11:50:50 AM: No operations allowed after statement closed.
-3:2015-09-16 11:50:50 AM: 08003
-
-
--------------------------2015-09-17 09:35:52 AM-------------------------
-3:2015-09-17 09:35:52 AM: Start to connect local database...
-2015-09-17 09:35:54 AM: Connect successfully!
-
--------------------------2015-09-17 09:57:58 AM-------------------------
-3:2015-09-17 09:57:59 AM: Start to connect local database...
-2015-09-17 09:58:00 AM: Connect successfully!
-
--------------------------2015-09-17 10:37:20 AM-------------------------
-3:2015-09-17 10:37:20 AM: Start to connect local database...
-2015-09-17 10:37:22 AM: Connect successfully!
-
--------------------------2015-09-17 10:55:23 AM-------------------------
-3:2015-09-17 10:55:23 AM: Start to connect local database...
-2015-09-17 10:55:25 AM: Connect successfully!
-
--------------------------2015-09-20 03:29:16 PM-------------------------
-3:2015-09-20 03:29:16 PM: Start to connect local database...
-2015-09-20 03:29:18 PM: Connect successfully!
-
--------------------------2015-09-20 03:53:53 PM-------------------------
-3:2015-09-20 03:53:53 PM: Start to connect local database...
-2015-09-20 03:53:55 PM: Connect successfully!
-
--------------------------2015-09-20 03:55:35 PM-------------------------
-3:2015-09-20 03:55:35 PM: Start to connect local database...
-2015-09-20 03:55:36 PM: Connect successfully!
-
--------------------------2015-09-20 03:59:05 PM-------------------------
-3:2015-09-20 03:59:05 PM: Start to connect local database...
-2015-09-20 03:59:06 PM: Connect successfully!
-
--------------------------2015-09-20 04:02:37 PM-------------------------
-3:2015-09-20 04:02:37 PM: Start to connect local database...
-2015-09-20 04:02:38 PM: Connect successfully!
-
--------------------------2015-09-20 04:08:35 PM-------------------------
-3:2015-09-20 04:08:35 PM: Start to connect local database...
-2015-09-20 04:08:37 PM: Connect successfully!
-
--------------------------2015-09-20 04:14:05 PM-------------------------
-3:2015-09-20 04:14:05 PM: Start to connect local database...
-2015-09-20 04:14:06 PM: Connect successfully!
-
--------------------------2015-09-20 04:16:01 PM-------------------------
-3:2015-09-20 04:16:01 PM: Start to connect local database...
-2015-09-20 04:16:03 PM: Connect successfully!
-
--------------------------2015-09-20 04:23:38 PM-------------------------
-3:2015-09-20 04:23:38 PM: Start to connect local database...
-2015-09-20 04:23:39 PM: Connect successfully!
-
--------------------------2015-09-20 04:31:07 PM-------------------------
-3:2015-09-20 04:31:07 PM: Start to connect local database...
-2015-09-20 04:31:08 PM: Connect successfully!
-
--------------------------2015-09-20 04:32:00 PM-------------------------
-3:2015-09-20 04:32:00 PM: Start to connect local database...
-2015-09-20 04:32:01 PM: Connect successfully!
-
--------------------------2015-09-20 05:52:47 PM-------------------------
-3:2015-09-20 05:52:47 PM: Start to connect local database...
-2015-09-20 05:52:48 PM: Connect successfully!
-
--------------------------2015-09-20 08:00:31 PM-------------------------
-3:2015-09-20 08:00:32 PM: Start to connect local database...
-2015-09-20 08:00:33 PM: Connect successfully!
-
--------------------------2015-09-20 08:09:58 PM-------------------------
-3:2015-09-20 08:09:58 PM: Start to connect local database...
-2015-09-20 08:10:00 PM: Connect successfully!
-
--------------------------2015-09-20 08:10:41 PM-------------------------
-3:2015-09-20 08:10:41 PM: Start to connect local database...
-2015-09-20 08:10:42 PM: Connect successfully!
-
--------------------------2015-09-20 08:13:20 PM-------------------------
-3:2015-09-20 08:13:20 PM: Start to connect local database...
-2015-09-20 08:13:21 PM: Connect successfully!
-
--------------------------2015-09-20 08:14:40 PM-------------------------
-3:2015-09-20 08:14:40 PM: Start to connect local database...
-2015-09-20 08:14:41 PM: Connect successfully!
-
--------------------------2015-09-20 08:15:58 PM-------------------------
-3:2015-09-20 08:15:59 PM: Start to connect local database...
-2015-09-20 08:16:00 PM: Connect successfully!
-
--------------------------2015-09-20 08:22:11 PM-------------------------
-3:2015-09-20 08:22:11 PM: Start to connect local database...
-2015-09-20 08:22:13 PM: Connect successfully!
-
--------------------------2015-09-20 08:24:21 PM-------------------------
-3:2015-09-20 08:24:21 PM: Start to connect local database...
-2015-09-20 08:24:22 PM: Connect successfully!
-
--------------------------2015-09-20 08:31:21 PM-------------------------
-3:2015-09-20 08:31:21 PM: Start to connect local database...
-2015-09-20 08:31:22 PM: Connect successfully!
-
--------------------------2015-09-20 08:32:46 PM-------------------------
-3:2015-09-20 08:32:46 PM: Start to connect local database...
-2015-09-20 08:32:47 PM: Connect successfully!
-
--------------------------2015-09-20 08:34:19 PM-------------------------
-3:2015-09-20 08:34:19 PM: Start to connect local database...
-2015-09-20 08:34:20 PM: Connect successfully!
-
--------------------------2015-09-20 08:36:05 PM-------------------------
-3:2015-09-20 08:36:05 PM: Start to connect local database...
-2015-09-20 08:36:06 PM: Connect successfully!
-
--------------------------2015-09-20 08:40:58 PM-------------------------
-3:2015-09-20 08:40:58 PM: Start to connect local database...
-2015-09-20 08:40:59 PM: Connect successfully!
-
--------------------------2015-09-20 08:42:57 PM-------------------------
-3:2015-09-20 08:42:57 PM: Start to connect local database...
-2015-09-20 08:42:59 PM: Connect successfully!
-
--------------------------2015-09-20 08:46:44 PM-------------------------
-3:2015-09-20 08:46:44 PM: Start to connect local database...
-2015-09-20 08:46:45 PM: Connect successfully!
-
--------------------------2015-09-20 08:54:22 PM-------------------------
-3:2015-09-20 08:54:22 PM: Start to connect local database...
-2015-09-20 08:54:23 PM: Connect successfully!
-
--------------------------2015-09-20 08:57:01 PM-------------------------
-3:2015-09-20 08:57:01 PM: Start to connect local database...
-2015-09-20 08:57:03 PM: Connect successfully!
-
--------------------------2015-09-20 09:13:06 PM-------------------------
-3:2015-09-20 09:13:06 PM: Start to connect local database...
-2015-09-20 09:13:07 PM: Connect successfully!
-
--------------------------2015-09-20 09:14:30 PM-------------------------
-3:2015-09-20 09:14:30 PM: Start to connect local database...
-2015-09-20 09:14:31 PM: Connect successfully!
-
--------------------------2015-09-20 09:28:52 PM-------------------------
-3:2015-09-20 09:28:53 PM: Start to connect local database...
-2015-09-20 09:28:54 PM: Connect successfully!
-
--------------------------2015-09-20 09:29:22 PM-------------------------
-3:2015-09-20 09:29:22 PM: Start to connect local database...
-2015-09-20 09:29:23 PM: Connect successfully!
-
--------------------------2015-09-20 09:30:37 PM-------------------------
-3:2015-09-20 09:30:37 PM: Start to connect local database...
-2015-09-20 09:30:38 PM: Connect successfully!
-
--------------------------2015-09-20 09:31:40 PM-------------------------
-3:2015-09-20 09:31:40 PM: Start to connect local database...
-2015-09-20 09:31:41 PM: Connect successfully!
-
--------------------------2015-09-20 09:33:43 PM-------------------------
-3:2015-09-20 09:33:43 PM: Start to connect local database...
-2015-09-20 09:33:44 PM: Connect successfully!
-
--------------------------2015-09-20 11:54:50 PM-------------------------
-3:2015-09-20 11:54:50 PM: Start to connect local database...
-2015-09-20 11:54:53 PM: Connect successfully!
-
--------------------------2015-09-20 11:55:21 PM-------------------------
-3:2015-09-20 11:55:21 PM: Start to connect local database...
-2015-09-20 11:55:23 PM: Connect successfully!
-
--------------------------2015-09-21 01:41:25 PM-------------------------
-3:2015-09-21 01:41:26 PM: Start to connect local database...
-2015-09-21 01:41:27 PM: Connect successfully!
-
--------------------------2015-09-21 01:58:35 PM-------------------------
-3:2015-09-21 01:58:35 PM: Start to connect local database...
-2015-09-21 01:58:37 PM: Connect successfully!
-3:2015-09-21 01:59:11 PM: DELETE FROM pupone_dummy.tasks WHERE taskID IN (31, 32, 33, 34, 35, 36);
-
--------------------------2015-09-22 09:50:13 AM-------------------------
-3:2015-09-22 09:50:14 AM: Start to connect local database...
-2015-09-22 09:50:16 AM: Connect successfully!
-
--------------------------2015-09-22 10:47:41 AM-------------------------
-3:2015-09-22 10:47:41 AM: Start to connect local database...
-2015-09-22 10:47:42 AM: Connect successfully!
-
--------------------------2015-09-23 01:39:30 AM-------------------------
-3:2015-09-23 01:39:30 AM: Start to connect local database...
-2015-09-23 01:39:31 AM: Connect successfully!
-
--------------------------2015-09-23 01:52:11 AM-------------------------
-3:2015-09-23 01:52:11 AM: Start to connect local database...
-2015-09-23 01:52:15 AM: Connect successfully!
-
--------------------------2015-09-23 02:10:01 AM-------------------------
-3:2015-09-23 02:10:01 AM: Start to connect local database...
-2015-09-23 02:10:03 AM: Connect successfully!
-
--------------------------2015-09-23 02:10:48 AM-------------------------
-3:2015-09-23 02:10:48 AM: Start to connect local database...
-2015-09-23 02:10:50 AM: Connect successfully!
-
--------------------------2015-09-23 02:16:08 AM-------------------------
-3:2015-09-23 02:16:08 AM: Start to connect local database...
-2015-09-23 02:16:10 AM: Connect successfully!
-
--------------------------2015-09-23 02:17:42 AM-------------------------
-3:2015-09-23 02:17:42 AM: Start to connect local database...
-2015-09-23 02:17:43 AM: Connect successfully!
-
--------------------------2015-09-23 02:20:11 AM-------------------------
-3:2015-09-23 02:20:11 AM: Start to connect local database...
-2015-09-23 02:20:13 AM: Connect successfully!
-
--------------------------2015-09-23 02:22:05 AM-------------------------
-3:2015-09-23 02:22:05 AM: Start to connect local database...
-2015-09-23 02:22:06 AM: Connect successfully!
-
--------------------------2015-09-23 02:23:13 AM-------------------------
-3:2015-09-23 02:23:14 AM: Start to connect local database...
-2015-09-23 02:23:15 AM: Connect successfully!
-
--------------------------2015-09-23 02:24:34 AM-------------------------
-3:2015-09-23 02:24:35 AM: Start to connect local database...
-2015-09-23 02:24:36 AM: Connect successfully!
-
--------------------------2015-09-23 02:25:12 AM-------------------------
-3:2015-09-23 02:25:12 AM: Start to connect local database...
-2015-09-23 02:25:13 AM: Connect successfully!
-
--------------------------2015-09-23 02:37:11 AM-------------------------
-3:2015-09-23 02:37:11 AM: Start to connect local database...
-2015-09-23 02:37:14 AM: Connect successfully!
-
--------------------------2015-09-23 02:39:47 AM-------------------------
-3:2015-09-23 02:39:48 AM: Start to connect local database...
-2015-09-23 02:39:49 AM: Connect successfully!
-
--------------------------2015-09-23 02:43:56 AM-------------------------
-3:2015-09-23 02:43:56 AM: Start to connect local database...
-2015-09-23 02:43:58 AM: Connect successfully!
-
--------------------------2015-09-23 02:49:46 AM-------------------------
-3:2015-09-23 02:49:47 AM: Start to connect local database...
-2015-09-23 02:49:48 AM: Connect successfully!
-
--------------------------2015-09-23 02:50:17 AM-------------------------
-3:2015-09-23 02:50:17 AM: Start to connect local database...
-2015-09-23 02:50:18 AM: Connect successfully!
-
--------------------------2015-09-23 02:51:29 AM-------------------------
-3:2015-09-23 02:51:29 AM: Start to connect local database...
-2015-09-23 02:51:30 AM: Connect successfully!
-
--------------------------2015-09-23 02:52:01 AM-------------------------
-3:2015-09-23 02:52:01 AM: Start to connect local database...
-2015-09-23 02:52:03 AM: Connect successfully!
-
--------------------------2015-09-23 03:03:27 AM-------------------------
-3:2015-09-23 03:03:28 AM: Start to connect local database...
-2015-09-23 03:03:29 AM: Connect successfully!
-
--------------------------2015-09-23 03:04:28 AM-------------------------
-3:2015-09-23 03:04:28 AM: Start to connect local database...
-2015-09-23 03:04:29 AM: Connect successfully!
-
--------------------------2015-09-23 03:12:03 AM-------------------------
-3:2015-09-23 03:12:03 AM: Start to connect local database...
-2015-09-23 03:12:05 AM: Connect successfully!
-
--------------------------2015-09-23 03:12:37 AM-------------------------
-3:2015-09-23 03:12:37 AM: Start to connect local database...
-2015-09-23 03:12:38 AM: Connect successfully!
-
--------------------------2015-09-23 03:13:21 AM-------------------------
-3:2015-09-23 03:13:21 AM: Start to connect local database...
-2015-09-23 03:13:23 AM: Connect successfully!
-
--------------------------2015-09-23 03:14:04 AM-------------------------
-3:2015-09-23 03:14:04 AM: Start to connect local database...
-2015-09-23 03:14:05 AM: Connect successfully!
-
--------------------------2015-09-23 03:14:35 AM-------------------------
-3:2015-09-23 03:14:36 AM: Start to connect local database...
-2015-09-23 03:14:37 AM: Connect successfully!
-
--------------------------2015-09-23 03:26:42 AM-------------------------
-3:2015-09-23 03:26:42 AM: Start to connect local database...
-2015-09-23 03:26:44 AM: Connect successfully!
-
--------------------------2015-09-23 03:27:37 AM-------------------------
-3:2015-09-23 03:27:37 AM: Start to connect local database...
-2015-09-23 03:27:39 AM: Connect successfully!
-
--------------------------2015-09-23 03:28:23 AM-------------------------
-3:2015-09-23 03:28:23 AM: Start to connect local database...
-2015-09-23 03:28:25 AM: Connect successfully!
+-------------------------2015-09-21 01:10:19 PM-------------------------
+3:2015-09-21 01:10:34 PM: Start to connect local database...
+2015-09-21 01:10:35 PM: Connect successfully!
+
+-------------------------2015-09-21 01:25:10 PM-------------------------
+3:2015-09-21 01:25:27 PM: Start to connect local database...
+1:2015-09-21 01:25:29 PM: Access denied for user 'pupone_Carlos'@'c-73-218-140-128.hsd1.ma.comcast.net' (using password: YES)
+3:2015-09-21 01:25:35 PM: Start to connect local database...
+2015-09-21 01:25:36 PM: Connect successfully!
+
+-------------------------2015-09-21 01:28:02 PM-------------------------
+3:2015-09-21 01:28:14 PM: Start to connect local database...
+2015-09-21 01:28:15 PM: Connect successfully!
+
+-------------------------2015-09-21 01:46:49 PM-------------------------
+
+-------------------------2015-09-21 01:48:20 PM-------------------------
+3:2015-09-21 01:48:39 PM: Start to connect local database...
+2015-09-21 01:48:40 PM: Connect successfully!
+
+-------------------------2015-09-22 10:17:13 AM-------------------------
+3:2015-09-22 10:17:40 AM: Start to connect local database...
+2015-09-22 10:17:41 AM: Connect successfully!
+
+-------------------------2015-09-22 10:36:27 AM-------------------------
+3:2015-09-22 10:36:49 AM: Start to connect local database...
+2015-09-22 10:36:50 AM: Connect successfully!
+
+-------------------------2015-09-23 07:18:23 AM-------------------------
+3:2015-09-23 07:18:45 AM: Start to connect local database...
+2015-09-23 07:18:47 AM: Connect successfully!
+
+-------------------------2015-09-23 07:23:46 AM-------------------------
+3:2015-09-23 07:24:02 AM: Start to connect local database...
+2015-09-23 07:24:04 AM: Connect successfully!
+
+-------------------------2015-09-23 07:32:46 AM-------------------------
+3:2015-09-23 07:33:01 AM: Start to connect local database...
+2015-09-23 07:33:02 AM: Connect successfully!
+
+-------------------------2015-09-23 07:37:20 AM-------------------------
+3:2015-09-23 07:37:37 AM: Start to connect local database...
+2015-09-23 07:37:38 AM: Connect successfully!
+
+-------------------------2015-09-23 08:23:18 AM-------------------------
+3:2015-09-23 08:23:35 AM: Start to connect local database...
+2015-09-23 08:23:36 AM: Connect successfully!
+3:2015-09-23 08:24:02 AM: DELETE FROM pupone_dummy.tasks WHERE taskID IN (45);
+
+-------------------------2015-09-23 08:30:03 AM-------------------------
+3:2015-09-23 08:30:16 AM: Start to connect local database...
+2015-09-23 08:30:18 AM: Connect successfully!
+3:2015-09-23 08:31:54 AM: DELETE FROM pupone_dummy.tasks WHERE taskID IN (30, 46);
+
+-------------------------2015-09-23 08:37:51 AM-------------------------
+3:2015-09-23 08:38:08 AM: Start to connect local database...
+1:2015-09-23 08:38:11 AM: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+
+-------------------------2015-09-23 08:41:00 AM-------------------------
+3:2015-09-23 08:41:17 AM: Start to connect local database...
+2015-09-23 08:41:18 AM: Connect successfully!
