@@ -170,3 +170,13 @@
 3:2015-09-23 08:30:16 AM: Start to connect local database...
 2015-09-23 08:30:18 AM: Connect successfully!
 3:2015-09-23 08:31:54 AM: DELETE FROM pupone_dummy.tasks WHERE taskID IN (30, 46);
+
+-------------------------2015-09-23 08:37:51 AM-------------------------
+3:2015-09-23 08:38:08 AM: Start to connect local database...
+1:2015-09-23 08:38:11 AM: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+
+-------------------------2015-09-23 08:41:00 AM-------------------------
+3:2015-09-23 08:41:17 AM: Start to connect local database...
+2015-09-23 08:41:18 AM: Connect successfully!
