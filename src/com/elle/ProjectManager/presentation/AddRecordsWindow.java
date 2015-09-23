@@ -97,12 +97,20 @@ public class AddRecordsWindow extends JFrame {
         this.setMinimumSize(new Dimension(1137, 150));
 
         // set the tableSelected cell popup window
-        tableCellPopupWindow = new TableCellPopupWindow();
-        tableCellPopupWindow.initTableCellPopup(this);
-        tableCellPopupWindow.setTableListener(table);
+        tableCellPopupWindow = new TableCellPopupWindow(this);
+        if (!tableCellPopupWindow.getWindowPopup()) {
+            tableCellPopupWindow.setTableListener(table, this);
+        }
 
         // set this window to appear in the middle of Analyster
         this.setLocationRelativeTo(projectManager);
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                projectManager.setDisableProjecetManagerFunction(true);
+                
+            }
+        });
     }
 
     /**
@@ -230,6 +238,8 @@ public class AddRecordsWindow extends JFrame {
      */
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
 
+        projectManager.setDisableProjecetManagerFunction(true);
+
         submit();
         projectManager.setAddRecordsWindowShow(false);
     }//GEN-LAST:event_btnSubmitActionPerformed
@@ -287,7 +297,7 @@ public class AddRecordsWindow extends JFrame {
                     // skip empty rows
                     // this must be after the format cell value so the "" => null
                     if (col == 0 && cellValue == null) {
-                         break;
+                        break;
                     }
 
                     // add each value for each column to the values statement
@@ -312,14 +322,14 @@ public class AddRecordsWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Upload failed!");
 
                         if (statement.getWarnings().getMessage() != null) {
-                            
-                            String levelMessage = "2:"+ statement.getWarnings().getMessage(); 
+
+                            String levelMessage = "2:" + statement.getWarnings().getMessage();
                             logWindow.addMessageWithDate(levelMessage);
 //                            logWindow.
                             System.out.println(statement.getWarnings().getMessage());
-                            
+
                             System.out.println(levelMessage);//delete
-                            
+
                             statement.clearWarnings();
                         }
                         logWindow.addMessageWithDate("2:add record submit failed!");
@@ -371,6 +381,7 @@ public class AddRecordsWindow extends JFrame {
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         this.dispose();
         projectManager.setAddRecordsWindowShow(false);
+        projectManager.setDisableProjecetManagerFunction(true);
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRowActionPerformed
@@ -399,63 +410,56 @@ public class AddRecordsWindow extends JFrame {
 
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                
-                if(e.getComponent() instanceof JTable){
+
+                if (e.getComponent() instanceof JTable) {
 
                     // this is called to either clear data or submit data
                     if (e.getKeyCode() == KeyEvent.VK_ENTER && !table.isEditing()) {
 
                         // clear the row(s)
-                        if(e.getID() == KeyEvent.KEY_PRESSED){
-                            if(table.getSelectionBackground() == Color.RED){
+                        if (e.getID() == KeyEvent.KEY_PRESSED) {
+                            if (table.getSelectionBackground() == Color.RED) {
                                 int[] rows = table.getSelectedRows();
 
-                                if(rows != null){
-                                    for(int row : rows){
-                                        for(int col = 0; col < table.getColumnCount(); col++){
+                                if (rows != null) {
+                                    for (int row : rows) {
+                                        for (int col = 0; col < table.getColumnCount(); col++) {
                                             table.getModel().setValueAt("", row, col);
                                         }
                                     }
                                 }
                                 table.setSelectionBackground(defaultSelectedBG);
-                                
+
                                 // check for empty rows/table
                                 checkForEmptyRows();
-                                if(rowsNotEmpty.isEmpty()){
+                                if (rowsNotEmpty.isEmpty()) {
                                     btnSubmit.setEnabled(false);
-                                }
-                                else{
+                                } else {
                                     btnSubmit.setEnabled(true);
                                 }
-                            }
-                            
-                            // submit the data
-                            else if(table.getSelectionBackground() != Color.RED){
+                            } // submit the data
+                            else if (table.getSelectionBackground() != Color.RED) {
                                 submit();
                             }
                         }
-                    }
-
-                    // this toggles the red bg for clearing row data
+                    } // this toggles the red bg for clearing row data
                     else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 
-                        if(e.getID() == KeyEvent.KEY_RELEASED){
-                            if(table.isEditing())
+                        if (e.getID() == KeyEvent.KEY_RELEASED) {
+                            if (table.isEditing()) {
                                 table.getCellEditor().stopCellEditing();
-
-                            if(table.getSelectionBackground() == defaultSelectedBG){
-                                table.setSelectionBackground(Color.RED);
                             }
-                            else{
+
+                            if (table.getSelectionBackground() == defaultSelectedBG) {
+                                table.setSelectionBackground(Color.RED);
+                            } else {
                                 table.setSelectionBackground(defaultSelectedBG);
                             }
                         }
-                    }
-                    
-                    // this is to tab and move to cells with arrow keys
+                    } // this is to tab and move to cells with arrow keys
                     else if (e.getKeyCode() == KeyEvent.VK_TAB || e.getKeyCode() == KeyEvent.VK_LEFT
-                                || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_UP
-                                || e.getKeyCode() == KeyEvent.VK_DOWN) {
+                            || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_UP
+                            || e.getKeyCode() == KeyEvent.VK_DOWN) {
 
                         JTable tableSelected = (JTable) e.getComponent();
 
@@ -463,15 +467,14 @@ public class AddRecordsWindow extends JFrame {
                             //show popup Window by different table
                             popupWindowShowInRecordByDiffTable(tableSelected);
 
-                        }else if (e.getID()==KeyEvent.KEY_PRESSED){
+                        } else if (e.getID() == KeyEvent.KEY_PRESSED) {
 
-                        }else{
+                        } else {
 
                         }
                     }
 
                 } // end table component condition
-                
                 // ctrl + D fills in the current date
                 else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
                     JTable table = (JTable) e.getComponent().getParent();
@@ -491,23 +494,23 @@ public class AddRecordsWindow extends JFrame {
                     }
                 }
 
-                return false; 
+                return false;
             }
         });
     }
 
     private void popupWindowShowInRecordByDiffTable(JTable tableSelected) {
-        
-        int row = tableSelected.getSelectedRow();
+
         int column = tableSelected.getSelectedColumn();
+
         if (tableSelected.getName().equals(TASKS_TABLE_NAME)) {
 
             if (tableSelected.getColumnName(column).equals("title")
                     || tableSelected.getColumnName(column).equals("description")
                     || tableSelected.getColumnName(column).equals("instructions")) {
-               
+
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(tableSelected);
+                tableCellPopupWindow.getTableCellPopup(tableSelected, this);
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -517,7 +520,7 @@ public class AddRecordsWindow extends JFrame {
                     || tableSelected.getColumnName(column).equals("notes")
                     || tableSelected.getColumnName(column).equals("path")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(tableSelected);
+                tableCellPopupWindow.getTableCellPopup(tableSelected, this);
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -525,7 +528,7 @@ public class AddRecordsWindow extends JFrame {
 
             if (tableSelected.getColumnName(column).equals("status_notes")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(tableSelected);
+                tableCellPopupWindow.getTableCellPopup(tableSelected, this);
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
