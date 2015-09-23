@@ -97,7 +97,9 @@ public class AddRecordsWindow extends JFrame {
 
         // set the tableSelected cell popup window
         tableCellPopupWindow = new TableCellPopupWindow(this);
-        tableCellPopupWindow.setTableListener(table, this);
+        if (!tableCellPopupWindow.getWindowPopup()) {
+            tableCellPopupWindow.setTableListener(table, this);
+        }
 
         // set this window to appear in the middle of Analyster
         this.setLocationRelativeTo(projectManager);
@@ -285,7 +287,7 @@ public class AddRecordsWindow extends JFrame {
                     // skip empty rows
                     // this must be after the format cell value so the "" => null
                     if (col == 0 && cellValue == null) {
-                         break;
+                        break;
                     }
 
                     // add each value for each column to the values statement
@@ -310,14 +312,14 @@ public class AddRecordsWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "Upload failed!");
 
                         if (statement.getWarnings().getMessage() != null) {
-                            
-                            String levelMessage = "2:"+ statement.getWarnings().getMessage(); 
+
+                            String levelMessage = "2:" + statement.getWarnings().getMessage();
                             logWindow.addMessageWithDate(levelMessage);
 //                            logWindow.
                             System.out.println(statement.getWarnings().getMessage());
-                            
+
                             System.out.println(levelMessage);//delete
-                            
+
                             statement.clearWarnings();
                         }
                         logWindow.addMessageWithDate("2:add record submit failed!");
@@ -462,13 +464,13 @@ public class AddRecordsWindow extends JFrame {
                             || e.getKeyCode() == KeyEvent.VK_DOWN) {
 
                                 JTable tableSelected = (JTable) e.getComponent();
-                                
+
                                 if (e.getID() == KeyEvent.KEY_RELEASED) {
                                     //show popup Window by different table
                                     popupWindowShowInRecordByDiffTable(tableSelected);
-                                    
-                                }else if (e.getID()==KeyEvent.KEY_PRESSED){
-                                }else{
+
+                                } else if (e.getID() == KeyEvent.KEY_PRESSED) {
+                                } else {
                                 }
                             }
 
@@ -480,15 +482,15 @@ public class AddRecordsWindow extends JFrame {
     }
 
     private void popupWindowShowInRecordByDiffTable(JTable tableSelected) {
-        
+
         int column = tableSelected.getSelectedColumn();
-        
+
         if (tableSelected.getName().equals(TASKS_TABLE_NAME)) {
 
             if (tableSelected.getColumnName(column).equals("title")
                     || tableSelected.getColumnName(column).equals("description")
                     || tableSelected.getColumnName(column).equals("instructions")) {
-               
+
                 // popup tableSelected cell edit window
                 tableCellPopupWindow.getTableCellPopup(tableSelected, this);
             } else {
