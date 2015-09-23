@@ -33,7 +33,6 @@ public class ModifiedTableData{
         newData = new ArrayList<>();
         
         // initialize data for the table model
-        oldData = new String[table.getModel().getRowCount()][table.getColumnCount()];
         reloadData();
     }
     
@@ -42,6 +41,11 @@ public class ModifiedTableData{
      * This reloads the data from the table model
      */
     public void reloadData(){
+        
+        // initialize the array size
+        oldData = new String[table.getModel().getRowCount()][table.getColumnCount()];
+        
+        // load the array with values
         for(int row = 0; row < table.getModel().getRowCount(); row++){
             for(int col = 0; col < table.getColumnCount(); col++){
                 Object value = table.getModel().getValueAt(row, col);
