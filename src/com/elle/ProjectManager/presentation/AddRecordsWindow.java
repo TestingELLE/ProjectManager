@@ -390,96 +390,105 @@ public class AddRecordsWindow extends JFrame {
          firing the key events 
          */
         table.setFocusTraversalKeysEnabled(false);
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {// Allow to TAB-
 
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().
-                addKeyEventDispatcher(new KeyEventDispatcher() {// Allow to TAB-
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                
+                if(e.getComponent() instanceof JTable){
 
-                    @Override
-                    public boolean dispatchKeyEvent(KeyEvent e) {
+                    // this is called to either clear data or submit data
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER && !table.isEditing()) {
 
-                        if (e.getComponent() instanceof JTable) {
-                            // ctrl + D fills in the current date
-                            if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
-                                JTable table = (JTable) e.getComponent().getParent();
-                                int column = table.getSelectedColumn();
-                                if (table.getColumnName(column).toLowerCase().contains("date")) {
-                                    if (e.getID() != 401) {
-                                        return false;
-                                    } else {
-                                        JTextField selectCom = (JTextField) e.getComponent();
-                                        selectCom.requestFocusInWindow();
-                                        selectCom.selectAll();
-                                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                                        Date date = new Date();
-                                        String today = dateFormat.format(date);
-                                        selectCom.setText(today);
-                                    }// default date input with today's date}
-                                }
-                            } // this is called to either clear data or submit data
-                            else if (e.getKeyCode() == KeyEvent.VK_ENTER && !table.isEditing()) {
+                        // clear the row(s)
+                        if(e.getID() == KeyEvent.KEY_PRESSED){
+                            if(table.getSelectionBackground() == Color.RED){
+                                int[] rows = table.getSelectedRows();
 
-                                // clear the row(s)
-                                if (e.getID() == KeyEvent.KEY_PRESSED) {
-                                    if (table.getSelectionBackground() == Color.RED) {
-                                        int[] rows = table.getSelectedRows();
-
-                                        if (rows != null) {
-                                            for (int row : rows) {
-                                                for (int col = 0; col < table.getColumnCount(); col++) {
-                                                    table.getModel().setValueAt("", row, col);
-                                                }
-                                            }
+                                if(rows != null){
+                                    for(int row : rows){
+                                        for(int col = 0; col < table.getColumnCount(); col++){
+                                            table.getModel().setValueAt("", row, col);
                                         }
-                                        table.setSelectionBackground(defaultSelectedBG);
-
-                                        // check for empty rows/table
-                                        checkForEmptyRows();
-                                        if (rowsNotEmpty.isEmpty()) {
-                                            btnSubmit.setEnabled(false);
-                                        } else {
-                                            btnSubmit.setEnabled(true);
-                                        }
-                                    } // submit the data
-                                    else if (table.getSelectionBackground() != Color.RED) {
-                                        submit();
                                     }
                                 }
-                            } // this toggles the red bg for clearing row data
-                            else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-
-                                if (e.getID() == KeyEvent.KEY_RELEASED) {
-                                    if (table.isEditing()) {
-                                        table.getCellEditor().stopCellEditing();
-                                    }
-
-                                    if (table.getSelectionBackground() == defaultSelectedBG) {
-                                        table.setSelectionBackground(Color.RED);
-                                    } else {
-                                        table.setSelectionBackground(defaultSelectedBG);
-                                    }
-                                }
-                            } else if (e.getKeyCode() == KeyEvent.VK_TAB || e.getKeyCode() == KeyEvent.VK_LEFT
-                            || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_UP
-                            || e.getKeyCode() == KeyEvent.VK_DOWN) {
-
-                                JTable tableSelected = (JTable) e.getComponent();
+                                table.setSelectionBackground(defaultSelectedBG);
                                 
-                                if (e.getID() == KeyEvent.KEY_RELEASED) {
-                                    //show popup Window by different table
-                                    popupWindowShowInRecordByDiffTable(tableSelected);
-                                    
-                                }else if (e.getID()==KeyEvent.KEY_PRESSED){
-                                    
-                                }else{
-                                    
+                                // check for empty rows/table
+                                checkForEmptyRows();
+                                if(rowsNotEmpty.isEmpty()){
+                                    btnSubmit.setEnabled(false);
+                                }
+                                else{
+                                    btnSubmit.setEnabled(true);
                                 }
                             }
-
-                        } // end tableSelected component condition
-
-                        return false;
+                            
+                            // submit the data
+                            else if(table.getSelectionBackground() != Color.RED){
+                                submit();
+                            }
+                        }
                     }
-                });
+
+                    // this toggles the red bg for clearing row data
+                    else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+
+                        if(e.getID() == KeyEvent.KEY_RELEASED){
+                            if(table.isEditing())
+                                table.getCellEditor().stopCellEditing();
+
+                            if(table.getSelectionBackground() == defaultSelectedBG){
+                                table.setSelectionBackground(Color.RED);
+                            }
+                            else{
+                                table.setSelectionBackground(defaultSelectedBG);
+                            }
+                        }
+                    }
+                    
+                    // this is to tab and move to cells with arrow keys
+                    else if (e.getKeyCode() == KeyEvent.VK_TAB || e.getKeyCode() == KeyEvent.VK_LEFT
+                                || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_UP
+                                || e.getKeyCode() == KeyEvent.VK_DOWN) {
+
+                        JTable tableSelected = (JTable) e.getComponent();
+
+                        if (e.getID() == KeyEvent.KEY_RELEASED) {
+                            //show popup Window by different table
+                            popupWindowShowInRecordByDiffTable(tableSelected);
+
+                        }else if (e.getID()==KeyEvent.KEY_PRESSED){
+
+                        }else{
+
+                        }
+                    }
+
+                } // end table component condition
+                
+                // ctrl + D fills in the current date
+                else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
+                    JTable table = (JTable) e.getComponent().getParent();
+                    int column = table.getSelectedColumn();
+                    if (table.getColumnName(column).toLowerCase().contains("date")) {
+                        if (e.getID() != 401) {
+                            return false;
+                        } else {
+                            JTextField selectCom = (JTextField) e.getComponent();
+                            selectCom.requestFocusInWindow();
+                            selectCom.selectAll();
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date = new Date();
+                            String today = dateFormat.format(date);
+                            selectCom.setText(today);
+                        }// default date input with today's date}
+                    }
+                }
+
+                return false; 
+            }
+        });
     }
 
     private void popupWindowShowInRecordByDiffTable(JTable tableSelected) {
