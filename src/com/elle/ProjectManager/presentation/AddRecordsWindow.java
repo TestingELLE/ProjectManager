@@ -1,6 +1,7 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.database.DBConnection;
+import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.logic.ColumnPopupMenu;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
@@ -346,7 +347,11 @@ public class AddRecordsWindow extends JFrame {
                 Tab tab = tabs.get(tabName);                                  // selected tab
 
                 JTable table = tab.getTable();                                // selected tableSelected
-                projectManager.loadTable(table);                                   // load tableSelected data from database
+                projectManager.loadTable(table);                              // load tableSelected data from database
+                
+                // reload new table data for modifiedTableData
+                ModifiedTableData data = tab.getTableData();
+                data.reloadData();
 
                 TableFilter filter = tab.getFilter();                         // tableSelected filter
                 filter.applyFilter();                                         // apply filter
