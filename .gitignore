@@ -2,3 +2,4 @@
 /build/
 /nbproject/private/
 /src/com/elle/ProjectManager/database/servers.xml
+/target/
