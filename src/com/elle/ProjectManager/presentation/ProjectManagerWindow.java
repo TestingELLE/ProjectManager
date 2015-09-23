@@ -21,6 +21,10 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -66,7 +70,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private EditDatabaseWindow editDatabaseWindow;
     private ReportWindow reportWindow;
     private boolean addRecordWindowShow;
-    
+
     private int addRecordLevel = 2;
     private int deleteRecordLevel = 2;
 
@@ -227,7 +231,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //        tableCellPopupWindow.setTableListener(tasksTable);
 //        tableCellPopupWindow.setTableListener(task_filesTable);
 //        tableCellPopupWindow.setTableListener(task_notesTable);
-        if(!addRecordWindowShow){
+        if (!addRecordWindowShow) {
             initTableCellPopupWindow();
         }
 
@@ -238,12 +242,28 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.setPreferredSize(new Dimension(1207, 631));
         this.setMinimumSize(new Dimension(1207, 631));
 
+        scrollDown(jScrollPane1);
+        scrollDown(jScrollPane3);
+        scrollDown(jScrollPane4);
     }
 
+    /*
+     * This is to make the scroll bar always scrolling down.
+     */
+    private void scrollDown(JScrollPane scrollPane) {
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+            }
+
+        });
+    }
 //    
 //    /*
 //     * This is to initiate the tableSelected cell popup window.
-//    */ 
+//     */
 //    private void initTableCellPopup(){
 //        
 //        // initialize the textAreatableCellPopup
@@ -432,6 +452,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //        });         
 //    }   
 //        
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1356,7 +1377,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param evt
      */
     private void btnAddRecordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRecordsActionPerformed
-        
+
         addRecordsWindow = new AddRecordsWindow();
         addRecordsWindow.setVisible(true);
         addRecordWindowShow = true;
@@ -2043,15 +2064,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             + " = '" + value + "' WHERE taskID = " + id + ";";
                 }
                 System.out.println(sqlChange);
-                
+
                 DBConnection.open();
                 statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlChange);
 
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(this, "Upload failed!");
-                logWindow.addMessageWithDate("3:"+e.getMessage());
-                logWindow.addMessageWithDate("3:"+e.getSQLState() + "\n");
+                logWindow.addMessageWithDate("3:" + e.getMessage());
+                logWindow.addMessageWithDate("3:" + e.getSQLState() + "\n");
             }
         }
 
@@ -2184,12 +2205,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                             if (e.getComponent() instanceof JTable) {
 
-                                    JTable tableSelected = (JTable) e.getComponent();
-                                    
+                                JTable tableSelected = (JTable) e.getComponent();
+
                                 if (e.getID() == KeyEvent.KEY_RELEASED) {
-                                    
+
                                     popupWindowShowInDiffTable(tableSelected);  //determind which tableSelected to show popup window
-                                    
+
                                 }
                             }
                         }
@@ -2200,9 +2221,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
         );
     }
-    
+
     private void popupWindowShowInDiffTable(JTable table) {
-        
+
         int column = table.getSelectedColumn();
 
         if (table.getName().equals(TASKS_TABLE_NAME)) {
@@ -2211,7 +2232,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     || table.getColumnName(column).equals("description")
                     || table.getColumnName(column).equals("instructions")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(table);
+                tableCellPopupWindow.getTableCellPopup(table, this);
+
+                boolean disable = !tableCellPopupWindow.getWindowPopup();
+
+                table.setEnabled(disable);
+
+                disableProjectManagerFunction(disable);
 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2222,8 +2249,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     || table.getColumnName(column).equals("notes")
                     || table.getColumnName(column).equals("path")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(table);
-                
+                tableCellPopupWindow.getTableCellPopup(table, this);
+
+                boolean disable = !tableCellPopupWindow.getWindowPopup();
+
+                table.setEnabled(disable);
+
+                disableProjectManagerFunction(disable);
+
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -2231,15 +2264,48 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             if (table.getColumnName(column).equals("status_notes")) {
                 // popup tableSelected cell edit window
-                tableCellPopupWindow.tableCellPopup(table);
-                
+                tableCellPopupWindow.getTableCellPopup(table, this);
+
+                boolean disable = !tableCellPopupWindow.getWindowPopup();
+
+                table.setEnabled(disable);
+
+                disableProjectManagerFunction(disable);
+
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
         }
     }
-    
-    public TableCellPopupWindow getPopupWindow(){
+
+    public void setDisableProjecetManagerFunction(boolean f) {
+        disableProjectManagerFunction(f);
+    }
+
+    private void disableProjectManagerFunction(boolean disable) {
+
+        System.out.println(disable + "projectmanager function disabled");
+        tabbedPanel.setEnabled(disable);
+        btnAddRecords.setEnabled(disable);
+        btnBatchEdit.setEnabled(disable);
+        btnClearAllFilter.setEnabled(disable);
+        btnCancelEditMode.setEnabled(disable);
+        btnSearch.setEnabled(disable);
+        btnSwitchEditMode.setEnabled(disable);
+        btnUploadChanges.setEnabled(disable);
+        comboBoxSearch.setEnabled(disable);
+        menuEdit.setEnabled(disable);
+        menuFile.setEnabled(disable);
+        menuFind.setEnabled(disable);
+        menuHelp.setEnabled(disable);
+        menuView.setEnabled(disable);
+        menuTools.setEnabled(disable);
+        menuReports.setEnabled(disable);
+        searchPanel.setEnabled(disable);
+        textFieldForSearch.setEnabled(disable);
+    }
+
+    public TableCellPopupWindow getPopupWindow() {
         return this.tableCellPopupWindow;
     }
 
@@ -2290,8 +2356,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return panelBatchEditButtons;
     }
 
-    
-    
     /**
      * initTotalRowCounts called once to initialize the total rowIndex counts of
      * each tabs tableSelected
@@ -2361,7 +2425,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // for debugging
             ex.printStackTrace();
             logWindow.addMessageWithDate(ex.getMessage());
-            
+
             // notify the user that there was an issue
             JOptionPane.showMessageDialog(this, "connection failed");
         }
@@ -2573,22 +2637,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void initTableCellPopupWindow() {
 
-        tableCellPopupWindow = new TableCellPopupWindow();
-        tableCellPopupWindow.initTableCellPopup(this);
+        tableCellPopupWindow = new TableCellPopupWindow(this);
 
-        tableCellPopupWindow.setTableListener(tasksTable);
-        tableCellPopupWindow.setTableListener(task_filesTable);
-        tableCellPopupWindow.setTableListener(task_notesTable);
+        tableCellPopupWindow.setTableListener(tasksTable, this);
+        tableCellPopupWindow.setTableListener(task_filesTable, this);
+        tableCellPopupWindow.setTableListener(task_notesTable, this);
 
     }
-    
-    public boolean getAddRecordsWindowShow(){
-        
+
+    public boolean getAddRecordsWindowShow() {
+
         return this.addRecordWindowShow;
-        
+
     }
-    
-    public void setAddRecordsWindowShow(boolean a){
+
+    public void setAddRecordsWindowShow(boolean a) {
         this.addRecordWindowShow = a;
     }
 
