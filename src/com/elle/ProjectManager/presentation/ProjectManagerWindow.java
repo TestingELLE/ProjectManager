@@ -251,14 +251,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * This is to make the scroll bar always scrolling down.
      */
     private void scrollDown(JScrollPane scrollPane) {
-        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-
+        JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
+        AdjustmentListener downScroller = new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
-                e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                Adjustable adjustable = e.getAdjustable();
+                adjustable.setValue(adjustable.getMaximum());
+                verticalBar.removeAdjustmentListener(this);
             }
-
-        });
+        };
+        verticalBar.addAdjustmentListener(downScroller);
     }
 //    
 //    /*
@@ -2224,7 +2226,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             JTable tableSelected = (JTable) e.getComponent();
 
                             if (e.getID() == KeyEvent.KEY_RELEASED) {
-                                
+
                                 popupWindowShowInDiffTable(tableSelected);  //determind which tableSelected to show popup window
 
                             }

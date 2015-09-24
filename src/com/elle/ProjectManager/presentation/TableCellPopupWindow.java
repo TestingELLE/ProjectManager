@@ -162,6 +162,9 @@ public class TableCellPopupWindow implements ITableConstants {
 //
 //            }
         } else {
+            editBtnPopup.setVisible(false);
+            editBtnPopup.setEnabled(false);
+            
             textAreatableCellPopup.setSize(new Dimension(400, 100));
             areaScrollPanetableCellPopup.setSize(new Dimension(400, 100));
             tableCellPopupPanel.setSize(400, 100);
@@ -297,6 +300,8 @@ public class TableCellPopupWindow implements ITableConstants {
 
         // set the controlPopupPanel position
         controlPopupPanel.setLocation(x + 5, ycontrolPanelLocation);
+        
+        textAreatableCellPopup.setFocusTraversalKeysEnabled(false);
 
         //register shift+tab to aumatically confirm and shift to the next cell
         Action confirmAndShiftEvent = new AbstractAction() {
@@ -314,8 +319,10 @@ public class TableCellPopupWindow implements ITableConstants {
         InputMap im = textAreatableCellPopup.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap am = textAreatableCellPopup.getActionMap();
 
-        KeyStroke bindingKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB,
-                InputEvent.SHIFT_DOWN_MASK);
+//        KeyStroke bindingKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB,
+//                InputEvent.SHIFT_DOWN_MASK);
+        
+        KeyStroke bindingKey = KeyStroke.getKeyStroke("control TAB");
 
         im.put(bindingKey, "confirm and shift");
         am.put("confirm and shift", confirmAndShiftEvent);
