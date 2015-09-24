@@ -328,3 +328,87 @@ The last packet sent successfully to the server was 0 milliseconds ago. The driv
 -------------------------2015-09-23 12:58:51 PM-------------------------
 3:2015-09-23 12:58:51 PM: Start to connect local database...
 2015-09-23 12:58:52 PM: Connect successfully!
+
+-------------------------2015-09-23 06:11:43 PM-------------------------
+3:2015-09-23 06:11:43 PM: Start to connect local database...
+2015-09-23 06:11:45 PM: Connect successfully!
+
+-------------------------2015-09-23 07:45:08 PM-------------------------
+3:2015-09-23 07:45:08 PM: Start to connect local database...
+2015-09-23 07:45:10 PM: Connect successfully!
+
+-------------------------2015-09-23 08:12:10 PM-------------------------
+3:2015-09-23 08:12:10 PM: Start to connect local database...
+2015-09-23 08:12:12 PM: Connect successfully!
+
+-------------------------2015-09-23 08:14:40 PM-------------------------
+3:2015-09-23 08:14:40 PM: Start to connect local database...
+2015-09-23 08:14:41 PM: Connect successfully!
+
+-------------------------2015-09-23 08:23:48 PM-------------------------
+3:2015-09-23 08:23:49 PM: Start to connect local database...
+2015-09-23 08:23:50 PM: Connect successfully!
+
+-------------------------2015-09-23 08:26:22 PM-------------------------
+3:2015-09-23 08:26:22 PM: Start to connect local database...
+2015-09-23 08:26:23 PM: Connect successfully!
+
+-------------------------2015-09-24 10:26:52 AM-------------------------
+3:2015-09-24 10:26:52 AM: Start to connect local database...
+2015-09-24 10:26:54 AM: Connect successfully!
+
+-------------------------2015-09-24 10:27:38 AM-------------------------
+3:2015-09-24 10:27:39 AM: Start to connect local database...
+2015-09-24 10:27:40 AM: Connect successfully!
+
+-------------------------2015-09-24 10:33:56 AM-------------------------
+3:2015-09-24 10:33:56 AM: Start to connect local database...
+2015-09-24 10:33:58 AM: Connect successfully!
+
+-------------------------2015-09-24 10:39:50 AM-------------------------
+3:2015-09-24 10:39:50 AM: Start to connect local database...
+2015-09-24 10:39:52 AM: Connect successfully!
+
+-------------------------2015-09-24 12:09:20 PM-------------------------
+3:2015-09-24 12:09:20 PM: Start to connect local database...
+2015-09-24 12:09:22 PM: Connect successfully!
+
+-------------------------2015-09-24 12:19:19 PM-------------------------
+3:2015-09-24 12:19:19 PM: Start to connect local database...
+2015-09-24 12:19:21 PM: Connect successfully!
+
+-------------------------2015-09-24 12:55:41 PM-------------------------
+3:2015-09-24 12:55:41 PM: Start to connect local database...
+2015-09-24 12:55:43 PM: Connect successfully!
+
+-------------------------2015-09-24 01:03:10 PM-------------------------
+3:2015-09-24 01:03:10 PM: Start to connect local database...
+2015-09-24 01:03:11 PM: Connect successfully!
+
+-------------------------2015-09-24 01:06:41 PM-------------------------
+3:2015-09-24 01:06:41 PM: Start to connect local database...
+2015-09-24 01:06:43 PM: Connect successfully!
+
+-------------------------2015-09-24 01:12:13 PM-------------------------
+3:2015-09-24 01:12:13 PM: Start to connect local database...
+2015-09-24 01:12:15 PM: Connect successfully!
+
+-------------------------2015-09-24 01:14:27 PM-------------------------
+3:2015-09-24 01:14:27 PM: Start to connect local database...
+2015-09-24 01:14:29 PM: Connect successfully!
+
+-------------------------2015-09-24 01:15:59 PM-------------------------
+3:2015-09-24 01:15:59 PM: Start to connect local database...
+2015-09-24 01:16:01 PM: Connect successfully!
+
+-------------------------2015-09-24 01:18:21 PM-------------------------
+3:2015-09-24 01:18:21 PM: Start to connect local database...
+2015-09-24 01:18:23 PM: Connect successfully!
+
+-------------------------2015-09-24 01:19:54 PM-------------------------
+3:2015-09-24 01:19:54 PM: Start to connect local database...
+2015-09-24 01:19:56 PM: Connect successfully!
+
+-------------------------2015-09-24 01:22:51 PM-------------------------
+3:2015-09-24 01:22:51 PM: Start to connect local database...
+2015-09-24 01:22:53 PM: Connect successfully!

@@ -1278,6 +1278,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // this checks the text and passes the opposite - ON = false to turn off
         makeTableEditable(jLabelEdit.getText().equals("ON ") ? false : true);
 
+        boolean editable = jLabelEdit.getText().equals("ON");
+
+        tableCellPopupWindow.enableEdit(editable);
+
     }//GEN-LAST:event_btnSwitchEditModeActionPerformed
 
     /**
@@ -1325,7 +1329,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         makeTableEditable(false); // exit edit mode;
 
+        tableCellPopupWindow.disableEdit(true);
+
     }//GEN-LAST:event_btnCancelEditModeActionPerformed
+
+    /**
+     * getEditMode on or off
+     *
+     * @param
+     */
+    public boolean getEditMode() {
+        boolean editable = jLabelEdit.getText().equals("ON");
+        return editable;
+    }
 
     /**
      * changeTabbedPanelState
@@ -2196,25 +2212,25 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             }
 
                         }
-                    } else {
-                        if (e.getKeyCode() == KeyEvent.VK_TAB
-                                || e.getKeyCode() == KeyEvent.VK_LEFT
-                                || e.getKeyCode() == KeyEvent.VK_RIGHT
-                                || e.getKeyCode() == KeyEvent.VK_UP
-                                || e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_TAB
+                            || e.getKeyCode() == KeyEvent.VK_LEFT
+                            || e.getKeyCode() == KeyEvent.VK_RIGHT
+                            || e.getKeyCode() == KeyEvent.VK_UP
+                            || e.getKeyCode() == KeyEvent.VK_DOWN) {
 
-                            if (e.getComponent() instanceof JTable) {
+                        if (e.getComponent() instanceof JTable) {
 
-                                JTable tableSelected = (JTable) e.getComponent();
+                            JTable tableSelected = (JTable) e.getComponent();
 
-                                if (e.getID() == KeyEvent.KEY_RELEASED) {
+                            if (e.getID() == KeyEvent.KEY_RELEASED) {
+                                
+                                popupWindowShowInDiffTable(tableSelected);  //determind which tableSelected to show popup window
 
-                                    popupWindowShowInDiffTable(tableSelected);  //determind which tableSelected to show popup window
-
-                                }
                             }
                         }
                     }
+
                 }
                 return false;
             }
@@ -2236,9 +2252,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 boolean disable = !tableCellPopupWindow.getWindowPopup();
 
-                table.setEnabled(disable);
+                if (jLabelEdit.getText().equals("ON")) {
 
-                disableProjectManagerFunction(disable);
+                    table.setEnabled(disable);
+
+                    disableProjectManagerFunction(disable);
+                }
 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2253,9 +2272,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 boolean disable = !tableCellPopupWindow.getWindowPopup();
 
-                table.setEnabled(disable);
+                if (jLabelEdit.getText().equals("ON")) {
 
-                disableProjectManagerFunction(disable);
+                    table.setEnabled(disable);
+
+                    disableProjectManagerFunction(disable);
+                }
 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2268,9 +2290,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 boolean disable = !tableCellPopupWindow.getWindowPopup();
 
-                table.setEnabled(disable);
+                if (jLabelEdit.getText().equals("ON")) {
 
-                disableProjectManagerFunction(disable);
+                    table.setEnabled(disable);
+
+                    disableProjectManagerFunction(disable);
+                }
 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2284,7 +2309,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void disableProjectManagerFunction(boolean disable) {
 
-        System.out.println(disable + "projectmanager function disabled");
         tabbedPanel.setEnabled(disable);
         btnAddRecords.setEnabled(disable);
         btnBatchEdit.setEnabled(disable);
