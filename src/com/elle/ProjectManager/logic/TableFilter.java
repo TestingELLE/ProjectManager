@@ -1,7 +1,5 @@
-
 package com.elle.ProjectManager.logic;
 
-import com.elle.ProjectManager.logic.EditableTableModel;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,155 +12,160 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
- * TableFilter
- * This class takes a JTable and filters the view for searching data.
- * It also applies colors to the column headers when filtering.
+ * TableFilter This class takes a JTable and filters the view for searching
+ * data. It also applies colors to the column headers when filtering.
+ *
  * @author Carlos Igreja
  * @since June 10, 2015
  * @version 0.6.3
  */
 public class TableFilter extends RowFilter<TableModel, Integer> {
-    
+
     // attributes
     private JTable table;                                  // table to be filtered 
     private TableRowSorter<TableModel> sorter;             // the table sorter
-    private Map<Integer,ArrayList<Object>> filterItems;    // distinct items to filter
+    private Map<Integer, ArrayList<Object>> filterItems;    // distinct items to filter
     private Color color;                                   // color to paint header
     private boolean isFiltering;                           // is filtering items
-    
 
     /**
-     * CONSTRUCTOR
-     * TableFilter
-     * @param table  // the table to apply the filter
+     * CONSTRUCTOR TableFilter
+     *
+     * @param table // the table to apply the filter
      */
-    public TableFilter(JTable table){
-        
+    public TableFilter(JTable table) {
+
         this.table = table;
-        
+
         // initialize the color for the table header when it is filtering
         color = Color.GREEN; // default color is green
-        
+
         isFiltering = false;
     }
-    
+
     /**
-     * initFilterItems
-     * Initilizes the filter item arrays.
-     * This should be called once at the startup of the application
-     * and after a table model has been set to the table.
+     * initFilterItems Initilizes the filter item arrays. This should be called
+     * once at the startup of the application and after a table model has been
+     * set to the table.
      */
-    public void initFilterItems(){
-        
+    public void initFilterItems() {
+
         // initialize filterItems
-        filterItems = new HashMap<>(); 
-        for(int i = 0; i < table.getColumnCount(); i++){
+        filterItems = new HashMap<>();
+        for (int i = 0; i < table.getColumnCount(); i++) {
             filterItems.put(i, new ArrayList<>());
         }
     }
+
     /**
      * addDistinctItem
+     *
      * @param col
-     * @param selectedField 
+     * @param selectedField
      */
-    public void addFilterItem(int col, Object selectedField){
-        
+    public void addFilterItem(int col, Object selectedField) {
+
         // if not filtering then all filters are cleared (full table)
         // this is to not clear other filtered columns
-        if(isFiltering == false){
+        if (isFiltering == false) {
             removeAllFilterItems();                // this empties all column filters
             isFiltering = true;
-        }
-        else{
+        } else {
             filterItems.get(col).clear();              // remove all items from this column
         }
-        
-        if(selectedField == null)                  // check for null just in case
+
+        if (selectedField == null) // check for null just in case
+        {
             selectedField = "";                    // no reason not to
-        
+        }
         filterItems.get(col).add(selectedField);   // add passed item
 
         addColorHeader(col);                       // highlight header
     }
-    
+
     /**
      * addDistinctItems
+     *
      * @param col
-     * @param items 
+     * @param items
      */
-    public void addFilterItems(int col, ArrayList<Object> items){
-        
-        if(!items.isEmpty()){
+    public void addFilterItems(int col, ArrayList<Object> items) {
+
+        if (!items.isEmpty()) {
             // if not filtering then all filters are cleared (full table)
             // this is to not clear other filtered columns
-            if(isFiltering == false){
+            if (isFiltering == false) {
                 removeAllFilterItems();                // this empties all column filters
                 isFiltering = true;
-            }
-            else{
+            } else {
                 filterItems.get(col).clear();              // remove all items from this column
             }
 
-            for(Object item: items){                  
+            for (Object item : items) {
 
-                if(item == null)                      // check for null just in case
+                if (item == null) // check for null just in case
+                {
                     item = "";                        // no reason not to
-
+                }
                 filterItems.get(col).add(item);       // add item to list
             }
 
             addColorHeader(col);                      // highlight header
         }
     }
-    
+
     /**
      * removeDistinctItems
+     *
      * @param col
      */
-    public void removeFilterItems(int col){
+    public void removeFilterItems(int col) {
 
         filterItems.get(col).clear();
         removeColorHeader(col);
     }
-    
+
     /**
      * removeAllDistinctItems
+     *
      * @param col
-     * @param items 
+     * @param items
      */
-    public void removeAllFilterItems(){
-        
-        for(int i = 0; i < filterItems.size(); i++)
+    public void removeAllFilterItems() {
+
+        for (int i = 0; i < filterItems.size(); i++) {
             filterItems.get(i).clear();
+        }
     }
-    
+
     /**
      * applyFilter
      */
-    public void applyFilter(){
-        
+    public void applyFilter() {
+
         sorter = new TableRowSorter<TableModel>(table.getModel());
         table.setRowSorter(sorter);
         sorter.setRowFilter(this);
     }
-    
+
     /**
      * applyFilter
      */
-    public void applyFilter(EditableTableModel model){
-        
+    public void applyFilter(EditableTableModel model) {
+
         sorter = new TableRowSorter<TableModel>(model);
         sorter.setRowFilter(this);
         table.setRowSorter(sorter);
     }
-    
+
     /**
      * addColorHeader
+     *
      * @param columnIndex
-     * @param color 
+     * @param color
      */
-    public void addColorHeader(int columnIndex){
-        
+    public void addColorHeader(int columnIndex) {
+
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
         cellRenderer.setBackground(color);
         cellRenderer.setHorizontalAlignment(JLabel.CENTER);
@@ -170,43 +173,45 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
                 .setHeaderRenderer(cellRenderer);
         table.getTableHeader().repaint();
     }
-    
+
     /**
      * applyColorHeaders
-     * @param color 
+     *
+     * @param color
      */
-    public void applyColorHeaders(){
-        
-        for(int i = 0; i < filterItems.size(); i++){
-            if(filterItems.get(i).isEmpty()){
+    public void applyColorHeaders() {
+
+        for (int i = 0; i < filterItems.size(); i++) {
+            if (filterItems.get(i).isEmpty()) {
                 removeColorHeader(i);
-            }
-            else{
+            } else {
                 addColorHeader(i);
             }
         }
         table.getTableHeader().repaint();
     }
-    
+
     /**
      * removeColorHeader
+     *
      * @param columnIndex
-     * @param color 
+     * @param color
      */
-    public void removeColorHeader(int columnIndex){
-        
+    public void removeColorHeader(int columnIndex) {
+
         table.getColumnModel().getColumn(columnIndex)
                 .setHeaderRenderer(table.getTableHeader().getDefaultRenderer());
         table.getTableHeader().repaint();
     }
-    
+
     /**
      * removeAllColorHeaders
-     * @param color 
+     *
+     * @param color
      */
-    public void removeAllColorHeaders(){
-        
-        for(int i = 0; i < filterItems.size(); i++){
+    public void removeAllColorHeaders() {
+
+        for (int i = 0; i < filterItems.size(); i++) {
             removeColorHeader(i);
         }
         table.getTableHeader().repaint();
@@ -214,7 +219,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
     /**
      * getColor
-     * @return 
+     *
+     * @return
      */
     public Color getColor() {
         return color;
@@ -222,7 +228,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
     /**
      * setColor
-     * @param color 
+     *
+     * @param color
      */
     public void setColor(Color color) {
         this.color = color;
@@ -230,7 +237,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
     /**
      * getTable
-     * @return 
+     *
+     * @return
      */
     public JTable getTable() {
         return table;
@@ -238,7 +246,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
     /**
      * setTable
-     * @param table 
+     *
+     * @param table
      */
     public void setTable(JTable table) {
         this.table = table;
@@ -246,7 +255,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
     /**
      * getSorter
-     * @return 
+     *
+     * @return
      */
     public TableRowSorter<TableModel> getSorter() {
         return sorter;
@@ -254,7 +264,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
     /**
      * setSorter
-     * @param sorter 
+     *
+     * @param sorter
      */
     public void setSorter(TableRowSorter<TableModel> sorter) {
         this.sorter = sorter;
@@ -262,7 +273,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
     /**
      * getFilterItems
-     * @return 
+     *
+     * @return
      */
     public Map<Integer, ArrayList<Object>> getFilterItems() {
         return filterItems;
@@ -270,29 +282,30 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
     /**
      * setFilterItems
-     * @param distinctColumnItems 
+     *
+     * @param distinctColumnItems
      */
     public void setFilterItems(Map<Integer, ArrayList<Object>> distinctColumnItems) {
         this.filterItems = distinctColumnItems;
     }
-    
+
     /**
-     * clearAllFilters
-     * clears filters for the specified column
+     * clearAllFilters clears filters for the specified column
+     *
      * @param columnIndex
-     * @return 
+     * @return
      */
-    public void clearColFilter(int columnIndex){
+    public void clearColFilter(int columnIndex) {
         removeFilterItems(columnIndex);    // remove the filters for the column
         removeColorHeader(columnIndex);    // remove the header highlight
     }
-    
+
     /**
-     * clearAllFilters
-     * Loads all rows, applys the filter, and removes the color highlights
+     * clearAllFilters Loads all rows, applys the filter, and removes the color
+     * highlights
      */
-    public void clearAllFilters(){
-        
+    public void clearAllFilters() {
+
         removeAllFilterItems();      // load all rows
         removeAllColorHeaders();     // remove all header highlighted Colors
         isFiltering = false;         // no filters are applied 
@@ -300,13 +313,14 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
     /**
      * include
+     *
      * @param entry
-     * @return 
+     * @return
      */
     @Override
     public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-        
-        if(isFiltering){
+
+        if (isFiltering) {
             TableModel model = entry.getModel();
             int row = entry.getIdentifier();
             int numColsfiltered = filterItems.size();     // number of cols filtered
@@ -314,49 +328,46 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
             int emptyFilterCols = 0;                             // number of empty filter columns
 
             // check every column 
-            for( int col = 0; col < model.getColumnCount(); col++ ) {
+            for (int col = 0; col < model.getColumnCount(); col++) {
 
-                if ( filterItems.get(col).isEmpty() ){
+                if (filterItems.get(col).isEmpty()) {
                     numColsfiltered--;
                     emptyFilterCols++;
                     continue;                          // the column is empty
                 }
-                    // get filter values
-                    ArrayList<Object> distinctItems = filterItems.get(col);
+                // get filter values
+                ArrayList<Object> distinctItems = filterItems.get(col);
 
-                    // get value
-                    Object cellValue = model.getValueAt(row, col);
+                // get value
+                Object cellValue = model.getValueAt(row, col);
 
-                    // handle null exception
-                    if(cellValue == null) 
-                        cellValue = "";
+                // handle null exception
+                if (cellValue == null) {
+                    cellValue = "";
+                }
 
-                    // if contains any of the filter items then include
-                    if(distinctItems.contains(cellValue.toString())){
-                        itemsFound++;
-                    }
-                    else{
-                        // search for a match and ignore case
-                        for(Object distinctItem : distinctItems){
-                            if(cellValue.toString().equalsIgnoreCase(distinctItem.toString())){
-                                itemsFound++;
-                            }
+                // if contains any of the filter items then include
+                if (distinctItems.contains(cellValue.toString())) {
+                    itemsFound++;
+                } else {
+                    // search for a match and ignore case
+                    for (Object distinctItem : distinctItems) {
+                        if (cellValue.toString().equalsIgnoreCase(distinctItem.toString())) {
+                            itemsFound++;
                         }
                     }
+                }
             }
 
-            if(emptyFilterCols == model.getColumnCount()){
+            if (emptyFilterCols == model.getColumnCount()) {
                 isFiltering = false;
                 return true;
-            }
-            else if(itemsFound == numColsfiltered){
+            } else if (itemsFound == numColsfiltered) {
                 return true;
+            } else {
+                return false;
             }
-            else{
-                return false; 
-            }
-        }
-        else{
+        } else {
             return true;  // not filtering
         }
     }

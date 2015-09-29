@@ -1396,9 +1396,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     private void btnAddRecordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRecordsActionPerformed
 
+        //addRecordWindow become visible
+        addRecordWindowShow = true;
+        
+        //set popup Window become invisible
+        tableCellPopupWindow.setTableCellPopupWindowVisible(!addRecordWindowShow);
+
         addRecordsWindow = new AddRecordsWindow();
         addRecordsWindow.setVisible(true);
-        addRecordWindowShow = true;
 
         // update records
         String tabName = getSelectedTabName();
@@ -1781,9 +1786,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 public void mouseClicked(MouseEvent e) {
 
                     if (e.getClickCount() == 2) {
-                        clearFilterDoubleClick(e, table);
+                        if (!tableCellPopupWindow.isEditButtonClicked()) {
+                            clearFilterDoubleClick(e, table);
+                        }
                     }
-                    System.out.println("print");
                 }
 
                 /**
@@ -1823,7 +1829,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         // if left mouse clicks
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             if (e.getClickCount() == 2) {
-                                filterByDoubleClick(table);
+                                if (!tableCellPopupWindow.isEditButtonClicked()) {
+                                    filterByDoubleClick(table);
+                                }
                             } else if (e.getClickCount() == 1) {
                                 if (jLabelEdit.getText().equals("ON ")) {
                                     selectAllText(e);
@@ -2126,95 +2134,97 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                if (!addRecordWindowShow) {
-                    if (jLabelEdit.getText().equals("ON ")) {
-                        if (e.getKeyCode() == KeyEvent.VK_TAB) {
-                            if (e.getComponent() instanceof JTable) {
-                                JTable table = (JTable) e.getComponent();
-                                table.setFocusTraversalKeysEnabled(false);
-                                int row = table.getSelectedRow();
-                                int column = table.getSelectedColumn();
-                                if (column == table.getRowCount() || column == 0) {
-                                    return false;
-                                } else {
-                                    table.getComponentAt(row, column).requestFocus();
-                                    table.editCellAt(row, column);
-                                    JTextField selectCom = (JTextField) table.getEditorComponent();
-                                    selectCom.requestFocusInWindow();
-                                    selectCom.selectAll();
-                                }
-                            }
-
-                        } else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {                     // Default Date input with today's date
-                            JTable table = (JTable) e.getComponent().getParent();
+                if (jLabelEdit.getText().equals("ON ")) {
+                    if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                        if (e.getComponent() instanceof JTable) {
+                            JTable table = (JTable) e.getComponent();
+                            table.setFocusTraversalKeysEnabled(false);
+                            int row = table.getSelectedRow();
                             int column = table.getSelectedColumn();
-                            if (table.getColumnName(column).toLowerCase().contains("date")) {
-                                if (e.getID() != 401) { // 401 = key down, 402 = key released
-                                    return false;
-                                } else {
-                                    JTextField selectCom = (JTextField) e.getComponent();
-                                    selectCom.requestFocusInWindow();
-                                    selectCom.selectAll();
-                                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                                    Date date = new Date();
-                                    String today = dateFormat.format(date);
-                                    selectCom.setText(today);
-                                }
+                            if (column == table.getRowCount() || column == 0) {
+                                return false;
+                            } else {
+                                table.getComponentAt(row, column).requestFocus();
+                                table.editCellAt(row, column);
+                                JTextField selectCom = (JTextField) table.getEditorComponent();
+                                selectCom.requestFocusInWindow();
+                                selectCom.selectAll();
                             }
-                        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-
-                            if (e.getComponent() instanceof JTable) {
-                                JTable table = (JTable) e.getComponent();
-                                table.setFocusTraversalKeysEnabled(false);
-
-                                // make sure in editing mode
-                                if (!table.isEditing()
-                                        && e.getID() == KeyEvent.KEY_PRESSED) {
-
-                                    // if finished display dialog box
-                                    // Upload Changes? Yes or No?
-                                    Object[] options = {"Commit", "Revert"};  // the titles of buttons
-
-                                    // store selected rowIndex before the tableSelected is refreshed
-                                    int rowIndex = table.getSelectedRow();
-
-                                    int selectedOption = JOptionPane.showOptionDialog(ProjectManagerWindow.getInstance(),
-                                            "Would you like to upload changes?", "Upload Changes",
-                                            JOptionPane.YES_NO_OPTION,
-                                            JOptionPane.QUESTION_MESSAGE,
-                                            null, //do not use a custom Icon
-                                            options, //the titles of buttons
-                                            options[0]); //default button title
-
-                                    switch (selectedOption) {
-                                        case 0:
-                                            // if Commit, upload changes and return to editing
-                                            uploadChanges();  // upload changes to database
-                                            makeTableEditable(false); // exit edit mode;
-                                            break;
-                                        case 1:
-                                            // if Revert, revert changes
-                                            loadTable(table); // reverts the model back
-                                            makeTableEditable(false); // exit edit mode;
-
-                                            break;
-                                        default:
-                                            // do nothing -> cancel
-                                            break;
-                                    }
-
-                                    // highligh previously selected rowIndex
-                                    if (rowIndex != -1) {
-                                        table.setRowSelectionInterval(rowIndex, rowIndex);
-                                    }
-                                }
-
-                                // if enter is pressed then enable upload changes button
-                                btnUploadChanges.setEnabled(true);
-                            }
-
                         }
+
+                    } else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
+                        // Default Date input with today's date
+                        System.out.print("control d");
+                        JTable table = (JTable) e.getComponent().getParent();
+                        int column = table.getSelectedColumn();
+                        if (table.getColumnName(column).toLowerCase().contains("date")) {
+                            if (e.getID() != 401) { // 401 = key down, 402 = key released
+                                return false;
+                            } else {
+                                JTextField selectCom = (JTextField) e.getComponent();
+                                selectCom.requestFocusInWindow();
+                                selectCom.selectAll();
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                Date date = new Date();
+                                String today = dateFormat.format(date);
+                                selectCom.setText(today);
+                            }
+                        }
+                    } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+                        if (e.getComponent() instanceof JTable) {
+                            JTable table = (JTable) e.getComponent();
+                            table.setFocusTraversalKeysEnabled(false);
+
+                            // make sure in editing mode
+                            if (!table.isEditing()
+                                    && e.getID() == KeyEvent.KEY_PRESSED) {
+
+                                // if finished display dialog box
+                                // Upload Changes? Yes or No?
+                                Object[] options = {"Commit", "Revert"};  // the titles of buttons
+
+                                // store selected rowIndex before the tableSelected is refreshed
+                                int rowIndex = table.getSelectedRow();
+
+                                int selectedOption = JOptionPane.showOptionDialog(ProjectManagerWindow.getInstance(),
+                                        "Would you like to upload changes?", "Upload Changes",
+                                        JOptionPane.YES_NO_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE,
+                                        null, //do not use a custom Icon
+                                        options, //the titles of buttons
+                                        options[0]); //default button title
+
+                                switch (selectedOption) {
+                                    case 0:
+                                        // if Commit, upload changes and return to editing
+                                        uploadChanges();  // upload changes to database
+                                        makeTableEditable(false); // exit edit mode;
+                                        break;
+                                    case 1:
+                                        // if Revert, revert changes
+                                        loadTable(table); // reverts the model back
+                                        makeTableEditable(false); // exit edit mode;
+
+                                        break;
+                                    default:
+                                        // do nothing -> cancel
+                                        break;
+                                }
+
+                                // highligh previously selected rowIndex
+                                if (rowIndex != -1) {
+                                    table.setRowSelectionInterval(rowIndex, rowIndex);
+                                }
+                            }
+
+                            // if enter is pressed then enable upload changes button
+                            btnUploadChanges.setEnabled(true);
+                        }
+
                     }
+                }
+                if (!addRecordWindowShow) {
                     if (e.getKeyCode() == KeyEvent.VK_TAB
                             || e.getKeyCode() == KeyEvent.VK_LEFT
                             || e.getKeyCode() == KeyEvent.VK_RIGHT
@@ -2329,6 +2339,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuReports.setEnabled(disable);
         searchPanel.setEnabled(disable);
         textFieldForSearch.setEnabled(disable);
+        
+        //set sort and filter enabled
+        String tabName = getSelectedTabName();
+        Tab tab = tabs.get(tabName);
+        TableFilter filter = tab.getFilter();
+        for (int i = 0; i < tab.getTable().getColumnCount(); i++) {
+            filter.getSorter().setSortable(i, disable);
+        }
+
     }
 
     public TableCellPopupWindow getPopupWindow() {
@@ -2522,6 +2541,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // set the listeners for the tableSelected
         setTableListeners(table);
+//        table.setEnabled(false);
 
         // update last time the tableSelected was updated
         setLastUpdateTime();

@@ -40,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 /**
  * Create table cell popup window class
@@ -257,6 +258,7 @@ public class TableCellPopupWindow implements ITableConstants {
     public void getTableCellPopup(JTable table, JFrame frame) {
         tableCellPopup(table, frame);
     }
+    
     /*
      * This is to set the table cell popup window visible to edit.
      * @parm selectedTable, row , column
@@ -269,6 +271,10 @@ public class TableCellPopupWindow implements ITableConstants {
 
         // find the selected table cell 
         Rectangle cellRectTable = selectedTable.getCellRect(row, column, true);
+        
+        //convert the location in jtable to the location in projectManager window
+        cellRectTable = SwingUtilities.convertRectangle(selectedTable, cellRectTable, projectManager);
+        
         int x = cellRectTable.x;
         int y = cellRectTable.y;
 
@@ -280,11 +286,11 @@ public class TableCellPopupWindow implements ITableConstants {
         textAreatableCellPopup.setText("");
         textAreatableCellPopup.setText((String) selectedTable.getValueAt(row, column));
 
-        int ytablePanelLocation = y + cellRectTable.height + 2; // actually table Panel's y value
+        int ytablePanelLocation = y-20; // actually table Panel's y value
 
-        if (!projectManager.getAddRecordsWindowShow()) {
-            ytablePanelLocation = ytablePanelLocation + 150;
-        }
+//        if (!projectManager.getAddRecordsWindowShow()) {
+//            ytablePanelLocation = ytablePanelLocation + 150;
+//        }
 
         int ycontrolPanelLocation = ytablePanelLocation + tableCellPopupPanel.getHeight();// actually control Panel's y value
 
@@ -296,14 +302,14 @@ public class TableCellPopupWindow implements ITableConstants {
             ycontrolPanelLocation = ytablePanelLocation + tableCellPopupPanel.getHeight();
         }
         // set the tableCellPopupPanel position
-        tableCellPopupPanel.setLocation(x + 5, ytablePanelLocation);
+        tableCellPopupPanel.setLocation(x, ytablePanelLocation);
 
         // set the controlPopupPanel position
-        controlPopupPanel.setLocation(x + 5, ycontrolPanelLocation);
+        controlPopupPanel.setLocation(x, ycontrolPanelLocation);
         
         textAreatableCellPopup.setFocusTraversalKeysEnabled(false);
 
-        //register shift+tab to aumatically confirm and shift to the next cell
+        //register cirt+tab to aumatically confirm and shift to the next cell
         Action confirmAndShiftEvent = new AbstractAction() {
 
             @Override
@@ -318,9 +324,6 @@ public class TableCellPopupWindow implements ITableConstants {
 
         InputMap im = textAreatableCellPopup.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap am = textAreatableCellPopup.getActionMap();
-
-//        KeyStroke bindingKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB,
-//                InputEvent.SHIFT_DOWN_MASK);
         
         KeyStroke bindingKey = KeyStroke.getKeyStroke("control TAB");
 
