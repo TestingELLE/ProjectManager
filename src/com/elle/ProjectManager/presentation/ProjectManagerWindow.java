@@ -221,6 +221,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(TASKS_TABLE_NAME).setTableData(new ModifiedTableData(tasksTable));
         tabs.get(TASKFILES_TABLE_NAME).setTableData(new ModifiedTableData(task_filesTable));
         tabs.get(TASKNOTES_TABLE_NAME).setTableData(new ModifiedTableData(task_notesTable));
+        
+        // set all the tabs initially not in editing mode
+        tabs.get(TASKS_TABLE_NAME).setEditing(false);
+        tabs.get(TASKFILES_TABLE_NAME).setEditing(false);
+        tabs.get(TASKNOTES_TABLE_NAME).setEditing(false);
 
 //        // Call the initTableCellPopup method to initiate the Table Cell Popup window
 //        initTableCellPopup();
