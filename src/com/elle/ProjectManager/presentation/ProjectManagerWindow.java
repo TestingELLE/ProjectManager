@@ -1809,7 +1809,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemSQLCmdChkBxActionPerformed
 
     private void btnRevertChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevertChangesActionPerformed
-        // TODO add your handling code here:
+        
+        revertChanges();
+        
     }//GEN-LAST:event_btnRevertChangesActionPerformed
 
     private void buttonFilteringTables(JTable table, String str){
