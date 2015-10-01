@@ -153,6 +153,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         initComponents(); // generated code
 
+        // initialize the colors for the edit mode text
+        editModeActiveTextColor = new Color(44,122,22); //dark green
+        editModeDefaultTextColor = labelEditMode.getForeground();
+        
         // set names to tables (this was in tabbedPanelChanged method)
         tasksTable.setName(TASKS_TABLE_NAME);
         task_filesTable.setName(TASKFILES_TABLE_NAME);
@@ -478,9 +482,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnAddRecords = new javax.swing.JButton();
         btnUploadChanges = new javax.swing.JButton();
         btnSwitchEditMode = new javax.swing.JButton();
-        jLabelEdit = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        btnRevertChangesBatchEdit1 = new javax.swing.JButton();
+        labelEditModeState = new javax.swing.JLabel();
+        labelEditMode = new javax.swing.JLabel();
+        btnRevertChangesBatchEdit = new javax.swing.JButton();
         jPanelSQL = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaSQL = new javax.swing.JTextArea();
@@ -694,14 +698,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
 
-        jLabelEdit.setText("OFF");
+        labelEditModeState.setText("OFF");
 
-        jLabel2.setText("Edit Mode:");
+        labelEditMode.setText("Edit Mode:");
 
-        btnRevertChangesBatchEdit1.setText("Revert Changes");
-        btnRevertChangesBatchEdit1.addActionListener(new java.awt.event.ActionListener() {
+        btnRevertChangesBatchEdit.setText("Revert Changes");
+        btnRevertChangesBatchEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRevertChangesBatchEdit1ActionPerformed(evt);
+                btnRevertChangesBatchEditActionPerformed(evt);
             }
         });
 
@@ -711,15 +715,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelEditLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
+                .addComponent(labelEditMode)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabelEdit)
+                .addComponent(labelEditModeState)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnSwitchEditMode)
                 .addGap(82, 82, 82)
                 .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnRevertChangesBatchEdit1)
+                .addComponent(btnRevertChangesBatchEdit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAddRecords)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -732,12 +736,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addGap(4, 4, 4)
                 .addGroup(jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
+                    .addComponent(labelEditMode)
                     .addComponent(btnSwitchEditMode)
-                    .addComponent(jLabelEdit)
+                    .addComponent(labelEditModeState)
                     .addComponent(btnBatchEdit)
                     .addComponent(btnAddRecords)
-                    .addComponent(btnRevertChangesBatchEdit1))
+                    .addComponent(btnRevertChangesBatchEdit))
                 .addGap(4, 4, 4))
         );
 
@@ -1206,7 +1210,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // reload modified tableSelected data with current tableSelected model
         data.reloadData();
 
-        makeTableEditable(jLabelEdit.getText().equals("OFF") ? true : false);
+        makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false);
 
         data.getNewData().clear();    // reset the arraylist to record future changes
         setLastUpdateTime();          // update time
@@ -1258,9 +1262,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // this was the way it is being checked - with the label text
         // this checks the text and passes the opposite - ON = false to turn off
-        makeTableEditable(jLabelEdit.getText().equals("ON ") ? false : true);
+        makeTableEditable(labelEditModeState.getText().equals("ON ") ? false : true);
 
-        boolean editable = jLabelEdit.getText().equals("ON");
+        boolean editable = labelEditModeState.getText().equals("ON");
 
         tableCellPopupWindow.enableEdit(editable);
 
@@ -1279,13 +1283,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         boolean isBatchEditBtnVisible = tab.isBatchEditBtnVisible();
 
         if (makeTableEditable) {
-            jLabelEdit.setText("ON ");
+            labelEditModeState.setText("ON ");
             btnSwitchEditMode.setVisible(false);
             btnUploadChanges.setVisible(true);
             btnAddRecords.setVisible(false);
             btnBatchEdit.setVisible(false);
         } else {
-            jLabelEdit.setText("OFF");
+            labelEditModeState.setText("OFF");
             btnSwitchEditMode.setVisible(true);
             btnUploadChanges.setVisible(false);
             btnAddRecords.setVisible(isAddRecordsBtnVisible);
@@ -1306,7 +1310,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param
      */
     public boolean getEditMode() {
-        boolean editable = jLabelEdit.getText().equals("ON");
+        boolean editable = labelEditModeState.getText().equals("ON");
         return editable;
     }
 
@@ -1335,7 +1339,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         labelRecords.setText(recordsLabel);
 
         // hide buttons if in edit mode
-        if (jLabelEdit.getText().equals("ON ")) {
+        if (labelEditModeState.getText().equals("ON ")) {
             btnAddRecords.setVisible(false);
             btnBatchEdit.setVisible(false);
         }
@@ -1714,9 +1718,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }//GEN-LAST:event_menuItemSQLCmdChkBxActionPerformed
 
-    private void btnRevertChangesBatchEdit1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevertChangesBatchEdit1ActionPerformed
+    private void btnRevertChangesBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevertChangesBatchEditActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnRevertChangesBatchEdit1ActionPerformed
+    }//GEN-LAST:event_btnRevertChangesBatchEditActionPerformed
 
     private void buttonFilteringTables(JTable table, String str){
         
@@ -1806,7 +1810,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     filterByDoubleClick(table);
                                 }
                             } else if (e.getClickCount() == 1) {
-                                if (jLabelEdit.getText().equals("ON ")) {
+                                if (labelEditModeState.getText().equals("ON ")) {
                                     selectAllText(e);
                                 }
                             }
@@ -1893,7 +1897,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                     // I believe this is meant to toggle edit mode
                     // so I passed the conditional
-                    makeTableEditable(jLabelEdit.getText().equals("ON ") ? false : true);
+                    makeTableEditable(labelEditModeState.getText().equals("ON ") ? false : true);
                 }
             }
         });
@@ -2107,7 +2111,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                if (jLabelEdit.getText().equals("ON ")) {
+                if (labelEditModeState.getText().equals("ON ")) {
                     if (e.getKeyCode() == KeyEvent.VK_TAB) {
                         if (e.getComponent() instanceof JTable) {
                             JTable table = (JTable) e.getComponent();
@@ -2237,7 +2241,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 boolean disable = !tableCellPopupWindow.getWindowPopup();
 
-                if (jLabelEdit.getText().equals("ON")) {
+                if (labelEditModeState.getText().equals("ON")) {
 
                     table.setEnabled(disable);
 
@@ -2257,7 +2261,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 boolean disable = !tableCellPopupWindow.getWindowPopup();
 
-                if (jLabelEdit.getText().equals("ON")) {
+                if (labelEditModeState.getText().equals("ON")) {
 
                     table.setEnabled(disable);
 
@@ -2275,7 +2279,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 boolean disable = !tableCellPopupWindow.getWindowPopup();
 
-                if (jLabelEdit.getText().equals("ON")) {
+                if (labelEditModeState.getText().equals("ON")) {
 
                     table.setEnabled(disable);
 
@@ -2591,13 +2595,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JButton btnClearAllFilter;
     private javax.swing.JButton btnCloseSQL;
     private javax.swing.JButton btnEnterSQL;
-    private javax.swing.JButton btnRevertChangesBatchEdit1;
+    private javax.swing.JButton btnRevertChangesBatchEdit;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnSwitchEditMode;
     private javax.swing.JButton btnUploadChanges;
     private javax.swing.JComboBox comboBoxSearch;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabelEdit;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanelEdit;
@@ -2608,6 +2610,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextAreaSQL;
+    private javax.swing.JLabel labelEditMode;
+    private javax.swing.JLabel labelEditModeState;
     private javax.swing.JLabel labelRecords;
     private javax.swing.JLabel labelTimeLastUpdate;
     private javax.swing.JMenuBar menuBar;
