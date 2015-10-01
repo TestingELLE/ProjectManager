@@ -251,14 +251,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * This is to make the scroll bar always scrolling down.
      */
     private void scrollDown(JScrollPane scrollPane) {
-        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-
+        JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
+        AdjustmentListener downScroller = new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
-                e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                Adjustable adjustable = e.getAdjustable();
+                adjustable.setValue(adjustable.getMaximum());
+                verticalBar.removeAdjustmentListener(this);
             }
-
-        });
+        };
+        verticalBar.addAdjustmentListener(downScroller);
     }
 //    
 //    /*
@@ -462,14 +464,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        addPanel_control = new javax.swing.JPanel();
-        labelTimeLastUpdate = new javax.swing.JLabel();
-        searchPanel = new javax.swing.JPanel();
-        btnSearch = new javax.swing.JButton();
-        textFieldForSearch = new javax.swing.JTextField();
-        comboBoxSearch = new javax.swing.JComboBox();
-        btnClearAllFilter = new javax.swing.JButton();
-        labelRecords = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         tabbedPanel = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -495,6 +489,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         panelBatchEditButtons = new javax.swing.JPanel();
         btnRevertChangesBatchEdit = new javax.swing.JButton();
         btnUploadChangesBatchEdit = new javax.swing.JButton();
+        addPanel_control = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        labelRecords = new javax.swing.JLabel();
+        labelTimeLastUpdate = new javax.swing.JLabel();
+        searchPanel = new javax.swing.JPanel();
+        btnSearch = new javax.swing.JButton();
+        textFieldForSearch = new javax.swing.JTextField();
+        comboBoxSearch = new javax.swing.JComboBox();
+        btnClearAllFilter = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemVersion = new javax.swing.JMenuItem();
@@ -526,94 +530,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        labelTimeLastUpdate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labelTimeLastUpdate.setText("Last updated: ");
-        labelTimeLastUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-
-        btnSearch.setText("Search");
-        btnSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSearchActionPerformed(evt);
-            }
-        });
-
-        textFieldForSearch.setText("Enter Symbol name");
-        textFieldForSearch.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                textFieldForSearchMouseClicked(evt);
-            }
-        });
-        textFieldForSearch.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                textFieldForSearchKeyPressed(evt);
-            }
-        });
-
-        comboBoxSearch.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "symbol", "analyst" }));
-
-        btnClearAllFilter.setText("Clear All Filters");
-        btnClearAllFilter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClearAllFilterActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
-        searchPanel.setLayout(searchPanelLayout);
-        searchPanelLayout.setHorizontalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnClearAllFilter)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSearch)
-                .addGap(17, 17, 17))
-        );
-        searchPanelLayout.setVerticalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSearch)
-                    .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnClearAllFilter))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        labelRecords.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labelRecords.setText("labelRecords");
-
-        javax.swing.GroupLayout addPanel_controlLayout = new javax.swing.GroupLayout(addPanel_control);
-        addPanel_control.setLayout(addPanel_controlLayout);
-        addPanel_controlLayout.setHorizontalGroup(
-            addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(addPanel_controlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE))
-                .addContainerGap(59, Short.MAX_VALUE))
-        );
-        addPanel_controlLayout.setVerticalGroup(
-            addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(addPanel_controlLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addComponent(labelTimeLastUpdate)
-                .addContainerGap(20, Short.MAX_VALUE))
-        );
-
-        tabbedPanel.setPreferredSize(new java.awt.Dimension(800, 584));
         tabbedPanel.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 tabbedPanelStateChanged(evt);
@@ -642,7 +558,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "num", "title", "step", "description", "instructions", "programmer", "dateAssigned", "rk", "done", "dateDone"
+                "taskID", "app", "title", "step", "description", "instructions", "programmer", "dateAssigned", "rk", "version", "dateDone"
             }
         ) {
             Class[] types = new Class [] {
@@ -873,7 +789,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(btnEnterSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnCloseSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(4, 4, 4)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE))
+                .addComponent(jScrollPane2))
         );
         jPanelSQLLayout.setVerticalGroup(
             jPanelSQLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -914,47 +830,154 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         panelBatchEditButtonsLayout.setHorizontalGroup(
             panelBatchEditButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBatchEditButtonsLayout.createSequentialGroup()
-                .addContainerGap(312, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnUploadChangesBatchEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnRevertChangesBatchEdit)
-                .addContainerGap(327, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelBatchEditButtonsLayout.setVerticalGroup(
             panelBatchEditButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBatchEditButtonsLayout.createSequentialGroup()
-                .addGap(4, 4, 4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panelBatchEditButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnUploadChangesBatchEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRevertChangesBatchEdit))
-                .addGap(4, 4, 4))
+                    .addComponent(btnRevertChangesBatchEdit)))
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
-            .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+            .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE)
+            .addComponent(panelBatchEditButtons, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(4, 4, 4))
-            .addComponent(panelBatchEditButtons, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(tabbedPanel)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelBatchEditButtons, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
-                .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panelBatchEditButtons, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
         tabbedPanel.getAccessibleContext().setAccessibleName("Reports");
         tabbedPanel.getAccessibleContext().setAccessibleParent(tabbedPanel);
+
+        addPanel_control.setPreferredSize(new java.awt.Dimension(1045, 120));
+
+        labelRecords.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        labelRecords.setText("labelRecords");
+
+        labelTimeLastUpdate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        labelTimeLastUpdate.setText("Last updated: ");
+        labelTimeLastUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        searchPanel.setPreferredSize(new java.awt.Dimension(584, 76));
+
+        btnSearch.setText("Search");
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
+
+        textFieldForSearch.setText("Enter Symbol name");
+        textFieldForSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                textFieldForSearchMouseClicked(evt);
+            }
+        });
+        textFieldForSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                textFieldForSearchKeyPressed(evt);
+            }
+        });
+
+        comboBoxSearch.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "symbol", "analyst" }));
+
+        btnClearAllFilter.setText("Clear All Filters");
+        btnClearAllFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearAllFilterActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
+        searchPanel.setLayout(searchPanelLayout);
+        searchPanelLayout.setHorizontalGroup(
+            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnClearAllFilter)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSearch)
+                .addContainerGap(92, Short.MAX_VALUE))
+        );
+        searchPanelLayout.setVerticalGroup(
+            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchPanelLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClearAllFilter)
+                    .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSearch))
+                .addGap(0, 33, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout addPanel_controlLayout = new javax.swing.GroupLayout(addPanel_control);
+        addPanel_control.setLayout(addPanel_controlLayout);
+        addPanel_controlLayout.setHorizontalGroup(
+            addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(addPanel_controlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(122, Short.MAX_VALUE))
+        );
+        addPanel_controlLayout.setVerticalGroup(
+            addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(addPanel_controlLayout.createSequentialGroup()
+                .addGap(0, 9, Short.MAX_VALUE)
+                .addGroup(addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
 
         menuFile.setText("File");
 
@@ -1119,13 +1142,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(addPanel_control, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 807, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1278,6 +1303,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // this checks the text and passes the opposite - ON = false to turn off
         makeTableEditable(jLabelEdit.getText().equals("ON ") ? false : true);
 
+        boolean editable = jLabelEdit.getText().equals("ON");
+
+        tableCellPopupWindow.enableEdit(editable);
+
     }//GEN-LAST:event_btnSwitchEditModeActionPerformed
 
     /**
@@ -1325,7 +1354,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         makeTableEditable(false); // exit edit mode;
 
+        tableCellPopupWindow.disableEdit(true);
+
     }//GEN-LAST:event_btnCancelEditModeActionPerformed
+
+    /**
+     * getEditMode on or off
+     *
+     * @param
+     */
+    public boolean getEditMode() {
+        boolean editable = jLabelEdit.getText().equals("ON");
+        return editable;
+    }
 
     /**
      * changeTabbedPanelState
@@ -1378,9 +1419,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     private void btnAddRecordsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRecordsActionPerformed
 
+        //addRecordWindow become visible
+        addRecordWindowShow = true;
+        
+        //set popup Window become invisible
+        tableCellPopupWindow.setTableCellPopupWindowVisible(!addRecordWindowShow);
+
         addRecordsWindow = new AddRecordsWindow();
         addRecordsWindow.setVisible(true);
-        addRecordWindowShow = true;
 
         // update records
         String tabName = getSelectedTabName();
@@ -1741,6 +1787,25 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         uploadChanges();  // upload changes to database
     }//GEN-LAST:event_btnUploadChangesBatchEditActionPerformed
 
+    private void buttonFilteringTables(JTable table, String str){
+        
+        try {
+            // open connection because might time out
+            DBConnection.open();
+            statement = DBConnection.getStatement();
+            String sql = "SELECT * FROM " + table.getName() + " WHERE app = "
+                    + str +" ORDER BY taskID ASC" + "";
+            loadTable(sql, table);
+
+        } catch (SQLException ex) {
+            // for debugging
+            ex.printStackTrace();
+            logWindow.addMessageWithDate(ex.getMessage());
+
+            // notify the user that there was an issue
+            JOptionPane.showMessageDialog(this, "connection failed");
+        }
+    }
     /**
      * loadData
      */
@@ -1763,9 +1828,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 public void mouseClicked(MouseEvent e) {
 
                     if (e.getClickCount() == 2) {
-                        clearFilterDoubleClick(e, table);
+                        if (!tableCellPopupWindow.isEditButtonClicked()) {
+                            clearFilterDoubleClick(e, table);
+                        }
                     }
-                    System.out.println("print");
                 }
 
                 /**
@@ -1805,7 +1871,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         // if left mouse clicks
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             if (e.getClickCount() == 2) {
-                                filterByDoubleClick(table);
+                                if (!tableCellPopupWindow.isEditButtonClicked()) {
+                                    filterByDoubleClick(table);
+                                }
                             } else if (e.getClickCount() == 1) {
                                 if (jLabelEdit.getText().equals("ON ")) {
                                     selectAllText(e);
@@ -2108,113 +2176,115 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                if (!addRecordWindowShow) {
-                    if (jLabelEdit.getText().equals("ON ")) {
-                        if (e.getKeyCode() == KeyEvent.VK_TAB) {
-                            if (e.getComponent() instanceof JTable) {
-                                JTable table = (JTable) e.getComponent();
-                                table.setFocusTraversalKeysEnabled(false);
-                                int row = table.getSelectedRow();
-                                int column = table.getSelectedColumn();
-                                if (column == table.getRowCount() || column == 0) {
-                                    return false;
-                                } else {
-                                    table.getComponentAt(row, column).requestFocus();
-                                    table.editCellAt(row, column);
-                                    JTextField selectCom = (JTextField) table.getEditorComponent();
-                                    selectCom.requestFocusInWindow();
-                                    selectCom.selectAll();
-                                }
-                            }
-
-                        } else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {                     // Default Date input with today's date
-                            JTable table = (JTable) e.getComponent().getParent();
+                if (jLabelEdit.getText().equals("ON ")) {
+                    if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                        if (e.getComponent() instanceof JTable) {
+                            JTable table = (JTable) e.getComponent();
+                            table.setFocusTraversalKeysEnabled(false);
+                            int row = table.getSelectedRow();
                             int column = table.getSelectedColumn();
-                            if (table.getColumnName(column).toLowerCase().contains("date")) {
-                                if (e.getID() != 401) { // 401 = key down, 402 = key released
-                                    return false;
-                                } else {
-                                    JTextField selectCom = (JTextField) e.getComponent();
-                                    selectCom.requestFocusInWindow();
-                                    selectCom.selectAll();
-                                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                                    Date date = new Date();
-                                    String today = dateFormat.format(date);
-                                    selectCom.setText(today);
-                                }
+                            if (column == table.getRowCount() || column == 0) {
+                                return false;
+                            } else {
+                                table.getComponentAt(row, column).requestFocus();
+                                table.editCellAt(row, column);
+                                JTextField selectCom = (JTextField) table.getEditorComponent();
+                                selectCom.requestFocusInWindow();
+                                selectCom.selectAll();
                             }
-                        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-
-                            if (e.getComponent() instanceof JTable) {
-                                JTable table = (JTable) e.getComponent();
-                                table.setFocusTraversalKeysEnabled(false);
-
-                                // make sure in editing mode
-                                if (!table.isEditing()
-                                        && e.getID() == KeyEvent.KEY_PRESSED) {
-
-                                    // if finished display dialog box
-                                    // Upload Changes? Yes or No?
-                                    Object[] options = {"Commit", "Revert"};  // the titles of buttons
-
-                                    // store selected rowIndex before the tableSelected is refreshed
-                                    int rowIndex = table.getSelectedRow();
-
-                                    int selectedOption = JOptionPane.showOptionDialog(ProjectManagerWindow.getInstance(),
-                                            "Would you like to upload changes?", "Upload Changes",
-                                            JOptionPane.YES_NO_OPTION,
-                                            JOptionPane.QUESTION_MESSAGE,
-                                            null, //do not use a custom Icon
-                                            options, //the titles of buttons
-                                            options[0]); //default button title
-
-                                    switch (selectedOption) {
-                                        case 0:
-                                            // if Commit, upload changes and return to editing
-                                            uploadChanges();  // upload changes to database
-                                            makeTableEditable(false); // exit edit mode;
-                                            break;
-                                        case 1:
-                                            // if Revert, revert changes
-                                            loadTable(table); // reverts the model back
-                                            makeTableEditable(false); // exit edit mode;
-
-                                            break;
-                                        default:
-                                            // do nothing -> cancel
-                                            break;
-                                    }
-
-                                    // highligh previously selected rowIndex
-                                    if (rowIndex != -1) {
-                                        table.setRowSelectionInterval(rowIndex, rowIndex);
-                                    }
-                                }
-
-                                // if enter is pressed then enable upload changes button
-                                btnUploadChanges.setEnabled(true);
-                            }
-
                         }
-                    } else {
-                        if (e.getKeyCode() == KeyEvent.VK_TAB
-                                || e.getKeyCode() == KeyEvent.VK_LEFT
-                                || e.getKeyCode() == KeyEvent.VK_RIGHT
-                                || e.getKeyCode() == KeyEvent.VK_UP
-                                || e.getKeyCode() == KeyEvent.VK_DOWN) {
 
-                            if (e.getComponent() instanceof JTable) {
+                    } else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
+                        // Default Date input with today's date
+                        System.out.print("control d");
+                        JTable table = (JTable) e.getComponent().getParent();
+                        int column = table.getSelectedColumn();
+                        if (table.getColumnName(column).toLowerCase().contains("date")) {
+                            if (e.getID() != 401) { // 401 = key down, 402 = key released
+                                return false;
+                            } else {
+                                JTextField selectCom = (JTextField) e.getComponent();
+                                selectCom.requestFocusInWindow();
+                                selectCom.selectAll();
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                Date date = new Date();
+                                String today = dateFormat.format(date);
+                                selectCom.setText(today);
+                            }
+                        }
+                    } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 
-                                JTable tableSelected = (JTable) e.getComponent();
+                        if (e.getComponent() instanceof JTable) {
+                            JTable table = (JTable) e.getComponent();
+                            table.setFocusTraversalKeysEnabled(false);
 
-                                if (e.getID() == KeyEvent.KEY_RELEASED) {
+                            // make sure in editing mode
+                            if (!table.isEditing()
+                                    && e.getID() == KeyEvent.KEY_PRESSED) {
 
-                                    popupWindowShowInDiffTable(tableSelected);  //determind which tableSelected to show popup window
+                                // if finished display dialog box
+                                // Upload Changes? Yes or No?
+                                Object[] options = {"Commit", "Revert"};  // the titles of buttons
 
+                                // store selected rowIndex before the tableSelected is refreshed
+                                int rowIndex = table.getSelectedRow();
+
+                                int selectedOption = JOptionPane.showOptionDialog(ProjectManagerWindow.getInstance(),
+                                        "Would you like to upload changes?", "Upload Changes",
+                                        JOptionPane.YES_NO_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE,
+                                        null, //do not use a custom Icon
+                                        options, //the titles of buttons
+                                        options[0]); //default button title
+
+                                switch (selectedOption) {
+                                    case 0:
+                                        // if Commit, upload changes and return to editing
+                                        uploadChanges();  // upload changes to database
+                                        makeTableEditable(false); // exit edit mode;
+                                        break;
+                                    case 1:
+                                        // if Revert, revert changes
+                                        loadTable(table); // reverts the model back
+                                        makeTableEditable(false); // exit edit mode;
+
+                                        break;
+                                    default:
+                                        // do nothing -> cancel
+                                        break;
                                 }
+
+                                // highligh previously selected rowIndex
+                                if (rowIndex != -1) {
+                                    table.setRowSelectionInterval(rowIndex, rowIndex);
+                                }
+                            }
+
+                            // if enter is pressed then enable upload changes button
+                            btnUploadChanges.setEnabled(true);
+                        }
+
+                    }
+                }
+                if (!addRecordWindowShow) {
+                    if (e.getKeyCode() == KeyEvent.VK_TAB
+                            || e.getKeyCode() == KeyEvent.VK_LEFT
+                            || e.getKeyCode() == KeyEvent.VK_RIGHT
+                            || e.getKeyCode() == KeyEvent.VK_UP
+                            || e.getKeyCode() == KeyEvent.VK_DOWN) {
+
+                        if (e.getComponent() instanceof JTable) {
+
+                            JTable tableSelected = (JTable) e.getComponent();
+
+                            if (e.getID() == KeyEvent.KEY_RELEASED) {
+
+                                popupWindowShowInDiffTable(tableSelected);  //determind which tableSelected to show popup window
+
                             }
                         }
                     }
+
                 }
                 return false;
             }
@@ -2236,9 +2306,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 boolean disable = !tableCellPopupWindow.getWindowPopup();
 
-                table.setEnabled(disable);
+                if (jLabelEdit.getText().equals("ON")) {
 
-                disableProjectManagerFunction(disable);
+                    table.setEnabled(disable);
+
+                    disableProjectManagerFunction(disable);
+                }
 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2253,9 +2326,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 boolean disable = !tableCellPopupWindow.getWindowPopup();
 
-                table.setEnabled(disable);
+                if (jLabelEdit.getText().equals("ON")) {
 
-                disableProjectManagerFunction(disable);
+                    table.setEnabled(disable);
+
+                    disableProjectManagerFunction(disable);
+                }
 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2268,9 +2344,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 boolean disable = !tableCellPopupWindow.getWindowPopup();
 
-                table.setEnabled(disable);
+                if (jLabelEdit.getText().equals("ON")) {
 
-                disableProjectManagerFunction(disable);
+                    table.setEnabled(disable);
+
+                    disableProjectManagerFunction(disable);
+                }
 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2284,7 +2363,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void disableProjectManagerFunction(boolean disable) {
 
-        System.out.println(disable + "projectmanager function disabled");
         tabbedPanel.setEnabled(disable);
         btnAddRecords.setEnabled(disable);
         btnBatchEdit.setEnabled(disable);
@@ -2303,6 +2381,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuReports.setEnabled(disable);
         searchPanel.setEnabled(disable);
         textFieldForSearch.setEnabled(disable);
+        
+        //set sort and filter enabled
+        String tabName = getSelectedTabName();
+        Tab tab = tabs.get(tabName);
+        TableFilter filter = tab.getFilter();
+        for (int i = 0; i < tab.getTable().getColumnCount(); i++) {
+            filter.getSorter().setSortable(i, disable);
+        }
+
     }
 
     public TableCellPopupWindow getPopupWindow() {
@@ -2399,7 +2486,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             loadTable(table);
             setTableListeners(table);
         }
-
         setLastUpdateTime();
 
         return tabs;
@@ -2496,6 +2582,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // set the listeners for the tableSelected
         setTableListeners(table);
+//        table.setEnabled(false);
 
         // update last time the tableSelected was updated
         setLastUpdateTime();
@@ -2587,6 +2674,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JComboBox comboBoxSearch;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelEdit;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanelEdit;
     private javax.swing.JPanel jPanelSQL;
@@ -2594,6 +2682,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextAreaSQL;
     private javax.swing.JLabel labelRecords;
     private javax.swing.JLabel labelTimeLastUpdate;
