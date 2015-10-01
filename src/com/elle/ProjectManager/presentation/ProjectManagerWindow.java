@@ -186,6 +186,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnBatchEdit.setVisible(true);
         jTextAreaSQL.setVisible(true);
         jPanelEdit.setVisible(true);
+        btnRevertChanges.setVisible(false);
 
         // add filters for each tableSelected
         // must be before setting ColumnPopupMenu because this is its parameter
@@ -484,7 +485,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnSwitchEditMode = new javax.swing.JButton();
         labelEditModeState = new javax.swing.JLabel();
         labelEditMode = new javax.swing.JLabel();
-        btnRevertChangesBatchEdit = new javax.swing.JButton();
+        btnRevertChanges = new javax.swing.JButton();
         jPanelSQL = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaSQL = new javax.swing.JTextArea();
@@ -702,10 +703,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         labelEditMode.setText("Edit Mode:");
 
-        btnRevertChangesBatchEdit.setText("Revert Changes");
-        btnRevertChangesBatchEdit.addActionListener(new java.awt.event.ActionListener() {
+        btnRevertChanges.setText("Revert Changes");
+        btnRevertChanges.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRevertChangesBatchEditActionPerformed(evt);
+                btnRevertChangesActionPerformed(evt);
             }
         });
 
@@ -723,7 +724,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addGap(82, 82, 82)
                 .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnRevertChangesBatchEdit)
+                .addComponent(btnRevertChanges)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAddRecords)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -741,7 +742,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(labelEditModeState)
                     .addComponent(btnBatchEdit)
                     .addComponent(btnAddRecords)
-                    .addComponent(btnRevertChangesBatchEdit))
+                    .addComponent(btnRevertChanges))
                 .addGap(4, 4, 4))
         );
 
@@ -1718,9 +1719,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }//GEN-LAST:event_menuItemSQLCmdChkBxActionPerformed
 
-    private void btnRevertChangesBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevertChangesBatchEditActionPerformed
+    private void btnRevertChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevertChangesActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnRevertChangesBatchEditActionPerformed
+    }//GEN-LAST:event_btnRevertChangesActionPerformed
 
     private void buttonFilteringTables(JTable table, String str){
         
@@ -2595,7 +2596,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JButton btnClearAllFilter;
     private javax.swing.JButton btnCloseSQL;
     private javax.swing.JButton btnEnterSQL;
-    private javax.swing.JButton btnRevertChangesBatchEdit;
+    private javax.swing.JButton btnRevertChanges;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnSwitchEditMode;
     private javax.swing.JButton btnUploadChanges;
