@@ -41,11 +41,6 @@ public class LoginWindow extends JFrame {
         // load selectedDB selections from the text file for the combobox
         loadDBList(); 
         
-        comboBoxDatabase.setSelectedIndex(2);
-        comboBoxServer.setSelectedIndex(0);
-        textFieldUsername.setText("pupone_Xiao");
-        passwordFieldPW.setText("XiaoXXXX8");
-        login();
 //        comboBoxDatabase.setSelectedIndex(3);
         
         // show window
