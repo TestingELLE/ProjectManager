@@ -1306,8 +1306,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // set the color of the edit mode text
         editModeTextColor(!editing);
 
+        // cell pop up window
         boolean editable = labelEditModeState.getText().equals("ON");
-
         tableCellPopupWindow.enableEdit(editable);
 
     }//GEN-LAST:event_btnSwitchEditModeActionPerformed
@@ -1323,25 +1323,27 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         Tab tab = tabs.get(tabName);
         boolean isAddRecordsBtnVisible = tab.isAddRecordsBtnVisible();
         boolean isBatchEditBtnVisible = tab.isBatchEditBtnVisible();
-
+        
         if (makeTableEditable) {
             labelEditModeState.setText("ON ");
-            btnSwitchEditMode.setVisible(false);
+            btnSwitchEditMode.setVisible(true);
             btnUploadChanges.setVisible(true);
             btnAddRecords.setVisible(false);
-            btnBatchEdit.setVisible(false);
+            btnBatchEdit.setVisible(true);
+            btnRevertChanges.setVisible(true);
         } else {
             labelEditModeState.setText("OFF");
             btnSwitchEditMode.setVisible(true);
             btnUploadChanges.setVisible(false);
             btnAddRecords.setVisible(isAddRecordsBtnVisible);
             btnBatchEdit.setVisible(isBatchEditBtnVisible);
+            btnRevertChanges.setVisible(false);
         }
-
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+        
+        for (Map.Entry<String, Tab> entry : tabs.entrySet()){
             tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
-            EditableTableModel model = ((EditableTableModel) table.getModel());
+            EditableTableModel model = ((EditableTableModel)table.getModel());
             model.setCellEditable(makeTableEditable);
         }
     }
