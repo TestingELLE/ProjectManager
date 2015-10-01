@@ -1849,28 +1849,50 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 }
                             }
                         } // end if left mouse clicks
+                        
                         // if right mouse clicks
-                        else if (SwingUtilities.isRightMouseButton(e)) {
-                            if (e.getClickCount() == 2) {
+                        else if(SwingUtilities.isRightMouseButton(e)){
+                            if (e.getClickCount() == 2 ) {
+                                
+                                Tab tab = tabs.get(table.getName());
+                                
+                                // check if this tab is editing or if allowed editing
+                                boolean thisTabIsEditing = tab.isEditing();
+                                boolean noTabIsEditing = !isTabEditing();
+                                
+                                if(thisTabIsEditing || noTabIsEditing){
+                                
+                                    // set the states for this tab
+                                    tab.setEditing(true);
+                                    makeTableEditable(true);
+                                    setEnabledEditingButtons(true, true, true);
+                                    setBatchEditButtonStates(tab);
+                                    
+                                    // set the color of the edit mode text
+                                    editModeTextColor(tab.isEditing());
 
-                                // make tableSelected editable
-                                makeTableEditable(true);
+                                    // get selected cell for editing
+                                    int columnIndex = table.columnAtPoint(e.getPoint()); // this returns the column index
+                                    int rowIndex = table.rowAtPoint(e.getPoint()); // this returns the rowIndex index
+                                    if (rowIndex != -1 && columnIndex != -1) {
 
-                                // get selected cell
-                                int columnIndex = table.columnAtPoint(e.getPoint()); // this returns the column index
-                                int rowIndex = table.rowAtPoint(e.getPoint()); // this returns the rowIndex index
-                                if (rowIndex != -1 && columnIndex != -1) {
+                                        // make it the active editing cell
+                                        table.changeSelection(rowIndex, columnIndex, false, false);
 
-                                    // make it the active editing cell
-                                    table.changeSelection(rowIndex, columnIndex, false, false);
+                                        selectAllText(e);
+                                        
+                                        // if cell is being edited
+                                        // cannot cancel or upload or revert
+                                        setEnabledEditingButtons(false, false, false);
+                
 
-                                    selectAllText(e);
-
-                                } // end not null condition
-
+                                    } // end not null condition
+                                
+                                } // end of is tab editing conditions
+                                
                             } // end if 2 clicks 
                         } // end if right mouse clicks
-
+                        
                     }// end mouseClicked
 
                     private void selectAllText(MouseEvent e) {// Select all text inside jTextField
