@@ -2249,11 +2249,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                if (labelEditModeState.getText().equals("ON ")) {
-                    if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                 if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                    if (labelEditModeState.getText().equals("ON ")) {
                         if (e.getComponent() instanceof JTable) {
                             JTable table = (JTable) e.getComponent();
-                            table.setFocusTraversalKeysEnabled(false);
                             int row = table.getSelectedRow();
                             int column = table.getSelectedColumn();
                             if (column == table.getRowCount() || column == 0) {
@@ -2265,11 +2264,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 selectCom.requestFocusInWindow();
                                 selectCom.selectAll();
                             }
+                            
+                            // if table cell is editing 
+                            // then the editing buttons should not be enabled
+                            if(table.isEditing()){
+                                setEnabledEditingButtons(false, false, false);
+                            }
                         }
-
-                    } else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
-                        // Default Date input with today's date
-                        System.out.print("control d");
+                    }
+                    
+                } 
+                
+                else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
+                    if (labelEditModeState.getText().equals("ON ")) {                       // Default Date input with today's date
                         JTable table = (JTable) e.getComponent().getParent();
                         int column = table.getSelectedColumn();
                         if (table.getColumnName(column).toLowerCase().contains("date")) {
@@ -2285,60 +2292,59 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 selectCom.setText(today);
                             }
                         }
-                    } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    }
+                }
+                
+                else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    if (e.getComponent() instanceof JTable) {
+                        JTable table = (JTable)e.getComponent();
 
-                        if (e.getComponent() instanceof JTable) {
-                            JTable table = (JTable) e.getComponent();
-                            table.setFocusTraversalKeysEnabled(false);
+                        // make sure in editing mode
+                        if(labelEditModeState.getText().equals("ON ") 
+                                && !table.isEditing() 
+                                && e.getID() == KeyEvent.KEY_PRESSED){
 
-                            // make sure in editing mode
-                            if (!table.isEditing()
-                                    && e.getID() == KeyEvent.KEY_PRESSED) {
-
+                            // only show popup if there are changes to upload or revert
+                            if(btnUploadChanges.isEnabled() || btnRevertChanges.isEnabled()){
                                 // if finished display dialog box
                                 // Upload Changes? Yes or No?
                                 Object[] options = {"Commit", "Revert"};  // the titles of buttons
 
-                                // store selected rowIndex before the tableSelected is refreshed
+                                // store selected rowIndex before the table is refreshed
                                 int rowIndex = table.getSelectedRow();
 
-                                int selectedOption = JOptionPane.showOptionDialog(ProjectManagerWindow.getInstance(),
+                                int selectedOption = JOptionPane.showOptionDialog(ProjectManagerWindow.getInstance(), 
                                         "Would you like to upload changes?", "Upload Changes",
-                                        JOptionPane.YES_NO_OPTION,
+                                        JOptionPane.YES_NO_OPTION, 
                                         JOptionPane.QUESTION_MESSAGE,
                                         null, //do not use a custom Icon
                                         options, //the titles of buttons
                                         options[0]); //default button title
 
                                 switch (selectedOption) {
-                                    case 0:
+                                    case 0:            
                                         // if Commit, upload changes and return to editing
                                         uploadChanges();  // upload changes to database
-                                        makeTableEditable(false); // exit edit mode;
                                         break;
                                     case 1:
                                         // if Revert, revert changes
-                                        loadTable(table); // reverts the model back
-                                        makeTableEditable(false); // exit edit mode;
-
+                                        revertChanges(); // reverts the model back
                                         break;
                                     default:
                                         // do nothing -> cancel
                                         break;
-                                }
+                                }   
 
-                                // highligh previously selected rowIndex
-                                if (rowIndex != -1) {
+                                // highlight previously selected rowIndex
+                                if (rowIndex != -1) 
                                     table.setRowSelectionInterval(rowIndex, rowIndex);
-                                }
                             }
-
-                            // if enter is pressed then enable upload changes button
-                            btnUploadChanges.setEnabled(true);
                         }
-
+                        
                     }
+            
                 }
+                
                 if (!addRecordWindowShow) {
                     if (e.getKeyCode() == KeyEvent.VK_TAB
                             || e.getKeyCode() == KeyEvent.VK_LEFT
