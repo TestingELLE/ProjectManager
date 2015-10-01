@@ -1261,9 +1261,42 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void btnSwitchEditModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSwitchEditModeActionPerformed
 
-        // this was the way it is being checked - with the label text
-        // this checks the text and passes the opposite - ON = false to turn off
-        makeTableEditable(labelEditModeState.getText().equals("ON ") ? false : true);
+         // get selected tab
+        String tabName = getSelectedTabName();
+        Tab tab = tabs.get(tabName);
+        
+        // get whether  this tab is currently editing
+        boolean editing = tab.isEditing();
+        
+        // if tab is editing then it is switching off
+        if(editing){
+            
+            // set the states for this tab
+            tab.setEditing(false);
+            makeTableEditable(false);
+            setEnabledEditingButtons(true, true, true);
+            btnAddRecords.setEnabled(true);
+            btnSwitchEditMode.setEnabled(true);
+            setBatchEditButtonStates(tab);
+
+            // set the color of the edit mode text
+            editModeTextColor(tab.isEditing());
+        
+        }
+        
+        // if tab is not editing then it is switching on
+        else{
+            
+            // set the states for this tab
+            tab.setEditing(true);
+            makeTableEditable(true);
+            setEnabledEditingButtons(true, false, false);
+            setBatchEditButtonStates(tab);
+
+        }
+        
+        // set the color of the edit mode text
+        editModeTextColor(!editing);
 
         boolean editable = labelEditModeState.getText().equals("ON");
 
@@ -2585,6 +2618,149 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         }
         return sqlDelete;
+    }
+    
+    
+    /******* added methods *******************************/
+    
+    public JPanel getAddPanel_control() {
+        return addPanel_control;
+    }
+
+    public JPanel getjPanel5() {
+        return jPanel5;
+    }
+
+    public JPanel getjPanelSQL() {
+        return jPanelSQL;
+    }
+
+    public JPanel getSearchPanel() {
+        return searchPanel;
+    }
+    
+    /**
+     * setBatchEditButtonStates
+     * Sets the batch edit button enabled if editing allowed for that tab
+     * and disabled if editing is not allowed for that tab
+     * @param selectedTab // this is the editing tab
+     */
+    private void setBatchEditButtonStates(Tab selectedTab) {
+        
+        for (Map.Entry<String, Tab> entry : tabs.entrySet())
+        {
+            Tab tab = tabs.get(entry.getKey());
+            
+            // if selectedTab is editing, that means the switch button was pressed
+            if(selectedTab.isEditing()){
+                if (tab == selectedTab){
+                    if(selectedTab.isBatchEditWindowOpen()){
+                        btnBatchEdit.setEnabled(false);
+                    }
+                    else{
+                        tab.setBatchEditBtnEnabled(true);
+                    }
+                }
+                else{
+                    tab.setBatchEditBtnEnabled(false);
+                }
+            }
+            else{
+                tab.setBatchEditBtnEnabled(true);
+            }
+        }
+    }
+
+    /**
+     * getBtnBatchEdit
+     * @return 
+     */
+    public JButton getBtnBatchEdit() {
+        return btnBatchEdit;
+    }
+
+    public BatchEditWindow getBatchEditWindow() {
+        return batchEditWindow;
+    }
+    
+    /**
+     * isTabEditing
+     * This method returns true or false whether a tab is in editing mode or not
+     * @return boolean isEditing 
+     */
+    public boolean isTabEditing(){
+        
+        boolean isEditing = false;
+        
+        for (Map.Entry<String, Tab> entry : tabs.entrySet())
+        {
+            Tab tab = tabs.get(entry.getKey());
+            isEditing = tab.isEditing();
+            
+            // if editing break and return true
+            if(isEditing){
+                break;
+            }
+        }
+        
+        return isEditing;
+    }
+    
+    /**
+     * setEnabledEditingButtons
+     * sets the editing buttons enabled 
+     * @param switchBtnEnabled
+     * @param uploadEnabled
+     * @param revertEnabled 
+     */
+    public void setEnabledEditingButtons(boolean switchBtnEnabled, boolean uploadEnabled, boolean revertEnabled){
+        
+        // the three editing buttons (cancel, upload, revert)
+        btnSwitchEditMode.setEnabled(switchBtnEnabled);
+        btnUploadChanges.setEnabled(uploadEnabled);
+        btnRevertChanges.setEnabled(revertEnabled);
+    }
+    
+    /**
+     * revertChanges
+     * used to revert changes of modified data to original data
+     */
+    public void revertChanges(){
+        
+        String tabName = getSelectedTabName();
+        Tab tab = tabs.get(tabName);
+        JTable table = tab.getTable();
+        ModifiedTableData modifiedTableData = tab.getTableData();
+        modifiedTableData.getNewData().clear();  // clear any stored changes (new data)
+        loadTable(table); // reverts the model back
+        modifiedTableData.reloadData();  // reloads data of new table (old data) to compare with new changes (new data)
+        
+        // no changes to upload or revert
+        setEnabledEditingButtons(true, false, false);
+        
+        // set the color of the edit mode text
+        editModeTextColor(tab.isEditing());
+    }
+    
+    /**
+     * editModeTextColor
+     * This method changes the color of the edit mode text
+     * If edit mode is active then the text is green 
+     * and if it is not active then the text is the default color (black)
+     */
+    public void editModeTextColor(boolean editing){
+        
+        // if editing
+        if(editing){
+            labelEditMode.setForeground(editModeActiveTextColor);
+            labelEditModeState.setForeground(editModeActiveTextColor);
+        }
+        
+        // else not editing
+        else {
+            labelEditMode.setForeground(editModeDefaultTextColor);
+            labelEditModeState.setForeground(editModeDefaultTextColor);
+        }
     }
 
     // @formatter:off
