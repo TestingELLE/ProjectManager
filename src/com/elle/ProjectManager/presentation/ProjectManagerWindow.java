@@ -2000,6 +2000,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         table.getModel().addTableModelListener(new TableModelListener() {  // add tableSelected model listener every time the tableSelected model reloaded
             @Override
             public void tableChanged(TableModelEvent e) {
+                
                 int row = e.getFirstRow();
                 int col = e.getColumn();
                 String tab = getSelectedTabName();
@@ -2008,21 +2009,34 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 Object oldValue = data.getOldData()[row][col];
                 Object newValue = table.getModel().getValueAt(row, col);
 
-                // disable the upload changes button
-                btnUploadChanges.setEnabled(false);
-
                 // check that data is different
-                if (!newValue.equals(oldValue)) {
+                if(!newValue.equals(oldValue)){
 
                     String tableName = table.getName();
                     String columnName = table.getColumnName(col);
                     int id = (Integer) table.getModel().getValueAt(row, 0);
+                    
                     data.getNewData().add(new ModifiedData(tableName, columnName, newValue, id));
 
                     // color the cell
                     JTableCellRenderer cellRender = tabs.get(tab).getCellRenderer();
                     cellRender.getCells().get(col).add(row);
                     table.getColumnModel().getColumn(col).setCellRenderer(cellRender);
+                    
+                    // can upload or revert changes
+                    setEnabledEditingButtons(false, true, true);
+                }
+                
+                // if modified data then cancel button not enabled
+                else if(!data.getNewData().isEmpty()){
+                    // can upload or revert changes
+                    setEnabledEditingButtons(false, true, true);
+                }
+                
+                // there is no new modified data
+                else{
+                    // no changes to upload or revert (these options disabled)
+                    setEnabledEditingButtons(true, false, false);
                 }
             }
         });
