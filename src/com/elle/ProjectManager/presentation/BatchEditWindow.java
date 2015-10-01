@@ -1,8 +1,6 @@
 
 package com.elle.ProjectManager.presentation;
 
-import com.elle.ProjectManager.database.ModifiedData;
-import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.logic.Tab;
 import com.elle.ProjectManager.logic.TableFilter;
 import java.util.ArrayList;
@@ -222,9 +220,17 @@ public class BatchEditWindow extends JFrame {
      * @param evt 
      */
     private void btnQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitActionPerformed
-        projectManagerWindow.getPanelBatchEditButtons().setVisible(false);
-        projectManagerWindow.getjPanelEdit().setVisible(true);
-        this.dispose();
+
+        // set the states for the editing tab
+        tab.setBatchEditWindowOpen(false);
+        tab.setBatchEditWindowVisible(false);
+        tab.setBatchEditBtnEnabled(true);
+        
+        // set the batch edit button enabled
+        projectManagerWindow.getBtnBatchEdit().setEnabled(true);
+        
+        // this instance should dispose
+        projectManagerWindow.getBatchEditWindow().dispose();
     }//GEN-LAST:event_btnQuitActionPerformed
 
     private void textFieldNewValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldNewValueActionPerformed

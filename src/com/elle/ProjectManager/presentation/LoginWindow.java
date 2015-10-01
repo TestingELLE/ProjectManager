@@ -44,9 +44,7 @@ public class LoginWindow extends JFrame {
 //        comboBoxDatabase.setSelectedIndex(3);
         
         // show window
-        this.setTitle("Log in");
-        this.setVisible(false);
-        
+        this.setTitle("Log in");  
     }
 
     /**

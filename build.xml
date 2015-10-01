@@ -7,7 +7,7 @@
     <import file="nbproject/build-impl.xml"/>
     
     <!-- set the version of ProjectManager here -->
-    <property name="version" value="ProjectManager-0.8.8a"/>
+    <property name="version" value="ProjectManager-0.9.0"/>
     
     <!-- This creates the jar that we want with the included dependancies -->
     <!-- There should be no need to edit this code -->

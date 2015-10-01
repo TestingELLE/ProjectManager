@@ -36,8 +36,15 @@ public class Tab implements ITableConstants{
     private boolean archiveRecordMenuItemEnabled;  // enables archive record menu item
     private boolean addRecordsBtnVisible;          // sets the add records button visible
     private boolean batchEditBtnVisible;           // sets the batch edit button visible
+    private boolean batchEditBtnEnabled;           // sets the batch edit button enabled
+    private boolean AddRecordsBtnEnabled;          // sets the Add Records button enabled
     
-
+    // each tab can either be editing or not
+    private boolean Editing;   
+    
+    // batch edit window states
+    private boolean batchEditWindowOpen;
+    private boolean batchEditWindowVisible;
     
     /**
      * CONSTRUCTOR
@@ -53,6 +60,9 @@ public class Tab implements ITableConstants{
         archiveRecordMenuItemEnabled = false;
         addRecordsBtnVisible = false;
         batchEditBtnVisible = false;
+        batchEditBtnEnabled = true;
+        batchEditWindowOpen = false;
+        batchEditWindowVisible = false;
     }
     
     /**
@@ -213,7 +223,47 @@ public class Tab implements ITableConstants{
         this.tableData = tableData;
     }
     
+    public boolean isEditing() {
+        return Editing;
+    }
 
+    public void setEditing(boolean Editing) {
+        this.Editing = Editing;
+    }
+
+    public boolean isBatchEditBtnEnabled() {
+        return batchEditBtnEnabled;
+    }
+
+    public void setBatchEditBtnEnabled(boolean batchEditBtnEnabled) {
+        this.batchEditBtnEnabled = batchEditBtnEnabled;
+    }
+
+    public boolean isBatchEditWindowOpen() {
+        return batchEditWindowOpen;
+    }
+
+    public void setBatchEditWindowOpen(boolean batchEditWindowOpen) {
+        this.batchEditWindowOpen = batchEditWindowOpen;
+    }
+
+    public boolean isBatchEditWindowVisible() {
+        return batchEditWindowVisible;
+    }
+
+    public void setBatchEditWindowVisible(boolean batchEditWindowVisible) {
+        this.batchEditWindowVisible = batchEditWindowVisible;
+    }
+
+    public boolean isAddRecordsBtnEnabled() {
+        return AddRecordsBtnEnabled;
+    }
+
+    public void setAddRecordsBtnEnabled(boolean AddRecordsBtnEnabled) {
+        this.AddRecordsBtnEnabled = AddRecordsBtnEnabled;
+    }
+    
+    
     /**************************************************************************
      *************************** Methods **************************************
      **************************************************************************/
