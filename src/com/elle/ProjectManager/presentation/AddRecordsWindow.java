@@ -70,6 +70,8 @@ public class AddRecordsWindow extends JFrame {
         logWindow = projectManager.getLogWindow();
         tabs = projectManager.getTabs();
         statement = projectManager.getStatement();
+        
+//        columnNames = new String[projectManager.getSelectedTable().getColumnCount()];
 
         // set the selected tableSelected name
         table.setName(projectManager.getSelectedTabName());
@@ -93,8 +95,8 @@ public class AddRecordsWindow extends JFrame {
         this.setTitle("Add Records to " + table.getName());
 
         // set the size for AddRecord window
-        this.setPreferredSize(new Dimension(1137, 150));
-        this.setMinimumSize(new Dimension(1137, 150));
+        this.setPreferredSize(new Dimension(1137, 120));
+        this.setMinimumSize(new Dimension(1137, 120));
 
         // set the tableSelected cell popup window
         tableCellPopupWindow = new TableCellPopupWindow(this);
@@ -108,9 +110,10 @@ public class AddRecordsWindow extends JFrame {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 projectManager.setDisableProjecetManagerFunction(true);
-                
+
             }
         });
+        this.pack();
     }
 
     /**
@@ -135,7 +138,7 @@ public class AddRecordsWindow extends JFrame {
 
         scrollpane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollpane.setMaximumSize(new java.awt.Dimension(260, 100));
-        scrollpane.setMinimumSize(new java.awt.Dimension(130, 50));
+        scrollpane.setMinimumSize(new java.awt.Dimension(130, 20));
 
         table.setAutoCreateRowSorter(true);
         table.setModel(new javax.swing.table.DefaultTableModel(
@@ -157,6 +160,7 @@ public class AddRecordsWindow extends JFrame {
                 return types [columnIndex];
             }
         });
+        table.setMinimumSize(new java.awt.Dimension(75, 20));
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tableMouseClicked(evt);
@@ -194,26 +198,27 @@ public class AddRecordsWindow extends JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+            .addComponent(scrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 917, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnAddRow)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 670, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSubmit)
                 .addGap(18, 18, 18)
                 .addComponent(btnCancel)
                 .addContainerGap())
-            .addComponent(scrollpane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(scrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
-                .addGap(12, 12, 12)
+                .addContainerGap()
+                .addComponent(scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAddRow)
                     .addComponent(btnSubmit)
-                    .addComponent(btnCancel)
-                    .addComponent(btnAddRow))
-                .addGap(12, 12, 12))
+                    .addComponent(btnCancel))
+                .addGap(20, 20, 20))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -224,7 +229,7 @@ public class AddRecordsWindow extends JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -277,10 +282,12 @@ public class AddRecordsWindow extends JFrame {
             String values = "";
             for (row = 0; row < table.getRowCount(); row++) {
                 values = "VALUES (";  // start the values statement
+                System.out.println(table.getColumnCount() + "table column number");
                 for (col = 0; col < table.getColumnCount(); col++) {
 
                     // get cell value
                     cellValue = table.getValueAt(row, col);
+                    
 
                     // format the cell value for sql
                     if (cellValue != null) {
@@ -293,6 +300,7 @@ public class AddRecordsWindow extends JFrame {
                             cellValue = "'" + cellValue + "'";
                         }
                     }
+                    System.out.println("add record submit"+cellValue + "at "+ row + " " + col);
 
                     // skip empty rows
                     // this must be after the format cell value so the "" => null
@@ -307,6 +315,7 @@ public class AddRecordsWindow extends JFrame {
                         values += cellValue + ");";
                     }
                 }
+                System.out.println(values);
 
                 try {
                     // execute the sql statement
@@ -340,15 +349,17 @@ public class AddRecordsWindow extends JFrame {
                     }
                 }
             }
-
+            
+            System.out.println("numRowsAdded" + numRowsAdded);
+            
             if (numRowsAdded > 0) {
                 // update tableSelected and records label
                 String tabName = projectManager.getSelectedTabName();              // tab name
                 Tab tab = tabs.get(tabName);                                  // selected tab
 
-                JTable table = tab.getTable();                                // selected tableSelected
+                JTable table = tab.getTable();  
                 projectManager.loadTable(table);                              // load tableSelected data from database
-                
+
                 // reload new table data for modifiedTableData
                 ModifiedTableData data = tab.getTableData();
                 data.reloadData();
@@ -540,13 +551,18 @@ public class AddRecordsWindow extends JFrame {
      */
     private void createEmptyTable() {
         // get column names for selected Analyster tableSelected
+//        columnNames = new String[projectManager.getSelectedTable().getColumnCount()];
+//        
+//        for ( int j = 0; j< projectManager.getSelectedTable().getColumnCount(); j++)
+//            columnNames[j] = projectManager.getSelectedTable().getColumnName(j);
+        
         columnNames = projectManager.getTabs().get(table.getName()).getTableColNames();
 
         // we don't want the ID column 
         columnNames = Arrays.copyOfRange(columnNames, 1, columnNames.length);
 
         // set the tableSelected model - add 10 empty rows
-        model = new DefaultTableModel(columnNames, 10);
+        model = new DefaultTableModel(columnNames, 1);
 
         // add the tableSelected model to the tableSelected
         table.setModel(model);

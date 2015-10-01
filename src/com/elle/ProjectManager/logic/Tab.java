@@ -71,8 +71,11 @@ public class Tab implements ITableConstants{
         ColumnPopupMenu = new ColumnPopupMenu(filter);
         
         // store the column names for the table
-        for (int i = 0; i < table.getColumnCount(); i++) 
+        for (int i = 0; i < table.getColumnCount(); i++){
             tableColNames[i] = table.getColumnName(i);
+            System.out.println("this is" + tableName + " and " + tableColNames[i]);
+        }
+        
     }
     
     /**************************************************************************
