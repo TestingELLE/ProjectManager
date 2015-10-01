@@ -1436,9 +1436,26 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
 
     private void btnBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatchEditActionPerformed
+        
+        // get selected tab
+        String tabName = getSelectedTabName();
+        Tab tab = tabs.get(tabName);
+        
+        // set the tab to editing
+        tab.setEditing(true);
+        makeTableEditable(true);
+        
+        // set the color of the edit mode text
+        editModeTextColor(tab.isEditing());
+        
+        // open a batch edit window and make visible only to this tab
         batchEditWindow = new BatchEditWindow();
         batchEditWindow.setVisible(true);
-        jPanelEdit.setVisible(false);
+        tab.setBatchEditWindowVisible(true);
+        tab.setBatchEditWindowOpen(true);
+        tab.setBatchEditBtnEnabled(false);
+        setBatchEditButtonStates(tab);
+        
     }//GEN-LAST:event_btnBatchEditActionPerformed
 
     private void menuItemManageDBsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemManageDBsActionPerformed
