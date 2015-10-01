@@ -221,8 +221,16 @@ public class BatchEditWindow extends JFrame {
      */
     private void btnQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitActionPerformed
 
-        projectManagerWindow.getjPanelEdit().setVisible(true);
-        this.dispose();
+        // set the states for the editing tab
+        tab.setBatchEditWindowOpen(false);
+        tab.setBatchEditWindowVisible(false);
+        tab.setBatchEditBtnEnabled(true);
+        
+        // set the batch edit button enabled
+        projectManagerWindow.getBtnBatchEdit().setEnabled(true);
+        
+        // this instance should dispose
+        projectManagerWindow.getBatchEditWindow().dispose();
     }//GEN-LAST:event_btnQuitActionPerformed
 
     private void textFieldNewValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldNewValueActionPerformed
