@@ -1353,29 +1353,82 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     private void changeTabbedPanelState() {
 
+        // get selected tab
         String tabName = getSelectedTabName();
         Tab tab = tabs.get(tabName);
+        
+        // get booleans for the states of the selected tab
         boolean isActivateRecordMenuItemEnabled = tab.isActivateRecordMenuItemEnabled();
         boolean isArchiveRecordMenuItemEnabled = tab.isArchiveRecordMenuItemEnabled();
-        boolean isAddRecordsBtnVisible = tab.isAddRecordsBtnVisible();
-        boolean isBatchEditBtnVisible = tab.isBatchEditBtnVisible();
-
+        boolean isBatchEditBtnEnabled = tab.isBatchEditBtnEnabled();
+        boolean isBatchEditWindowOpen = tab.isBatchEditWindowOpen();
+        boolean isBatchEditWindowVisible = tab.isBatchEditWindowVisible();
+        
         // this enables or disables the menu components for this tabName
-        menuItemActivateRecord.setEnabled(isActivateRecordMenuItemEnabled);
-        menuItemArchiveRecord.setEnabled(isArchiveRecordMenuItemEnabled);
-
-        // show or hide the add records button and the batch edit button
-        btnAddRecords.setVisible(isAddRecordsBtnVisible);
-        btnBatchEdit.setVisible(isBatchEditBtnVisible);
-
+        menuItemActivateRecord.setEnabled(isActivateRecordMenuItemEnabled); 
+        menuItemArchiveRecord.setEnabled(isArchiveRecordMenuItemEnabled); 
+        
+        // batch edit button enabled is only allowed for table that is editing
+        btnBatchEdit.setEnabled(isBatchEditBtnEnabled);
+        if(isBatchEditWindowOpen){
+            batchEditWindow.setVisible(isBatchEditWindowVisible);
+        }
+        
+        // check whether editing and display accordingly
+        boolean editing = tab.isEditing(); 
+        
+        // must be instance of EditableTableModel 
+        // this method is called from init componenents before the table model is set
+        JTable table = tab.getTable();
+        if(table.getModel() instanceof EditableTableModel){
+            makeTableEditable(editing);
+        }
+        
+        // set the color of the edit mode text
+        editModeTextColor(tab.isEditing());
+        
         // set label record information
         String recordsLabel = tab.getRecordsLabel();
-        labelRecords.setText(recordsLabel);
-
-        // hide buttons if in edit mode
-        if (labelEditModeState.getText().equals("ON ")) {
+        labelRecords.setText(recordsLabel);    
+        
+        // buttons if in edit mode
+        if(labelEditModeState.getText().equals("ON ")){
             btnAddRecords.setVisible(false);
-            btnBatchEdit.setVisible(false);
+            btnBatchEdit.setVisible(true);
+        }
+        
+        // batch edit window visible only on the editing tab
+        if(batchEditWindow != null){
+            boolean batchWindowVisible = tab.isBatchEditWindowVisible();
+            batchEditWindow.setVisible(batchWindowVisible);
+        }
+        
+        // if this tab is editing
+        if(editing){
+            
+            // if there is no modified data
+            if(tab.getTableData().getNewData().isEmpty()){
+                setEnabledEditingButtons(true, false, false);
+            }
+                
+            // there is modified data to upload or revert
+            else{
+                setEnabledEditingButtons(false, true, true);
+            }
+        }
+        
+        // else if no tab is editing
+        else if(!isTabEditing()){
+            btnSwitchEditMode.setEnabled(true);
+            btnAddRecords.setEnabled(true);
+            btnBatchEdit.setEnabled(true);
+        }
+        
+        // else if there is a tab editing but it is not this one
+        else if(isTabEditing()){
+            btnSwitchEditMode.setEnabled(false);
+            btnAddRecords.setEnabled(false);
+            btnBatchEdit.setEnabled(false);
         }
     }
 
