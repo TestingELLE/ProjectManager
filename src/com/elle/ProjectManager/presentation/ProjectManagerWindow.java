@@ -1926,9 +1926,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     filterByDoubleClick(table);
                                 }
                             } else if (e.getClickCount() == 1) {
-                                if (labelEditModeState.getText().equals("ON ")) {
-                                    selectAllText(e);
-                                }
+                                // do nothing
+                                // used to select rows or cells
                             }
                         } // end if left mouse clicks
                         
