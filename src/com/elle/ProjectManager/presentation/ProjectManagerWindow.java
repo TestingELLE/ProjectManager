@@ -21,8 +21,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
@@ -69,8 +67,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private BatchEditWindow batchEditWindow;
     private EditDatabaseWindow editDatabaseWindow;
     private ReportWindow reportWindow;
+    
+    // colors - Edit mode labels
+    private Color editModeDefaultTextColor;
+    private Color editModeActiveTextColor;
+    
+    // Misc 
     private boolean addRecordWindowShow;
-
     private int addRecordLevel = 2;
     private int deleteRecordLevel = 2;
 
