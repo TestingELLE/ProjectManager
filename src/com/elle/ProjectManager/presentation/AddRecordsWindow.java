@@ -70,6 +70,8 @@ public class AddRecordsWindow extends JFrame {
         logWindow = projectManager.getLogWindow();
         tabs = projectManager.getTabs();
         statement = projectManager.getStatement();
+        
+//        columnNames = new String[projectManager.getSelectedTable().getColumnCount()];
 
         // set the selected tableSelected name
         table.setName(projectManager.getSelectedTabName());
@@ -280,10 +282,12 @@ public class AddRecordsWindow extends JFrame {
             String values = "";
             for (row = 0; row < table.getRowCount(); row++) {
                 values = "VALUES (";  // start the values statement
+                System.out.println(table.getColumnCount() + "table column number");
                 for (col = 0; col < table.getColumnCount(); col++) {
 
                     // get cell value
                     cellValue = table.getValueAt(row, col);
+                    
 
                     // format the cell value for sql
                     if (cellValue != null) {
@@ -296,6 +300,7 @@ public class AddRecordsWindow extends JFrame {
                             cellValue = "'" + cellValue + "'";
                         }
                     }
+                    System.out.println("add record submit"+cellValue + "at "+ row + " " + col);
 
                     // skip empty rows
                     // this must be after the format cell value so the "" => null
@@ -310,6 +315,7 @@ public class AddRecordsWindow extends JFrame {
                         values += cellValue + ");";
                     }
                 }
+                System.out.println(values);
 
                 try {
                     // execute the sql statement
@@ -343,13 +349,15 @@ public class AddRecordsWindow extends JFrame {
                     }
                 }
             }
-
+            
+            System.out.println("numRowsAdded" + numRowsAdded);
+            
             if (numRowsAdded > 0) {
                 // update tableSelected and records label
                 String tabName = projectManager.getSelectedTabName();              // tab name
                 Tab tab = tabs.get(tabName);                                  // selected tab
 
-                JTable table = tab.getTable();                                // selected tableSelected
+                JTable table = tab.getTable();  
                 projectManager.loadTable(table);                              // load tableSelected data from database
 
                 // reload new table data for modifiedTableData
@@ -543,6 +551,11 @@ public class AddRecordsWindow extends JFrame {
      */
     private void createEmptyTable() {
         // get column names for selected Analyster tableSelected
+//        columnNames = new String[projectManager.getSelectedTable().getColumnCount()];
+//        
+//        for ( int j = 0; j< projectManager.getSelectedTable().getColumnCount(); j++)
+//            columnNames[j] = projectManager.getSelectedTable().getColumnName(j);
+        
         columnNames = projectManager.getTabs().get(table.getName()).getTableColNames();
 
         // we don't want the ID column 

@@ -138,6 +138,9 @@ public class TableCellPopupWindow implements ITableConstants {
         cancelButtonTableCellPopup.setOpaque(true);
 
         controlPopupPanel.add(cancelButtonTableCellPopup, tableCellPopupConstraints);
+        System.out.println(confirmButtonTableCellPopup.getPreferredSize());
+        System.out.println(cancelButtonTableCellPopup.getPreferredSize());
+
 
         if (frame instanceof ProjectManagerWindow) {
 
@@ -166,10 +169,13 @@ public class TableCellPopupWindow implements ITableConstants {
             editBtnPopup.setVisible(false);
             editBtnPopup.setEnabled(false);
             
-            textAreatableCellPopup.setSize(new Dimension(400, 100));
-            areaScrollPanetableCellPopup.setSize(new Dimension(400, 100));
-            tableCellPopupPanel.setSize(400, 100);
-            controlPopupPanel.setSize(400, 35);
+            confirmButtonTableCellPopup.setPreferredSize(new Dimension(73, 20));
+            cancelButtonTableCellPopup.setPreferredSize(new Dimension(73, 20));
+            
+            textAreatableCellPopup.setSize(new Dimension(400, 55));
+            areaScrollPanetableCellPopup.setSize(new Dimension(400, 55));
+            tableCellPopupPanel.setSize(400, 55);
+            controlPopupPanel.setSize(400, 25);
         }
 
         editBtnIsClick = false;
