@@ -176,11 +176,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanelSQL.setVisible(false);
         btnEnterSQL.setVisible(true);
         btnCancelSQL.setVisible(true);
-        btnCancelEditMode.setVisible(false);
         btnBatchEdit.setVisible(true);
         jTextAreaSQL.setVisible(true);
         jPanelEdit.setVisible(true);
-        panelBatchEditButtons.setVisible(false);
 
         // add filters for each tableSelected
         // must be before setting ColumnPopupMenu because this is its parameter
@@ -476,19 +474,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnBatchEdit = new javax.swing.JButton();
         btnAddRecords = new javax.swing.JButton();
         btnUploadChanges = new javax.swing.JButton();
-        btnCancelEditMode = new javax.swing.JButton();
         btnSwitchEditMode = new javax.swing.JButton();
         jLabelEdit = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        btnRevertChangesBatchEdit1 = new javax.swing.JButton();
         jPanelSQL = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaSQL = new javax.swing.JTextArea();
         btnEnterSQL = new javax.swing.JButton();
         btnCancelSQL = new javax.swing.JButton();
         btnCloseSQL = new javax.swing.JButton();
-        panelBatchEditButtons = new javax.swing.JPanel();
-        btnRevertChangesBatchEdit = new javax.swing.JButton();
-        btnUploadChangesBatchEdit = new javax.swing.JButton();
         addPanel_control = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         labelRecords = new javax.swing.JLabel();
@@ -689,13 +684,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
 
-        btnCancelEditMode.setText("Cancel");
-        btnCancelEditMode.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelEditModeActionPerformed(evt);
-            }
-        });
-
         btnSwitchEditMode.setText("Switch");
         btnSwitchEditMode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -706,6 +694,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jLabelEdit.setText("OFF");
 
         jLabel2.setText("Edit Mode:");
+
+        btnRevertChangesBatchEdit1.setText("Revert Changes");
+        btnRevertChangesBatchEdit1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRevertChangesBatchEdit1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelEditLayout = new javax.swing.GroupLayout(jPanelEdit);
         jPanelEdit.setLayout(jPanelEditLayout);
@@ -718,10 +713,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(jLabelEdit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnSwitchEditMode)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnCancelEditMode)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(82, 82, 82)
                 .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnRevertChangesBatchEdit1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAddRecords)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -737,9 +732,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(jLabel2)
                     .addComponent(btnSwitchEditMode)
                     .addComponent(jLabelEdit)
-                    .addComponent(btnCancelEditMode)
                     .addComponent(btnBatchEdit)
-                    .addComponent(btnAddRecords))
+                    .addComponent(btnAddRecords)
+                    .addComponent(btnRevertChangesBatchEdit1))
                 .addGap(4, 4, 4))
         );
 
@@ -807,50 +802,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addGap(4, 4, 4))
         );
 
-        panelBatchEditButtons.setPreferredSize(new java.awt.Dimension(636, 180));
-
-        btnRevertChangesBatchEdit.setText("Revert Changes");
-        btnRevertChangesBatchEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRevertChangesBatchEditActionPerformed(evt);
-            }
-        });
-
-        btnUploadChangesBatchEdit.setText("Upload Changes");
-        btnUploadChangesBatchEdit.setMaximumSize(new java.awt.Dimension(95, 30));
-        btnUploadChangesBatchEdit.setMinimumSize(new java.awt.Dimension(95, 30));
-        btnUploadChangesBatchEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUploadChangesBatchEditActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout panelBatchEditButtonsLayout = new javax.swing.GroupLayout(panelBatchEditButtons);
-        panelBatchEditButtons.setLayout(panelBatchEditButtonsLayout);
-        panelBatchEditButtonsLayout.setHorizontalGroup(
-            panelBatchEditButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBatchEditButtonsLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnUploadChangesBatchEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnRevertChangesBatchEdit)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        panelBatchEditButtonsLayout.setVerticalGroup(
-            panelBatchEditButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBatchEditButtonsLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(panelBatchEditButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnUploadChangesBatchEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRevertChangesBatchEdit)))
-        );
-
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE)
-            .addComponent(panelBatchEditButtons, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -863,9 +819,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelBatchEditButtons, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(12, 12, 12)
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
@@ -945,7 +899,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addContainerGap(151, Short.MAX_VALUE))
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -956,7 +910,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch))
-                .addGap(0, 33, Short.MAX_VALUE))
+                .addGap(0, 38, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout addPanel_controlLayout = new javax.swing.GroupLayout(addPanel_control);
@@ -968,12 +922,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(122, Short.MAX_VALUE))
+                .addContainerGap(123, Short.MAX_VALUE))
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(addPanel_controlLayout.createSequentialGroup()
-                .addGap(0, 9, Short.MAX_VALUE)
+                .addGap(0, 5, Short.MAX_VALUE)
                 .addGroup(addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1325,14 +1279,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             jLabelEdit.setText("ON ");
             btnSwitchEditMode.setVisible(false);
             btnUploadChanges.setVisible(true);
-            btnCancelEditMode.setVisible(true);
             btnAddRecords.setVisible(false);
             btnBatchEdit.setVisible(false);
         } else {
             jLabelEdit.setText("OFF");
             btnSwitchEditMode.setVisible(true);
             btnUploadChanges.setVisible(false);
-            btnCancelEditMode.setVisible(false);
             btnAddRecords.setVisible(isAddRecordsBtnVisible);
             btnBatchEdit.setVisible(isBatchEditBtnVisible);
         }
@@ -1344,19 +1296,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             model.setCellEditable(makeTableEditable);
         }
     }
-
-    /**
-     * btnCancelEditModeActionPerformed
-     *
-     * @param evt
-     */
-    private void btnCancelEditModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelEditModeActionPerformed
-
-        makeTableEditable(false); // exit edit mode;
-
-        tableCellPopupWindow.disableEdit(true);
-
-    }//GEN-LAST:event_btnCancelEditModeActionPerformed
 
     /**
      * getEditMode on or off
@@ -1403,7 +1342,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         batchEditWindow = new BatchEditWindow();
         batchEditWindow.setVisible(true);
         jPanelEdit.setVisible(false);
-        panelBatchEditButtons.setVisible(true);
     }//GEN-LAST:event_btnBatchEditActionPerformed
 
     private void menuItemManageDBsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemManageDBsActionPerformed
@@ -1773,19 +1711,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }//GEN-LAST:event_menuItemSQLCmdChkBxActionPerformed
 
-    private void btnRevertChangesBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevertChangesBatchEditActionPerformed
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        ModifiedTableData modifiedTableData = tab.getTableData();
-        modifiedTableData.getNewData().clear();  // clear any stored changes (new data)
-        loadTable(table); // reverts the model back
-        modifiedTableData.reloadData();  // reloads data of new table (old data) to compare with new changes (new data)
-    }//GEN-LAST:event_btnRevertChangesBatchEditActionPerformed
-
-    private void btnUploadChangesBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadChangesBatchEditActionPerformed
-        uploadChanges();  // upload changes to database
-    }//GEN-LAST:event_btnUploadChangesBatchEditActionPerformed
+    private void btnRevertChangesBatchEdit1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevertChangesBatchEdit1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRevertChangesBatchEdit1ActionPerformed
 
     private void buttonFilteringTables(JTable table, String str){
         
@@ -2367,7 +2295,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnAddRecords.setEnabled(disable);
         btnBatchEdit.setEnabled(disable);
         btnClearAllFilter.setEnabled(disable);
-        btnCancelEditMode.setEnabled(disable);
         btnSearch.setEnabled(disable);
         btnSwitchEditMode.setEnabled(disable);
         btnUploadChanges.setEnabled(disable);
@@ -2437,10 +2364,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public JPanel getjPanelEdit() {
         return jPanelEdit;
-    }
-
-    public JPanel getPanelBatchEditButtons() {
-        return panelBatchEditButtons;
     }
 
     /**
@@ -2661,16 +2584,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JPanel addPanel_control;
     private javax.swing.JButton btnAddRecords;
     private javax.swing.JButton btnBatchEdit;
-    private javax.swing.JButton btnCancelEditMode;
     private javax.swing.JButton btnCancelSQL;
     private javax.swing.JButton btnClearAllFilter;
     private javax.swing.JButton btnCloseSQL;
     private javax.swing.JButton btnEnterSQL;
-    private javax.swing.JButton btnRevertChangesBatchEdit;
+    private javax.swing.JButton btnRevertChangesBatchEdit1;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnSwitchEditMode;
     private javax.swing.JButton btnUploadChanges;
-    private javax.swing.JButton btnUploadChangesBatchEdit;
     private javax.swing.JComboBox comboBoxSearch;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelEdit;
@@ -2714,7 +2635,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenu menuSelectConn;
     private javax.swing.JMenu menuTools;
     private javax.swing.JMenu menuView;
-    private javax.swing.JPanel panelBatchEditButtons;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JTabbedPane tabbedPanel;
     private javax.swing.JTable task_filesTable;

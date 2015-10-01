@@ -1,8 +1,6 @@
 
 package com.elle.ProjectManager.presentation;
 
-import com.elle.ProjectManager.database.ModifiedData;
-import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.logic.Tab;
 import com.elle.ProjectManager.logic.TableFilter;
 import java.util.ArrayList;
@@ -222,7 +220,7 @@ public class BatchEditWindow extends JFrame {
      * @param evt 
      */
     private void btnQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitActionPerformed
-        projectManagerWindow.getPanelBatchEditButtons().setVisible(false);
+
         projectManagerWindow.getjPanelEdit().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnQuitActionPerformed

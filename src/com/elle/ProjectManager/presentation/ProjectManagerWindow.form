@@ -246,7 +246,6 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="jPanelEdit" alignment="0" pref="823" max="32767" attributes="0"/>
-              <Component id="panelBatchEditButtons" alignment="0" pref="823" max="32767" attributes="0"/>
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanelSQL" max="32767" attributes="0"/>
@@ -261,9 +260,7 @@
                   <Component id="tabbedPanel" min="-2" pref="349" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanelEdit" min="-2" pref="37" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="panelBatchEditButtons" min="-2" pref="33" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                   <Component id="jPanelSQL" max="32767" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               </Group>
@@ -557,10 +554,10 @@
                       <Component id="jLabelEdit" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="btnSwitchEditMode" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnCancelEditMode" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
                       <Component id="btnUploadChanges" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnRevertChangesBatchEdit1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="btnAddRecords" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -578,9 +575,9 @@
                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnSwitchEditMode" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabelEdit" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnCancelEditMode" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnBatchEdit" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnAddRecords" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnRevertChangesBatchEdit1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                   </Group>
@@ -618,14 +615,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUploadChangesActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="btnCancelEditMode">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Cancel"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelEditModeActionPerformed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JButton" name="btnSwitchEditMode">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Switch"/>
@@ -643,6 +632,14 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Edit Mode:"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnRevertChangesBatchEdit1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Revert Changes"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRevertChangesBatchEdit1ActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -742,62 +739,6 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="panelBatchEditButtons">
-          <Properties>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[636, 180]"/>
-            </Property>
-          </Properties>
-
-          <Layout>
-            <DimensionLayout dim="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="btnUploadChangesBatchEdit" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                      <Component id="btnRevertChangesBatchEdit" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-            <DimensionLayout dim="1">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="btnUploadChangesBatchEdit" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnRevertChangesBatchEdit" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-          </Layout>
-          <SubComponents>
-            <Component class="javax.swing.JButton" name="btnRevertChangesBatchEdit">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Revert Changes"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRevertChangesBatchEditActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="btnUploadChangesBatchEdit">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Upload Changes"/>
-                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[95, 30]"/>
-                </Property>
-                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[95, 30]"/>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUploadChangesBatchEditActionPerformed"/>
-              </Events>
-            </Component>
-          </SubComponents>
-        </Container>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="addPanel_control">
@@ -815,14 +756,14 @@
                   <Component id="searchPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="122" max="32767" attributes="0"/>
+                  <EmptySpace pref="123" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="0" pref="9" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="5" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                       <Component id="searchPanel" min="-2" max="-2" attributes="0"/>
@@ -893,7 +834,7 @@
                       <Component id="textFieldForSearch" min="-2" pref="141" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnSearch" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="92" max="32767" attributes="0"/>
+                      <EmptySpace pref="151" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -907,7 +848,7 @@
                           <Component id="textFieldForSearch" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnSearch" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="33" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="38" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
