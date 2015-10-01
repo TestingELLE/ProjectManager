@@ -1215,6 +1215,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         data.getNewData().clear();    // reset the arraylist to record future changes
         setLastUpdateTime();          // update time
+        
+        // no changes to upload or revert
+        setEnabledEditingButtons(true, false, false);
     }
 
     private void menuItemRepBugSuggActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRepBugSuggActionPerformed
