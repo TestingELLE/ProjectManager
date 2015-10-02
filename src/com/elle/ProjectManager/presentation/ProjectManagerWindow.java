@@ -51,8 +51,8 @@ import java.util.Vector;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-10-01";
-    private final String VERSION = "0.9.0";
+    private final String CREATION_DATE = "2015-10-02";
+    private final String VERSION = "0.9.1";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
