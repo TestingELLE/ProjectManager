@@ -72,6 +72,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private Color editModeDefaultTextColor;
     private Color editModeActiveTextColor;
     
+    private String editingTabName; // stores the name of the tab that is editing
+    
     // Misc 
     private boolean addRecordWindowShow;
     private int addRecordLevel = 2;
@@ -1425,6 +1427,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             else{
                 setEnabledEditingButtons(false, true, true);
             }
+            
+            // set edit mode label
+            labelEditMode.setText("Edit Mode: ");
+            labelEditModeState.setVisible(true);
+            editModeTextColor(true);
         }
         
         // else if no tab is editing
@@ -1432,6 +1439,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             btnSwitchEditMode.setEnabled(true);
             btnAddRecords.setEnabled(true);
             btnBatchEdit.setEnabled(true);
+            
+            // set edit mode label
+            labelEditMode.setText("Edit Mode: ");
+            labelEditModeState.setVisible(true);
+            
+            editModeTextColor(false);
         }
         
         // else if there is a tab editing but it is not this one
@@ -1439,6 +1452,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             btnSwitchEditMode.setEnabled(false);
             btnAddRecords.setEnabled(false);
             btnBatchEdit.setEnabled(false);
+            
+            // set edit mode label
+            labelEditMode.setText("Editing " + getEditingTabName() + " ... ");
+            labelEditModeState.setVisible(false);
+            editModeTextColor(true);
         }
     }
 
@@ -2825,6 +2843,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             
             // if editing break and return true
             if(isEditing){
+                editingTabName = entry.getKey();
                 break;
             }
         }
@@ -2900,6 +2919,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         
     }
     
+    public String getEditingTabName() {
+        return editingTabName;
+    }
     
     // @formatter:off
     // Variables declaration - do not modify//GEN-BEGIN:variables
