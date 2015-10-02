@@ -2886,6 +2886,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }
 
+    /**
+     * showWindowInFront
+     * This shows the component in front of the Main Window
+     * @param c Any component that needs to show on top of the Main window
+     */
+    public void showWindowInFront(Component c){
+
+        ((Window)(c)).setAlwaysOnTop(true);
+        
+    }
+    
+    
     // @formatter:off
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel addPanel_control;
