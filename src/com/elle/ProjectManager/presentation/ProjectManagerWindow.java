@@ -1505,8 +1505,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         //set popup Window become invisible
         tableCellPopupWindow.setTableCellPopupWindowVisible(!addRecordWindowShow);
 
-        addRecordsWindow = new AddRecordsWindow();
-        addRecordsWindow.setVisible(true);
+        // if no add records window is open
+        if(addRecordsWindow == null || !addRecordsWindow.isDisplayable()){
+            addRecordsWindow = new AddRecordsWindow();
+            addRecordsWindow.setVisible(true);
+        }
+        
+        // if window is already open then set the focus
+        else {
+            addRecordsWindow.toFront();
+        }
 
         // update records
         String tabName = getSelectedTabName();
