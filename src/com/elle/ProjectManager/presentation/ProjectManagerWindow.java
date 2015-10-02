@@ -51,8 +51,8 @@ import java.util.Vector;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-10-01";
-    private final String VERSION = "0.9.0";
+    private final String CREATION_DATE = "2015-10-02";
+    private final String VERSION = "0.9.1";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
@@ -71,6 +71,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // colors - Edit mode labels
     private Color editModeDefaultTextColor;
     private Color editModeActiveTextColor;
+    
+    private String editingTabName; // stores the name of the tab that is editing
     
     // Misc 
     private boolean addRecordWindowShow;
@@ -1282,7 +1284,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // set the states for this tab
             tab.setEditing(false);
             makeTableEditable(false);
-            setEnabledEditingButtons(true, true, true);
+            setEnabledEditingButtons(true, false, false);
             btnAddRecords.setEnabled(true);
             btnSwitchEditMode.setEnabled(true);
             setBatchEditButtonStates(tab);
@@ -1425,6 +1427,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             else{
                 setEnabledEditingButtons(false, true, true);
             }
+            
+            // set edit mode label
+            labelEditMode.setText("Edit Mode: ");
+            labelEditModeState.setVisible(true);
+            editModeTextColor(true);
         }
         
         // else if no tab is editing
@@ -1432,6 +1439,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             btnSwitchEditMode.setEnabled(true);
             btnAddRecords.setEnabled(true);
             btnBatchEdit.setEnabled(true);
+            
+            // set edit mode label
+            labelEditMode.setText("Edit Mode: ");
+            labelEditModeState.setVisible(true);
+            
+            editModeTextColor(false);
         }
         
         // else if there is a tab editing but it is not this one
@@ -1439,6 +1452,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             btnSwitchEditMode.setEnabled(false);
             btnAddRecords.setEnabled(false);
             btnBatchEdit.setEnabled(false);
+            
+            // set edit mode label
+            labelEditMode.setText("Editing " + getEditingTabName() + " ... ");
+            labelEditModeState.setVisible(false);
+            editModeTextColor(true);
         }
     }
 
@@ -1463,6 +1481,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tab.setBatchEditBtnEnabled(false);
         setBatchEditButtonStates(tab);
         
+        // show the batch edit window in front of the Main Window
+        showWindowInFront(batchEditWindow);
+        
     }//GEN-LAST:event_btnBatchEditActionPerformed
 
     private void menuItemManageDBsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemManageDBsActionPerformed
@@ -1484,8 +1505,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         //set popup Window become invisible
         tableCellPopupWindow.setTableCellPopupWindowVisible(!addRecordWindowShow);
 
-        addRecordsWindow = new AddRecordsWindow();
-        addRecordsWindow.setVisible(true);
+        // if no add records window is open
+        if(addRecordsWindow == null || !addRecordsWindow.isDisplayable()){
+            addRecordsWindow = new AddRecordsWindow();
+            addRecordsWindow.setVisible(true);
+        }
+        
+        // if window is already open then set the focus
+        else {
+            addRecordsWindow.toFront();
+        }
 
         // update records
         String tabName = getSelectedTabName();
@@ -2822,6 +2851,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             
             // if editing break and return true
             if(isEditing){
+                editingTabName = entry.getKey();
                 break;
             }
         }
@@ -2886,6 +2916,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }
 
+    /**
+     * showWindowInFront
+     * This shows the component in front of the Main Window
+     * @param c Any component that needs to show on top of the Main window
+     */
+    public void showWindowInFront(Component c){
+
+        ((Window)(c)).setAlwaysOnTop(true);
+        
+    }
+    
+    public String getEditingTabName() {
+        return editingTabName;
+    }
+    
     // @formatter:off
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel addPanel_control;

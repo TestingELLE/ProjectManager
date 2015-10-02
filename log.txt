@@ -1157,3 +1157,87 @@ The last packet sent successfully to the server was 0 milliseconds ago. The driv
 -------------------------2015-09-25 10:26:11 AM-------------------------
 3:2015-09-25 10:26:32 AM: Start to connect local database...
 2015-09-25 10:26:33 AM: Connect successfully!
+
+-------------------------2015-10-01 09:52:39 AM-------------------------
+3:2015-10-01 09:53:00 AM: Start to connect local database...
+2015-10-01 09:53:01 AM: Connect successfully!
+
+-------------------------2015-10-01 09:59:15 AM-------------------------
+
+-------------------------2015-10-01 11:03:38 AM-------------------------
+
+-------------------------2015-10-01 11:08:36 AM-------------------------
+3:2015-10-01 11:08:36 AM: Start to connect local database...
+2015-10-01 11:08:38 AM: Connect successfully!
+
+-------------------------2015-10-01 11:08:53 AM-------------------------
+3:2015-10-01 11:08:53 AM: Start to connect local database...
+2015-10-01 11:08:54 AM: Connect successfully!
+
+-------------------------2015-10-01 11:38:09 AM-------------------------
+3:2015-10-01 11:38:09 AM: Start to connect local database...
+2015-10-01 11:38:10 AM: Connect successfully!
+
+-------------------------2015-10-01 11:51:38 AM-------------------------
+3:2015-10-01 11:51:38 AM: Start to connect local database...
+2015-10-01 11:51:39 AM: Connect successfully!
+
+-------------------------2015-10-01 11:52:04 AM-------------------------
+3:2015-10-01 11:52:04 AM: Start to connect local database...
+2015-10-01 11:52:06 AM: Connect successfully!
+
+-------------------------2015-10-01 11:56:32 AM-------------------------
+3:2015-10-01 11:56:32 AM: Start to connect local database...
+2015-10-01 11:56:33 AM: Connect successfully!
+
+-------------------------2015-10-01 11:56:58 AM-------------------------
+3:2015-10-01 11:56:58 AM: Start to connect local database...
+2015-10-01 11:57:00 AM: Connect successfully!
+
+-------------------------2015-10-01 12:08:19 PM-------------------------
+3:2015-10-01 12:08:19 PM: Start to connect local database...
+2015-10-01 12:08:21 PM: Connect successfully!
+
+-------------------------2015-10-01 12:17:12 PM-------------------------
+3:2015-10-01 12:17:12 PM: Start to connect local database...
+2015-10-01 12:17:13 PM: Connect successfully!
+
+-------------------------2015-10-01 12:17:31 PM-------------------------
+3:2015-10-01 12:17:31 PM: Start to connect local database...
+2015-10-01 12:17:33 PM: Connect successfully!
+
+-------------------------2015-10-01 12:25:46 PM-------------------------
+3:2015-10-01 12:25:46 PM: Start to connect local database...
+2015-10-01 12:25:47 PM: Connect successfully!
+
+-------------------------2015-10-01 12:46:05 PM-------------------------
+3:2015-10-01 12:46:05 PM: Start to connect local database...
+2015-10-01 12:46:06 PM: Connect successfully!
+
+-------------------------2015-10-01 12:50:55 PM-------------------------
+3:2015-10-01 12:50:55 PM: Start to connect local database...
+2015-10-01 12:50:56 PM: Connect successfully!
+
+-------------------------2015-10-01 12:59:20 PM-------------------------
+3:2015-10-01 12:59:20 PM: Start to connect local database...
+2015-10-01 12:59:21 PM: Connect successfully!
+
+-------------------------2015-10-01 01:02:54 PM-------------------------
+3:2015-10-01 01:02:55 PM: Start to connect local database...
+2015-10-01 01:02:56 PM: Connect successfully!
+
+-------------------------2015-10-01 01:05:36 PM-------------------------
+3:2015-10-01 01:05:37 PM: Start to connect local database...
+2015-10-01 01:05:38 PM: Connect successfully!
+
+-------------------------2015-10-01 01:08:11 PM-------------------------
+3:2015-10-01 01:08:11 PM: Start to connect local database...
+2015-10-01 01:08:12 PM: Connect successfully!
+
+-------------------------2015-10-02 12:25:27 PM-------------------------
+3:2015-10-02 12:25:44 PM: Start to connect local database...
+2015-10-02 12:25:46 PM: Connect successfully!
+
+-------------------------2015-10-02 01:34:18 PM-------------------------
+3:2015-10-02 01:34:41 PM: Start to connect local database...
+2015-10-02 01:34:42 PM: Connect successfully!
