@@ -1282,7 +1282,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // set the states for this tab
             tab.setEditing(false);
             makeTableEditable(false);
-            setEnabledEditingButtons(true, true, true);
+            setEnabledEditingButtons(true, false, false);
             btnAddRecords.setEnabled(true);
             btnSwitchEditMode.setEnabled(true);
             setBatchEditButtonStates(tab);
