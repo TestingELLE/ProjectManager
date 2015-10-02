@@ -1463,6 +1463,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tab.setBatchEditBtnEnabled(false);
         setBatchEditButtonStates(tab);
         
+        // show the batch edit window in front of the Main Window
+        showWindowInFront(batchEditWindow);
+        
     }//GEN-LAST:event_btnBatchEditActionPerformed
 
     private void menuItemManageDBsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemManageDBsActionPerformed
