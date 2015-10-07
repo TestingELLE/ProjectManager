@@ -74,6 +74,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     
     private String editingTabName; // stores the name of the tab that is editing
     
+    private String editingTabName; // stores the name of the tab that is editing
+    
     // Misc 
     private boolean addRecordWindowShow;
     private int addRecordLevel = 2;
