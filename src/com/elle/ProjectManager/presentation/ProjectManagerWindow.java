@@ -76,6 +76,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private boolean addRecordWindowShow;
     private int addRecordLevel = 2;
     private int deleteRecordLevel = 2;
+    
+    private String appColumnCurrentType;
 
 //    // create components for the tableSelected cell popup window in project manager window 
 //    private JTextArea textAreatableCellPopup;
@@ -235,6 +237,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //        setTableListener(task_filesTable);
 //        setTableListener(task_notesTable);      
         addRecordWindowShow = false;
+        appColumnCurrentType = "";
 
         // set the tableSelected cell popup window
 //        tableCellPopupWindow = new TableCellPopupWindow();
@@ -474,7 +477,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        TableFilterBtnGroup = new javax.swing.ButtonGroup();
+        jPanel2 = new javax.swing.JPanel();
+        ELLEGUITableBtn = new javax.swing.JToggleButton();
+        AnalysterTableBtn = new javax.swing.JToggleButton();
+        PMTableBtn = new javax.swing.JToggleButton();
+        OtherTableBtn = new javax.swing.JToggleButton();
         jPanel5 = new javax.swing.JPanel();
         tabbedPanel = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -506,7 +516,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         textFieldForSearch = new javax.swing.JTextField();
         comboBoxSearch = new javax.swing.JComboBox();
         btnClearAllFilter = new javax.swing.JButton();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemVersion = new javax.swing.JMenuItem();
@@ -538,6 +547,77 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel2.setAlignmentX(0.0F);
+        jPanel2.setAlignmentY(0.0F);
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        TableFilterBtnGroup.add(ELLEGUITableBtn);
+        ELLEGUITableBtn.setText("ELLEGUI");
+        ELLEGUITableBtn.setAlignmentY(0.0F);
+        ELLEGUITableBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        ELLEGUITableBtn.setMaximumSize(new java.awt.Dimension(108, 29));
+        ELLEGUITableBtn.setMinimumSize(new java.awt.Dimension(108, 29));
+        ELLEGUITableBtn.setPreferredSize(new java.awt.Dimension(108, 25));
+        ELLEGUITableBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ELLEGUITableBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, -2, -1, -3);
+        jPanel2.add(ELLEGUITableBtn, gridBagConstraints);
+
+        TableFilterBtnGroup.add(AnalysterTableBtn);
+        AnalysterTableBtn.setText("Analyster");
+        AnalysterTableBtn.setAlignmentX(Component.TOP_ALIGNMENT);
+        AnalysterTableBtn.setAlignmentY(0.0F);
+        AnalysterTableBtn.setMaximumSize(new java.awt.Dimension(108, 29));
+        AnalysterTableBtn.setMinimumSize(new java.awt.Dimension(108, 29));
+        AnalysterTableBtn.setPreferredSize(new java.awt.Dimension(108, 25));
+        AnalysterTableBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AnalysterTableBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, -2, -1, -3);
+        jPanel2.add(AnalysterTableBtn, gridBagConstraints);
+
+        TableFilterBtnGroup.add(PMTableBtn);
+        PMTableBtn.setText("PM");
+        PMTableBtn.setAlignmentY(0.0F);
+        PMTableBtn.setMaximumSize(new java.awt.Dimension(108, 29));
+        PMTableBtn.setMinimumSize(new java.awt.Dimension(108, 29));
+        PMTableBtn.setPreferredSize(new java.awt.Dimension(108, 25));
+        PMTableBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PMTableBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, -2, -1, -3);
+        jPanel2.add(PMTableBtn, gridBagConstraints);
+
+        TableFilterBtnGroup.add(OtherTableBtn);
+        OtherTableBtn.setText("Other");
+        OtherTableBtn.setAlignmentY(0.0F);
+        OtherTableBtn.setMaximumSize(new java.awt.Dimension(108, 29));
+        OtherTableBtn.setMinimumSize(new java.awt.Dimension(108, 29));
+        OtherTableBtn.setPreferredSize(new java.awt.Dimension(108, 25));
+        OtherTableBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OtherTableBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, -2, -1, -3);
+        jPanel2.add(OtherTableBtn, gridBagConstraints);
+
+        tabbedPanel.setAlignmentX(0.0F);
+        tabbedPanel.setAlignmentY(0.0F);
         tabbedPanel.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 tabbedPanelStateChanged(evt);
@@ -811,7 +891,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         .addComponent(btnCancelSQL)
                         .addGap(4, 4, 4)
                         .addComponent(btnCloseSQL)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 64, Short.MAX_VALUE)))
                 .addGap(4, 4, 4))
         );
 
@@ -819,7 +899,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE)
+            .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 823, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -862,8 +942,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(labelTimeLastUpdate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -912,7 +992,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addContainerGap(151, Short.MAX_VALUE))
+                .addContainerGap(92, Short.MAX_VALUE))
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -923,7 +1003,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch))
-                .addGap(0, 38, Short.MAX_VALUE))
+                .addGap(0, 27, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout addPanel_controlLayout = new javax.swing.GroupLayout(addPanel_control);
@@ -935,15 +1015,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(123, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(addPanel_controlLayout.createSequentialGroup()
-                .addGap(0, 5, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addPanel_controlLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         menuFile.setText("File");
@@ -1110,14 +1191,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 807, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 16, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addPanel_control, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 817, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1289,7 +1374,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             // set the color of the edit mode text
             editModeTextColor(tab.isEditing());
-        
         }
         
         // if tab is not editing then it is switching on
@@ -1300,15 +1384,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             makeTableEditable(true);
             setEnabledEditingButtons(true, false, false);
             setBatchEditButtonStates(tab);
-
         }
-        
         // set the color of the edit mode text
         editModeTextColor(!editing);
-
-        // cell pop up window
-        boolean editable = labelEditModeState.getText().equals("ON");
-        tableCellPopupWindow.enableEdit(editable);
 
     }//GEN-LAST:event_btnSwitchEditModeActionPerformed
 
@@ -1354,7 +1432,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param
      */
     public boolean getEditMode() {
-        boolean editable = labelEditModeState.getText().equals("ON");
+        String editState = labelEditModeState.getText();
+        
+        boolean editable = editState.equals("ON ");
+        
         return editable;
     }
 
@@ -1466,9 +1547,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_btnBatchEditActionPerformed
 
     private void menuItemManageDBsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemManageDBsActionPerformed
+        
         editDatabaseWindow = new EditDatabaseWindow();
         editDatabaseWindow.setLocationRelativeTo(this);
         editDatabaseWindow.setVisible(true);
+        
     }//GEN-LAST:event_menuItemManageDBsActionPerformed
 
     /**
@@ -1838,14 +1921,63 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         
     }//GEN-LAST:event_btnRevertChangesActionPerformed
 
+    private void ELLEGUITableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ELLEGUITableBtnActionPerformed
+        
+        appColumnCurrentType = "ELLEGUI";
+        
+        JTable table = getSelectedTable();       //get selected table
+        
+        String selectedFilterName = " WHERE app = ";
+        selectedFilterName = selectedFilterName +  "'"+ ELLEGUITableBtn.getText()+"'";
+        
+        buttonFilteringTables(table, selectedFilterName );
+    }//GEN-LAST:event_ELLEGUITableBtnActionPerformed
+
+    private void AnalysterTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AnalysterTableBtnActionPerformed
+        
+        appColumnCurrentType = "Analyster";
+        
+        JTable table = getSelectedTable();
+        
+        String selectedFilterName = " WHERE app = ";
+        selectedFilterName = selectedFilterName + "'"+ AnalysterTableBtn.getText()+"'";
+        
+        buttonFilteringTables(table, selectedFilterName );
+    }//GEN-LAST:event_AnalysterTableBtnActionPerformed
+
+    private void PMTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PMTableBtnActionPerformed
+        
+        appColumnCurrentType = "PM";
+        
+        JTable table = getSelectedTable();
+        
+        String selectedFilterName = " WHERE app = ";
+        selectedFilterName = selectedFilterName + "'"+ PMTableBtn.getText()+"'";
+        
+        buttonFilteringTables(table, selectedFilterName );
+    }//GEN-LAST:event_PMTableBtnActionPerformed
+
+    private void OtherTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OtherTableBtnActionPerformed
+       
+        appColumnCurrentType = "";
+        
+        JTable table = getSelectedTable();
+        
+        String selectedFilterName = " WHERE app IS ";
+        selectedFilterName = selectedFilterName + " NULL ";
+        
+        buttonFilteringTables(table, selectedFilterName );
+    }//GEN-LAST:event_OtherTableBtnActionPerformed
+
     private void buttonFilteringTables(JTable table, String str){
         
         try {
             // open connection because might time out
             DBConnection.open();
             statement = DBConnection.getStatement();
-            String sql = "SELECT * FROM " + table.getName() + " WHERE app = "
-                    + str +" ORDER BY taskID ASC" + "";
+            String sql = "SELECT * FROM " + table.getName() + str +" ORDER BY taskID ASC" + "";
+            
+            System.out.println(sql + "sentence send to sql!");
             loadTable(sql, table);
 
         } catch (SQLException ex) {
@@ -2393,17 +2525,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             if (table.getColumnName(column).equals("title")
                     || table.getColumnName(column).equals("description")
                     || table.getColumnName(column).equals("instructions")) {
+                
                 // popup tableSelected cell edit window
                 tableCellPopupWindow.getTableCellPopup(table, this);
-
-                boolean disable = !tableCellPopupWindow.getWindowPopup();
-
-                if (labelEditModeState.getText().equals("ON")) {
-
-                    table.setEnabled(disable);
-
-                    disableProjectManagerFunction(disable);
-                }
 
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
@@ -2416,15 +2540,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 // popup tableSelected cell edit window
                 tableCellPopupWindow.getTableCellPopup(table, this);
 
-                boolean disable = !tableCellPopupWindow.getWindowPopup();
-
-                if (labelEditModeState.getText().equals("ON")) {
-
-                    table.setEnabled(disable);
-
-                    disableProjectManagerFunction(disable);
-                }
-
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -2433,16 +2548,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             if (table.getColumnName(column).equals("status_notes")) {
                 // popup tableSelected cell edit window
                 tableCellPopupWindow.getTableCellPopup(table, this);
-
-                boolean disable = !tableCellPopupWindow.getWindowPopup();
-
-                if (labelEditModeState.getText().equals("ON")) {
-
-                    table.setEnabled(disable);
-
-                    disableProjectManagerFunction(disable);
-                }
-
+                
             } else {
                 tableCellPopupWindow.setTableCellPopupWindowVisible(false);
             }
@@ -2450,10 +2556,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
 
     public void setDisableProjecetManagerFunction(boolean f) {
-        disableProjectManagerFunction(f);
+        setEnableProjectManagerFunction(f);
     }
 
-    private void disableProjectManagerFunction(boolean disable) {
+    private void setEnableProjectManagerFunction(boolean disable) {
 
         tabbedPanel.setEnabled(disable);
         btnAddRecords.setEnabled(disable);
@@ -2462,6 +2568,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnSearch.setEnabled(disable);
         btnSwitchEditMode.setEnabled(disable);
         btnUploadChanges.setEnabled(disable);
+        btnRevertChanges.setEnabled(disable);
         comboBoxSearch.setEnabled(disable);
         menuEdit.setEnabled(disable);
         menuFile.setEnabled(disable);
@@ -2888,6 +2995,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // @formatter:off
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton AnalysterTableBtn;
+    private javax.swing.JToggleButton ELLEGUITableBtn;
+    private javax.swing.JToggleButton OtherTableBtn;
+    private javax.swing.JToggleButton PMTableBtn;
+    private javax.swing.ButtonGroup TableFilterBtnGroup;
     private javax.swing.JPanel addPanel_control;
     private javax.swing.JButton btnAddRecords;
     private javax.swing.JButton btnBatchEdit;
@@ -2901,6 +3013,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JButton btnUploadChanges;
     private javax.swing.JComboBox comboBoxSearch;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanelEdit;
     private javax.swing.JPanel jPanelSQL;
@@ -2908,7 +3021,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextAreaSQL;
     private javax.swing.JLabel labelEditMode;
     private javax.swing.JLabel labelEditModeState;
@@ -2966,9 +3078,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.addRecordWindowShow;
 
     }
+    
+    public JFrame getAddRecordsWindow(){
+        return this.addRecordsWindow;
+    }
 
     public void setAddRecordsWindowShow(boolean a) {
         this.addRecordWindowShow = a;
+    }
+    
+    public String getAppColumnCurrentType(){
+        return this.appColumnCurrentType;
     }
 
     /**

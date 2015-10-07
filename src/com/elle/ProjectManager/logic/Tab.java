@@ -136,7 +136,7 @@ public class Tab implements ITableConstants{
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-
+    
     public boolean isActivateRecordMenuItemEnabled() {
         return activateRecordMenuItemEnabled;
     }
