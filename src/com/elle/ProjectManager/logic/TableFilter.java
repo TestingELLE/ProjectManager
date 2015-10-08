@@ -128,8 +128,6 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
     /**
      * removeAllDistinctItems
      *
-     * @param col
-     * @param items
      */
     public void removeAllFilterItems() {
 
@@ -162,7 +160,6 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      * addColorHeader
      *
      * @param columnIndex
-     * @param color
      */
     public void addColorHeader(int columnIndex) {
 
@@ -177,7 +174,6 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
     /**
      * applyColorHeaders
      *
-     * @param color
      */
     public void applyColorHeaders() {
 
@@ -195,7 +191,6 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      * removeColorHeader
      *
      * @param columnIndex
-     * @param color
      */
     public void removeColorHeader(int columnIndex) {
 
@@ -207,7 +202,6 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
     /**
      * removeAllColorHeaders
      *
-     * @param color
      */
     public void removeAllColorHeaders() {
 
@@ -293,7 +287,6 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      * clearAllFilters clears filters for the specified column
      *
      * @param columnIndex
-     * @return
      */
     public void clearColFilter(int columnIndex) {
         removeFilterItems(columnIndex);    // remove the filters for the column

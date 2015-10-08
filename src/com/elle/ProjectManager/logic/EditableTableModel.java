@@ -22,7 +22,6 @@ public class EditableTableModel extends DefaultTableModel {
      * EditableTableModel
      * @param data
      * @param columnNames
-     * @param isCellEditable 
      */
     public EditableTableModel(Vector data, Vector columnNames) {
         super(data, columnNames);

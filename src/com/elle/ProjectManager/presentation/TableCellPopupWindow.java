@@ -58,13 +58,15 @@ public class TableCellPopupWindow implements ITableConstants {
     private JButton confirmButtonTableCellPopup;
     private JButton cancelButtonTableCellPopup;
     private JButton editBtnPopup;
-    private boolean windowPopup = false;
     private ProjectManagerWindow projectManager;
+
+    // mics
     boolean editBtnIsClick;
+    private boolean windowPopup;
 
     public TableCellPopupWindow(JFrame frame) {
         initTableCellPopup(frame);
-        windowPopup = false;
+//        windowPopup = false;
         projectManager = ProjectManagerWindow.getInstance();
     }
 
@@ -100,11 +102,6 @@ public class TableCellPopupWindow implements ITableConstants {
         controlPopupPanel.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
         controlPopupPanel.setVisible(false);
 
-//        // initialize the confirmButtonTableCellPopup                       
-//        GridBagConstraints tableCellPopupConstraints = new GridBagConstraints();
-//        tableCellPopupConstraints.gridx = 0;
-//        tableCellPopupConstraints.gridy = 0;
-//        tableCellPopupConstraints.fill = GridBagConstraints.HORIZONTAL;
         GridBagConstraints tableCellPopupConstraints = new GridBagConstraints();
 
         // initialize the editButtonTableCellPopup                       
@@ -141,7 +138,6 @@ public class TableCellPopupWindow implements ITableConstants {
         System.out.println(confirmButtonTableCellPopup.getPreferredSize());
         System.out.println(cancelButtonTableCellPopup.getPreferredSize());
 
-
         if (frame instanceof ProjectManagerWindow) {
 
             editBtnPopup.setVisible(true);
@@ -158,62 +154,24 @@ public class TableCellPopupWindow implements ITableConstants {
             tableCellPopupPanel.setSize(500, 200);
             controlPopupPanel.setSize(500, 35);
 
-//            if (projectManager.getEditMode()) {
-//                
-//                boolean editable = projectManager.getEditMode();
-//
-//                enableEdit(editable);
-//
-//            }
         } else {
+            
+            System.out.println( "add record popup window!");
+
             editBtnPopup.setVisible(false);
             editBtnPopup.setEnabled(false);
-            
-            confirmButtonTableCellPopup.setPreferredSize(new Dimension(73, 20));
-            cancelButtonTableCellPopup.setPreferredSize(new Dimension(73, 20));
-            
-            textAreatableCellPopup.setSize(new Dimension(400, 55));
-            areaScrollPanetableCellPopup.setSize(new Dimension(400, 55));
-            tableCellPopupPanel.setSize(400, 55);
-            controlPopupPanel.setSize(400, 25);
+
+            textAreatableCellPopup.setSize(new Dimension(400, 35));
+            areaScrollPanetableCellPopup.setSize(new Dimension(400, 35));
+            tableCellPopupPanel.setSize(400, 35);
+            controlPopupPanel.setSize(400, 20);
+
         }
 
         editBtnIsClick = false;
         // set the popup_layer of projectmanager for the table cell popup window
         frame.getLayeredPane().add(tableCellPopupPanel, JLayeredPane.POPUP_LAYER);
         frame.getLayeredPane().add(controlPopupPanel, JLayeredPane.POPUP_LAYER);
-    }
-
-    public void disableEdit(boolean editable) {
-        boolean disable = !editable;
-        textAreatableCellPopup.setEditable(disable);
-
-        editBtnPopup.setEnabled(!disable);
-        editBtnPopup.setVisible(!disable);
-
-        editBtnIsClick = disable;
-
-        confirmButtonTableCellPopup.setVisible(disable);
-        confirmButtonTableCellPopup.setEnabled(disable);
-        cancelButtonTableCellPopup.setVisible(disable);
-        cancelButtonTableCellPopup.setEnabled(disable);
-    }
-
-    /*
-     * Make popup window editable, confirm and cancel button show and edit button disappear
-     * @parm editable
-     */
-    public void enableEdit(boolean editable) {
-
-        textAreatableCellPopup.setEditable(editable);
-
-        editBtnPopup.setEnabled(!editable);
-        editBtnPopup.setVisible(!editable);
-
-        confirmButtonTableCellPopup.setVisible(editable);
-        confirmButtonTableCellPopup.setEnabled(editable);
-        cancelButtonTableCellPopup.setVisible(editable);
-        cancelButtonTableCellPopup.setEnabled(editable);
     }
 
     public boolean getWindowPopup() {
@@ -236,7 +194,6 @@ public class TableCellPopupWindow implements ITableConstants {
                         tableCellPopup(table, frame);
                     } else {
                         setTableCellPopupWindowVisible(false);
-                        windowPopup = false;
                     }
                 } else if (table.getName().equals(TASKFILES_TABLE_NAME)) {
                     if (table.getColumnName(column).equals("files") || table.getColumnName(column).equals("notes")
@@ -245,7 +202,6 @@ public class TableCellPopupWindow implements ITableConstants {
                         tableCellPopup(table, frame);
                     } else {
                         setTableCellPopupWindowVisible(false);
-                        windowPopup = false;
                     }
                 } else if (table.getName().equals(TASKNOTES_TABLE_NAME)) {
                     if (table.getColumnName(column).equals("status_notes")) {
@@ -253,7 +209,6 @@ public class TableCellPopupWindow implements ITableConstants {
                         tableCellPopup(table, frame);
                     } else {
                         setTableCellPopupWindowVisible(false);
-                        windowPopup = false;
                     }
                 }
             }
@@ -261,58 +216,68 @@ public class TableCellPopupWindow implements ITableConstants {
         table.setFocusTraversalKeysEnabled(false);
     }
 
+    /*
+     * Make popup window editable, confirm and cancel button show and edit button disappear
+     * @parm editable
+     */
+    public void setEnableEdit(boolean editable, JFrame frame) {
+
+        if (frame instanceof ProjectManagerWindow) {
+
+            textAreatableCellPopup.setEditable(editable);
+
+            editBtnPopup.setEnabled(!editable);
+            editBtnPopup.setVisible(!editable);
+
+            confirmButtonTableCellPopup.setVisible(editable);
+            confirmButtonTableCellPopup.setEnabled(editable);
+            cancelButtonTableCellPopup.setVisible(editable);
+            cancelButtonTableCellPopup.setEnabled(editable);
+        }
+    }
+
     public void getTableCellPopup(JTable table, JFrame frame) {
+
         tableCellPopup(table, frame);
     }
-    
+
     /*
      * This is to set the table cell popup window visible to edit.
      * @parm selectedTable, row , column
      */
-
     private void tableCellPopup(JTable selectedTable, JFrame frame) {
 
         int row = selectedTable.getSelectedRow();
         int column = selectedTable.getSelectedColumn();
 
-        // find the selected table cell 
-        Rectangle cellRectTable = selectedTable.getCellRect(row, column, true);
-        
-        //convert the location in jtable to the location in projectManager window
-        cellRectTable = SwingUtilities.convertRectangle(selectedTable, cellRectTable, projectManager);
-        
-        int x = cellRectTable.x;
-        int y = cellRectTable.y;
-
-        // set the table cell popup window visible
-        setTableCellPopupWindowVisible(true);
+        // popup Window popup
         windowPopup = true;
-        setProjectManagerFunction(selectedTable, windowPopup);
-        // use the table cell content to set the content for textarea
-        textAreatableCellPopup.setText("");
-        textAreatableCellPopup.setText((String) selectedTable.getValueAt(row, column));
 
-        int ytablePanelLocation = y-20; // actually table Panel's y value
+        // set the location of popup window in Project Manager Window or Add record Window
+        setLocationOfPopupWindow(selectedTable, frame, row, column);
 
-//        if (!projectManager.getAddRecordsWindowShow()) {
-//            ytablePanelLocation = ytablePanelLocation + 150;
-//        }
+        // add control + tab keystroke to popup window
+        setControlTabKeyEvent(selectedTable, row, column);
 
-        int ycontrolPanelLocation = ytablePanelLocation + tableCellPopupPanel.getHeight();// actually control Panel's y value
+        //set Edit, confirm, cancel btn event
+        setPopupWindowBtnsEvent(selectedTable, row, column, frame);
 
-        int baseLineHeight = ytablePanelLocation + tableCellPopupPanel.getHeight() + controlPopupPanel.getHeight();//the popup window botton line location's y value
+//        System.out.println("table cell popup method called and popup window show in ? " + windowPopup + " isedit btn clicked? " + editBtnIsClick);
 
-        // make the location of popup window always above the frame bottom line
-        if (baseLineHeight > frame.getHeight() - 10) {
-            ytablePanelLocation = frame.getHeight() - 25 - tableCellPopupPanel.getHeight() - controlPopupPanel.getHeight();
-            ycontrolPanelLocation = ytablePanelLocation + tableCellPopupPanel.getHeight();
+        if (projectManager.getEditMode()) {
+            setEnableEdit(true, frame);
+            selectedTable.setEnabled(false);
+            setProjectManagerFunction(false);
+        } else {
+            setEnableEdit(false, frame);
+            selectedTable.setEnabled(true);
+            setProjectManagerFunction(true);
         }
-        // set the tableCellPopupPanel position
-        tableCellPopupPanel.setLocation(x, ytablePanelLocation);
 
-        // set the controlPopupPanel position
-        controlPopupPanel.setLocation(x, ycontrolPanelLocation);
-        
+    }
+
+    private void setControlTabKeyEvent(JTable selectedTable, int row, int column) {
+
         textAreatableCellPopup.setFocusTraversalKeysEnabled(false);
 
         //register cirt+tab to aumatically confirm and shift to the next cell
@@ -320,9 +285,10 @@ public class TableCellPopupWindow implements ITableConstants {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                windowPopup = false;
-                setProjectManagerFunction(selectedTable, windowPopup);
                 confirmButtonActionPerformed(e, selectedTable);
+
+                setProjectManagerFunction(true);
+
                 selectedTable.changeSelection(row, column + 1, false, false);
 
             }
@@ -330,20 +296,72 @@ public class TableCellPopupWindow implements ITableConstants {
 
         InputMap im = textAreatableCellPopup.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap am = textAreatableCellPopup.getActionMap();
-        
+
         KeyStroke bindingKey = KeyStroke.getKeyStroke("control TAB");
 
         im.put(bindingKey, "confirm and shift");
         am.put("confirm and shift", confirmAndShiftEvent);
+    }
 
+    private void setLocationOfPopupWindow(JTable selectedTable, JFrame frame, int row, int column) {
+        // find the selected table cell 
+        Rectangle cellRectTable = selectedTable.getCellRect(row, column, true);
+
+        int x, y, ytablePanelLocation, ycontrolPanelLocation;
+
+        if (frame instanceof ProjectManagerWindow) {
+
+            //convert the location in jtable to the location in projectManager window
+            cellRectTable = SwingUtilities.convertRectangle(selectedTable, cellRectTable, projectManager);
+
+            x = cellRectTable.x;
+            y = cellRectTable.y;
+
+            ytablePanelLocation = y - 20; // actually table Panel's y value
+
+            ycontrolPanelLocation = ytablePanelLocation + tableCellPopupPanel.getHeight();// actually control Panel's y value
+
+            int baseLineHeight = ytablePanelLocation + tableCellPopupPanel.getHeight() + controlPopupPanel.getHeight();//the popup window botton line location's y value
+
+            // make the location of popup window always above the frame bottom line
+            if (baseLineHeight > frame.getHeight() - 10) {
+                ytablePanelLocation = frame.getHeight() - 25 - tableCellPopupPanel.getHeight() - controlPopupPanel.getHeight();
+                ycontrolPanelLocation = ytablePanelLocation + tableCellPopupPanel.getHeight();
+            }
+        } else {
+            cellRectTable = SwingUtilities.convertRectangle(selectedTable, cellRectTable, projectManager.getAddRecordsWindow());
+
+            x = cellRectTable.x;
+            y = cellRectTable.y;
+
+            ytablePanelLocation = y - 20; // actually table Panel's y value
+
+            ycontrolPanelLocation = ytablePanelLocation + tableCellPopupPanel.getHeight();// actually control Panel's y value
+
+        }
+        // set the table cell popup window visible
+        setTableCellPopupWindowVisible(true);
+
+        // use the table cell content to set the content for textarea
+        textAreatableCellPopup.setText("");
+        textAreatableCellPopup.setText((String) selectedTable.getValueAt(row, column));
+
+        tableCellPopupPanel.setLocation(x, ytablePanelLocation);
+
+        // set the controlPopupPanel position
+        controlPopupPanel.setLocation(x, ycontrolPanelLocation);
+    }
+
+    // add edit, confirm, cancel buttons event 
+    private void setPopupWindowBtnsEvent(JTable selectedTable, int row, int column, JFrame frame) {
         editBtnPopup.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                enableEdit(true);
+                setEnableEdit(true, frame);
                 projectManager.makeTableEditable(true);
                 editBtnIsClick = true;
-                setProjectManagerFunction(selectedTable, true);
+                setProjectManagerFunction(false);
             }
 
         });
@@ -352,11 +370,11 @@ public class TableCellPopupWindow implements ITableConstants {
         Action confirmButtonAction = new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                //recover the other functions in project manager
-                windowPopup = false;
-                setProjectManagerFunction(selectedTable, windowPopup);
 
                 confirmButtonActionPerformed(e, selectedTable);
+
+                //recover the other functions in project manager
+                setProjectManagerFunction(true);
             }
         };
 
@@ -368,10 +386,10 @@ public class TableCellPopupWindow implements ITableConstants {
 
                 setTableCellPopupWindowVisible(false);
 
-                windowPopup = false;
+                selectedTable.setEnabled(true);
 
                 //recover the other functions in project manager
-                setProjectManagerFunction(selectedTable, windowPopup);
+                setProjectManagerFunction(true);
 
                 selectedTable.getComponentAt(row, column).requestFocus();
             }
@@ -379,23 +397,29 @@ public class TableCellPopupWindow implements ITableConstants {
         cancelButtonTableCellPopup.addActionListener(cancelButtonAction);
     }
 
-    public boolean isEditButtonClicked() {
-        return editBtnIsClick;
+    public void setIsEditButtonClicked(boolean isClicked) {
+        this.editBtnIsClick = isClicked;
     }
 
-    private void setProjectManagerFunction(JTable table, boolean windowPopup) {
+    public JButton getEditButton() {
+        return this.editBtnPopup;
+    }
 
-        if (editBtnIsClick) {
+    public boolean isEditButtonClicked() {
+        return this.editBtnIsClick;
+    }
 
-            table.setEnabled(!windowPopup);
-            projectManager.setDisableProjecetManagerFunction(!windowPopup);
-        }
+    private void setProjectManagerFunction(boolean windowPopup) {
+
+        projectManager.setDisableProjecetManagerFunction(windowPopup);
 
     }
 
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent e, JTable selectedTable) {
         int row = selectedTable.getSelectedRow();
         int column = selectedTable.getSelectedColumn();
+
+        selectedTable.setEnabled(true);
 
         if (projectManager.getAddRecordsWindowShow()) {
 
@@ -418,6 +442,7 @@ public class TableCellPopupWindow implements ITableConstants {
         if (Flag) {
             tableCellPopupPanel.setVisible(true);
             controlPopupPanel.setVisible(true);
+            windowPopup = true;
         } else {
             tableCellPopupPanel.setVisible(false);
             controlPopupPanel.setVisible(false);

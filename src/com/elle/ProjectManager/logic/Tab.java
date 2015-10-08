@@ -136,7 +136,7 @@ public class Tab implements ITableConstants{
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-
+    
     public boolean isActivateRecordMenuItemEnabled() {
         return activateRecordMenuItemEnabled;
     }
@@ -280,7 +280,7 @@ public class Tab implements ITableConstants{
     /**
      * This method subtracts an amount from the totalRecords value
      * This is used when records are deleted to update the totalRecords value
-     * @param amountOfRecordsDeleted 
+     * @param amountOfRecordsAdded 
      */
     public void addToTotalRowCount(int amountOfRecordsAdded) {
         totalRecords = totalRecords + amountOfRecordsAdded;

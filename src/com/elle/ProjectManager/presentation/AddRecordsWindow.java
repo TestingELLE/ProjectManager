@@ -12,8 +12,6 @@ import com.elle.ProjectManager.logic.Validator;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -51,6 +49,8 @@ public class AddRecordsWindow extends JFrame {
     private ArrayList<Integer> rowsNotEmpty; // only includes rows that have data
 
     private TableCellPopupWindow tableCellPopupWindow;
+    
+    private JTable table;
 
     // used to notify if the tableSelected is editing
     // the tableSelected.isEditing method has issues from the tableModelListener
@@ -64,15 +64,14 @@ public class AddRecordsWindow extends JFrame {
         rowsNotEmpty = new ArrayList<>();
         isEditing = false;
 
-        // initialize components
-        initComponents();
         projectManager = ProjectManagerWindow.getInstance();
         logWindow = projectManager.getLogWindow();
         tabs = projectManager.getTabs();
         statement = projectManager.getStatement();
         
-//        columnNames = new String[projectManager.getSelectedTable().getColumnCount()];
+        table = new JTable();
 
+//        columnNames = new String[projectManager.getSelectedTable().getColumnCount()];
         // set the selected tableSelected name
         table.setName(projectManager.getSelectedTabName());
 
@@ -81,6 +80,13 @@ public class AddRecordsWindow extends JFrame {
 
         // create a new empty tableSelected
         createEmptyTable();
+        
+        
+        // initialize components
+        initComponents();
+        
+        scrollpane.setPreferredSize(table.getPreferredSize());
+        scrollpane.setViewportView(table);
 
         // sets the keyboard focus manager
         setKeyboardFocusManager();
@@ -127,51 +133,14 @@ public class AddRecordsWindow extends JFrame {
 
         jPanel3 = new javax.swing.JPanel();
         scrollpane = new javax.swing.JScrollPane();
-        table = new javax.swing.JTable();
         btnSubmit = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
         btnAddRow = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(550, 200));
         setSize(new java.awt.Dimension(894, 560));
 
         scrollpane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollpane.setMaximumSize(new java.awt.Dimension(260, 100));
-        scrollpane.setMinimumSize(new java.awt.Dimension(130, 20));
-
-        table.setAutoCreateRowSorter(true);
-        table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "symbol", "analyst", "priority", "dateAssigned", "note"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        table.setMinimumSize(new java.awt.Dimension(75, 20));
-        table.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tableMouseClicked(evt);
-            }
-        });
-        table.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                tableKeyPressed(evt);
-            }
-        });
-        scrollpane.setViewportView(table);
 
         btnSubmit.setText("Submit");
         btnSubmit.addActionListener(new java.awt.event.ActionListener() {
@@ -198,34 +167,35 @@ public class AddRecordsWindow extends JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 917, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnAddRow)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSubmit)
-                .addGap(18, 18, 18)
-                .addComponent(btnCancel)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrollpane)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnAddRow)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSubmit)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancel)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddRow)
                     .addComponent(btnSubmit)
                     .addComponent(btnCancel))
-                .addGap(20, 20, 20))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -246,7 +216,6 @@ public class AddRecordsWindow extends JFrame {
         projectManager.setDisableProjecetManagerFunction(true);
 
         submit();
-        projectManager.setAddRecordsWindowShow(false);
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     /**
@@ -287,7 +256,6 @@ public class AddRecordsWindow extends JFrame {
 
                     // get cell value
                     cellValue = table.getValueAt(row, col);
-                    
 
                     // format the cell value for sql
                     if (cellValue != null) {
@@ -300,7 +268,7 @@ public class AddRecordsWindow extends JFrame {
                             cellValue = "'" + cellValue + "'";
                         }
                     }
-                    System.out.println("add record submit"+cellValue + "at "+ row + " " + col);
+                    System.out.println("add record submit" + cellValue + "at " + row + " " + col);
 
                     // skip empty rows
                     // this must be after the format cell value so the "" => null
@@ -349,15 +317,15 @@ public class AddRecordsWindow extends JFrame {
                     }
                 }
             }
-            
+
             System.out.println("numRowsAdded" + numRowsAdded);
-            
+
             if (numRowsAdded > 0) {
                 // update tableSelected and records label
                 String tabName = projectManager.getSelectedTabName();              // tab name
                 Tab tab = tabs.get(tabName);                                  // selected tab
 
-                JTable table = tab.getTable();  
+                JTable table = tab.getTable();
                 projectManager.loadTable(table);                              // load tableSelected data from database
 
                 // reload new table data for modifiedTableData
@@ -385,10 +353,6 @@ public class AddRecordsWindow extends JFrame {
         }
     }
 
-    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
-
-    }//GEN-LAST:event_tableMouseClicked
-
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         this.dispose();
         projectManager.setAddRecordsWindowShow(false);
@@ -401,10 +365,6 @@ public class AddRecordsWindow extends JFrame {
         model.addRow(new Object[]{});
 
     }//GEN-LAST:event_btnAddRowActionPerformed
-
-    private void tableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableKeyPressed
-
-    }//GEN-LAST:event_tableKeyPressed
 
     /**
      * setKeyboardFocusManager Sets the Keyboard Focus Manager
@@ -473,12 +433,20 @@ public class AddRecordsWindow extends JFrame {
                             || e.getKeyCode() == KeyEvent.VK_DOWN) {
 
                         JTable tableSelected = (JTable) e.getComponent();
+                        
+                        int selectedCol = tableSelected.getSelectedColumn();
 
                         if (e.getID() == KeyEvent.KEY_RELEASED) {
                             //show popup Window by different table
                             popupWindowShowInRecordByDiffTable(tableSelected);
 
                         } else if (e.getID() == KeyEvent.KEY_PRESSED) {
+                            if(selectedCol == tableSelected.getColumnCount()-1){
+                                
+                                DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+                                
+                                tableModel.addRow(new Object[]{});
+                            }
 
                         } else {
 
@@ -549,29 +517,63 @@ public class AddRecordsWindow extends JFrame {
     /**
      * createEmptyTable creates an empty tableSelected with default 10 rows
      */
-    private void createEmptyTable() {
-        // get column names for selected Analyster tableSelected
-//        columnNames = new String[projectManager.getSelectedTable().getColumnCount()];
-//        
-//        for ( int j = 0; j< projectManager.getSelectedTable().getColumnCount(); j++)
-//            columnNames[j] = projectManager.getSelectedTable().getColumnName(j);
-        
+    private void createEmptyTable(String appDefaultValue) {
         columnNames = projectManager.getTabs().get(table.getName()).getTableColNames();
 
-        // we don't want the ID column 
-        columnNames = Arrays.copyOfRange(columnNames, 1, columnNames.length);
+        if (table.getName().equals("tasks")) {
 
-        // set the tableSelected model - add 10 empty rows
-        model = new DefaultTableModel(columnNames, 1);
+            // we don't want the ID column 
+            columnNames = Arrays.copyOfRange(columnNames, 1, columnNames.length - 2);
 
-        // add the tableSelected model to the tableSelected
-        table.setModel(model);
+            // set the tableSelected model - add 10 empty rows
+            model = new DefaultTableModel(columnNames, 10);
 
-        // get tableSelected column width format
-        float[] widths = tabs.get(table.getName()).getColWidthPercent();
-        widths = Arrays.copyOfRange(widths, 1, widths.length);
+            // add the tableSelected model to the tableSelected
+            table.setModel(model);
 
-        projectManager.setColumnFormat(widths, table);
+            int changeColumnNum = table.getColumn("app").getModelIndex();
+
+            for (int i = 0; i < table.getRowCount(); i++) {
+                table.setValueAt(appDefaultValue, i, changeColumnNum);
+            }
+
+            // get tableSelected column width format
+            float[] widths = tabs.get(table.getName()).getColWidthPercent();
+            widths = Arrays.copyOfRange(widths, 1, widths.length - 2);
+
+            projectManager.setColumnFormat(widths, table);
+            
+        } else {
+            // we don't want the ID column 
+            columnNames = Arrays.copyOfRange(columnNames, 1, columnNames.length-2);
+
+            // set the tableSelected model - add 10 empty rows
+            model = new DefaultTableModel(columnNames, 10);
+
+            // add the tableSelected model to the tableSelected
+            table.setModel(model);
+
+            // get tableSelected column width format
+            float[] widths = tabs.get(table.getName()).getColWidthPercent();
+            widths = Arrays.copyOfRange(widths, 1, widths.length-2);
+
+            projectManager.setColumnFormat(widths, table);
+        }
+
+    }
+
+    /**
+     * jSubmitActionPerformed This is performed when the submit button is
+     * executed. Refactored by Carlos Igreja 7-28-2015
+     *
+     * @param evt
+     */
+    private void createEmptyTable() {
+
+        String appDefaultType = projectManager.getAppColumnCurrentType();
+
+        createEmptyTable(appDefaultType);
+
     }
 
     /**
@@ -591,9 +593,12 @@ public class AddRecordsWindow extends JFrame {
                 if (!isEditing) {
                     // if clearing row then do not validate
                     if (table.getSelectionBackground() != Color.RED) {
+                        
                         // check the cell for valid entry
                         int row = e.getFirstRow();            // row index
                         int col = e.getColumn();             // column index
+                        
+                        System.out.println("tableChanged at: " + row + " " + col);
                         validateCell(row, col);
                     }
 
@@ -682,15 +687,23 @@ public class AddRecordsWindow extends JFrame {
         boolean error = false;                               // error occurred
 
         switch (colName) {
-            case "symbol":
+            case "app":
                 if (cellValue == null || cellValue.toString().equals("")) {
                     errorMsg += "Symbol cannot be null";
                     error = true;
                 }
                 break;
-            case "analyst":
+            case "title":
                 break;
-            case "priority":
+            case "step":
+                break;
+            case "description":
+                break;   
+            case "instruction":
+                break;
+            case "programmer":
+                break;
+            case "rank":
                 if (cellValue != null && !cellValue.toString().equals("")) {
                     if (!cellValue.toString().matches("[1-5]{1}")) {
                         errorMsg += "Priority must be an Integer (1-5)";
@@ -714,11 +727,7 @@ public class AddRecordsWindow extends JFrame {
                     }
                 }
                 break;
-            case "notes":
-                break;
-            case "author":
-                break;
-            case "analysisDate":
+            case "date_":
                 if (cellValue != null && !cellValue.toString().equals("")) {
                     if (!Validator.isValidDate("yyyy-MM-dd", cellValue.toString())) {
                         errorMsg += "Date format not correct: YYYY-MM-DD";
@@ -726,11 +735,13 @@ public class AddRecordsWindow extends JFrame {
                     }
                 }
                 break;
+            case "taskID":
+                break;
+            case "notes":
+                break;
             case "path":
                 break;
-            case "document":
-                break;
-            case "notesL":
+            case "submitter":
                 break;
             default:
                 break;
@@ -818,7 +829,6 @@ public class AddRecordsWindow extends JFrame {
     private javax.swing.JButton btnSubmit;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane scrollpane;
-    private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 
 }
