@@ -1,13 +1,20 @@
-
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.logic.Tab;
 import com.elle.ProjectManager.logic.TableFilter;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 
 /**
  *
@@ -17,30 +24,33 @@ import javax.swing.JTable;
  * @version 0.6.3
  */
 public class BatchEditWindow extends JFrame {
-    
+
     // attributes
     private ProjectManagerWindow projectManagerWindow;
     private JTable table;
     private Tab tab;
-
     
+    //misc
+    private boolean batchEditWindowShow;
+
     /**
-     * CONSTRUCTOR
-     * Creates new BatchEditWindow
-     * @param selectedTable
-     * @param projectManagerWindow
+     * CONSTRUCTOR Creates new BatchEditWindow
      */
     public BatchEditWindow() {
         initComponents();
         projectManagerWindow = ProjectManagerWindow.getInstance();
-        Map<String,Tab> tabs = projectManagerWindow.getTabs();
+        Map<String, Tab> tabs = projectManagerWindow.getTabs();
         String tabName = projectManagerWindow.getSelectedTabName();
         tab = tabs.get(tabName);
         table = tab.getTable();
-        
+
         String[] batchEditFields = tab.getBatchEditFields();
         DefaultComboBoxModel model = new DefaultComboBoxModel(batchEditFields);
         comboBoxFieldSelect.setModel(model);
+
+        this.setKeyBoardFocusManager();
+        
+        batchEditWindowShow = true;
         
         // set the interface to the middle of the window
         this.setLocationRelativeTo(projectManagerWindow);
@@ -66,7 +76,7 @@ public class BatchEditWindow extends JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        comboBoxFieldSelect.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "analyst", "priority", "dateAssigned", "notes", "symbol", " ", " ", " " }));
+        comboBoxFieldSelect.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "analyst", "priority", "dateAssigned", "notes", "symbol", "dateDone", " ", " ", " " }));
         comboBoxFieldSelect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxFieldSelectActionPerformed(evt);
@@ -162,7 +172,8 @@ public class BatchEditWindow extends JFrame {
 
     /**
      * clears the text field
-     * @param evt 
+     *
+     * @param evt
      */
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         textFieldNewValue.setText("");
@@ -170,7 +181,8 @@ public class BatchEditWindow extends JFrame {
 
     /**
      * submit changes to the database
-     * @param evt 
+     *
+     * @param evt
      */
     private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
 
@@ -180,7 +192,7 @@ public class BatchEditWindow extends JFrame {
         int columnIndex;                                                           // column index
         int rowIndex;                                                              // row index
         int rowCount = table.getSelectedRowCount();                                // number of rows
-        
+
         // get column index for the combobox selection
         for (columnIndex = 0; columnIndex < table.getColumnCount(); columnIndex++) {
             if (columnName.equals(table.getColumnName(columnIndex))) {
@@ -194,21 +206,21 @@ public class BatchEditWindow extends JFrame {
         for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             table.setValueAt(newValue, rows[rowIndex], columnIndex);
         }
-        
+
         // Add any new changes to be filtered as well
         // so that the records modified do not disappear after the upload.
         TableFilter filter = tab.getFilter();
-        
+
         // get the filter items for this column
-        ArrayList<Object> filterItems 
+        ArrayList<Object> filterItems
                 = new ArrayList<>(filter.getFilterItems().get(columnIndex));
 
-        if(!filterItems.isEmpty()){
-            if(!filterItems.contains(newValue)){
-                
+        if (!filterItems.isEmpty()) {
+            if (!filterItems.contains(newValue)) {
+
                 // add item to the array
                 filterItems.add(newValue);
-                
+
                 // add the array to the filter items list
                 filter.addFilterItems(columnIndex, filterItems);
             }
@@ -217,7 +229,8 @@ public class BatchEditWindow extends JFrame {
 
     /**
      * This terminates the window and returns resources
-     * @param evt 
+     *
+     * @param evt
      */
     private void btnQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitActionPerformed
 
@@ -225,10 +238,12 @@ public class BatchEditWindow extends JFrame {
         tab.setBatchEditWindowOpen(false);
         tab.setBatchEditWindowVisible(false);
         tab.setBatchEditBtnEnabled(true);
-        
+
         // set the batch edit button enabled
         projectManagerWindow.getBtnBatchEdit().setEnabled(true);
         
+        batchEditWindowShow = false;
+
         // this instance should dispose
         projectManagerWindow.getBatchEditWindow().dispose();
     }//GEN-LAST:event_btnQuitActionPerformed
@@ -245,6 +260,45 @@ public class BatchEditWindow extends JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_comboBoxFieldSelectActionPerformed
 
+    private void setKeyBoardFocusManager() {
+
+        table.setFocusTraversalKeysEnabled(false);
+
+        KeyboardFocusManager focusFrame = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        if (focusFrame.getFocusOwner() != this) {
+            System.out.println("the focus owner is not this!");
+            focusFrame.clearFocusOwner();
+            this.requestFocus();
+        }
+        focusFrame.addKeyEventDispatcher(new KeyEventDispatcher() {
+
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
+                    String columnName = comboBoxFieldSelect.getSelectedItem().toString();      // column name  
+                    System.out.println("control d pressed! " + columnName);
+                    if (columnName.equals("dateDone")) {
+                        if (e.getID() != 401) { // 401 = key down, 402 = key released
+                            return false;
+                        } else {
+                            JTextField selectCom = (JTextField) e.getComponent();
+                            selectCom.requestFocusInWindow();
+                            selectCom.selectAll();
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date = new Date();
+                            String today = dateFormat.format(date);
+                            selectCom.setText(today);
+                        }
+                    }
+                }
+                return false;
+            }
+
+        });
+    }
+    public boolean isBatchEditWindowShow(){
+        return batchEditWindowShow;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnConfirm;

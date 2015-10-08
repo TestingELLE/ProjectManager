@@ -280,7 +280,7 @@ public class Tab implements ITableConstants{
     /**
      * This method subtracts an amount from the totalRecords value
      * This is used when records are deleted to update the totalRecords value
-     * @param amountOfRecordsDeleted 
+     * @param amountOfRecordsAdded 
      */
     public void addToTotalRowCount(int amountOfRecordsAdded) {
         totalRecords = totalRecords + amountOfRecordsAdded;
