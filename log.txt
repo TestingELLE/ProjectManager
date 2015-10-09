@@ -3281,3 +3281,5 @@ The last packet sent successfully to the server was 0 milliseconds ago. The driv
 -------------------------2015-10-08 10:11:03 AM-------------------------
 3:2015-10-08 10:11:17 AM: Start to connect local database...
 2015-10-08 10:11:18 AM: Connect successfully!
+
+-------------------------2015-10-08 07:44:06 PM-------------------------
