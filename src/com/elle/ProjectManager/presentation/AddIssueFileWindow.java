@@ -24,14 +24,14 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 /**
- * AddRecordsWindow
+ * AddIssueFileWindow
  *
  * @author Louis W.
  * @author Carlos Igreja
  * @since June 10, 2015
  * @version 0.6.3
  */
-public class AddRecordsWindow extends JFrame {
+public class AddIssueFileWindow extends JFrame {
 
     // attributes
     private String[] columnNames;
@@ -48,18 +48,20 @@ public class AddRecordsWindow extends JFrame {
 
     private ArrayList<Integer> rowsNotEmpty; // only includes rows that have data
 
-    private TableCellPopupWindow tableCellPopupWindow;
-    
+    private PopupWindowInTableCell tableCellPopupWindow;
+
     private JTable table;
 
     // used to notify if the tableSelected is editing
     // the tableSelected.isEditing method has issues from the tableModelListener
     private boolean isEditing;
 
+    int lastSelectedRow = -1, lastSelectedColumn = -1;
+
     /**
      * Creates new form AddRecordsWindow
      */
-    public AddRecordsWindow() {
+    public AddIssueFileWindow() {
 
         rowsNotEmpty = new ArrayList<>();
         isEditing = false;
@@ -68,7 +70,7 @@ public class AddRecordsWindow extends JFrame {
         logWindow = projectManager.getLogWindow();
         tabs = projectManager.getTabs();
         statement = projectManager.getStatement();
-        
+
         table = new JTable();
 
 //        columnNames = new String[projectManager.getSelectedTable().getColumnCount()];
@@ -80,19 +82,17 @@ public class AddRecordsWindow extends JFrame {
 
         // create a new empty tableSelected
         createEmptyTable();
-        
-        
         // initialize components
         initComponents();
-        
+
         scrollpane.setPreferredSize(table.getPreferredSize());
         scrollpane.setViewportView(table);
 
         // sets the keyboard focus manager
-        setKeyboardFocusManager();
+        setKeyboardFocusManager(this);
 
         // add listeners
-        addTableListeners();
+        addTableListeners(this);
 
         // submit button does not start enabled because the tableSelected is empty
         btnSubmit.setEnabled(false);
@@ -100,26 +100,30 @@ public class AddRecordsWindow extends JFrame {
         // set the label header
         this.setTitle("Add Records to " + table.getName());
 
+        Dimension scrollPanelDimension = scrollpane.getPreferredSize();
+
         // set the size for AddRecord window
-        this.setPreferredSize(new Dimension(1137, 120));
-        this.setMinimumSize(new Dimension(1137, 120));
+        this.setPreferredSize(new Dimension((int) scrollPanelDimension.getWidth(),
+                (int) (scrollPanelDimension.getHeight() + 80)));
+        this.setMinimumSize(new Dimension((int) scrollPanelDimension.getWidth(), 120));
 
-        // set the tableSelected cell popup window
-        tableCellPopupWindow = new TableCellPopupWindow(this);
-        if (!tableCellPopupWindow.getWindowPopup()) {
-            tableCellPopupWindow.setTableListener(table, this);
-        }
-
-        // set this window to appear in the middle of Analyster
+//        if (!tableCellPopupWindow.isPopupWindowShow(isEditing)) {
+//            tableCellPopupWindow.setTableListener(table, this);
+//        }
+        // set this window to appear in the middle of Project Manager
         this.setLocationRelativeTo(projectManager);
+
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                projectManager.setAddRecordsWindowShow(false);
+
                 projectManager.setDisableProjecetManagerFunction(true);
 
             }
         });
-        this.pack();
+//        this.pack();
+        System.out.println("add record window create!");
     }
 
     /**
@@ -133,21 +137,15 @@ public class AddRecordsWindow extends JFrame {
 
         jPanel3 = new javax.swing.JPanel();
         scrollpane = new javax.swing.JScrollPane();
-        btnSubmit = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
         btnCancel = new javax.swing.JButton();
-        btnAddRow = new javax.swing.JButton();
+        btnSubmit = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(894, 560));
 
+        scrollpane.setBorder(null);
         scrollpane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        btnSubmit.setText("Submit");
-        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSubmitActionPerformed(evt);
-            }
-        });
 
         btnCancel.setText("Cancel");
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
@@ -156,50 +154,61 @@ public class AddRecordsWindow extends JFrame {
             }
         });
 
-        btnAddRow.setText("+");
-        btnAddRow.addActionListener(new java.awt.event.ActionListener() {
+        btnSubmit.setText("Submit");
+        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddRowActionPerformed(evt);
+                btnSubmitActionPerformed(evt);
             }
         });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnSubmit)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCancel)
+                .addContainerGap(34, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSubmit)
+                    .addComponent(btnCancel))
+                .addGap(0, 31, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollpane)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(btnAddRow)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSubmit)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCancel)))
-                .addContainerGap())
+                .addComponent(scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(0, 212, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddRow)
-                    .addComponent(btnSubmit)
-                    .addComponent(btnCancel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addComponent(scrollpane, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -214,7 +223,6 @@ public class AddRecordsWindow extends JFrame {
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
 
         projectManager.setDisableProjecetManagerFunction(true);
-
         submit();
     }//GEN-LAST:event_btnSubmitActionPerformed
 
@@ -354,22 +362,19 @@ public class AddRecordsWindow extends JFrame {
     }
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        this.dispose();
+
         projectManager.setAddRecordsWindowShow(false);
         projectManager.setDisableProjecetManagerFunction(true);
+        tableCellPopupWindow.windowClose();
+        this.dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
 
-    private void btnAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRowActionPerformed
-
-        // add an empty row to the tableSelected
-        model.addRow(new Object[]{});
-
-    }//GEN-LAST:event_btnAddRowActionPerformed
-
+    // add an empty row to the tableSelected
+//        model.addRow(new Object[]{});
     /**
      * setKeyboardFocusManager Sets the Keyboard Focus Manager
      */
-    private void setKeyboardFocusManager() {
+    private void setKeyboardFocusManager(JFrame frame) {
 
         /*
          No Tab key-pressed or key-released events are received by the key event listener. This is because the focus subsystem 
@@ -433,20 +438,31 @@ public class AddRecordsWindow extends JFrame {
                             || e.getKeyCode() == KeyEvent.VK_DOWN) {
 
                         JTable tableSelected = (JTable) e.getComponent();
-                        
-                        int selectedCol = tableSelected.getSelectedColumn();
 
                         if (e.getID() == KeyEvent.KEY_RELEASED) {
-                            //show popup Window by different table
-                            popupWindowShowInRecordByDiffTable(tableSelected);
+                            System.out.println("add records tabs!");
+                            //if table get selected location is not the same as last selection
+                            if (tableSelected.getSelectedRow() != lastSelectedRow
+                                    || tableSelected.getSelectedColumn() != lastSelectedColumn) {
 
-                        } else if (e.getID() == KeyEvent.KEY_PRESSED) {
-                            if(selectedCol == tableSelected.getColumnCount()-1){
-                                
-                                DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-                                
-                                tableModel.addRow(new Object[]{});
-                            }
+                                if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
+                                    lastSelectedRow = tableSelected.getSelectedRow();
+                                    lastSelectedColumn = tableSelected.getSelectedColumn();
+                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
+                                } else {
+                                    tableCellPopupWindow.windowClose();
+                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
+                                    lastSelectedRow = tableSelected.getSelectedRow();
+                                    lastSelectedColumn = tableSelected.getSelectedColumn();
+                                }// last popup window dispose and new popup window show at the selected cell
+                            } 
+//                        } else if (e.getID() == KeyEvent.KEY_PRESSED) {
+//                            if (selectedCol == tableSelected.getColumnCount() - 1) {
+//
+//                                DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+//
+//                                tableModel.addRow(new Object[]{});
+//                            }
 
                         } else {
 
@@ -478,42 +494,6 @@ public class AddRecordsWindow extends JFrame {
         });
     }
 
-    private void popupWindowShowInRecordByDiffTable(JTable tableSelected) {
-
-        int column = tableSelected.getSelectedColumn();
-
-        if (tableSelected.getName().equals(TASKS_TABLE_NAME)) {
-
-            if (tableSelected.getColumnName(column).equals("title")
-                    || tableSelected.getColumnName(column).equals("description")
-                    || tableSelected.getColumnName(column).equals("instructions")) {
-
-                // popup tableSelected cell edit window
-                tableCellPopupWindow.getTableCellPopup(tableSelected, this);
-            } else {
-                tableCellPopupWindow.setTableCellPopupWindowVisible(false);
-            }
-        } else if (tableSelected.getName().equals(TASKFILES_TABLE_NAME)) {
-
-            if (tableSelected.getColumnName(column).equals("files")
-                    || tableSelected.getColumnName(column).equals("notes")
-                    || tableSelected.getColumnName(column).equals("path")) {
-                // popup tableSelected cell edit window
-                tableCellPopupWindow.getTableCellPopup(tableSelected, this);
-            } else {
-                tableCellPopupWindow.setTableCellPopupWindowVisible(false);
-            }
-        } else if (tableSelected.getName().equals(TASKNOTES_TABLE_NAME)) {
-
-            if (tableSelected.getColumnName(column).equals("status_notes")) {
-                // popup tableSelected cell edit window
-                tableCellPopupWindow.getTableCellPopup(tableSelected, this);
-            } else {
-                tableCellPopupWindow.setTableCellPopupWindowVisible(false);
-            }
-        }
-    }
-
     /**
      * createEmptyTable creates an empty tableSelected with default 10 rows
      */
@@ -526,7 +506,7 @@ public class AddRecordsWindow extends JFrame {
             columnNames = Arrays.copyOfRange(columnNames, 1, columnNames.length - 2);
 
             // set the tableSelected model - add 10 empty rows
-            model = new DefaultTableModel(columnNames, 10);
+            model = new DefaultTableModel(columnNames, 1);
 
             // add the tableSelected model to the tableSelected
             table.setModel(model);
@@ -542,20 +522,20 @@ public class AddRecordsWindow extends JFrame {
             widths = Arrays.copyOfRange(widths, 1, widths.length - 2);
 
             projectManager.setColumnFormat(widths, table);
-            
+
         } else {
             // we don't want the ID column 
-            columnNames = Arrays.copyOfRange(columnNames, 1, columnNames.length-2);
+            columnNames = Arrays.copyOfRange(columnNames, 1, columnNames.length - 2);
 
             // set the tableSelected model - add 10 empty rows
-            model = new DefaultTableModel(columnNames, 10);
+            model = new DefaultTableModel(columnNames, 1);
 
             // add the tableSelected model to the tableSelected
             table.setModel(model);
 
             // get tableSelected column width format
             float[] widths = tabs.get(table.getName()).getColWidthPercent();
-            widths = Arrays.copyOfRange(widths, 1, widths.length-2);
+            widths = Arrays.copyOfRange(widths, 1, widths.length - 2);
 
             projectManager.setColumnFormat(widths, table);
         }
@@ -581,7 +561,7 @@ public class AddRecordsWindow extends JFrame {
      * tableSelected The listeners added are the TableModel listener the
      * MouseListener and the KeyListener
      */
-    public void addTableListeners() {
+    public void addTableListeners(JFrame frame) {
 
         // add tableModelListener
         table.getModel().addTableModelListener(new TableModelListener() {
@@ -593,11 +573,11 @@ public class AddRecordsWindow extends JFrame {
                 if (!isEditing) {
                     // if clearing row then do not validate
                     if (table.getSelectionBackground() != Color.RED) {
-                        
+
                         // check the cell for valid entry
-                        int row = e.getFirstRow();            // row index
+                        int row = e.getLastRow();            // row index
                         int col = e.getColumn();             // column index
-                        
+
                         System.out.println("tableChanged at: " + row + " " + col);
                         validateCell(row, col);
                     }
@@ -646,6 +626,34 @@ public class AddRecordsWindow extends JFrame {
                     isEditing = true;
                     selectAllText(e);
                 }
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                // if left mouse clicks
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    if (e.getClickCount() == 1) {
+
+                        //if table get selected location is not the same as last selection
+                        if (table.getSelectedRow() != lastSelectedRow
+                                || table.getSelectedColumn() != lastSelectedColumn) {
+
+                            if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
+                                lastSelectedRow = table.getSelectedRow();
+                                lastSelectedColumn = table.getSelectedColumn();
+                                tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
+                            } else {
+                                tableCellPopupWindow.windowClose();
+                                tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
+                                lastSelectedRow = table.getSelectedRow();
+                                lastSelectedColumn = table.getSelectedColumn();
+                            }// last popup window dispose and new popup window show at the selected cell
+                        } else {
+                            //if current selection equals last selection nothing happens
+                        }
+                    }
+                } // end if left mouse clicks
             }
         });
     }
@@ -698,7 +706,7 @@ public class AddRecordsWindow extends JFrame {
             case "step":
                 break;
             case "description":
-                break;   
+                break;
             case "instruction":
                 break;
             case "programmer":
@@ -824,9 +832,9 @@ public class AddRecordsWindow extends JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAddRow;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSubmit;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane scrollpane;
     // End of variables declaration//GEN-END:variables
