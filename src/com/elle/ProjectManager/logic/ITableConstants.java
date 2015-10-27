@@ -22,17 +22,17 @@ public interface ITableConstants {
     public static final String SYMBOL_COLUMN_NAME = "Symbol";
     
     // column width percent constants
-    public static final float[] COL_WIDTH_PER_TASKS = {50, 70, 175, 35, 235, 95, 100, 30, 60, 95};
+    public static final float[] COL_WIDTH_PER_TASKS = {50, 70, 175, 350, 77, 90, 30, 55, 90};
     public static final float[] COL_WIDTH_PER_REPORTS = {55, 60, 115, 60, 95, 275, 200, 325};
     public static final float[] COL_WIDTH_PER_ARCHIVE = {60, 60, 115, 845, 105};
     
     // search fields for the comboBox for each table
-    public static final String[] TASKS_SEARCH_FIELDS = {"programmer", "dateClosed", "done", "rk"};
+    public static final String[] TASKS_SEARCH_FIELDS = {"programmer", "dateOpened", "done", "rk"};
     public static final String[] TASKFILES_SEARCH_FIELDS = {"submitter"};
     public static final String[] TASKNOTES_SEARCH_FIELDS = {"submitter"};
     
     // batch edit combobox selections for each table
-    public static final String[] TASKS_BATCHEDIT_CB_FIELDS = {"programmer", "rk", "dateClosed", "notes", "done", "dateDone"};
+    public static final String[] TASKS_BATCHEDIT_CB_FIELDS = {"programmer", "rk", "dateOpened", "notes", "done", "dateClosed"};
     public static final String[] TASKFILES_BATCHEDIT_CB_FIELDS = {"submitter", "date", "path", "notes"};
     public static final String[] TASKNOTES_BATCHEDIT_CB_FIELDS = {"submitter", "status_notes", "date"};
 }
