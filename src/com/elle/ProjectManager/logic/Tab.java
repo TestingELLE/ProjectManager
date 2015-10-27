@@ -1,4 +1,3 @@
-
 package com.elle.ProjectManager.logic;
 
 import com.elle.ProjectManager.database.ModifiedTableData;
@@ -6,16 +5,15 @@ import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import javax.swing.JTable;
 
 /**
- * Tab
- * This class is used to create a tab object.
- * This object contains all the components of the tab on Analyster.
- * Each tab may have its own attributes and that is what this class
- * is for.
+ * Tab This class is used to create a tab object. This object contains all the
+ * components of the tab on Analyster. Each tab may have its own attributes and
+ * that is what this class is for.
+ *
  * @author Carlos Igreja
  * @since June 10, 2015
  * @version 0.6.3
  */
-public class Tab implements ITableConstants{
+public class Tab implements ITableConstants {
 
     // attributes
     private String tableName;                    // name of the JTable
@@ -30,7 +28,7 @@ public class Tab implements ITableConstants{
     private ColumnPopupMenu ColumnPopupMenu;     // column filter pop up menu
     private JTableCellRenderer cellRenderer;     // table cell renderer
     private ModifiedTableData tableData;         // modified table data object
-    
+
     // these items are enabled differently for each tab
     private boolean activateRecordMenuItemEnabled; // enables activate record menu item
     private boolean archiveRecordMenuItemEnabled;  // enables archive record menu item
@@ -38,18 +36,17 @@ public class Tab implements ITableConstants{
     private boolean batchEditBtnVisible;           // sets the batch edit button visible
     private boolean batchEditBtnEnabled;           // sets the batch edit button enabled
     private boolean AddRecordsBtnEnabled;          // sets the Add Records button enabled
-    
+
     // each tab can either be editing or not
-    private boolean Editing;   
-    
+    private boolean Editing;
+
     // batch edit window states
     private boolean batchEditWindowOpen;
     private boolean batchEditWindowVisible;
-    
+
     /**
-     * CONSTRUCTOR
-     * Tab
-     * This is used if no table is ready such as before initComponents of a frame.
+     * CONSTRUCTOR Tab This is used if no table is ready such as before
+     * initComponents of a frame.
      */
     public Tab() {
         tableName = "";
@@ -64,13 +61,13 @@ public class Tab implements ITableConstants{
         batchEditWindowOpen = false;
         batchEditWindowVisible = false;
     }
-    
+
     /**
-     * CONSTRUCTOR
-     * This would be the ideal constructor, but there are issues with 
-     * the initcomponents in Analyster so the tab must be initialized first
+     * CONSTRUCTOR This would be the ideal constructor, but there are issues
+     * with the initcomponents in Analyster so the tab must be initialized first
      * then the table can be added
-     * @param table 
+     *
+     * @param table
      */
     public Tab(JTable table) {
         tableName = "";
@@ -79,20 +76,20 @@ public class Tab implements ITableConstants{
         recordsShown = 0;
         filter = new TableFilter(table);
         ColumnPopupMenu = new ColumnPopupMenu(filter);
-        
+
         // store the column names for the table
-        for (int i = 0; i < table.getColumnCount(); i++){
+        for (int i = 0; i < table.getColumnCount(); i++) {
             tableColNames[i] = table.getColumnName(i);
             System.out.println("this is" + tableName + " and " + tableColNames[i]);
         }
-        
-    }
-    
-    /**************************************************************************
-     ********************** Setters & Getters *********************************
-     **************************************************************************/
 
-    
+    }
+
+    /**
+     * ************************************************************************
+     ********************** Setters & Getters *********************************
+     *************************************************************************
+     */
     public JTable getTable() {
         return table;
     }
@@ -112,11 +109,11 @@ public class Tab implements ITableConstants{
     public float[] getColWidthPercent() {
         return colWidthPercent;
     }
-    
+
     public void setColWidthPercent(float[] colWidthPercent) {
         this.colWidthPercent = colWidthPercent;
     }
-    
+
     public int getTotalRecords() {
         return totalRecords;
     }
@@ -136,7 +133,7 @@ public class Tab implements ITableConstants{
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-    
+
     public boolean isActivateRecordMenuItemEnabled() {
         return activateRecordMenuItemEnabled;
     }
@@ -160,11 +157,12 @@ public class Tab implements ITableConstants{
     public void setTableColNames(String[] tableColNames) {
         this.tableColNames = tableColNames;
     }
-    
+
     public void setTableColNames(JTable table) {
         tableColNames = new String[table.getColumnCount()];
-        for (int i = 0; i < table.getColumnCount(); i++) 
+        for (int i = 0; i < table.getColumnCount(); i++) {
             tableColNames[i] = table.getColumnName(i);
+        }
     }
 
     public String[] getSearchFields() {
@@ -222,7 +220,7 @@ public class Tab implements ITableConstants{
     public void setTableData(ModifiedTableData tableData) {
         this.tableData = tableData;
     }
-    
+
     public boolean isEditing() {
         return Editing;
     }
@@ -262,78 +260,83 @@ public class Tab implements ITableConstants{
     public void setAddRecordsBtnEnabled(boolean AddRecordsBtnEnabled) {
         this.AddRecordsBtnEnabled = AddRecordsBtnEnabled;
     }
-    
-    
-    /**************************************************************************
-     *************************** Methods **************************************
-     **************************************************************************/
-    
+
     /**
-     * This method subtracts an amount from the totalRecords value
-     * This is used when records are deleted to update the totalRecords value
-     * @param amountOfRecordsDeleted 
+     * ************************************************************************
+     *************************** Methods **************************************
+     *************************************************************************
+     */
+    /**
+     * This method subtracts an amount from the totalRecords value This is used
+     * when records are deleted to update the totalRecords value
+     *
+     * @param amountOfRecordsDeleted
      */
     public void subtractFromTotalRowCount(int amountOfRecordsDeleted) {
         totalRecords = totalRecords - amountOfRecordsDeleted;
     }
-    
+
     /**
-     * This method subtracts an amount from the totalRecords value
-     * This is used when records are deleted to update the totalRecords value
-     * @param amountOfRecordsAdded 
+     * This method subtracts an amount from the totalRecords value This is used
+     * when records are deleted to update the totalRecords value
+     *
+     * @param amountOfRecordsAdded
      */
     public void addToTotalRowCount(int amountOfRecordsAdded) {
         totalRecords = totalRecords + amountOfRecordsAdded;
     }
-    
+
     /**
      * This method returns a string that displays the records.
-     * @return String This returns a string that has the records for both total and shown
+     *
+     * @return String This returns a string that has the records for both total
+     * and shown
      */
-    public String getRecordsLabel(){
-        
+    public String getRecordsLabel() {
+
         String output;
-        
+
         switch (getTableName()) {
             case TASKS_TABLE_NAME:
                 output = "<html><pre>"
-                       + "          Number of records shown: " + getRecordsShown() 
-                  + "<br/> Number of records in Assignments: " + getTotalRecords()
-                     + "</pre></html>";
+                        + "          Number of records shown: " + getRecordsShown()
+                        + "<br/> Number of records in Assignments: " + getTotalRecords()
+                        + "</pre></html>";
+                System.out.println(output);
                 break;
             case TASKFILES_TABLE_NAME:
                 output = "<html><pre>"
-                       + "      Number of records shown: " + getRecordsShown() 
-                  + "<br/> Number of records in Reports: " + getTotalRecords() 
-                     + "</pre></html>";
+                        + "      Number of records shown: " + getRecordsShown()
+                        + "<br/> Number of records in Reports: " + getTotalRecords()
+                        + "</pre></html>";
                 break;
             case TASKNOTES_TABLE_NAME:
                 output = "<html><pre>"
-                       + "      Number of records shown: " + getRecordsShown() 
-                  + "<br/> Number of records in Archive: " + getTotalRecords() 
-                     + "</pre></html>";
+                        + "      Number of records shown: " + getRecordsShown()
+                        + "<br/> Number of records in Archive: " + getTotalRecords()
+                        + "</pre></html>";
                 break;
             default:
                 // this means an invalid table name constant was passed
                 // this exception will be handled and thrown here
                 // the program will still run and show the stack trace for debugging
                 output = "<html><pre>"
-                       + "*******ATTENTION*******"
-                  + "<br/>Not a valid table name constant entered"
-                     + "</pre></html>";
+                        + "*******ATTENTION*******"
+                        + "<br/>Not a valid table name constant entered"
+                        + "</pre></html>";
                 try {
                     String errorMessage = "ERROR: unknown table";
                     throw new NoSuchFieldException(errorMessage);
                 } catch (NoSuchFieldException ex) {
                     // post to log.txt
-                    ProjectManagerWindow.getInstance().getLogWindow().addMessageWithDate("1:"+ex.getMessage());
+                    ProjectManagerWindow.getInstance().getLogWindow().addMessageWithDate("1:" + ex.getMessage());
                     ex.printStackTrace();
                 }
-        
+
                 break;
         }
-        
+
         return output;
     }
-    
+
 }// end Tab

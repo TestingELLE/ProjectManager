@@ -216,7 +216,7 @@ public class PopupWindowInTableCell extends JFrame {
             cellRectTable = SwingUtilities.convertRectangle(selectedTable, cellRectTable, projectManager);
 
             x = cellRectTable.x + 140;
-            y = cellRectTable.y + 95;
+            y = cellRectTable.y + 135;
 
         } else {
             cellRectTable = SwingUtilities.convertRectangle(selectedTable, cellRectTable, projectManager.getAddRecordsWindow());
@@ -297,8 +297,7 @@ public class PopupWindowInTableCell extends JFrame {
 
         if (selectedTable.getName().equals(TASKS_TABLE_NAME)) {
             if (selectedTable.getColumnName(selectedColumn).equals("title")
-                    || selectedTable.getColumnName(selectedColumn).equals("description")
-                    || selectedTable.getColumnName(selectedColumn).equals("instructions")) {
+                    || selectedTable.getColumnName(selectedColumn).equals("description")) {
                 this.showWindow();
                 //to check it is edit mode or not in project manager
                 //or in add records window it directly into edit mode
