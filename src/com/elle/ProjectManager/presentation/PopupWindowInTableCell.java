@@ -185,8 +185,10 @@ public class PopupWindowInTableCell extends JFrame {
 
     private void editButtonTableCellPopupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonTableCellPopupActionPerformed
 
-        setEnableEdit(true);
         projectManager.makeTableEditable(true);
+        setEnableEdit(true);
+        textAreatableCellPopup.selectAll();
+        System.out.println("set edit " + textAreatableCellPopup.isEditable());
         editBtnIsClick = true;
         setProjectManagerFunction(false);
 
@@ -281,9 +283,10 @@ public class PopupWindowInTableCell extends JFrame {
     }
 
     private void setEnableEdit(boolean editable) {
-
+        this.setFocusable(editable);
         textAreatableCellPopup.setEditable(editable);
-
+        textAreatableCellPopup.requestFocusInWindow();
+        
         editButtonTableCellPopup.setEnabled(!editable);
         editButtonTableCellPopup.setVisible(!editable);
 
@@ -356,15 +359,17 @@ public class PopupWindowInTableCell extends JFrame {
 
     private void editModeSwich() {
         if (selectedFrame instanceof ProjectManagerWindow) {
+            System.out.println(" in edit mode? " + projectManager.getEditMode());
             if (!projectManager.getEditMode()) {
                 System.out.println("here");
                 setEnableEdit(false);
-                selectedTable.setEnabled(true);
+//                selectedTable.setEnabled(true);
                 setProjectManagerFunction(true);
             } else {
+                System.out.println("there");
                 setEnableEdit(true);
                 projectManager.makeTableEditable(true);
-                selectedTable.setEnabled(false);
+//                selectedTable.setEnabled(false);
                 setProjectManagerFunction(false);
             }
         } else if (selectedFrame instanceof AddIssueFileWindow) {

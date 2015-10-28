@@ -204,6 +204,8 @@ public class AddIssueWindow extends JFrame {
         // get tableSelected column width format
         columnWidths = tabs.get(table.getName()).getColWidthPercent();
 
+        System.out.println(columnWidths.length + "add issue");
+        System.out.println(columnNames.length + "add issue");
 //        if (table.getName().equals("tasks")) {
 //
 //            // we don't want the ID column 
@@ -235,6 +237,10 @@ public class AddIssueWindow extends JFrame {
 
         columnWidths = Arrays.copyOfRange(columnWidths, 1, columnWidths.length);
 
+        System.out.println(columnWidths.length + "widths");
+
+        System.out.println(table.getColumnCount());
+
         projectManager.setColumnFormat(columnWidths, table);
 
         if (formValues == null) {
@@ -262,7 +268,7 @@ public class AddIssueWindow extends JFrame {
     private void createTable() {
 
         String appDefaultType = projectManager.getAppColumnCurrentType();
-        if(appDefaultType.equals(" NULL ")){
+        if (appDefaultType.equals(" NULL ")) {
             appDefaultType = "";
         }
 
