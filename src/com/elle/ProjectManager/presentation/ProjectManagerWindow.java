@@ -627,31 +627,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         issuesTable.setAutoCreateRowSorter(true);
         issuesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "app", "title", "description", "dateOpened", "rk", "version", "dateClosed"
+                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -2017,8 +2017,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             addIssueWindow.setVisible(true);
 
         } else {
-            JOptionPane.showMessageDialog(this, "Finishing working with other add record window first!.");
-            addIssueWindow.toFront();
+//            JOptionPane.showMessageDialog(this, "Finishing working with other add record window first!.");
+//            addIssueWindow.toFront();
         }
         if (labelEditModeState.getText().equals("ON ")) {
             addIssueWindow.setEditable(true);
@@ -2035,8 +2035,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             DBConnection.open();
             statement = DBConnection.getStatement();
             String sql = "SELECT * FROM " + table.getName() + str + " ORDER BY taskID ASC" + "";
-
-            System.out.println(sql + "sentence send to sql!");
             loadTable(sql, table);
 
         } catch (SQLException ex) {
@@ -2385,6 +2383,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
                     }
+                    System.out.println(i);
                 }
                 break;
             }
@@ -2638,11 +2637,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                         JTable tableSelected = (JTable) e.getComponent();
 
-                        if (addIssueWindow != null && addIssueWindow.isDisplayable()) {
-                            JOptionPane.showMessageDialog(frame, "Finishing working "
-                                    + "with other add record window first!.");
-
-                        } else {
+                        if (addIssueWindow == null || !addIssueWindow.isDisplayable() ){
+//
+//                        } else {
 
                             Object[] cellsValue = new Object[tableSelected.getColumnCount()];
                             int row = tableSelected.getSelectedRow();
@@ -2658,6 +2655,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                             addIssueWindow = new AddIssueWindow(cellsValue, idNum, row);
                             addIssueWindow.setVisible(true);
+                        }else{
+                            
+//                            JOptionPane.showMessageDialog(frame, "Finishing working "
+//                                    + "with other add record window first!.");
                         }
                         if (labelEditModeState.getText().equals("ON ")) {
                             addIssueWindow.setEditable(true);
@@ -2742,7 +2743,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
 
     public String getSelectedTabName() {
-        System.out.println(tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex()));
         return tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
     }
 
@@ -2827,13 +2827,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     public JTable loadTable(JTable table) {
         String str = table.getName();
-        System.out.println("now load: " + str);
 
         if (str == "issues") {
             if (PMTableBtn.isSelected() == false && ELLEGUITableBtn.isSelected() == false
                     && AnalysterTableBtn.isSelected() == false && OtherTableBtn.isSelected() == false) {
                 PMTableBtn.doClick();
-                System.out.println("first enter here!");
                 return table;
             } else {
                 if (OtherTableBtn.isSelected()) {
@@ -2841,7 +2839,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 } else {
                     str = str + " WHERE app = " + "'" + appCurrentType + "'";
                 }
-                System.out.println(appCurrentType + " " + OtherTableBtn.getText() + " " + str);
 //            selectedFilterName = selectedFilterName + "'" + PMTableBtn.getText() + "'";
             }
         }
@@ -2850,7 +2847,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             DBConnection.open();
             statement = DBConnection.getStatement();
             String sql = "SELECT * FROM " + str + " ORDER BY taskID ASC";
-            System.out.println(sql + " sent to database!");
             loadTable(sql, table);
 
         } catch (SQLException ex) {
