@@ -226,7 +226,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="jPanel5" max="32767" attributes="0"/>
-          <Component id="addPanel_control" alignment="1" pref="839" max="32767" attributes="0"/>
+          <Component id="addPanel_control" alignment="1" pref="846" max="32767" attributes="0"/>
           <Component id="jPanel2" alignment="1" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
@@ -368,7 +368,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jPanelEdit" alignment="0" pref="839" max="32767" attributes="0"/>
+              <Component id="jPanelEdit" alignment="0" pref="846" max="32767" attributes="0"/>
               <Component id="jPanelSQL" alignment="1" max="32767" attributes="0"/>
               <Component id="tabbedPanel" alignment="0" max="32767" attributes="0"/>
           </Group>
@@ -663,7 +663,7 @@
                       <Component id="btnUploadChanges" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnRevertChanges" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="21" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="btnAddIssue" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnBatchEdit" min="-2" max="-2" attributes="0"/>
@@ -700,7 +700,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="btnAddIssue">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Add Issue"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="&quot;Add &quot; + getSelectedTabName()" type="code"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddIssueActionPerformed"/>

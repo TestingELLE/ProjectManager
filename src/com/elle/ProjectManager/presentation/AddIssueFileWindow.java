@@ -48,7 +48,7 @@ public class AddIssueFileWindow extends JFrame {
 
     private ArrayList<Integer> rowsNotEmpty; // only includes rows that have data
 
-    private PopupWindowInTableCell tableCellPopupWindow;
+//    private PopupWindowInTableCell tableCellPopupWindow;
 
     private JTable table;
 
@@ -141,7 +141,7 @@ public class AddIssueFileWindow extends JFrame {
         btnCancel = new javax.swing.JButton();
         btnSubmit = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setSize(new java.awt.Dimension(894, 560));
 
         scrollpane.setBorder(null);
@@ -365,7 +365,7 @@ public class AddIssueFileWindow extends JFrame {
 
         projectManager.setAddRecordsWindowShow(false);
         projectManager.setDisableProjecetManagerFunction(true);
-        tableCellPopupWindow.windowClose();
+//        tableCellPopupWindow.windowClose();
         this.dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
 
@@ -433,41 +433,41 @@ public class AddIssueFileWindow extends JFrame {
                             }
                         }
                     } // this is to tab and move to cells with arrow keys
-                    else if (e.getKeyCode() == KeyEvent.VK_TAB || e.getKeyCode() == KeyEvent.VK_LEFT
-                            || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_UP
-                            || e.getKeyCode() == KeyEvent.VK_DOWN) {
-
-                        JTable tableSelected = (JTable) e.getComponent();
-
-                        if (e.getID() == KeyEvent.KEY_RELEASED) {
-                            System.out.println("add records tabs!");
-                            //if table get selected location is not the same as last selection
-                            if (tableSelected.getSelectedRow() != lastSelectedRow
-                                    || tableSelected.getSelectedColumn() != lastSelectedColumn) {
-
-                                if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
-                                    lastSelectedRow = tableSelected.getSelectedRow();
-                                    lastSelectedColumn = tableSelected.getSelectedColumn();
-                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
-                                } else {
-                                    tableCellPopupWindow.windowClose();
-                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
-                                    lastSelectedRow = tableSelected.getSelectedRow();
-                                    lastSelectedColumn = tableSelected.getSelectedColumn();
-                                }// last popup window dispose and new popup window show at the selected cell
-                            } 
-//                        } else if (e.getID() == KeyEvent.KEY_PRESSED) {
-//                            if (selectedCol == tableSelected.getColumnCount() - 1) {
+//                    else if (e.getKeyCode() == KeyEvent.VK_TAB || e.getKeyCode() == KeyEvent.VK_LEFT
+//                            || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_UP
+//                            || e.getKeyCode() == KeyEvent.VK_DOWN) {
 //
-//                                DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+//                        JTable tableSelected = (JTable) e.getComponent();
 //
-//                                tableModel.addRow(new Object[]{});
-//                            }
-
-                        } else {
-
-                        }
-                    }
+//                        if (e.getID() == KeyEvent.KEY_RELEASED) {
+//                            System.out.println("add records tabs!");
+//                            //if table get selected location is not the same as last selection
+//                            if (tableSelected.getSelectedRow() != lastSelectedRow
+//                                    || tableSelected.getSelectedColumn() != lastSelectedColumn) {
+//
+//                                if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
+//                                    lastSelectedRow = tableSelected.getSelectedRow();
+//                                    lastSelectedColumn = tableSelected.getSelectedColumn();
+//                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
+//                                } else {
+//                                    tableCellPopupWindow.windowClose();
+//                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
+//                                    lastSelectedRow = tableSelected.getSelectedRow();
+//                                    lastSelectedColumn = tableSelected.getSelectedColumn();
+//                                }// last popup window dispose and new popup window show at the selected cell
+//                            } 
+////                        } else if (e.getID() == KeyEvent.KEY_PRESSED) {
+////                            if (selectedCol == tableSelected.getColumnCount() - 1) {
+////
+////                                DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+////
+////                                tableModel.addRow(new Object[]{});
+////                            }
+//
+//                        } else {
+//
+//                        }
+//                    }
 
                 } // end table component condition
                 // ctrl + D fills in the current date
@@ -628,33 +628,33 @@ public class AddIssueFileWindow extends JFrame {
                 }
             }
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-                // if left mouse clicks
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    if (e.getClickCount() == 1) {
-
-                        //if table get selected location is not the same as last selection
-                        if (table.getSelectedRow() != lastSelectedRow
-                                || table.getSelectedColumn() != lastSelectedColumn) {
-
-                            if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
-                                lastSelectedRow = table.getSelectedRow();
-                                lastSelectedColumn = table.getSelectedColumn();
-                                tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
-                            } else {
-                                tableCellPopupWindow.windowClose();
-                                tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
-                                lastSelectedRow = table.getSelectedRow();
-                                lastSelectedColumn = table.getSelectedColumn();
-                            }// last popup window dispose and new popup window show at the selected cell
-                        } else {
-                            //if current selection equals last selection nothing happens
-                        }
-                    }
-                } // end if left mouse clicks
-            }
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//
+//                // if left mouse clicks
+//                if (SwingUtilities.isLeftMouseButton(e)) {
+//                    if (e.getClickCount() == 1) {
+//
+//                        //if table get selected location is not the same as last selection
+//                        if (table.getSelectedRow() != lastSelectedRow
+//                                || table.getSelectedColumn() != lastSelectedColumn) {
+//
+//                            if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
+//                                lastSelectedRow = table.getSelectedRow();
+//                                lastSelectedColumn = table.getSelectedColumn();
+//                                tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
+//                            } else {
+//                                tableCellPopupWindow.windowClose();
+//                                tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
+//                                lastSelectedRow = table.getSelectedRow();
+//                                lastSelectedColumn = table.getSelectedColumn();
+//                            }// last popup window dispose and new popup window show at the selected cell
+//                        } else {
+//                            //if current selection equals last selection nothing happens
+//                        }
+//                    }
+//                } // end if left mouse clicks
+//            }
         });
     }
 

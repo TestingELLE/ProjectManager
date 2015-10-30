@@ -757,7 +757,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
 
-        btnAddIssue.setText("Add Issue");
+        btnAddIssue.setText("Add " + getSelectedTabName());
         btnAddIssue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddIssueActionPerformed(evt);
@@ -806,7 +806,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRevertChanges)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAddIssue)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBatchEdit)
@@ -895,7 +895,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
+            .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 846, Short.MAX_VALUE)
             .addComponent(jPanelSQL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(tabbedPanel)
         );
@@ -1184,7 +1184,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(addPanel_control, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
+            .addComponent(addPanel_control, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 846, Short.MAX_VALUE)
             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -1519,7 +1519,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             editModeTextColor(true);
         }
 
-        btnAddIssue.setText("add " + getSelectedTabName());
+        btnAddIssue.setText("Add " + getSelectedTabName());
     }
 
     private void btnBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatchEditActionPerformed
@@ -1578,7 +1578,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // if no add records window is open
         if ((addIssueWindow == null || !addIssueWindow.isDisplayable())
                 && (addIssueFileWindow == null || !addIssueFileWindow.isDisplayable())) {
-            if (btnAddIssue.getText().equals("Add Issue")) {
+            if (btnAddIssue.getText().equals("Add issues")) {
                 addIssueWindow = new AddIssueWindow();
                 addIssueWindow.setVisible(true);
                 //addRecordWindow become visible
@@ -2119,27 +2119,32 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     filterByDoubleClick(table);
                                 }
                             } else if (e.getClickCount() == 1) {
-
-                                //if table get selected location is not the same as last selection
-                                if (table.getSelectedRow() != lastSelectedRow
-                                || table.getSelectedColumn() != lastSelectedColumn) {
-
-                                    if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
-                                        lastSelectedRow = table.getSelectedRow();
-                                        lastSelectedColumn = table.getSelectedColumn();
-                                        tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
-                                        popupWindowShowInPM = tableCellPopupWindow.isPopupWindowShow();
-                                    } else {
-                                        tableCellPopupWindow.windowClose();
-                                        tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
-                                        lastSelectedRow = table.getSelectedRow();
-                                        lastSelectedColumn = table.getSelectedColumn();
-                                        popupWindowShowInPM = tableCellPopupWindow.isPopupWindowShow();
-                                    }// last popup window dispose and new popup window show at the selected cell
-                                } else {
-                                    //if current selection equals last selection nothing happens
+                                System.out.println("mouse click popup Show " + popupWindowShowInPM);
+                                if (popupWindowShowInPM) {
+                                    tableCellPopupWindow.windowClose();
                                 }
-                                table.requestFocus();
+                                    popupWindowShowInTableByDiffTitle(table);
+
+//                                //if table get selected location is not the same as last selection
+//                                if (table.getSelectedRow() != lastSelectedRow
+//                                || table.getSelectedColumn() != lastSelectedColumn) {
+//
+//                                    if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
+//                                        lastSelectedRow = table.getSelectedRow();
+//                                        lastSelectedColumn = table.getSelectedColumn();
+//                                        tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
+//                                        popupWindowShowInPM = tableCellPopupWindow.isPopupWindowShow();
+//                                    } else {
+//                                        tableCellPopupWindow.windowClose();
+//                                        tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
+//                                        lastSelectedRow = table.getSelectedRow();
+//                                        lastSelectedColumn = table.getSelectedColumn();
+//                                        popupWindowShowInPM = tableCellPopupWindow.isPopupWindowShow();
+//                                    }// last popup window dispose and new popup window show at the selected cell
+//                                } else {
+//                                    //if current selection equals last selection nothing happens
+//                                }
+//                                table.requestFocus();
                             } else {
 
                             }
@@ -2283,13 +2288,57 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(!(e.getComponent() instanceof JTable) && !(getEditMode())){
-                    if(popupWindowShowInPM){
+                if (!(e.getComponent() instanceof JTable) && !(getEditMode())) {
+                    if (popupWindowShowInPM) {
                         tableCellPopupWindow.windowClose();
                     }
                 }
             }
         });
+    }
+
+    private void popupWindowShowInTableByDiffTitle(JTable selectedTable) {
+        int selectedColumn = selectedTable.getSelectedColumn();
+
+        if (selectedTable.getName().equals(TASKS_TABLE_NAME)) {
+            if (selectedTable.getColumnName(selectedColumn).equals("title")
+                    || selectedTable.getColumnName(selectedColumn).equals("description")) {
+                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
+//                tableCellPopupWindow.showWindow();
+//                //to check it is edit mode or not in project manager
+//                //or in add records window it directly into edit mode
+//                tableCellPopupWindow.editModeSwich();
+//            } else {
+//                tableCellPopupWindow.windowClose();
+            }
+        } else if (selectedTable.getName().equals(TASKFILES_TABLE_NAME)) {
+            if (selectedTable.getColumnName(selectedColumn).equals("files")
+                    || selectedTable.getColumnName(selectedColumn).equals("notes")
+                    || selectedTable.getColumnName(selectedColumn).equals("path")) {
+
+                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
+
+//                // popup table cell edit window
+//                tableCellPopupWindow.showWindow();
+//                //to check it is edit mode or not in project manager
+//                //or in add records window it directly into edit mode
+//                tableCellPopupWindow.editModeSwich();
+//            } else {
+//                tableCellPopupWindow.windowClose();
+            }
+        } else if (selectedTable.getName().equals(TASKNOTES_TABLE_NAME)) {
+            if (selectedTable.getColumnName(selectedColumn).equals("status_notes")) {
+
+                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
+//                // popup table cell edit window
+//                tableCellPopupWindow.showWindow();
+//                //to check it is edit mode or not in project manager
+//                //or in add records window it directly into edit mode
+//                tableCellPopupWindow.editModeSwich();
+//            } else {
+//                tableCellPopupWindow.windowClose();
+            }
+        }
     }
 
     /**
@@ -2606,25 +2655,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         JTable tableSelected = (JTable) e.getComponent();
 
                         if (e.getID() == KeyEvent.KEY_RELEASED) {
-                            //if table get selected location is not the same as last selection
-                            if (tableSelected.getSelectedRow() != lastSelectedRow
-                                    || tableSelected.getSelectedColumn() != lastSelectedColumn) {
-
-                                if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
-                                    lastSelectedRow = tableSelected.getSelectedRow();
-                                    lastSelectedColumn = tableSelected.getSelectedColumn();
-                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
-                                    popupWindowShowInPM = tableCellPopupWindow.isPopupWindowShow();
-                                } else {
-                                    tableCellPopupWindow.windowClose();
-                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
-                                    lastSelectedRow = tableSelected.getSelectedRow();
-                                    lastSelectedColumn = tableSelected.getSelectedColumn();
-                                    popupWindowShowInPM = tableCellPopupWindow.isPopupWindowShow();
-                                }// last popup window dispose and new popup window show at the selected cell
-                            } else {
-                                //if current selection equals last selection nothing happens
+                            System.out.println(popupWindowShowInPM);
+                            if(popupWindowShowInPM){
+                                tableCellPopupWindow.windowClose();
                             }
+
+                            popupWindowShowInTableByDiffTitle(tableSelected);
+//                            if table get selected location is not the same as last selection
+//                            if (tableSelected.getSelectedRow() != lastSelectedRow
+//                                    || tableSelected.getSelectedColumn() != lastSelectedColumn) {
+//
+//                                if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
+//                                    lastSelectedRow = tableSelected.getSelectedRow();
+//                                    lastSelectedColumn = tableSelected.getSelectedColumn();
+//                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
+//                                    popupWindowShowInPM = tableCellPopupWindow.isPopupWindowShow();
+//                                } else {
+//                                    tableCellPopupWindow.windowClose();
+//                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
+//                                    lastSelectedRow = tableSelected.getSelectedRow();
+//                                    lastSelectedColumn = tableSelected.getSelectedColumn();
+//                                    popupWindowShowInPM = tableCellPopupWindow.isPopupWindowShow();
+//                                }// last popup window dispose and new popup window show at the selected cell
+//                            } else {
+//                                //if current selection equals last selection nothing happens
+//                            }
                             tableSelected.requestFocus();
 
 //                            }
@@ -2637,7 +2692,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                         JTable tableSelected = (JTable) e.getComponent();
 
-                        if (addIssueWindow == null || !addIssueWindow.isDisplayable() ){
+                        if (addIssueWindow == null || !addIssueWindow.isDisplayable()) {
 //
 //                        } else {
 
@@ -2655,8 +2710,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                             addIssueWindow = new AddIssueWindow(cellsValue, idNum, row);
                             addIssueWindow.setVisible(true);
-                        }else{
-                            
+                        } else {
+
 //                            JOptionPane.showMessageDialog(frame, "Finishing working "
 //                                    + "with other add record window first!.");
                         }

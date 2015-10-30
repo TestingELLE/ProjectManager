@@ -129,7 +129,7 @@ public class AddIssueWindow extends JFrame {
 //        //sets the keyboard focus manager
 //        setKeyboardFocusManager(this);
         // set the label header
-        this.setTitle("Add Issue to " + table.getName());
+        this.setTitle("Add Issue");
 
         this.setPreferredSize(new Dimension(445, 710));
 
@@ -839,6 +839,7 @@ public class AddIssueWindow extends JFrame {
                         cellValue = null;
                     } // if the cell is not empty it must have single quotes
                     else {
+                        cellValue = processCellValue(cellValue);
                         cellValue = "'" + cellValue + "'";
                     }
                 }
@@ -1239,6 +1240,11 @@ public class AddIssueWindow extends JFrame {
         buttonSubmit.setEnabled(b);
         buttonSubmit.setVisible(b);
 
+    }
+
+    private Object processCellValue(Object cellValue) {
+        
+            return cellValue.toString().replaceAll("'", "''");
     }
 
 //    private void addKeyListener() {
