@@ -22,6 +22,7 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -49,6 +50,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
@@ -131,6 +133,8 @@ public class AddIssueWindow extends JFrame {
         addIssueMode(true);
 
         defaultSetting();
+        
+//        setFormListener();
 
 //        copyPasteAndCut();
 //        //sets the keyboard focus manager
@@ -528,7 +532,7 @@ public class AddIssueWindow extends JFrame {
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         appText.setColumns(20);
-        appText.setRows(5);
+        appText.setRows(1);
         appText.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         appText.setName("app"); // NOI18N
         jScrollPane1.setViewportView(appText);
@@ -540,7 +544,7 @@ public class AddIssueWindow extends JFrame {
         jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         titleText.setColumns(20);
-        titleText.setRows(5);
+        titleText.setRows(1);
         titleText.setName("title"); // NOI18N
         jScrollPane2.setViewportView(titleText);
 
@@ -551,7 +555,7 @@ public class AddIssueWindow extends JFrame {
 
         idText.setEditable(false);
         idText.setColumns(20);
-        idText.setRows(5);
+        idText.setRows(1);
         idText.setName("taskID"); // NOI18N
         idText.setNextFocusableComponent(dateOpenedText);
         jScrollPane3.setViewportView(idText);
@@ -562,7 +566,7 @@ public class AddIssueWindow extends JFrame {
         jScrollPane4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         programmerText.setColumns(20);
-        programmerText.setRows(5);
+        programmerText.setRows(1);
         programmerText.setName("programmer"); // NOI18N
         jScrollPane4.setViewportView(programmerText);
 
@@ -572,7 +576,7 @@ public class AddIssueWindow extends JFrame {
         jScrollPane5.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         rkText.setColumns(20);
-        rkText.setRows(5);
+        rkText.setRows(1);
         rkText.setName("rk"); // NOI18N
         jScrollPane5.setViewportView(rkText);
 
@@ -582,7 +586,7 @@ public class AddIssueWindow extends JFrame {
         jScrollPane6.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         dateOpenedText.setColumns(20);
-        dateOpenedText.setRows(5);
+        dateOpenedText.setRows(1);
         dateOpenedText.setToolTipText("");
         dateOpenedText.setName("dateOpened"); // NOI18N
         dateOpenedText.setNextFocusableComponent(programmerText);
@@ -620,7 +624,7 @@ public class AddIssueWindow extends JFrame {
         dateClosedScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         dateClosedText.setColumns(20);
-        dateClosedText.setRows(5);
+        dateClosedText.setRows(1);
         dateClosedText.setName("dateClosed"); // NOI18N
         dateClosedText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -635,7 +639,7 @@ public class AddIssueWindow extends JFrame {
         versionScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         versionText.setColumns(20);
-        versionText.setRows(5);
+        versionText.setRows(1);
         versionText.setName("version"); // NOI18N
         versionScroll.setViewportView(versionText);
 
@@ -779,7 +783,7 @@ public class AddIssueWindow extends JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPane)
+            .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -942,6 +946,7 @@ public class AddIssueWindow extends JFrame {
 
 //            System.out.println("numRowsAdded" + numRowsAdded);
             if (numRowsAdded > 0) {
+//                timer = new Timer();
                 projectManager.getInformationLabel().setVisible(true);
                 projectManager.getInformationLabel().setText("submitting to " + 
                         projectManager.getSelectedTabName());
@@ -976,6 +981,14 @@ public class AddIssueWindow extends JFrame {
                 
                 projectManager.getInformationLabel().setText("Add successfully to " +
                         projectManager.getSelectedTabName());
+                Timer time = new Timer(5000, new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                       projectManager.getInformationLabel().setText("");
+                    }
+                });
+                time.start();
 //                createTable();                                           // create a new empty tableSelected with default 10 rows
 //                resetForm();
             }
@@ -1074,6 +1087,8 @@ public class AddIssueWindow extends JFrame {
                 if (areaName.equals(columnNames[i])) {
                     textAreasInForm.put(columnNames[i], textAreaArray[j]);
 //                    System.out.println(columnNames[i] + " add to text area array!");
+                    
+//                        System.out.println(columnNames[i] + " " + tableValue);
 
                     if (tableValue != null) {
                         textAreasInForm.get(columnNames[i]).setText(tableValue.toString());
@@ -1277,6 +1292,10 @@ public class AddIssueWindow extends JFrame {
 
         return cellValue.toString().replaceAll("'", "''");
     }
+
+//    private void setFormListener() {
+//        header.addMouseListener(new MouseAdapter() {
+//    }
 
 //    private void copyPasteAndCut() {
 //        InputMap imap = this.getIn

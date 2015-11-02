@@ -23,7 +23,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="scrollPane" alignment="0" max="32767" attributes="0"/>
+          <Component id="scrollPane" alignment="0" pref="494" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -164,7 +164,7 @@
                 <Component class="javax.swing.JTextArea" name="appText">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
-                    <Property name="rows" type="int" value="5"/>
+                    <Property name="rows" type="int" value="1"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
                         <BevelBorder/>
@@ -195,7 +195,7 @@
                 <Component class="javax.swing.JTextArea" name="titleText">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
-                    <Property name="rows" type="int" value="5"/>
+                    <Property name="rows" type="int" value="1"/>
                     <Property name="name" type="java.lang.String" value="title" noResource="true"/>
                   </Properties>
                 </Component>
@@ -221,7 +221,7 @@
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
                     <Property name="columns" type="int" value="20"/>
-                    <Property name="rows" type="int" value="5"/>
+                    <Property name="rows" type="int" value="1"/>
                     <Property name="name" type="java.lang.String" value="taskID" noResource="true"/>
                     <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                       <ComponentRef name="dateOpenedText"/>
@@ -249,7 +249,7 @@
                 <Component class="javax.swing.JTextArea" name="programmerText">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
-                    <Property name="rows" type="int" value="5"/>
+                    <Property name="rows" type="int" value="1"/>
                     <Property name="name" type="java.lang.String" value="programmer" noResource="true"/>
                   </Properties>
                 </Component>
@@ -274,7 +274,7 @@
                 <Component class="javax.swing.JTextArea" name="rkText">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
-                    <Property name="rows" type="int" value="5"/>
+                    <Property name="rows" type="int" value="1"/>
                     <Property name="name" type="java.lang.String" value="rk" noResource="true"/>
                   </Properties>
                 </Component>
@@ -299,7 +299,7 @@
                 <Component class="javax.swing.JTextArea" name="dateOpenedText">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
-                    <Property name="rows" type="int" value="5"/>
+                    <Property name="rows" type="int" value="1"/>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                     <Property name="name" type="java.lang.String" value="dateOpened" noResource="true"/>
                     <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
@@ -421,7 +421,7 @@
                     <Component class="javax.swing.JTextArea" name="dateClosedText">
                       <Properties>
                         <Property name="columns" type="int" value="20"/>
-                        <Property name="rows" type="int" value="5"/>
+                        <Property name="rows" type="int" value="1"/>
                         <Property name="name" type="java.lang.String" value="dateClosed" noResource="true"/>
                       </Properties>
                       <Events>
@@ -449,7 +449,7 @@
                     <Component class="javax.swing.JTextArea" name="versionText">
                       <Properties>
                         <Property name="columns" type="int" value="20"/>
-                        <Property name="rows" type="int" value="5"/>
+                        <Property name="rows" type="int" value="1"/>
                         <Property name="name" type="java.lang.String" value="version" noResource="true"/>
                       </Properties>
                     </Component>
