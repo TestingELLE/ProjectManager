@@ -5130,3 +5130,101 @@ The last packet sent successfully to the server was 0 milliseconds ago. The driv
 -------------------------2015-10-30 11:03:48 AM-------------------------
 3:2015-10-30 11:04:04 AM: Start to connect local database...
 2015-10-30 11:04:05 AM: Connect successfully!
+
+-------------------------2015-10-31 09:49:10 AM-------------------------
+3:2015-10-31 09:49:25 AM: Start to connect local database...
+2015-10-31 09:49:27 AM: Connect successfully!
+
+-------------------------2015-10-31 09:56:35 AM-------------------------
+3:2015-10-31 09:57:11 AM: Start to connect local database...
+2015-10-31 09:57:14 AM: Connect successfully!
+
+-------------------------2015-10-31 10:04:22 AM-------------------------
+3:2015-10-31 10:04:33 AM: Start to connect local database...
+2015-10-31 10:04:35 AM: Connect successfully!
+
+-------------------------2015-10-31 10:05:43 AM-------------------------
+3:2015-10-31 10:05:53 AM: Start to connect local database...
+2015-10-31 10:05:58 AM: Connect successfully!
+
+-------------------------2015-10-31 10:19:25 AM-------------------------
+3:2015-10-31 10:19:39 AM: Start to connect local database...
+2015-10-31 10:19:41 AM: Connect successfully!
+
+-------------------------2015-10-31 10:30:04 AM-------------------------
+3:2015-10-31 10:32:13 AM: Start to connect local database...
+2015-10-31 10:32:18 AM: Connect successfully!
+
+-------------------------2015-10-31 10:34:18 AM-------------------------
+3:2015-10-31 10:34:29 AM: Start to connect local database...
+2015-10-31 10:34:33 AM: Connect successfully!
+
+-------------------------2015-10-31 10:47:42 AM-------------------------
+3:2015-10-31 10:47:57 AM: Start to connect local database...
+1:2015-10-31 10:47:59 AM: Access denied for user 'popune_Xiao'@'ool-457126c8.dyn.optonline.net' (using password: YES)
+3:2015-10-31 10:48:03 AM: Start to connect local database...
+1:2015-10-31 10:48:05 AM: Access denied for user 'popune_Xiao'@'ool-457126c8.dyn.optonline.net' (using password: YES)
+3:2015-10-31 10:48:11 AM: Start to connect local database...
+1:2015-10-31 10:48:14 AM: Access denied for user 'popune_Xiao'@'ool-457126c8.dyn.optonline.net' (using password: YES)
+3:2015-10-31 10:48:22 AM: Start to connect local database...
+1:2015-10-31 10:48:24 AM: Access denied for user 'popune_Xiao'@'ool-457126c8.dyn.optonline.net' (using password: YES)
+
+-------------------------2015-10-31 10:48:59 AM-------------------------
+3:2015-10-31 10:49:11 AM: Start to connect local database...
+2015-10-31 10:49:14 AM: Connect successfully!
+
+-------------------------2015-10-31 10:52:49 AM-------------------------
+3:2015-10-31 10:53:02 AM: Start to connect local database...
+2015-10-31 10:53:03 AM: Connect successfully!
+
+-------------------------2015-10-31 10:54:15 AM-------------------------
+
+-------------------------2015-10-31 10:55:34 AM-------------------------
+
+-------------------------2015-10-31 10:55:53 AM-------------------------
+3:2015-10-31 10:56:09 AM: Start to connect local database...
+2015-10-31 10:56:12 AM: Connect successfully!
+
+-------------------------2015-10-31 11:59:17 AM-------------------------
+3:2015-10-31 11:59:39 AM: Start to connect local database...
+2015-10-31 11:59:41 AM: Connect successfully!
+
+-------------------------2015-10-31 12:01:27 PM-------------------------
+3:2015-10-31 12:01:39 PM: Start to connect local database...
+2015-10-31 12:01:40 PM: Connect successfully!
+
+-------------------------2015-10-31 12:02:35 PM-------------------------
+3:2015-10-31 12:02:47 PM: Start to connect local database...
+2015-10-31 12:02:48 PM: Connect successfully!
+
+-------------------------2015-10-31 12:04:35 PM-------------------------
+3:2015-10-31 12:04:48 PM: Start to connect local database...
+2015-10-31 12:04:50 PM: Connect successfully!
+
+-------------------------2015-10-31 12:05:29 PM-------------------------
+3:2015-10-31 12:05:43 PM: Start to connect local database...
+2015-10-31 12:05:44 PM: Connect successfully!
+3:2015-10-31 12:06:04 PM: DELETE FROM pupone_dummy.issues WHERE taskID IN (94, 95, 96);
+
+-------------------------2015-10-31 12:06:25 PM-------------------------
+
+-------------------------2015-10-31 12:07:35 PM-------------------------
+3:2015-10-31 12:07:49 PM: Start to connect local database...
+2015-10-31 12:07:50 PM: Connect successfully!
+
+-------------------------2015-10-31 12:10:12 PM-------------------------
+3:2015-10-31 12:10:31 PM: Start to connect local database...
+2015-10-31 12:10:32 PM: Connect successfully!
+
+-------------------------2015-10-31 12:11:05 PM-------------------------
+3:2015-10-31 12:11:18 PM: Start to connect local database...
+2015-10-31 12:11:20 PM: Connect successfully!
+
+-------------------------2015-10-31 12:12:27 PM-------------------------
+3:2015-10-31 12:12:58 PM: Start to connect local database...
+2015-10-31 12:13:00 PM: Connect successfully!
+
+-------------------------2015-11-02 08:18:42 AM-------------------------
+3:2015-11-02 08:18:58 AM: Start to connect local database...
+2015-11-02 08:19:00 AM: Connect successfully!
+3:2015-11-02 08:19:48 AM: DELETE FROM pupone_dummy.issues WHERE taskID IN (97, 98);

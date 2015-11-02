@@ -14,12 +14,14 @@ import com.elle.ProjectManager.logic.Validator;
 import com.elle.ProjectManager.presentation.LogWindow;
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.PopupMenu;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -35,7 +37,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
+import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -43,6 +47,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -50,6 +55,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 
 /**
@@ -126,6 +132,7 @@ public class AddIssueWindow extends JFrame {
 
         defaultSetting();
 
+//        copyPasteAndCut();
 //        //sets the keyboard focus manager
 //        setKeyboardFocusManager(this);
         // set the label header
@@ -203,9 +210,9 @@ public class AddIssueWindow extends JFrame {
         columnNames = projectManager.getTabs().get(table.getName()).getTableColNames();
         // get tableSelected column width format
         columnWidths = tabs.get(table.getName()).getColWidthPercent();
-
-        System.out.println(columnWidths.length + "add issue");
-        System.out.println(columnNames.length + "add issue");
+//
+//        System.out.println(columnWidths.length + "add issue");
+//        System.out.println(columnNames.length + "add issue");
 //        if (table.getName().equals("tasks")) {
 //
 //            // we don't want the ID column 
@@ -237,15 +244,14 @@ public class AddIssueWindow extends JFrame {
 
         columnWidths = Arrays.copyOfRange(columnWidths, 1, columnWidths.length);
 
-        System.out.println(columnWidths.length + "widths");
-
-        System.out.println(table.getColumnCount());
-
+//        System.out.println(columnWidths.length + "widths");
+//
+//        System.out.println(table.getColumnCount());
         projectManager.setColumnFormat(columnWidths, table);
 
         if (formValues == null) {
             formValues = new Object[columnNames.length];
-            System.out.println("here");
+//            System.out.println("here");
         }
         formValues[0] = appDefaultValue;
 
@@ -253,7 +259,7 @@ public class AddIssueWindow extends JFrame {
             for (int col = 0; col < table.getColumnCount(); col++) {
                 if (formValues[col] != null) {
                     table.getModel().setValueAt(formValues[col], row, col);
-                    System.out.println("print out column Names here: " + columnNames[col] + " " + formValues[col]);
+//                    System.out.println("print out column Names here: " + columnNames[col] + " " + formValues[col]);
                 }
             }
         }
@@ -310,7 +316,7 @@ public class AddIssueWindow extends JFrame {
      * @return returns true if valid or false if error
      */
     public boolean validateCell(int row, int col) {
-        System.out.println("enter validatecell: " + row + " " + col);
+//        System.out.println("enter validatecell: " + row + " " + col);
 
         String colName = table.getColumnName(col);           // column name
         Object cellValue = table.getValueAt(row, col);       // store cell value
@@ -402,12 +408,11 @@ public class AddIssueWindow extends JFrame {
         int col = 0;                    // column index
         boolean isCellValid = true;    // if cell is valid entry 
 
-        System.out.println("enter validateData");
-
+//        System.out.println("enter validateData");
         // if tableSelected is not empty
         if (!CellsNotEmpty.isEmpty()) {
 
-            System.out.println("enter validateData" + " 1 ");
+//            System.out.println("enter validateData" + " 1 ");
             // check data
             for (int cell : CellsNotEmpty) {
 
@@ -423,8 +428,7 @@ public class AddIssueWindow extends JFrame {
                 }
                 int row = table.getRowCount() - 1;
 
-                System.out.println("enter validateData " + row);
-
+//                System.out.println("enter validateData " + row);
                 // begin error message
                 isCellValid = validateCell(row, cell);
 
@@ -450,9 +454,9 @@ public class AddIssueWindow extends JFrame {
         int row = table.getRowCount() - 1;
         boolean isNotEmpty = false;
         for (int col = 0; col < table.getColumnCount(); col++) {
-            System.out.println("check For Empty rows (table column count) : " + table.getColumnCount());
+//            System.out.println("check For Empty rows (table column count) : " + table.getColumnCount());
             Object value = table.getValueAt(row, col);
-            System.out.println("checkForEmptyRows " + value);
+//            System.out.println("checkForEmptyRows " + value);
             if (value != null && !value.equals("")) {
                 isNotEmpty = true;
 //                break;
@@ -462,7 +466,7 @@ public class AddIssueWindow extends JFrame {
 //            }
             if (isNotEmpty) {
                 CellsNotEmpty.add(col);
-                System.out.print("cells not empty at " + col);
+//                System.out.print("cells not empty at " + col);
             }
         }
     }
@@ -549,6 +553,7 @@ public class AddIssueWindow extends JFrame {
         idText.setColumns(20);
         idText.setRows(5);
         idText.setName("taskID"); // NOI18N
+        idText.setNextFocusableComponent(dateOpenedText);
         jScrollPane3.setViewportView(idText);
 
         programmer.setText(" programmer");
@@ -580,6 +585,7 @@ public class AddIssueWindow extends JFrame {
         dateOpenedText.setRows(5);
         dateOpenedText.setToolTipText("");
         dateOpenedText.setName("dateOpened"); // NOI18N
+        dateOpenedText.setNextFocusableComponent(programmerText);
         dateOpenedText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 dateOpenedTextKeyReleased(evt);
@@ -785,6 +791,48 @@ public class AddIssueWindow extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
+        for (int col = 0; col < formValues.length; col++) {
+            if (formValues[col] != null) {
+
+                projectManager.getSelectedTable().setValueAt(formValues[col], rowInView, col + 1);
+            }
+        }
+        this.dispose();
+    }//GEN-LAST:event_buttonConfirmActionPerformed
+
+    private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
+        AbstractButton abstractButton = (AbstractButton) evt.getSource();
+        boolean selected = abstractButton.getModel().isSelected();
+        makeCellEditable(selected);
+        projectManager.makeTableEditable(selected);
+    }//GEN-LAST:event_buttonEditActionPerformed
+
+    private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
+        if (evt.getKeyCode() == KeyEvent.VK_D && evt.isControlDown()) {
+            JTextArea dateArea = (JTextArea) evt.getSource();
+            makeContentDate(dateArea);
+
+        }
+    }//GEN-LAST:event_dateClosedTextKeyReleased
+
+    private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
+
+        submit();
+    }//GEN-LAST:event_buttonSubmitActionPerformed
+
+    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_buttonCancelActionPerformed
+
+    private void dateOpenedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateOpenedTextKeyReleased
+        if (evt.getKeyCode() == KeyEvent.VK_D && evt.isControlDown()) {
+            JTextArea dateArea = (JTextArea) evt.getSource();
+            makeContentDate(dateArea);
+
+        }
+    }//GEN-LAST:event_dateOpenedTextKeyReleased
+
     /**
      * submit This is used when the submit button is pressed or if the enter key
      * is pressed when the tableSelected is finished editing to submit the data
@@ -793,7 +841,7 @@ public class AddIssueWindow extends JFrame {
     private void submit() {
 //        storeValueInTable();
         for (int i = 0; i < table.getColumnCount(); i++) {
-            System.out.println("table cell value at " + i + " " + table.getValueAt(0, i));
+//            System.out.println("table cell value at " + i + " " + table.getValueAt(0, i));
         }
         checkForEmptyRows();
 
@@ -817,15 +865,14 @@ public class AddIssueWindow extends JFrame {
                 }
             }
 
-            System.out.println(insertInto);
-
+//            System.out.println(insertInto);
             numRowsAdded = 0; // reset numRowsAdded counter
 
             // Now get the values to add to the database
             String values = "";
 //            for (row = 0; row < table.getRowCount(); row++) {
             values = "VALUES (";  // start the values statement
-            System.out.println(table.getColumnCount() + "table column number");
+//            System.out.println(table.getColumnCount() + "table column number");
             for (col = 0; col < table.getColumnCount(); col++) {
 
                 // get cell value
@@ -843,7 +890,7 @@ public class AddIssueWindow extends JFrame {
                         cellValue = "'" + cellValue + "'";
                     }
                 }
-                System.out.println("add record submit" + cellValue + "at " + row + " " + col);
+//                System.out.println("add record submit" + cellValue + "at " + row + " " + col);
 
 //                    // skip empty rows
 //                    // this must be after the format cell value so the "" => null
@@ -857,7 +904,7 @@ public class AddIssueWindow extends JFrame {
                     values += cellValue + ");";
                 }
             }
-            System.out.println(values);
+//            System.out.println(values);
 
             try {
                 // execute the sql statement
@@ -877,10 +924,9 @@ public class AddIssueWindow extends JFrame {
                         String levelMessage = "2:" + statement.getWarnings().getMessage();
                         logWindow.addMessageWithDate(levelMessage);
 //                            logWindow.
-                        System.out.println(statement.getWarnings().getMessage());
+//                        System.out.println(statement.getWarnings().getMessage());
 
-                        System.out.println(levelMessage);//delete
-
+//                        System.out.println(levelMessage);//delete
                         statement.clearWarnings();
                     }
                     logWindow.addMessageWithDate("2:add record submit failed!");
@@ -891,10 +937,14 @@ public class AddIssueWindow extends JFrame {
                 }
             }
 //            }
+            
+                this.dispose();
 
-            System.out.println("numRowsAdded" + numRowsAdded);
-
+//            System.out.println("numRowsAdded" + numRowsAdded);
             if (numRowsAdded > 0) {
+                projectManager.getInformationLabel().setVisible(true);
+                projectManager.getInformationLabel().setText("submitting to " + 
+                        projectManager.getSelectedTabName());
                 // update tableSelected and records label
                 String tabName = projectManager.getSelectedTabName();              // tab name
                 Tab tab = tabs.get(tabName);                                  // selected tab
@@ -920,11 +970,14 @@ public class AddIssueWindow extends JFrame {
 
                 projectManager.setLastUpdateTime();                                // set the last update time from database
 
-                JOptionPane.showMessageDialog(this,
-                        numRowsAdded + " Add successfully!");                 // show dialog box that upload was successful
+//                JOptionPane.showMessageDialog(this,
+//                        numRowsAdded + " Add successfully!");                 // show dialog box that upload was successful
                 formValues = null;
-                createTable();                                           // create a new empty tableSelected with default 10 rows
-                resetForm();
+                
+                projectManager.getInformationLabel().setText("Add successfully to " +
+                        projectManager.getSelectedTabName());
+//                createTable();                                           // create a new empty tableSelected with default 10 rows
+//                resetForm();
             }
         }
     }
@@ -950,48 +1003,6 @@ public class AddIssueWindow extends JFrame {
             }
         }
     }
-
-    private void dateOpenedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateOpenedTextKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_D && evt.isControlDown()) {
-            JTextArea dateArea = (JTextArea) evt.getSource();
-            makeContentDate(dateArea);
-
-        }
-    }//GEN-LAST:event_dateOpenedTextKeyReleased
-
-    private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_D && evt.isControlDown()) {
-            JTextArea dateArea = (JTextArea) evt.getSource();
-            makeContentDate(dateArea);
-
-        }
-    }//GEN-LAST:event_dateClosedTextKeyReleased
-
-    private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
-
-        submit();
-    }//GEN-LAST:event_buttonSubmitActionPerformed
-
-    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_buttonCancelActionPerformed
-
-    private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
-        AbstractButton abstractButton = (AbstractButton) evt.getSource();
-        boolean selected = abstractButton.getModel().isSelected();
-        makeCellEditable(selected);
-        projectManager.makeTableEditable(selected);
-    }//GEN-LAST:event_buttonEditActionPerformed
-
-    private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
-        for (int col = 0; col < formValues.length; col++) {
-            if (formValues[col] != null) {
-
-                projectManager.getSelectedTable().setValueAt(formValues[col], rowInView, col + 1);
-            }
-        }
-        this.dispose();
-    }//GEN-LAST:event_buttonConfirmActionPerformed
 
     private void makeContentDate(JTextArea dateArea) {
 
@@ -1055,14 +1066,14 @@ public class AddIssueWindow extends JFrame {
         textAreaArray[7] = (dateClosedText);
         textAreaArray[8] = (versionText);
         String areaName = "";
-        System.out.println(columnNames.length + " hei");
+//        System.out.println(columnNames.length + " hei");
         for (int i = 0; i < columnNames.length; i++) {
             for (int j = 0; j < textAreaArray.length; j++) {
                 areaName = textAreaArray[j].getName();
                 Object tableValue = formValues[i];
                 if (areaName.equals(columnNames[i])) {
                     textAreasInForm.put(columnNames[i], textAreaArray[j]);
-                    System.out.println(columnNames[i] + " add to text area array!");
+//                    System.out.println(columnNames[i] + " add to text area array!");
 
                     if (tableValue != null) {
                         textAreasInForm.get(columnNames[i]).setText(tableValue.toString());
@@ -1078,6 +1089,8 @@ public class AddIssueWindow extends JFrame {
         idText.setEditable(false);
 
         setDocumentListener();
+
+        setTabKeyTransferFocusBtwTextArea();
     }
 
     private void setDocumentListener() {
@@ -1089,19 +1102,19 @@ public class AddIssueWindow extends JFrame {
                 String columnName = (String) e.getDocument().getProperty("id");
                 String value = textAreasInForm.get(columnName).getText();
                 updateValueToTableAt(value, columnName);
-                try {
-                    System.out.println("insert: " + e.getDocument().getText(0,
-                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
-//                    for (int i = 0; i < columnNames.length; i++) {
-//                        if (textAreasInForm.get(columnNames[i]).getText().equals("")) {
-//                            notEmpty = false;
-//
-//                        }
-//                    }
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(AddIssueWindow.class
-                            .getName()).log(Level.SEVERE, null, ex);
-                }
+//                try {
+////                    System.out.println("insert: " + e.getDocument().getText(0,
+////                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
+////                    for (int i = 0; i < columnNames.length; i++) {
+////                        if (textAreasInForm.get(columnNames[i]).getText().equals("")) {
+////                            notEmpty = false;
+////
+////                        }
+////                    }
+//                } catch (BadLocationException ex) {
+//                    Logger.getLogger(AddIssueWindow.class
+//                            .getName()).log(Level.SEVERE, null, ex);
+//                }
 
 //                if (!lastEditColumn.equals(columnName)) {
 //                    if (lastEditColumn.equals("")) {
@@ -1154,31 +1167,31 @@ public class AddIssueWindow extends JFrame {
                 String columnName = (String) e.getDocument().getProperty("id");
                 String value = textAreasInForm.get(columnName).getText();
                 updateValueToTableAt(value, columnName);
-                try {
-                    System.out.println("remove: " + e.getDocument().getText(0,
-                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
-//                    for (int i = 0; i < columnNames.length; i++) {
-//                        if (textAreasInForm.get(columnNames[i]).getText().equals("")) {
-//                            notEmpty = false;
-//
-//                        }
-//                    }
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(AddIssueWindow.class
-                            .getName()).log(Level.SEVERE, null, ex);
-                }
+//                try {
+//                    System.out.println("remove: " + e.getDocument().getText(0,
+//                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
+////                    for (int i = 0; i < columnNames.length; i++) {
+////                        if (textAreasInForm.get(columnNames[i]).getText().equals("")) {
+////                            notEmpty = false;
+////
+////                        }
+////                    }
+//                } catch (BadLocationException ex) {
+//                    Logger.getLogger(AddIssueWindow.class
+//                            .getName()).log(Level.SEVERE, null, ex);
+//                }
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                try {
-                    System.out.println("changed: " + e.getDocument().getText(0,
-                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
-
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(AddIssueWindow.class
-                            .getName()).log(Level.SEVERE, null, ex);
-                }
+//                try {
+//                    System.out.println("changed: " + e.getDocument().getText(0,
+//                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
+//
+//                } catch (BadLocationException ex) {
+//                    Logger.getLogger(AddIssueWindow.class
+//                            .getName()).log(Level.SEVERE, null, ex);
+//                }
             }
 
         };
@@ -1189,6 +1202,24 @@ public class AddIssueWindow extends JFrame {
         }
     }
 
+    private void setTabKeyTransferFocusBtwTextArea() {
+        AbstractAction transferFocus = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((Component) e.getSource()).transferFocus();
+            }
+        };
+
+        for (int i = 0; i < columnNames.length; i++) {
+            if (!columnNames[i].equals("description")) {
+                textAreasInForm.get(columnNames[i]).getInputMap().put(KeyStroke.
+                        getKeyStroke("TAB"), "transferFocus");
+                textAreasInForm.get(columnNames[i]).getActionMap().put("transferFocus", transferFocus);
+            }
+        }
+    }
+
     private void updateValueToTableAt(String value, String columnName) {
         for (int column = 0; column < table.getColumnCount(); column++) {
             if (table.getColumnName(column).equals(columnName)) {
@@ -1196,9 +1227,9 @@ public class AddIssueWindow extends JFrame {
 //                System.out.println("table get Value: " + table.getValueAt(0, column) + "at " + column);
 //                checkForEmptyRows();
 
-                System.out.println("formValue old value at " + column + " is " + formValues[column]);
+//                System.out.println("formValue old value at " + column + " is " + formValues[column]);
                 formValues[column] = value;
-                System.out.println("formValue update at " + column + " " + formValues[column]);
+//                System.out.println("formValue update at " + column + " " + formValues[column]);
             }
         }
     }
@@ -1243,10 +1274,13 @@ public class AddIssueWindow extends JFrame {
     }
 
     private Object processCellValue(Object cellValue) {
-        
-            return cellValue.toString().replaceAll("'", "''");
+
+        return cellValue.toString().replaceAll("'", "''");
     }
 
+//    private void copyPasteAndCut() {
+//        InputMap imap = this.getIn
+//    }
 //    private void addKeyListener() {
 //        KeyListener textKeyListener = new KeyListener() {
 //

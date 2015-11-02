@@ -44,15 +44,15 @@ import java.util.Vector;
 /**
  * ProjectManagerWindow
  *
- * @author Xijin Shan
- * @since June 29, 2015
- * @version 0.6.3
+ * @author Xiaoqian FU
+ * @since Oct 29, 2015
+ * @version 0.9.3
  */
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
     private final String CREATION_DATE = "2015-10-07";
-    private final String VERSION = "0.9.2";
+    private final String VERSION = "0.9.5";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
@@ -174,6 +174,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(TASKS_TABLE_NAME).setTableColNames(issuesTable);
         tabs.get(TASKFILES_TABLE_NAME).setTableColNames(issue_filesTable);
         tabs.get(TASKNOTES_TABLE_NAME).setTableColNames(issue_notesTable);
+        
+        informationLabel.setVisible(false);
 
         // this sets the KeyboardFocusManger
         setKeyboardFocusManager(this);
@@ -494,6 +496,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         labelEditModeState = new javax.swing.JLabel();
         labelEditMode = new javax.swing.JLabel();
         btnRevertChanges = new javax.swing.JButton();
+        informationLabel = new javax.swing.JLabel();
         jPanelSQL = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaSQL = new javax.swing.JTextArea();
@@ -791,6 +794,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
 
+        informationLabel.setText("jLabel2");
+
         javax.swing.GroupLayout jPanelEditLayout = new javax.swing.GroupLayout(jPanelEdit);
         jPanelEdit.setLayout(jPanelEditLayout);
         jPanelEditLayout.setHorizontalGroup(
@@ -802,11 +807,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(labelEditModeState)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnSwitchEditMode)
-                .addGap(82, 82, 82)
-                .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(informationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnRevertChanges)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnRevertChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addComponent(btnAddIssue)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBatchEdit)
@@ -815,15 +822,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanelEditLayout.setVerticalGroup(
             jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelEditLayout.createSequentialGroup()
-                .addGap(4, 4, 4)
+                .addContainerGap()
                 .addGroup(jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(labelEditMode)
                     .addComponent(btnSwitchEditMode)
                     .addComponent(labelEditModeState)
                     .addComponent(btnBatchEdit)
                     .addComponent(btnAddIssue)
-                    .addComponent(btnRevertChanges))
+                    .addComponent(btnRevertChanges)
+                    .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(informationLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -895,7 +903,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 846, Short.MAX_VALUE)
+            .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)
             .addComponent(jPanelSQL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(tabbedPanel)
         );
@@ -964,6 +972,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
 
         comboBoxSearch.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "symbol", "analyst" }));
+        comboBoxSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxSearchActionPerformed(evt);
+            }
+        });
 
         btnClearAllFilter.setText("Clear All Filters");
         btnClearAllFilter.addActionListener(new java.awt.event.ActionListener() {
@@ -1184,7 +1197,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(addPanel_control, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 846, Short.MAX_VALUE)
+            .addComponent(addPanel_control, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)
             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -2028,6 +2041,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }//GEN-LAST:event_menuitemViewOneIssueActionPerformed
 
+    private void comboBoxSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboBoxSearchActionPerformed
+
     private void buttonFilteringTables(JTable table, String str) {
 
         try {
@@ -2119,7 +2136,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     filterByDoubleClick(table);
                                 }
                             } else if (e.getClickCount() == 1) {
-                                System.out.println("mouse click popup Show " + popupWindowShowInPM);
+//                                System.out.println("mouse click popup Show " + popupWindowShowInPM);
                                 if (popupWindowShowInPM) {
                                     tableCellPopupWindow.windowClose();
                                 }
@@ -2655,7 +2672,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         JTable tableSelected = (JTable) e.getComponent();
 
                         if (e.getID() == KeyEvent.KEY_RELEASED) {
-                            System.out.println(popupWindowShowInPM);
+//                            System.out.println(popupWindowShowInPM);
                             if(popupWindowShowInPM){
                                 tableCellPopupWindow.windowClose();
                             }
@@ -3223,6 +3240,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JButton btnSwitchEditMode;
     private javax.swing.JButton btnUploadChanges;
     private javax.swing.JComboBox comboBoxSearch;
+    private javax.swing.JLabel informationLabel;
     private javax.swing.JTable issue_filesTable;
     private javax.swing.JTable issue_notesTable;
     private javax.swing.JTable issuesTable;
@@ -3293,6 +3311,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public void setPopupWindowShowInPM(boolean b) {
         popupWindowShowInPM = b;
+    }
+    
+    public JLabel getInformationLabel(){
+        return this.informationLabel;
     }
 
     /**
