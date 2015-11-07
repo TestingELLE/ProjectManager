@@ -123,6 +123,7 @@ public class Tab implements ITableConstants {
     }
 
     public int getRecordsShown() {
+//        System.out.println("table name: " + getTableName() + " row count " +  getTable().getRowCount());
         return getTable().getRowCount();
     }
 
@@ -299,8 +300,8 @@ public class Tab implements ITableConstants {
         switch (getTableName()) {
             case TASKS_TABLE_NAME:
                 output = "<html><pre>"
-                        + "          Number of records shown: " + getRecordsShown()
-                        + "<br/> Number of records in Assignments: " + getTotalRecords()
+                        + "     Number of records shown: " + getRecordsShown()
+                        + "<br/> Number of records in Issues: " + getTotalRecords()
                         + "</pre></html>";
                 System.out.println(output);
                 break;

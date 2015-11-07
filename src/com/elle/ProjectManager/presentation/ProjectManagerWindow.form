@@ -256,7 +256,7 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="TableFilterBtnGroup"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="ELLEGUI"/>
+            <Property name="text" type="java.lang.String" value="ELLE GUI"/>
             <Property name="alignmentY" type="float" value="0.0"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Default Cursor"/>

@@ -43,12 +43,15 @@ public class BatchEditWindow extends JFrame {
         String tabName = projectManagerWindow.getSelectedTabName();
         tab = tabs.get(tabName);
         table = tab.getTable();
+        System.out.println("batch Edit " + table.getRowCount());
 
         String[] batchEditFields = tab.getBatchEditFields();
         DefaultComboBoxModel model = new DefaultComboBoxModel(batchEditFields);
         comboBoxFieldSelect.setModel(model);
 
         this.setKeyBoardFocusManager();
+        
+        projectManagerWindow.setIsBatchEditWindowShow(true);
         
         batchEditWindowShow = true;
         
@@ -243,7 +246,8 @@ public class BatchEditWindow extends JFrame {
         projectManagerWindow.getBtnBatchEdit().setEnabled(true);
         
         batchEditWindowShow = false;
-
+        
+        projectManagerWindow.setIsBatchEditWindowShow(false);
         // this instance should dispose
         projectManagerWindow.getBatchEditWindow().dispose();
     }//GEN-LAST:event_btnQuitActionPerformed
