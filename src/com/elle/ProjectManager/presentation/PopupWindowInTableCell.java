@@ -6,7 +6,7 @@
 package com.elle.ProjectManager.presentation;
 
 import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
-import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
+//import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
 import java.awt.Color;
 import java.awt.Dimension;

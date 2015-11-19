@@ -4,7 +4,7 @@ import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.logic.ColumnPopupMenu;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
-import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
+//import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
 import com.elle.ProjectManager.logic.Tab;
 import com.elle.ProjectManager.logic.TableFilter;
@@ -550,7 +550,7 @@ public class AddIssueFileWindow extends JFrame {
      */
     private void createEmptyTable() {
 
-        String appDefaultType = projectManager.getAppColumnCurrentType();
+        String appDefaultType = projectManager.getSelectedTabName();
 
         createEmptyTable(appDefaultType);
 

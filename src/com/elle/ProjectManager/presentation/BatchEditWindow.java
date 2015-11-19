@@ -29,9 +29,10 @@ public class BatchEditWindow extends JFrame {
     private ProjectManagerWindow projectManagerWindow;
     private JTable table;
     private Tab tab;
-    
+
     //misc
     private boolean batchEditWindowShow;
+    private boolean btnConfirmClicked;
 
     /**
      * CONSTRUCTOR Creates new BatchEditWindow
@@ -43,18 +44,18 @@ public class BatchEditWindow extends JFrame {
         String tabName = projectManagerWindow.getSelectedTabName();
         tab = tabs.get(tabName);
         table = tab.getTable();
-        System.out.println("batch Edit " + table.getRowCount());
 
         String[] batchEditFields = tab.getBatchEditFields();
         DefaultComboBoxModel model = new DefaultComboBoxModel(batchEditFields);
         comboBoxFieldSelect.setModel(model);
 
         this.setKeyBoardFocusManager();
-        
+
         projectManagerWindow.setIsBatchEditWindowShow(true);
-        
+
         batchEditWindowShow = true;
-        
+        btnConfirmClicked = false;
+
         // set the interface to the middle of the window
         this.setLocationRelativeTo(projectManagerWindow);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // quit button should be used
@@ -78,6 +79,11 @@ public class BatchEditWindow extends JFrame {
         btnQuit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         comboBoxFieldSelect.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "analyst", "priority", "dateAssigned", "notes", "symbol", "dateDone", " ", " ", " " }));
         comboBoxFieldSelect.addActionListener(new java.awt.event.ActionListener() {
@@ -189,9 +195,16 @@ public class BatchEditWindow extends JFrame {
      */
     private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
 
+        projectManagerWindow.makeTableEditable(true);
+
         String columnName = comboBoxFieldSelect.getSelectedItem().toString();      // column name   
         String newValue = textFieldNewValue.getText();                             // new value to replace old value(s)
         int[] rows = table.getSelectedRows();                                      // selected rows
+        
+        projectManagerWindow.loadTableWhenSelectedRows(rows, table);               // move seleted rows to end
+        
+        rows = table.getSelectedRows();
+        
         int columnIndex;                                                           // column index
         int rowIndex;                                                              // row index
         int rowCount = table.getSelectedRowCount();                                // number of rows
@@ -209,6 +222,7 @@ public class BatchEditWindow extends JFrame {
         for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             table.setValueAt(newValue, rows[rowIndex], columnIndex);
         }
+//        projectManagerWindow.loadTableWhenSelectedRows(rows, table);
 
         // Add any new changes to be filtered as well
         // so that the records modified do not disappear after the upload.
@@ -228,6 +242,7 @@ public class BatchEditWindow extends JFrame {
                 filter.addFilterItems(columnIndex, filterItems);
             }
         }
+        btnConfirmClicked = true;
     }//GEN-LAST:event_btnConfirmActionPerformed
 
     /**
@@ -244,12 +259,19 @@ public class BatchEditWindow extends JFrame {
 
         // set the batch edit button enabled
         projectManagerWindow.getBtnBatchEdit().setEnabled(true);
-        
+
         batchEditWindowShow = false;
-        
+
         projectManagerWindow.setIsBatchEditWindowShow(false);
         // this instance should dispose
         projectManagerWindow.getBatchEditWindow().dispose();
+
+//        projectManagerWindow.loadTable(table);
+
+//        if(!btnConfirmClicked){
+//        projectManagerWindow.makeTableEditable(false);
+//        }
+
     }//GEN-LAST:event_btnQuitActionPerformed
 
     private void textFieldNewValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldNewValueActionPerformed
@@ -263,6 +285,11 @@ public class BatchEditWindow extends JFrame {
     private void comboBoxFieldSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxFieldSelectActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_comboBoxFieldSelectActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        projectManagerWindow.makeTableEditable(false);
+        this.dispose();
+    }//GEN-LAST:event_formWindowClosing
 
     private void setKeyBoardFocusManager() {
 
@@ -300,7 +327,8 @@ public class BatchEditWindow extends JFrame {
 
         });
     }
-    public boolean isBatchEditWindowShow(){
+
+    public boolean isBatchEditWindowShow() {
         return batchEditWindowShow;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
