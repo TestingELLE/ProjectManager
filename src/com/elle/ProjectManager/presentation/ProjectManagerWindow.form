@@ -31,11 +31,13 @@
             <Menu class="javax.swing.JMenu" name="menuSelectConn">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Select Connection"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="menuItemAWSAssign">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="AWS Assignments"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemAWSAssignActionPerformed"/>
@@ -63,6 +65,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuItemSaveFile">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save File"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemLogOff">
@@ -99,6 +102,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuItemArchiveRecord">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Archive Record"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemArchiveRecordActionPerformed"/>
@@ -107,6 +111,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuItemActivateRecord">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Activate Record"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemActivateRecordActionPerformed"/>
@@ -129,20 +134,20 @@
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="menuItemViewAllTasks">
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuItemLogChkBx">
               <Properties>
-                <Property name="text" type="java.lang.String" value="View All Tasks"/>
+                <Property name="text" type="java.lang.String" value="Log"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemViewAllTasksActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemLogChkBxActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="menuItemViewTaskNotes">
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuItemSQLCmdChkBx">
               <Properties>
-                <Property name="text" type="java.lang.String" value="View Task_Notes"/>
+                <Property name="text" type="java.lang.String" value="SQL Command"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemViewTaskNotesActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemSQLCmdChkBxActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuitemViewOneIssue">
@@ -172,14 +177,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemReloadDataActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuItemLogChkBx">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Log"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemLogChkBxActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemTurnEditModeOff">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Turn Edit Mode OFF"/>
@@ -196,19 +193,12 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemMoveSeletedRowsToEndActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="menuItemSQLCmdChkBx">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="SQL Command"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemSQLCmdChkBxActionPerformed"/>
-              </Events>
-            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="menuHelp">
           <Properties>
             <Property name="text" type="java.lang.String" value="Help"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemRepBugSugg">
@@ -291,6 +281,7 @@
           <Properties>
             <Property name="alignmentX" type="float" value="0.0"/>
             <Property name="alignmentY" type="float" value="0.0"/>
+            <Property name="name" type="java.lang.String" value="" noResource="true"/>
           </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Reports"/>
@@ -1055,11 +1046,16 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnClearAllFilter" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="comboBoxSearch" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="textFieldForSearch" min="-2" pref="141" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnSearch" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="searchInformationLabel" min="-2" pref="331" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="comboBoxSearch" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="textFieldForSearch" min="-2" pref="141" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnSearch" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
                       <EmptySpace pref="61" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -1074,7 +1070,8 @@
                           <Component id="textFieldForSearch" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnSearch" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="33" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                      <Component id="searchInformationLabel" pref="21" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1119,6 +1116,8 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnClearAllFilterActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="searchInformationLabel">
             </Component>
           </SubComponents>
         </Container>

@@ -17,9 +17,9 @@ import java.awt.geom.Rectangle2D.Double;
 /**
  * Main
  * This is the class that starts the application from the main method
- * @author shanxijin
- * @since June 10, 2015
- * @version 0.6.3
+ * @author Xiaoqian Fu
+ * @since AUG 28, 2015
+ * @version 0.9.9
  */
 public class ProjectManager {
     
@@ -90,7 +90,7 @@ public class ProjectManager {
 //            + comps[i-1] + "...");
             loadingProgress(i*20);  
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             }
             catch(InterruptedException e) {
             }
