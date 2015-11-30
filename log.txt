@@ -7422,3 +7422,44 @@ cancel' WHERE taskID = 119' at line 1
 -------------------------2015-11-25 11:53:38 AM-------------------------
 3:2015-11-25 11:53:46 AM: Start to connect local database...
 2015-11-25 11:53:47 AM: Connect successfully!
+
+-------------------------2015-11-30 12:23:32 AM-------------------------
+3:2015-11-30 12:23:36 AM: Start to connect local database...
+
+-------------------------2015-11-30 12:24:18 AM-------------------------
+3:2015-11-30 12:24:21 AM: Start to connect local database...
+3:2015-11-30 12:24:30 AM: Start to connect local database...
+
+-------------------------2015-11-30 12:26:13 AM-------------------------
+3:2015-11-30 12:26:17 AM: Start to connect local database...
+2015-11-30 12:26:19 AM: Connect successfully!
+
+-------------------------2015-11-30 12:26:37 AM-------------------------
+3:2015-11-30 12:26:40 AM: Start to connect local database...
+2015-11-30 12:26:40 AM: Connect successfully!
+
+-------------------------2015-11-30 12:30:38 AM-------------------------
+3:2015-11-30 12:30:40 AM: Start to connect local database...
+2015-11-30 12:30:41 AM: Connect successfully!
+
+-------------------------2015-11-30 09:38:31 AM-------------------------
+3:2015-11-30 09:38:33 AM: Start to connect local database...
+2015-11-30 09:38:35 AM: Connect successfully!
+
+-------------------------2015-11-30 09:51:05 AM-------------------------
+3:2015-11-30 09:51:08 AM: Start to connect local database...
+2015-11-30 09:51:09 AM: Connect successfully!
+
+-------------------------2015-11-30 09:53:24 AM-------------------------
+3:2015-11-30 09:53:26 AM: Start to connect local database...
+2015-11-30 09:53:27 AM: Connect successfully!
+
+-------------------------2015-11-30 09:55:22 AM-------------------------
+3:2015-11-30 09:55:25 AM: Start to connect local database...
+2015-11-30 09:55:26 AM: Connect successfully!
+
+-------------------------2015-11-30 09:58:58 AM-------------------------
+3:2015-11-30 09:59:00 AM: Start to connect local database...
+2015-11-30 09:59:01 AM: Connect successfully!
+
+-------------------------2015-11-30 10:00:48 AM-------------------------

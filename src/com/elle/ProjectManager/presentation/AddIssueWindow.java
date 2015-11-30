@@ -198,7 +198,7 @@ public class AddIssueWindow extends JFrame {
 
         this.setTitle("view issue in " + table.getName());
 
-        this.setPreferredSize(new Dimension(600, 780));
+        this.setPreferredSize(new Dimension(600, 730));
 
         // set this window to appear in the middle of Project Manager
         this.setLocationRelativeTo(projectManager);
@@ -484,12 +484,12 @@ public class AddIssueWindow extends JFrame {
         buttonConfirm = new javax.swing.JButton();
         dateClosedText = new javax.swing.JTextField();
         versionText = new javax.swing.JTextField();
+        BtnPrevious = new javax.swing.JButton();
+        BtnNext = new javax.swing.JButton();
         titleText = new javax.swing.JTextField();
         appText = new javax.swing.JTextField();
         description = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        BtnPrevious = new javax.swing.JButton();
-        BtnNext = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -604,6 +604,20 @@ public class AddIssueWindow extends JFrame {
         versionText.setText("jTextField1");
         versionText.setName("version"); // NOI18N
 
+        BtnPrevious.setText("<<");
+        BtnPrevious.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnPreviousActionPerformed(evt);
+            }
+        });
+
+        BtnNext.setText(">>");
+        BtnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnNextActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -618,6 +632,10 @@ public class AddIssueWindow extends JFrame {
                 .addGap(4, 4, 4))
             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BtnPrevious)
+                .addGap(18, 18, 18)
+                .addComponent(BtnNext)
+                .addGap(29, 29, 29)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dateClosedText, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dateClosed))
@@ -629,15 +647,17 @@ public class AddIssueWindow extends JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dateClosed)
                     .addComponent(version))
                 .addGap(0, 0, 0)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(dateClosedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                    .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BtnNext)
+                    .addComponent(BtnPrevious))
+                .addGap(0, 11, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonSubmit)
                     .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -657,38 +677,15 @@ public class AddIssueWindow extends JFrame {
 
         description.setText(" description");
 
-        BtnPrevious.setText("<<");
-        BtnPrevious.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BtnPreviousActionPerformed(evt);
-            }
-        });
-
-        BtnNext.setText(">>");
-        BtnNext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BtnNextActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(BtnPrevious)
-                .addGap(124, 124, 124)
-                .addComponent(BtnNext)
-                .addContainerGap())
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BtnPrevious)
-                    .addComponent(BtnNext))
-                .addGap(0, 9, Short.MAX_VALUE))
+            .addGap(0, 38, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
@@ -770,7 +767,7 @@ public class AddIssueWindow extends JFrame {
                         .addGap(0, 0, 0)
                         .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -787,7 +784,7 @@ public class AddIssueWindow extends JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(scrollPane))
+                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE))
         );
 
         pack();
@@ -803,6 +800,7 @@ public class AddIssueWindow extends JFrame {
 
         projectManager.makeTableEditable(false);
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
+        projectManager.deleteNumOfAddIssueWindowOpened();
         this.dispose();
 
         projectManager.getInformationLabel().setText("nothing changed!");
@@ -813,6 +811,7 @@ public class AddIssueWindow extends JFrame {
         projectManager.setAddRecordsWindowShow(false);
         projectManager.makeTableEditable(false);
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
+        projectManager.deleteNumOfAddIssueWindowOpened();
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
 
@@ -860,12 +859,13 @@ public class AddIssueWindow extends JFrame {
             }
         }
 
+        projectManager.deleteNumOfAddIssueWindowOpened();
         this.dispose();
         projectManager.setAddRecordsWindowShow(false);
 
         projectManager.uploadChanges();
 
-//        projectManager.makeTableEditable(false);
+        projectManager.makeTableEditable(false);
 
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
@@ -903,10 +903,12 @@ public class AddIssueWindow extends JFrame {
                 projectManager.uploadChanges();
             }
 //            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView+1, 2));
-            
+
+            projectManager.deleteNumOfAddIssueWindowOpened();
             this.dispose();
             projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
-            projectManager.viewNextIssue(rowInView+1, columnFocused);
+            projectManager.viewNextIssue(rowInView + 1, columnFocused);
+            projectManager.makeTableEditable(false);
         }
     }//GEN-LAST:event_BtnNextActionPerformed
 
@@ -924,10 +926,11 @@ public class AddIssueWindow extends JFrame {
                 projectManager.uploadChanges();
             }
 //            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView-1, 2));
-            
+
+            projectManager.deleteNumOfAddIssueWindowOpened();
             this.dispose();
             projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
-            projectManager.viewNextIssue(rowInView-1, columnFocused);
+            projectManager.viewNextIssue(rowInView - 1, columnFocused);
         }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
@@ -1026,6 +1029,8 @@ public class AddIssueWindow extends JFrame {
                     ex.printStackTrace();
                 }
             }
+
+            projectManager.deleteNumOfAddIssueWindowOpened();
 //            }
             this.dispose();
             projectManager.setAddRecordsWindowShow(false);
@@ -1304,6 +1309,9 @@ public class AddIssueWindow extends JFrame {
 
         buttonConfirm.setEnabled(false);
         buttonConfirm.setVisible(!b);
+
+        BtnNext.setVisible(!b);
+        BtnPrevious.setVisible(!b);
 
         buttonSubmit.setEnabled(false);
         buttonSubmit.setVisible(b);

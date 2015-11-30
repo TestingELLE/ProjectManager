@@ -74,7 +74,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private LoginWindow loginWindow;
     private BatchEditWindow batchEditWindow;
     private EditDatabaseWindow editDatabaseWindow;
-    private ReportWindow reportWindow;
+//    private ReportWindow reportWindow;
     private AddIssueFileWindow addIssueFileWindow;
 
     // colors - Edit mode labels
@@ -87,13 +87,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private boolean addIssueWindowShow;
     private boolean isBatchEditWindowShow;
 
-    private int addRecordLevel = 2;
-    private int deleteRecordLevel = 2;
+//    private int addRecordLevel = 2;
+//    private int deleteRecordLevel = 2;
+    private int numOfAddIssueWindowOpened;
 
 //    private PopupWindowInTableCell tableCellPopupWindow;
-    private boolean popupWindowShowInPM;
-    int lastSelectedRow = -1, lastSelectedColumn = -1;
-
+//    private boolean popupWindowShowInPM;
+//    int lastSelectedRow = -1, lastSelectedColumn = -1;
     // create a jlabel to show the database used
     private JLabel databaseLabel;
     private String currentTabName;
@@ -300,9 +300,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         currentTabName = getSelectedTabName();
 
-        popupWindowShowInPM = false;
-
+//        popupWindowShowInPM = false;
         btnBatchEdit.setVisible(false);
+
+        numOfAddIssueWindowOpened = 0;
 
 //        this.btnSwitchEditMode.setEnabled(false);
         // set title of window to Project Manager
@@ -1739,26 +1740,30 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //            tableCellPopupWindow.windowClose();
 //        }
         // if no add records window is open
-        if ((addIssueWindow == null || !addIssueWindow.isDisplayable())
-                && (addIssueFileWindow == null || !addIssueFileWindow.isDisplayable())) {
+//        if ((addIssueWindow == null || !addIssueWindow.isDisplayable())
+//                && (addIssueFileWindow == null || !addIssueFileWindow.isDisplayable())) {
+        if (numOfAddIssueWindowOpened <= 6) {
             if (btnAddIssue.getText().contains("Add issue to")) {
                 addIssueWindow = new AddIssueWindow();
                 addIssueWindow.setVisible(true);
+                numOfAddIssueWindowOpened++;
                 //addRecordWindow become visible
                 addIssueWindowShow = true;
                 makeTableEditable(true);
             } else {
+                numOfAddIssueWindowOpened++;
                 addIssueFileWindow = new AddIssueFileWindow();
                 addIssueFileWindow.setVisible(true);
             }
-        } // if window is already open then set the focus
-        else {
-            if (addIssueWindowShow) {
-                addIssueWindow.toFront();
-            } else {
-                addIssueFileWindow.toFront();
-            }
         }
+//        } // if window is already open then set the focus
+//        else {
+//            if (addIssueWindowShow) {
+//                addIssueWindow.toFront();
+//            } else {
+//                addIssueFileWindow.toFront();
+//            }
+//        }
 
         // update records
         String tabName = getSelectedTabName();
@@ -1829,7 +1834,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
 
 //        System.out.println(sorter + " current sorter");
-
         String sqlDelete = deleteRecordsSelected(table);
 
         table.setRowSorter(sorter);
@@ -2174,8 +2178,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         loadTables(tabs);
     }
 
-    public void viewNextIssue(int row,  String columnName) {
-        
+    public void viewNextIssue(int row, String columnName) {
+
         Tab tab = tabs.get(getSelectedTabName());
         JTable table = tab.getTable();
 
@@ -2190,7 +2194,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         String value = "openning issues are: ";
         for (int issue : idNumOfOpenningIssues) {
-             value = value +" " + issue;
+            value = value + " " + issue;
             if (issue == openningIssue) {
                 alreadyOpened = true;
             }
@@ -2208,16 +2212,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         makeTableEditable(false);
 
     }
-    
-    public ArrayList<Integer> getIdNumOfOpenningIssues(){
+
+    public ArrayList<Integer> getIdNumOfOpenningIssues() {
         return this.idNumOfOpenningIssues;
     }
-    
-    public void deleteFromIdNumOfOpenningIssues(int rowNum){
+
+    public void deleteFromIdNumOfOpenningIssues(int rowNum) {
         int id = (Integer) this.getSelectedTable().getValueAt(rowNum, 0);
-        
-        for(Integer IssueId : this.idNumOfOpenningIssues){
-            if(IssueId == id){
+
+        for (Integer IssueId : this.idNumOfOpenningIssues) {
+            if (IssueId == id) {
 //                System.out.println("before delete: " + IssueId + " is " + this.idNumOfOpenningIssues);
                 this.idNumOfOpenningIssues.remove(IssueId);
 //                System.out.println("after delete: " + IssueId + " is " + this.idNumOfOpenningIssues);
@@ -2279,14 +2283,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // add mouselistener to the tableSelected
         table.addMouseListener(new MouseAdapter() {
 
-                    boolean isClickOnce, doubleClick;
-                    long theFirstClick = 0, theSecondClick = 0;
+            boolean isClickOnce, doubleClick;
+            long theFirstClick = 0, theSecondClick = 0;
 
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
 
-                        // if left mouse clicks
-                        if (SwingUtilities.isLeftMouseButton(e)) {
+                // if left mouse clicks
+                if (SwingUtilities.isLeftMouseButton(e)) {
 //                            if (isClickOnce) {
 //                                isClickOnce = false;
 //                                doubleClick = true;
@@ -2300,148 +2304,156 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                            - theFirstClick > 20 && doubleClick) {
 //                                
 //                            }
-                             if (e.getClickCount() == 2) {
+                    if (e.getClickCount() == 2) {
 //                                System.out.println("double Click!");
-                                if (e.isControlDown()) {
+                        if (e.isControlDown()) {
 //                                    System.out.println("click");
-                                    filterByDoubleClick(table);
-                                } else {
-                                    if (e.getComponent() instanceof JTable) {
+                            filterByDoubleClick(table);
+                        } else {
+                            if (e.getComponent() instanceof JTable) {
+                                System.out.println("add issue window has already opened: " + numOfAddIssueWindowOpened);
+                                if (numOfAddIssueWindowOpened < 6) {
 
-                                        Tab tab = tabs.get(getSelectedTabName());
-                                        JTable table = tab.getTable();
+                                    Tab tab = tabs.get(getSelectedTabName());
+                                    JTable table = tab.getTable();
 
-                                        Object[] cellsValue = new Object[table.getColumnCount()];
+                                    Object[] cellsValue = new Object[table.getColumnCount()];
 
-                                        int row = table.getSelectedRow();
-                                        int column = table.getSelectedColumn();
+                                    int row = table.getSelectedRow();
+                                    int column = table.getSelectedColumn();
 
-                                        for (int col = 1; col < table.getColumnCount(); col++) {
-                                            cellsValue[col - 1] = table.getValueAt(row, col);
+                                    for (int col = 1; col < table.getColumnCount(); col++) {
+                                        cellsValue[col - 1] = table.getValueAt(row, col);
 
+                                    }
+                                    boolean alreadyOpened = false;
+
+                                    Integer openningIssue = (Integer) table.getValueAt(row, 0);
+
+                                    for (int issue : idNumOfOpenningIssues) {
+                                        if (issue == openningIssue) {
+                                            alreadyOpened = true;
                                         }
-                                        boolean alreadyOpened = false;
+                                    }
 
-                                        Integer openningIssue = (Integer) table.getValueAt(row, 0);
+                                    if (alreadyOpened) {
+                                        addIssueWindow.toFront();
+                                    } else {
+                                        idNumOfOpenningIssues.add(openningIssue);
 
-                                        for (int issue : idNumOfOpenningIssues) {
-                                            if (issue == openningIssue) {
-                                                alreadyOpened = true;
-                                            }
-                                        }
-
-                                        if (alreadyOpened) {
-                                            addIssueWindow.toFront();
-                                        } else {
-                                            idNumOfOpenningIssues.add(openningIssue);
-
-                                            String columnName = table.getColumnName(column);
+                                        String columnName = table.getColumnName(column);
 //                                            System.out.println("send " + columnName + " to add issue!");
 
-                                            addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(idNumOfOpenningIssues.size() - 1), row, columnName);
-                                            addIssueWindow.setVisible(true);
-                                        }
-                                        makeTableEditable(false);
-
-                                    } else {
+                                        addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(idNumOfOpenningIssues.size() - 1), row, columnName);
+                                        addIssueWindow.setVisible(true);
+                                        numOfAddIssueWindowOpened++;
+                                        
+                                    System.out.println(numOfAddIssueWindowOpened + " add issue window Opened!");
                                     }
-                                }
-                            } else if (e.getClickCount() == 1) {
-                                if (e.getComponent() instanceof JTable) {
-                                    JTable table = (JTable) e.getSource();
-                                    int[] rows = table.getSelectedRows();
+                                    makeTableEditable(false);
 
-                                    if (rows.length >= 2) {
+                                }else if ( numOfAddIssueWindowOpened == 6){
+                                     JOptionPane.showMessageDialog(frame, "It has already " 
+                                             + numOfAddIssueWindowOpened + " ! Can't open more!");
+                                }
+                            }
+                        }
+                    } else if (e.getClickCount() == 1) {
+                        if (e.getComponent() instanceof JTable) {
+                            JTable table = (JTable) e.getSource();
+                            int[] rows = table.getSelectedRows();
+
+                            if (rows.length >= 2) {
 //                                        loadTableWhenSelectedRows(rows, table);
 
-                                        btnBatchEdit.setEnabled(true);
-                                        btnBatchEdit.setVisible(true);
-                                    } else {
-                                        btnBatchEdit.setEnabled(false);
-                                        btnBatchEdit.setVisible(false);
-                                    }
-                                }
-                            }
-                        } // end if left mouse clicks
-                        // if right mouse clicks
-                        else if (SwingUtilities.isRightMouseButton(e)) {
-                            if (e.getClickCount() == 2) {
-
-                                Tab tab = tabs.get(table.getName());
-
-                                // check if this tab is editing or if allowed editing
-                                boolean thisTabIsEditing = tab.isEditing();
-                                boolean noTabIsEditing = !isTabEditing();
-
-                                if (thisTabIsEditing || noTabIsEditing) {
-
-                                    // set the states for this tab
-                                    makeTableEditable(true);
-                                    setEnabledEditingButtons(true, true, true);
-                                    setBatchEditButtonStates(tab);
-
-                                    // set the color of the edit mode text
-                                    editModeTextColor(tab.isEditing());
-
-                                    // get selected cell for editing
-                                    int columnIndex = table.columnAtPoint(e.getPoint()); // this returns the column index
-                                    int rowIndex = table.rowAtPoint(e.getPoint()); // this returns the rowIndex index
-                                    if (rowIndex != -1 && columnIndex != -1) {
-
-                                        // make it the active editing cell
-                                        table.changeSelection(rowIndex, columnIndex, false, false);
-
-                                        selectAllText(e);
-
-                                        // if cell is being edited
-                                        // cannot cancel or upload or revert
-                                        setEnabledEditingButtons(false, false, false);
-
-                                    } // end not null condition
-
-                                } // end of is tab editing conditions
-
-                            } // end if 2 clicks 
-                        } // end if right mouse clicks
-
-                    }// end mouseClicked
-
-                    private void selectAllText(MouseEvent e) {// Select all text inside jTextField
-
-                        JTable table = (JTable) e.getComponent();
-                        int row = table.getSelectedRow();
-                        int column = table.getSelectedColumn();
-                        if (column != 0) {
-                            table.getComponentAt(row, column).requestFocus();
-                            table.editCellAt(row, column);
-                            JTextField selectCom = (JTextField) table.getEditorComponent();
-                            if (selectCom != null) {
-                                selectCom.requestFocusInWindow();
-                                selectCom.selectAll();
+                                btnBatchEdit.setEnabled(true);
+                                btnBatchEdit.setVisible(true);
+                            } else {
+                                btnBatchEdit.setEnabled(false);
+                                btnBatchEdit.setVisible(false);
                             }
                         }
-
                     }
-                    long firstClick = 0;
-                    long secondClick = 0;
-                    boolean click = false;
+                } // end if left mouse clicks
+                // if right mouse clicks
+                else if (SwingUtilities.isRightMouseButton(e)) {
+                    if (e.getClickCount() == 2) {
 
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        if (labelEditModeState.getText().equals("ON ")) {
-                            if (click == false) {
-                                firstClick = new Date().getTime();
-                                click = true;
-                            } else if (click == true) {
-                                secondClick = new Date().getTime();
-                                click = false;
-                            }
-                            if (Math.abs((secondClick - firstClick)) < 200 && (secondClick - firstClick) > 30) {
+                        Tab tab = tabs.get(table.getName());
+
+                        // check if this tab is editing or if allowed editing
+                        boolean thisTabIsEditing = tab.isEditing();
+                        boolean noTabIsEditing = !isTabEditing();
+
+                        if (thisTabIsEditing || noTabIsEditing) {
+
+                            // set the states for this tab
+                            makeTableEditable(true);
+                            setEnabledEditingButtons(true, true, true);
+                            setBatchEditButtonStates(tab);
+
+                            // set the color of the edit mode text
+                            editModeTextColor(tab.isEditing());
+
+                            // get selected cell for editing
+                            int columnIndex = table.columnAtPoint(e.getPoint()); // this returns the column index
+                            int rowIndex = table.rowAtPoint(e.getPoint()); // this returns the rowIndex index
+                            if (rowIndex != -1 && columnIndex != -1) {
+
+                                // make it the active editing cell
+                                table.changeSelection(rowIndex, columnIndex, false, false);
+
                                 selectAllText(e);
-                            }
-                        }
+
+                                // if cell is being edited
+                                // cannot cancel or upload or revert
+                                setEnabledEditingButtons(false, false, false);
+
+                            } // end not null condition
+
+                        } // end of is tab editing conditions
+
+                    } // end if 2 clicks 
+                } // end if right mouse clicks
+
+            }// end mouseClicked
+
+            private void selectAllText(MouseEvent e) {// Select all text inside jTextField
+
+                JTable table = (JTable) e.getComponent();
+                int row = table.getSelectedRow();
+                int column = table.getSelectedColumn();
+                if (column != 0) {
+                    table.getComponentAt(row, column).requestFocus();
+                    table.editCellAt(row, column);
+                    JTextField selectCom = (JTextField) table.getEditorComponent();
+                    if (selectCom != null) {
+                        selectCom.requestFocusInWindow();
+                        selectCom.selectAll();
                     }
                 }
+
+            }
+            long firstClick = 0;
+            long secondClick = 0;
+            boolean click = false;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (labelEditModeState.getText().equals("ON ")) {
+                    if (click == false) {
+                        firstClick = new Date().getTime();
+                        click = true;
+                    } else if (click == true) {
+                        secondClick = new Date().getTime();
+                        click = false;
+                    }
+                    if (Math.abs((secondClick - firstClick)) < 200 && (secondClick - firstClick) > 30) {
+                        selectAllText(e);
+                    }
+                }
+            }
+        }
         );
 
         table.addMouseMotionListener(new MouseAdapter() {
@@ -3062,8 +3074,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                }
                 if (e.isAltDown() && e.getKeyCode() == KeyEvent.VK_V) {
                     if (e.getComponent() instanceof JTable) {
-
-                        if (addIssueWindow == null || !addIssueWindow.isDisplayable()) {
+                        if (numOfAddIssueWindowOpened <= 6) {
 
                             Tab tab = tabs.get(getSelectedTabName());
                             JTable table = tab.getTable();
@@ -3071,29 +3082,36 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             Object[] cellsValue = new Object[table.getColumnCount()];
 
                             int row = table.getSelectedRow();
+                            int column = table.getSelectedColumn();
 
                             for (int col = 1; col < table.getColumnCount(); col++) {
                                 cellsValue[col - 1] = table.getValueAt(row, col);
 
                             }
-                            int idNum = (int) table.getValueAt(row, 0);
+                            boolean alreadyOpened = false;
 
-                            addIssueWindow = new AddIssueWindow(cellsValue, idNum, row, "");
-                            addIssueWindow.setVisible(true);
-                            labelEditModeState.setText("ON ");
-                        } else {
+                            Integer openningIssue = (Integer) table.getValueAt(row, 0);
 
-                            addIssueWindow.toFront();
+                            for (int issue : idNumOfOpenningIssues) {
+                                if (issue == openningIssue) {
+                                    alreadyOpened = true;
+                                }
+                            }
 
-//                            JOptionPane.showMessageDialog(frame, "Finishing working "
-//                                    + "with other add record window first!.");
+                            if (alreadyOpened) {
+                                addIssueWindow.toFront();
+                            } else {
+                                idNumOfOpenningIssues.add(openningIssue);
+
+                                String columnName = table.getColumnName(column);
+//                                            System.out.println("send " + columnName + " to add issue!");
+
+                                addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(idNumOfOpenningIssues.size() - 1), row, columnName);
+                                addIssueWindow.setVisible(true);
+                                numOfAddIssueWindowOpened++;
+                            }
+                            makeTableEditable(false);
                         }
-//                        if (labelEditModeState.getText().equals("ON ")) {
-//                            addIssueWindow.setEditable(true);
-//
-//                        } else {
-//                            addIssueWindow.setEditable(false);
-//                        }
                     }
                 }
                 return false;
@@ -3761,10 +3779,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.isBatchEditWindowShow;
     }
 
-    public void setPopupWindowShowInPM(boolean b) {
-        popupWindowShowInPM = b;
+    public int getNumOfAddIssueWindowOpened() {
+        return this.numOfAddIssueWindowOpened;
     }
 
+    public void deleteNumOfAddIssueWindowOpened() {
+        this.numOfAddIssueWindowOpened--;
+    }
+
+//    public void setPopupWindowShowInPM(boolean b) {
+//        popupWindowShowInPM = b;
+//    }
     public JLabel getInformationLabel() {
         return this.informationLabel;
     }
