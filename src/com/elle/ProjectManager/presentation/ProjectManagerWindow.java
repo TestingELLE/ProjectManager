@@ -2352,7 +2352,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     }
                                     makeTableEditable(false);
 
-                                }else if ( numOfAddIssueWindowOpened == 6){
+                                }else if ( numOfAddIssueWindowOpened > 6){
                                      JOptionPane.showMessageDialog(frame, "It has already " 
                                              + numOfAddIssueWindowOpened + " ! Can't open more!");
                                 }
