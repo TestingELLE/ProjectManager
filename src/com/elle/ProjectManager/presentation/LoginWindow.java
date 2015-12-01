@@ -8,15 +8,19 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.database.DBConnection;
+import java.awt.Image;
+import java.awt.Toolkit;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 
 public class LoginWindow extends JFrame {
@@ -32,7 +36,15 @@ public class LoginWindow extends JFrame {
     private EditDatabaseWindow editDatabaseList;
     private LogWindow logWindow;
     
+    Image backgroundImg;
+    
     public LoginWindow() {
+        try{
+        this.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("/Users/fuxiaoqian/Desktop"
+                + "/Elle Investment/ProjectManagerFromMaster/src/com/elle/ProjectManager/image.png")))));
+        }catch(IOException e){
+            System.out.println("image does not exist!");
+        }
         
         // initialize
         initComponents();
@@ -40,15 +52,18 @@ public class LoginWindow extends JFrame {
         
         // load selectedDB selections from the text file for the combobox
         loadDBList(); 
-        comboBoxDatabase.setSelectedIndex(2);
-        comboBoxServer.setSelectedIndex(0);
-        textFieldUsername.setText("pupone_Xiao");
-        passwordFieldPW.setText("XiaoXXXX8");
+//        comboBoxDatabase.setSelectedIndex(2);
+//        comboBoxServer.setSelectedIndex(0);
+//        textFieldUsername.setText("pupone_Xiao");
+//        passwordFieldPW.setText("XiaoXXXX8");
         
 //        comboBoxDatabase.setSelectedIndex(3);
         
+        
+        
         // show window
-        this.setTitle("Log in");  
+        this.setTitle("Log in"); 
+        this.pack();
     }
 
     /**
@@ -62,7 +77,6 @@ public class LoginWindow extends JFrame {
 
         jTextPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
         jInputPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         comboBoxServer = new javax.swing.JComboBox();
@@ -79,40 +93,28 @@ public class LoginWindow extends JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Please input your username and password to log in.");
+        jTextPanel.setOpaque(false);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
+        jLabel1.setText("Please input your username and password to log in.");
 
         javax.swing.GroupLayout jTextPanelLayout = new javax.swing.GroupLayout(jTextPanel);
         jTextPanel.setLayout(jTextPanelLayout);
         jTextPanelLayout.setHorizontalGroup(
             jTextPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTextPanelLayout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jTextPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
                 .addGap(19, 19, 19))
         );
         jTextPanelLayout.setVerticalGroup(
             jTextPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jTextPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTextPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(252, 252, 252))
         );
+
+        jInputPanel.setOpaque(false);
 
         jLabel4.setText("Server");
 
@@ -154,6 +156,8 @@ public class LoginWindow extends JFrame {
             }
         });
 
+        jButtonPanel.setOpaque(false);
+
         btnCancel.setText("Cancel/ Log off");
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -173,20 +177,20 @@ public class LoginWindow extends JFrame {
         jButtonPanelLayout.setHorizontalGroup(
             jButtonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jButtonPanelLayout.createSequentialGroup()
-                .addGap(69, 69, 69)
+                .addGap(99, 99, 99)
                 .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
+                .addGap(18, 18, 18)
                 .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jButtonPanelLayout.setVerticalGroup(
             jButtonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jButtonPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(17, 17, 17)
                 .addGroup(jButtonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnLogin)
-                    .addComponent(btnCancel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnCancel)
+                    .addComponent(btnLogin))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         btnEditDB.setText("Edit");
@@ -244,9 +248,9 @@ public class LoginWindow extends JFrame {
                 .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(passwordFieldPW, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(38, 38, 38)
                 .addComponent(jButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -260,8 +264,8 @@ public class LoginWindow extends JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jTextPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jInputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jInputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -316,6 +320,10 @@ public class LoginWindow extends JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_passwordFieldPWActionPerformed
 
+    public String getUserName(){
+        String userNameToPM = userName.substring(6, userName.length()-1);
+        return userNameToPM;
+    }
     /**
      *  Loads the names of the databases from a text file
      * this is if the actual selectedDB list is edited in EditDatabaseWindow
@@ -394,9 +402,13 @@ public class LoginWindow extends JFrame {
             logWindow.addMessageWithDate(levelMessage);
             passwordFieldPW.setText("");
         }
+        userName = userName.substring(7);
+        System.out.println(userName);
         
         // create an projectManager object
-        projectManager = new ProjectManagerWindow();
+        projectManager = new ProjectManagerWindow(userName);
+        
+//        projectManager.setUserName(userName.substring(7));
 
         // pass the log window to projectManager
         projectManager.setLogWindow(logWindow);
@@ -413,7 +425,7 @@ public class LoginWindow extends JFrame {
         projectManager.setVisible(true);
 
         // terminate this object
-        this.dispose(); // returns used resources
+        this.dispose();// returns used resources
 
     }
     
@@ -430,7 +442,6 @@ public class LoginWindow extends JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jTextPanel;
     private javax.swing.JPasswordField passwordFieldPW;
     private javax.swing.JTextField textFieldUsername;

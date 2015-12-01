@@ -14,12 +14,15 @@ import com.elle.ProjectManager.logic.Validator;
 import com.elle.ProjectManager.presentation.LogWindow;
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.PopupMenu;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -35,7 +38,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -43,13 +50,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 
 /**
@@ -72,6 +83,8 @@ public class AddIssueWindow extends JFrame {
     private LogWindow logWindow;
     private DefaultTableModel model;
     private int rowInView;
+    private String columnFocused;
+    private LoginWindow loginWindow;
 
     private Color defaultSelectedBG;
 
@@ -82,12 +95,13 @@ public class AddIssueWindow extends JFrame {
     private JTable table;
 
     private Map<String, JLabel> labelsInForm;
-    private Map<String, JTextArea> textAreasInForm;
+    private Map<String, JTextField> textAreasInForm;
 
 //    private ArrayList line;
     // used to notify if the tableSelected is editing
     // the tableSelected.isEditing method has issues from the tableModelListener
-    private boolean isEditClicked;
+    private boolean addIssueMode;
+    private boolean contentChanged;
 
 //    private String lastEditColumn = "";
     /**
@@ -97,13 +111,15 @@ public class AddIssueWindow extends JFrame {
 
         CellsNotEmpty = new ArrayList<>();
         notEmpty = false;
-        isEditClicked = false;
+        addIssueMode = true;
         formValues = null;
 
         projectManager = ProjectManagerWindow.getInstance();
         logWindow = projectManager.getLogWindow();
         tabs = projectManager.getTabs();
         statement = projectManager.getStatement();
+
+        projectManager.setAddRecordsWindowShow(true);
 
         table = new JTable();
 
@@ -122,16 +138,20 @@ public class AddIssueWindow extends JFrame {
 
         createEmptyForm();
 
-        addIssueMode(true);
+        addIssueMode(addIssueMode);
 
         defaultSetting();
 
+//        setCopyAndPasteKeyEvent();
+//        setKeyboardFocusManager(this);
+//        setFormListener();
+//        copyPasteAndCut();
 //        //sets the keyboard focus manager
 //        setKeyboardFocusManager(this);
         // set the label header
-        this.setTitle("Add Issue to " + table.getName());
+        this.setTitle("Add Issue");
 
-        this.setPreferredSize(new Dimension(445, 710));
+        this.setPreferredSize(new Dimension(600, 730));
 
         // set this window to appear in the middle of Project Manager
         this.setLocationRelativeTo(projectManager);
@@ -139,20 +159,25 @@ public class AddIssueWindow extends JFrame {
         this.pack();
     }
 
-    public AddIssueWindow(Object[] cellsValue, int id, int row) {
+    public AddIssueWindow(Object[] cellsValue, int id, int row, String columnName) {
         CellsNotEmpty = new ArrayList<>();
         notEmpty = false;
-        isEditClicked = false;
-
-        formValues = cellsValue;
-        rowInView = row;
+        addIssueMode = false;
+        contentChanged = false;
 
         projectManager = ProjectManagerWindow.getInstance();
         logWindow = projectManager.getLogWindow();
         tabs = projectManager.getTabs();
         statement = projectManager.getStatement();
 
+        projectManager.setAddRecordsWindowShow(true);
+
+        formValues = cellsValue;
+        rowInView = row;
+        columnFocused = columnName;
+
         table = new JTable();
+//        System.out.println("now in view: " + id);
 
         // set the selected tableSelected name
         table.setName(projectManager.getSelectedTabName());
@@ -168,16 +193,31 @@ public class AddIssueWindow extends JFrame {
 
         createEmptyForm();
 
+//        setCopyAndPasteKeyEvent();
         idText.setText(Integer.toString(id));
-
-        addIssueMode(false);
 
         this.setTitle("view issue in " + table.getName());
 
-        this.setPreferredSize(new Dimension(445, 750));
+        this.setPreferredSize(new Dimension(600, 730));
 
         // set this window to appear in the middle of Project Manager
         this.setLocationRelativeTo(projectManager);
+
+        addIssueMode(addIssueMode);
+
+        if (!columnName.equals("")) {
+            if (columnName.equals("description")) {
+                descriptionText.requestFocusInWindow();
+            } else {
+                for (int i = 0; i < columnNames.length; i++) {
+                    if (columnName.equals(columnNames[i])) {
+                        textAreasInForm.get(columnNames[i]).requestFocusInWindow();
+                        break;
+                    }
+                }
+            }
+        } else {
+        }
 
         this.pack();
     }
@@ -193,6 +233,7 @@ public class AddIssueWindow extends JFrame {
 
         //set dateOpen to today's date
         makeContentDate(dateOpenedText);
+        buttonSubmit.setEnabled(false);
 
     }
 
@@ -203,29 +244,6 @@ public class AddIssueWindow extends JFrame {
         columnNames = projectManager.getTabs().get(table.getName()).getTableColNames();
         // get tableSelected column width format
         columnWidths = tabs.get(table.getName()).getColWidthPercent();
-
-        System.out.println(columnWidths.length + "add issue");
-        System.out.println(columnNames.length + "add issue");
-//        if (table.getName().equals("tasks")) {
-//
-//            // we don't want the ID column 
-//            columnNames = Arrays.copyOfRange(columnNames, 1, columnNames.length - 2);
-//
-//            // set the tableSelected model - add 10 empty rows
-//            model = new DefaultTableModel(columnNames, 1);
-//
-//            // add the tableSelected model to the tableSelected
-//            table.setModel(model);
-//
-////            int changeColumnNum = table.getColumn("app").getModelIndex();
-////            for (int i = 0; i < table.getRowCount(); i++) {
-////                table.setValueAt(appDefaultValue, i, changeColumnNum);
-////            }
-//            columnWidths = Arrays.copyOfRange(columnWidths, 1, columnWidths.length - 2);
-//
-//            projectManager.setColumnFormat(columnWidths, table);
-//
-//        } else {
         // we don't want the ID column 
         columnNames = Arrays.copyOfRange(columnNames, 1, columnNames.length);
 
@@ -237,15 +255,14 @@ public class AddIssueWindow extends JFrame {
 
         columnWidths = Arrays.copyOfRange(columnWidths, 1, columnWidths.length);
 
-        System.out.println(columnWidths.length + "widths");
-
-        System.out.println(table.getColumnCount());
-
+//        System.out.println(columnWidths.length + "widths");
+//
+//        System.out.println(table.getColumnCount());
         projectManager.setColumnFormat(columnWidths, table);
 
         if (formValues == null) {
             formValues = new Object[columnNames.length];
-            System.out.println("here");
+//            System.out.println("here");
         }
         formValues[0] = appDefaultValue;
 
@@ -253,7 +270,7 @@ public class AddIssueWindow extends JFrame {
             for (int col = 0; col < table.getColumnCount(); col++) {
                 if (formValues[col] != null) {
                     table.getModel().setValueAt(formValues[col], row, col);
-                    System.out.println("print out column Names here: " + columnNames[col] + " " + formValues[col]);
+//                    System.out.println("print out column Names here: " + columnNames[col] + " " + formValues[col]);
                 }
             }
         }
@@ -267,39 +284,13 @@ public class AddIssueWindow extends JFrame {
      */
     private void createTable() {
 
-        String appDefaultType = projectManager.getAppColumnCurrentType();
+        String appDefaultType = projectManager.getSelectedTabName();
         if (appDefaultType.equals(" NULL ")) {
             appDefaultType = "";
         }
 
         createTable(appDefaultType);
 
-    }
-
-//    private void createTableWithValue() {
-//
-//        columnNames = projectManager.getTabs().get(table.getName()).getTableColNames();
-//        // get tableSelected column width format
-//        columnWidths = tabs.get(table.getName()).getColWidthPercent();
-//        // set the tableSelected model - add 10 empty rows
-//        model = new DefaultTableModel(columnNames, 1);
-//
-//        // add the tableSelected model to the tableSelected
-//        table.setModel(model);
-//
-//        projectManager.setColumnFormat(columnWidths, table);
-//
-//        
-//    }
-    // find the sepecfic textArea in Form
-    private JTextArea findColumnInForm(String columnName) {
-        for (int i = 0; i < columnNames.length; i++) {
-            if (columnNames[i].contains(columnName)) {
-
-                return textAreasInForm.get(columnNames[i]);
-            }
-        }
-        return null;
     }
 
     /**
@@ -310,7 +301,7 @@ public class AddIssueWindow extends JFrame {
      * @return returns true if valid or false if error
      */
     public boolean validateCell(int row, int col) {
-        System.out.println("enter validatecell: " + row + " " + col);
+//        System.out.println("enter validatecell: " + row + " " + col);
 
         String colName = table.getColumnName(col);           // column name
         Object cellValue = table.getValueAt(row, col);       // store cell value
@@ -402,12 +393,9 @@ public class AddIssueWindow extends JFrame {
         int col = 0;                    // column index
         boolean isCellValid = true;    // if cell is valid entry 
 
-        System.out.println("enter validateData");
-
         // if tableSelected is not empty
         if (!CellsNotEmpty.isEmpty()) {
 
-            System.out.println("enter validateData" + " 1 ");
             // check data
             for (int cell : CellsNotEmpty) {
 
@@ -416,14 +404,11 @@ public class AddIssueWindow extends JFrame {
                     break;
                 }
 
-//                for (col = 0; col < table.getColumnCount(); col++) {
                 // if there was an error stop
                 if (!isCellValid) {
                     break;
                 }
                 int row = table.getRowCount() - 1;
-
-                System.out.println("enter validateData " + row);
 
                 // begin error message
                 isCellValid = validateCell(row, cell);
@@ -450,9 +435,9 @@ public class AddIssueWindow extends JFrame {
         int row = table.getRowCount() - 1;
         boolean isNotEmpty = false;
         for (int col = 0; col < table.getColumnCount(); col++) {
-            System.out.println("check For Empty rows (table column count) : " + table.getColumnCount());
+//            System.out.println("check For Empty rows (table column count) : " + table.getColumnCount());
             Object value = table.getValueAt(row, col);
-            System.out.println("checkForEmptyRows " + value);
+//            System.out.println("checkForEmptyRows " + value);
             if (value != null && !value.equals("")) {
                 isNotEmpty = true;
 //                break;
@@ -462,7 +447,7 @@ public class AddIssueWindow extends JFrame {
 //            }
             if (isNotEmpty) {
                 CellsNotEmpty.add(col);
-                System.out.print("cells not empty at " + col);
+//                System.out.print("cells not empty at " + col);
             }
         }
     }
@@ -480,39 +465,38 @@ public class AddIssueWindow extends JFrame {
         scrollPane = new javax.swing.JScrollPane();
         formPane = new javax.swing.JPanel();
         app = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        appText = new javax.swing.JTextArea();
         title = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        titleText = new javax.swing.JTextArea();
         id = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        idText = new javax.swing.JTextArea();
+        idText = new javax.swing.JTextField();
         programmer = new javax.swing.JLabel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        programmerText = new javax.swing.JTextArea();
+        programmerText = new javax.swing.JTextField();
         rk = new javax.swing.JLabel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        rkText = new javax.swing.JTextArea();
+        rkText = new javax.swing.JTextField();
         dateOpened = new javax.swing.JLabel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        dateOpenedText = new javax.swing.JTextArea();
-        description = new javax.swing.JLabel();
+        dateOpenedText = new javax.swing.JTextField();
         jScrollPane7 = new javax.swing.JScrollPane();
         descriptionText = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         buttonCancel = new javax.swing.JButton();
         buttonSubmit = new javax.swing.JButton();
-        dateClosedScroll = new javax.swing.JScrollPane();
-        dateClosedText = new javax.swing.JTextArea();
         dateClosed = new javax.swing.JLabel();
-        versionScroll = new javax.swing.JScrollPane();
-        versionText = new javax.swing.JTextArea();
         version = new javax.swing.JLabel();
-        buttonEdit = new javax.swing.JToggleButton();
         buttonConfirm = new javax.swing.JButton();
+        dateClosedText = new javax.swing.JTextField();
+        versionText = new javax.swing.JTextField();
+        BtnPrevious = new javax.swing.JButton();
+        BtnNext = new javax.swing.JButton();
+        titleText = new javax.swing.JTextField();
+        appText = new javax.swing.JTextField();
+        description = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         scrollPane.setBorder(null);
         scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -520,80 +504,63 @@ public class AddIssueWindow extends JFrame {
 
         app.setText(" app");
 
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-
-        appText.setColumns(20);
-        appText.setRows(5);
-        appText.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        appText.setName("app"); // NOI18N
-        jScrollPane1.setViewportView(appText);
-
         title.setText(" title");
-
-        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane2.setToolTipText("");
-        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-
-        titleText.setColumns(20);
-        titleText.setRows(5);
-        titleText.setName("title"); // NOI18N
-        jScrollPane2.setViewportView(titleText);
 
         id.setText(" id");
 
-        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-
-        idText.setEditable(false);
-        idText.setColumns(20);
-        idText.setRows(5);
-        idText.setName("taskID"); // NOI18N
-        jScrollPane3.setViewportView(idText);
+        idText.setText("jTextField1");
+        idText.setName("id"); // NOI18N
+        idText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                idTextActionPerformed(evt);
+            }
+        });
 
         programmer.setText(" programmer");
 
-        jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-
-        programmerText.setColumns(20);
-        programmerText.setRows(5);
+        programmerText.setText("jTextField1");
         programmerText.setName("programmer"); // NOI18N
-        jScrollPane4.setViewportView(programmerText);
+        programmerText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                programmerTextActionPerformed(evt);
+            }
+        });
 
         rk.setText(" rk");
 
-        jScrollPane5.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane5.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-
-        rkText.setColumns(20);
-        rkText.setRows(5);
+        rkText.setText("jTextField1");
         rkText.setName("rk"); // NOI18N
-        jScrollPane5.setViewportView(rkText);
+        rkText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rkTextActionPerformed(evt);
+            }
+        });
 
         dateOpened.setText(" dateOpened");
 
-        jScrollPane6.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane6.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-
-        dateOpenedText.setColumns(20);
-        dateOpenedText.setRows(5);
-        dateOpenedText.setToolTipText("");
+        dateOpenedText.setText("jTextField1");
         dateOpenedText.setName("dateOpened"); // NOI18N
+        dateOpenedText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateOpenedTextActionPerformed(evt);
+            }
+        });
         dateOpenedText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 dateOpenedTextKeyReleased(evt);
             }
         });
-        jScrollPane6.setViewportView(dateOpenedText);
-
-        description.setText(" description");
 
         descriptionText.setColumns(20);
         descriptionText.setLineWrap(true);
         descriptionText.setRows(5);
         descriptionText.setWrapStyleWord(true);
         descriptionText.setName("description"); // NOI18N
+        descriptionText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                descriptionTextKeyReleased(evt);
+            }
+        });
         jScrollPane7.setViewportView(descriptionText);
 
         buttonCancel.setText("Cancel");
@@ -610,37 +577,9 @@ public class AddIssueWindow extends JFrame {
             }
         });
 
-        dateClosedScroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        dateClosedScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-
-        dateClosedText.setColumns(20);
-        dateClosedText.setRows(5);
-        dateClosedText.setName("dateClosed"); // NOI18N
-        dateClosedText.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                dateClosedTextKeyReleased(evt);
-            }
-        });
-        dateClosedScroll.setViewportView(dateClosedText);
-
         dateClosed.setText(" dateClosed");
 
-        versionScroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        versionScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-
-        versionText.setColumns(20);
-        versionText.setRows(5);
-        versionText.setName("version"); // NOI18N
-        versionScroll.setViewportView(versionText);
-
         version.setText(" version");
-
-        buttonEdit.setText("Edit");
-        buttonEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonEditActionPerformed(evt);
-            }
-        });
 
         buttonConfirm.setText("Confirm");
         buttonConfirm.addActionListener(new java.awt.event.ActionListener() {
@@ -649,47 +588,104 @@ public class AddIssueWindow extends JFrame {
             }
         });
 
+        dateClosedText.setText("jTextField2");
+        dateClosedText.setName("dateClosed"); // NOI18N
+        dateClosedText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateClosedTextActionPerformed(evt);
+            }
+        });
+        dateClosedText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                dateClosedTextKeyReleased(evt);
+            }
+        });
+
+        versionText.setText("jTextField1");
+        versionText.setName("version"); // NOI18N
+
+        BtnPrevious.setText("<<");
+        BtnPrevious.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnPreviousActionPerformed(evt);
+            }
+        });
+
+        BtnNext.setText(">>");
+        BtnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnNextActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dateClosed)
-                    .addComponent(dateClosedScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(versionScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(version, javax.swing.GroupLayout.Alignment.TRAILING)))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(buttonEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(buttonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(buttonCancel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(buttonCancel)
+                .addGap(4, 4, 4))
+            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BtnPrevious)
+                .addGap(18, 18, 18)
+                .addComponent(BtnNext)
+                .addGap(29, 29, 29)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(dateClosedText, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dateClosed))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(version)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dateClosed)
-                            .addComponent(version))
-                        .addGap(0, 0, 0)
-                        .addComponent(dateClosedScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(versionScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(dateClosed)
+                    .addComponent(version))
                 .addGap(0, 0, 0)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dateClosedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BtnNext)
+                    .addComponent(BtnPrevious))
+                .addGap(0, 11, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonSubmit)
-                    .addComponent(buttonCancel)
-                    .addComponent(buttonEdit)
-                    .addComponent(buttonConfirm))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonConfirm)))
+        );
+
+        titleText.setText("jTextField1");
+        titleText.setName("title"); // NOI18N
+        titleText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                titleTextActionPerformed(evt);
+            }
+        });
+
+        appText.setText("jTextField1");
+        appText.setName("app"); // NOI18N
+
+        description.setText(" description");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 38, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
@@ -697,73 +693,82 @@ public class AddIssueWindow extends JFrame {
         formPaneLayout.setHorizontalGroup(
             formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(formPaneLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
+                .addContainerGap()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane7)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(id))
-                        .addGap(18, 18, 18)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dateOpened)
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addComponent(titleText)
+                        .addContainerGap())
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(formPaneLayout.createSequentialGroup()
-                                .addComponent(programmer)
-                                .addGap(69, 69, 69)))
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(idText, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(id))
+                                .addGap(12, 12, 12)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(dateOpened))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addComponent(programmer)
+                                        .addGap(60, 60, 60)
+                                        .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(formPaneLayout.createSequentialGroup()
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(description)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(app)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(app)
+                                    .addComponent(description))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(33, 33, 33)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(6, 6, 6))))
         );
         formPaneLayout.setVerticalGroup(
             formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(formPaneLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(programmer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(rk))
-                    .addComponent(dateOpened, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(id))
                 .addGap(0, 0, 0)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(dateOpened, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
+                        .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(programmer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(idText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0)
                 .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1)
                 .addComponent(description, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(formPaneLayout.createSequentialGroup()
                         .addComponent(app)
                         .addGap(0, 0, 0)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -773,17 +778,161 @@ public class AddIssueWindow extends JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPane)
+            .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 714, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
+
+        submit();
+    }//GEN-LAST:event_buttonSubmitActionPerformed
+
+    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
+        projectManager.setAddRecordsWindowShow(false);
+
+        projectManager.makeTableEditable(false);
+        projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
+        projectManager.deleteNumOfAddIssueWindowOpened();
+        this.dispose();
+
+        projectManager.getInformationLabel().setText("nothing changed!");
+        projectManager.startCountDownFromNow(5);
+    }//GEN-LAST:event_buttonCancelActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        projectManager.setAddRecordsWindowShow(false);
+        projectManager.makeTableEditable(false);
+        projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
+        projectManager.deleteNumOfAddIssueWindowOpened();
+        this.dispose();
+    }//GEN-LAST:event_formWindowClosing
+
+    private void idTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_idTextActionPerformed
+
+    private void rkTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rkTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rkTextActionPerformed
+
+    private void programmerTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programmerTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_programmerTextActionPerformed
+
+    private void dateOpenedTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateOpenedTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dateOpenedTextActionPerformed
+
+    private void titleTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titleTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_titleTextActionPerformed
+
+    private void dateClosedTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateClosedTextActionPerformed
+
+    }//GEN-LAST:event_dateClosedTextActionPerformed
+
+    private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
+            makeContentDate((JTextField) evt.getComponent());
+        }
+    }//GEN-LAST:event_dateClosedTextKeyReleased
+
+    private void dateOpenedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateOpenedTextKeyReleased
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
+            makeContentDate((JTextField) evt.getComponent());
+        }
+    }//GEN-LAST:event_dateOpenedTextKeyReleased
+
+    private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
+        for (int col = 0; col < formValues.length; col++) {
+            if (formValues[col] != null) {
+
+                projectManager.getSelectedTable().setValueAt(formValues[col], rowInView, col + 1);
+            }
+        }
+
+        projectManager.deleteNumOfAddIssueWindowOpened();
+        this.dispose();
+        projectManager.setAddRecordsWindowShow(false);
+
+        projectManager.uploadChanges();
+
+        projectManager.makeTableEditable(false);
+
+    }//GEN-LAST:event_buttonConfirmActionPerformed
+
+    private void descriptionTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionTextKeyReleased
+        JTextArea dateArea = (JTextArea) evt.getComponent();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String today = dateFormat.format(date);
+        String value = dateArea.getText();
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
+            dateArea.requestFocusInWindow();
+            dateArea.selectAll();
+            value = value + " " + today;
+            dateArea.setText(value);
+        } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
+
+            String userName = projectManager.getUserName();
+            value = value + "\n" + "-- by " + userName + " on " + today + "-- \n";
+            dateArea.setText(value);
+        }
+    }//GEN-LAST:event_descriptionTextKeyReleased
+
+    private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
+
+        if (rowInView == projectManager.getSelectedTable().getRowCount() - 1) {
+            JOptionPane.showMessageDialog(this, "This is the last row!");
+        } else {
+            if (contentChanged) {
+                for (int col = 0; col < formValues.length; col++) {
+                    if (formValues[col] != null) {
+
+                        projectManager.getSelectedTable().setValueAt(formValues[col], rowInView, col + 1);
+                    }
+                }
+                projectManager.uploadChanges();
+            }
+//            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView+1, 2));
+
+            projectManager.deleteNumOfAddIssueWindowOpened();
+            this.dispose();
+            projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
+            projectManager.viewNextIssue(rowInView + 1, columnFocused);
+            projectManager.makeTableEditable(false);
+        }
+    }//GEN-LAST:event_BtnNextActionPerformed
+
+    private void BtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPreviousActionPerformed
+        if (rowInView == 0) {
+            JOptionPane.showMessageDialog(this, "This is the first row!");
+        } else {
+            if (contentChanged) {
+                for (int col = 0; col < formValues.length; col++) {
+                    if (formValues[col] != null) {
+
+                        projectManager.getSelectedTable().setValueAt(formValues[col], rowInView, col + 1);
+                    }
+                }
+                projectManager.uploadChanges();
+            }
+//            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView-1, 2));
+
+            projectManager.deleteNumOfAddIssueWindowOpened();
+            this.dispose();
+            projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
+            projectManager.viewNextIssue(rowInView - 1, columnFocused);
+        }
+    }//GEN-LAST:event_BtnPreviousActionPerformed
 
     /**
      * submit This is used when the submit button is pressed or if the enter key
@@ -791,10 +940,7 @@ public class AddIssueWindow extends JFrame {
      * to the database.
      */
     private void submit() {
-//        storeValueInTable();
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            System.out.println("table cell value at " + i + " " + table.getValueAt(0, i));
-        }
+
         checkForEmptyRows();
 
         Object cellValue = null;                 // store cell value
@@ -806,7 +952,7 @@ public class AddIssueWindow extends JFrame {
 
             // once data checked, execute sql statement
             // first get the insert statement for the tableSelected
-            String insertInto = "INSERT INTO " + table.getName() + " (";
+            String insertInto = "INSERT INTO issues (";
 
             // this tableSelected should already not include the primary key
             for (col = 0; col < table.getColumnCount(); col++) {
@@ -817,15 +963,13 @@ public class AddIssueWindow extends JFrame {
                 }
             }
 
-            System.out.println(insertInto);
-
             numRowsAdded = 0; // reset numRowsAdded counter
 
             // Now get the values to add to the database
             String values = "";
 //            for (row = 0; row < table.getRowCount(); row++) {
             values = "VALUES (";  // start the values statement
-            System.out.println(table.getColumnCount() + "table column number");
+
             for (col = 0; col < table.getColumnCount(); col++) {
 
                 // get cell value
@@ -839,16 +983,11 @@ public class AddIssueWindow extends JFrame {
                         cellValue = null;
                     } // if the cell is not empty it must have single quotes
                     else {
+                        cellValue = processCellValue(cellValue);
                         cellValue = "'" + cellValue + "'";
                     }
                 }
-                System.out.println("add record submit" + cellValue + "at " + row + " " + col);
 
-//                    // skip empty rows
-//                    // this must be after the format cell value so the "" => null
-//                    if (col == 0 && cellValue == null) {
-//                        break;
-//                    }
                 // add each value for each column to the values statement
                 if (col != table.getColumnCount() - 1) {
                     values += cellValue + ", ";
@@ -856,7 +995,8 @@ public class AddIssueWindow extends JFrame {
                     values += cellValue + ");";
                 }
             }
-            System.out.println(values);
+//            System.out.println(insertInto);
+//            System.out.println(values);
 
             try {
                 // execute the sql statement
@@ -875,25 +1015,31 @@ public class AddIssueWindow extends JFrame {
 
                         String levelMessage = "2:" + statement.getWarnings().getMessage();
                         logWindow.addMessageWithDate(levelMessage);
+
+                        projectManager.getInformationLabel().setText(levelMessage);
+                        projectManager.startCountDownFromNow(5);
 //                            logWindow.
-                        System.out.println(statement.getWarnings().getMessage());
-
-                        System.out.println(levelMessage);//delete
-
                         statement.clearWarnings();
                     }
                     logWindow.addMessageWithDate("2:add record submit failed!");
+
                 } // end try-catch
                 catch (SQLException ex) {
                     // this should never be called
                     ex.printStackTrace();
                 }
             }
-//            }
 
-            System.out.println("numRowsAdded" + numRowsAdded);
+            projectManager.deleteNumOfAddIssueWindowOpened();
+//            }
+            this.dispose();
+            projectManager.setAddRecordsWindowShow(false);
 
             if (numRowsAdded > 0) {
+                projectManager.getInformationLabel().setVisible(true);
+                projectManager.getInformationLabel().setText("submitting to "
+                        + projectManager.getSelectedTabName());
+                projectManager.startCountDownFromNow(5);
                 // update tableSelected and records label
                 String tabName = projectManager.getSelectedTabName();              // tab name
                 Tab tab = tabs.get(tabName);                                  // selected tab
@@ -919,21 +1065,34 @@ public class AddIssueWindow extends JFrame {
 
                 projectManager.setLastUpdateTime();                                // set the last update time from database
 
-                JOptionPane.showMessageDialog(this,
-                        numRowsAdded + " Add successfully!");                 // show dialog box that upload was successful
+                // show dialog box that upload was successful
                 formValues = null;
-                createTable();                                           // create a new empty tableSelected with default 10 rows
-                resetForm();
+
+                projectManager.getInformationLabel().setText("Add successfully to "
+                        + projectManager.getSelectedTabName());
+                projectManager.startCountDownFromNow(5);
             }
+
+            projectManager.makeTableEditable(false);
+
         }
     }
 
     private void resetForm() {
         for (int col = 0; col < columnNames.length; col++) {
-            if (formValues[col] != null) {
-                textAreasInForm.get(columnNames[col]).setText(formValues[col].toString());
+            if (columnNames[col].equals("description")) {
+
+                if (formValues[col] != null) {
+                    descriptionText.setText(formValues[col].toString());
+                } else {
+                    descriptionText.setText("");
+                }
             } else {
-                textAreasInForm.get(columnNames[col]).setText(null);
+                if (formValues[col] != null) {
+                    textAreasInForm.get(columnNames[col]).setText(formValues[col].toString());
+                } else {
+                    textAreasInForm.get(columnNames[col]).setText("");
+                }
             }
         }
         defaultSetting();
@@ -945,54 +1104,16 @@ public class AddIssueWindow extends JFrame {
         for (int i = 0; i < columnNames[i].length(); i++) {
             String labelName = columnNames[i];
             if (labelName.equals(table.getColumnName(i))) {
-                table.setValueAt(textAreasInForm.get(labelName).getText(), 0, i);
+                if (!labelName.equals("description")) {
+                    table.setValueAt(textAreasInForm.get(labelName).getText(), 0, i);
+                } else {
+                    table.setValueAt(descriptionText.getText(), 0, i);
+                }
             }
         }
     }
 
-    private void dateOpenedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateOpenedTextKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_D && evt.isControlDown()) {
-            JTextArea dateArea = (JTextArea) evt.getSource();
-            makeContentDate(dateArea);
-
-        }
-    }//GEN-LAST:event_dateOpenedTextKeyReleased
-
-    private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_D && evt.isControlDown()) {
-            JTextArea dateArea = (JTextArea) evt.getSource();
-            makeContentDate(dateArea);
-
-        }
-    }//GEN-LAST:event_dateClosedTextKeyReleased
-
-    private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
-
-        submit();
-    }//GEN-LAST:event_buttonSubmitActionPerformed
-
-    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_buttonCancelActionPerformed
-
-    private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
-        AbstractButton abstractButton = (AbstractButton) evt.getSource();
-        boolean selected = abstractButton.getModel().isSelected();
-        makeCellEditable(selected);
-        projectManager.makeTableEditable(selected);
-    }//GEN-LAST:event_buttonEditActionPerformed
-
-    private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
-        for (int col = 0; col < formValues.length; col++) {
-            if (formValues[col] != null) {
-
-                projectManager.getSelectedTable().setValueAt(formValues[col], rowInView, col + 1);
-            }
-        }
-        this.dispose();
-    }//GEN-LAST:event_buttonConfirmActionPerformed
-
-    private void makeContentDate(JTextArea dateArea) {
+    private void makeContentDate(JTextField dateArea) {
 
         dateArea.requestFocusInWindow();
         dateArea.selectAll();
@@ -1003,73 +1124,75 @@ public class AddIssueWindow extends JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnNext;
+    private javax.swing.JButton BtnPrevious;
     private javax.swing.JLabel app;
-    private javax.swing.JTextArea appText;
+    private javax.swing.JTextField appText;
     private javax.swing.JButton buttonCancel;
     private javax.swing.JButton buttonConfirm;
-    private javax.swing.JToggleButton buttonEdit;
     private javax.swing.JButton buttonSubmit;
     private javax.swing.JLabel dateClosed;
-    private javax.swing.JScrollPane dateClosedScroll;
-    private javax.swing.JTextArea dateClosedText;
+    private javax.swing.JTextField dateClosedText;
     private javax.swing.JLabel dateOpened;
-    private javax.swing.JTextArea dateOpenedText;
+    private javax.swing.JTextField dateOpenedText;
     private javax.swing.JLabel description;
     private javax.swing.JTextArea descriptionText;
     private javax.swing.JPanel formPane;
     private javax.swing.JLabel id;
-    private javax.swing.JTextArea idText;
+    private javax.swing.JTextField idText;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JLabel programmer;
-    private javax.swing.JTextArea programmerText;
+    private javax.swing.JTextField programmerText;
     private javax.swing.JLabel rk;
-    private javax.swing.JTextArea rkText;
+    private javax.swing.JTextField rkText;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JLabel title;
-    private javax.swing.JTextArea titleText;
+    private javax.swing.JTextField titleText;
     private javax.swing.JLabel version;
-    private javax.swing.JScrollPane versionScroll;
-    private javax.swing.JTextArea versionText;
+    private javax.swing.JTextField versionText;
     // End of variables declaration//GEN-END:variables
 
     private void createEmptyForm() {
 //        labelsInForm = new HashMap<String, JLabel>();
-        textAreasInForm = new HashMap<String, JTextArea>();
+        textAreasInForm = new HashMap<String, JTextField>();
 
-        JTextArea textAreaArray[] = new JTextArea[9];
+        JTextField textAreaArray[] = new JTextField[8];
         textAreaArray[0] = appText;
         textAreaArray[1] = (dateOpenedText);
-        textAreaArray[2] = (descriptionText);
-        textAreaArray[3] = (programmerText);
-        textAreaArray[4] = (idText);
-        textAreaArray[5] = (titleText);
-        textAreaArray[6] = (rkText);
-        textAreaArray[7] = (dateClosedText);
-        textAreaArray[8] = (versionText);
+//        textAreaArray[2] = (descriptionText);
+        textAreaArray[2] = (programmerText);
+        textAreaArray[3] = (idText);
+        textAreaArray[4] = (titleText);
+        textAreaArray[5] = (rkText);
+        textAreaArray[6] = (dateClosedText);
+        textAreaArray[7] = (versionText);
         String areaName = "";
-        System.out.println(columnNames.length + " hei");
         for (int i = 0; i < columnNames.length; i++) {
-            for (int j = 0; j < textAreaArray.length; j++) {
-                areaName = textAreaArray[j].getName();
-                Object tableValue = formValues[i];
-                if (areaName.equals(columnNames[i])) {
-                    textAreasInForm.put(columnNames[i], textAreaArray[j]);
-                    System.out.println(columnNames[i] + " add to text area array!");
+            Object tableValue = formValues[i];
+            if (columnNames[i].equals("description")) {
 
-                    if (tableValue != null) {
-                        textAreasInForm.get(columnNames[i]).setText(tableValue.toString());
-                    } else {
-                        textAreasInForm.get(columnNames[i]).setText(null);
+                if (tableValue != null) {
+                    descriptionText.setText(tableValue.toString());
+                } else {
+                    descriptionText.setText("");
+                }
+            } else {
+                for (int j = 0; j < textAreaArray.length; j++) {
+                    areaName = textAreaArray[j].getName();
+                    if (areaName.equals(columnNames[i])) {
+                        textAreasInForm.put(columnNames[i], textAreaArray[j]);
+
+                        if (tableValue != null) {
+                            textAreasInForm.get(columnNames[i]).setText(tableValue.toString());
+                        } else {
+                            textAreasInForm.get(columnNames[i]).setText("");
+                        }
+
+                        formValues[i] = null;
+                        break;
                     }
-                    formValues[i] = null;
-                    break;
                 }
             }
         }
@@ -1077,6 +1200,8 @@ public class AddIssueWindow extends JFrame {
         idText.setEditable(false);
 
         setDocumentListener();
+
+        setTabKeyTransferFocusBtwTextArea();
     }
 
     private void setDocumentListener() {
@@ -1086,105 +1211,81 @@ public class AddIssueWindow extends JFrame {
             public void insertUpdate(DocumentEvent e) {
 
                 String columnName = (String) e.getDocument().getProperty("id");
-                String value = textAreasInForm.get(columnName).getText();
-                updateValueToTableAt(value, columnName);
-                try {
-                    System.out.println("insert: " + e.getDocument().getText(0,
-                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
-//                    for (int i = 0; i < columnNames.length; i++) {
-//                        if (textAreasInForm.get(columnNames[i]).getText().equals("")) {
-//                            notEmpty = false;
-//
-//                        }
-//                    }
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(AddIssueWindow.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                String value = "";
+                if (!columnName.equals("description")) {
+                    value = textAreasInForm.get(columnName).getText();
+                } else {
+                    value = descriptionText.getText();
                 }
+                updateValueToTableAt(value, columnName);
 
-//                if (!lastEditColumn.equals(columnName)) {
-//                    if (lastEditColumn.equals("")) {
-//                        lastEditColumn = columnName;
-//                    } else {
-//                        String value = textAreasInForm.get(lastEditColumn).getText();
-//                        System.out.println(lastEditColumn + " " + value);
-//                        addValueToTableAt(value, lastEditColumn);
-//                        lastEditColumn = columnName;
-//                    }
-//                }
-//                notEmpty = true;
-//                if (!lastEditColumn.equals(columnName)) {
-//                    if (lastEditColumn.equals("")) {
-//                        lastEditColumn = columnName;
-//                    } else {
-//                        String value = textAreasInForm.get(lastEditColumn).getText();
-//                        System.out.println(lastEditColumn + " " + value);
-//                        addValueToTableAt(value, lastEditColumn);
-//                        lastEditColumn = columnName;
-//                    }
-//                }
-//                notEmpty = true;
-//                if (!lastEditColumn.equals(columnName)) {
-//                    if (lastEditColumn.equals("")) {
-//                        lastEditColumn = columnName;
-//                    } else {
-//                        String value = textAreasInForm.get(lastEditColumn).getText();
-//                        System.out.println(lastEditColumn + " " + value);
-//                        addValueToTableAt(value, lastEditColumn);
-//                        lastEditColumn = columnName;
-//                    }
-//                }
-//                notEmpty = true;
-//                if (!lastEditColumn.equals(columnName)) {
-//                    if (lastEditColumn.equals("")) {
-//                        lastEditColumn = columnName;
-//                    } else {
-//                        String value = textAreasInForm.get(lastEditColumn).getText();
-//                        System.out.println(lastEditColumn + " " + value);
-//                        addValueToTableAt(value, lastEditColumn);
-//                        lastEditColumn = columnName;
-//                    }
-//                }
-//                notEmpty = true;
+                if (addIssueMode) {
+                    buttonSubmit.setEnabled(true);
+                } else {
+                    buttonConfirm.setEnabled(true);
+                }
+                contentChanged = true;
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 String columnName = (String) e.getDocument().getProperty("id");
-                String value = textAreasInForm.get(columnName).getText();
-                updateValueToTableAt(value, columnName);
-                try {
-                    System.out.println("remove: " + e.getDocument().getText(0,
-                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
-//                    for (int i = 0; i < columnNames.length; i++) {
-//                        if (textAreasInForm.get(columnNames[i]).getText().equals("")) {
-//                            notEmpty = false;
-//
-//                        }
-//                    }
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(AddIssueWindow.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                String value = "";
+                if (!columnName.equals("description")) {
+                    value = textAreasInForm.get(columnName).getText();
+                } else {
+                    value = descriptionText.getText();
                 }
+                updateValueToTableAt(value, columnName);
+                if (addIssueMode) {
+                    buttonSubmit.setEnabled(true);
+                } else {
+                    buttonConfirm.setEnabled(true);
+                }
+                contentChanged = true;
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                try {
-                    System.out.println("changed: " + e.getDocument().getText(0,
-                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
-
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(AddIssueWindow.class
-                            .getName()).log(Level.SEVERE, null, ex);
-                }
+//                try {
+//                    System.out.println("changed: " + e.getDocument().getText(0,
+//                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
+//
+//                } catch (BadLocationException ex) {
+//                    Logger.getLogger(AddIssueWindow.class
+//                            .getName()).log(Level.SEVERE, null, ex);
+//                }
             }
 
         };
         for (int i = 0; i < columnNames.length; i++) {
-            Document doc = textAreasInForm.get(columnNames[i]).getDocument();
+            Document doc;
+            if (columnNames[i].equals("description")) {
+                doc = descriptionText.getDocument();
+            } else {
+                doc = textAreasInForm.get(columnNames[i]).getDocument();
+            }
             doc.addDocumentListener(textDocumentLis);
             doc.putProperty("id", columnNames[i]);
+        }
+
+    }
+
+    private void setTabKeyTransferFocusBtwTextArea() {
+        AbstractAction transferFocus = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((Component) e.getSource()).transferFocus();
+            }
+        };
+
+        for (int i = 0; i < columnNames.length; i++) {
+            if (!columnNames[i].equals("description")) {
+                textAreasInForm.get(columnNames[i]).getInputMap().put(KeyStroke.
+                        getKeyStroke("TAB"), "transferFocus");
+                textAreasInForm.get(columnNames[i]).getActionMap().put("transferFocus", transferFocus);
+            }
         }
     }
 
@@ -1192,30 +1293,9 @@ public class AddIssueWindow extends JFrame {
         for (int column = 0; column < table.getColumnCount(); column++) {
             if (table.getColumnName(column).equals(columnName)) {
                 table.setValueAt(value, 0, column);
-//                System.out.println("table get Value: " + table.getValueAt(0, column) + "at " + column);
-//                checkForEmptyRows();
-
-                System.out.println("formValue old value at " + column + " is " + formValues[column]);
                 formValues[column] = value;
-                System.out.println("formValue update at " + column + " " + formValues[column]);
             }
         }
-    }
-
-    public void setEditable(boolean b) {
-        makeCellEditable(b);
-    }
-
-    private void makeCellEditable(boolean b) {
-        for (int col = 0; col < columnNames.length; col++) {
-            if (!columnNames[col].equals("taskID")) {
-                textAreasInForm.get(columnNames[col]).setEditable(b);
-            }
-        }
-        buttonConfirm.setEnabled(b);
-        buttonCancel.setEnabled(b);
-        buttonConfirm.setVisible(b);
-        buttonCancel.setVisible(b);
     }
 
     private void addIssueMode(boolean b) {
@@ -1227,20 +1307,47 @@ public class AddIssueWindow extends JFrame {
         versionText.setVisible(!b);
         version.setVisible(!b);
 
-        dateClosedScroll.setVisible(!b);
-        versionScroll.setVisible(!b);
-
-        buttonEdit.setEnabled(!b);
-        buttonEdit.setVisible(!b);
-
-        buttonConfirm.setEnabled(!b);
+        buttonConfirm.setEnabled(false);
         buttonConfirm.setVisible(!b);
 
-        buttonSubmit.setEnabled(b);
+        BtnNext.setVisible(!b);
+        BtnPrevious.setVisible(!b);
+
+        buttonSubmit.setEnabled(false);
         buttonSubmit.setVisible(b);
 
     }
 
+    private Object processCellValue(Object cellValue) {
+
+        return cellValue.toString().replaceAll("'", "''");
+    }
+//    // find the sepecfic textArea in Form
+//    private JTextArea findColumnInForm(String columnName) {
+//        for (int i = 0; i < columnNames.length; i++) {
+//            if(columnName.equals("description")){
+//                return descriptionText;
+//            }
+//            if (columnNames[i].contains(columnName)) {
+//
+//                return textAreasInForm.get(columnNames[i]);
+//            }
+//        }
+//        return null;
+//    }
+
+//    private void setCopyAndPasteKeyEvent() {
+//        InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
+//        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
+//        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
+//        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
+//    }
+//    private void setFormListener() {
+//        header.addMouseListener(new MouseAdapter() {
+//    }
+//    private void copyPasteAndCut() {
+//        InputMap imap = this.getIn
+//    }
 //    private void addKeyListener() {
 //        KeyListener textKeyListener = new KeyListener() {
 //

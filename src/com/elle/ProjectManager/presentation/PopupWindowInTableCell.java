@@ -6,12 +6,14 @@
 package com.elle.ProjectManager.presentation;
 
 import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
-import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
+//import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -36,8 +38,9 @@ public class PopupWindowInTableCell extends JFrame {
     int selectedColumn;
 
     // mics
-    boolean editBtnIsClick;
+    private boolean editBtnIsClick;
     private boolean popupWindowShow;
+    private boolean inEditMode;
 
     /**
      * Creates new form PopupWindowInTableCell
@@ -51,19 +54,27 @@ public class PopupWindowInTableCell extends JFrame {
 
         editBtnIsClick = false;
         popupWindowShow = false;
+        inEditMode = false;
 
         initComponents();
         textAreatableCellPopup.setWrapStyleWord(true);
+       
 
         this.setWindowLocation();
         // add control + tab keystroke to popup window
         this.setControlTabKeyEvent();
-        //setPopupWindow show in different table cell
-        this.popupWindowShowInRecordByDiffTable();
+//        //setPopupWindow show in different table cell
+//        this.popupWindowShowInRecordByDiffTable();
+        
+        setWindowFocusListener();
 
         this.setAlwaysOnTop(true);
+        
+        isEditMode();
+        
+        this.showWindow();
 
-        this.setFocusable(false);
+//        this.setFocusable(false);
     }
 
     /**
@@ -173,20 +184,20 @@ public class PopupWindowInTableCell extends JFrame {
 
     private void cancelButtonTableCellPopupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonTableCellPopupActionPerformed
 
-        selectedTable.setEnabled(true);
+//        selectedTable.setEnabled(true);
 
+        windowClose();
         //recover the other functions in project manager
         setProjectManagerFunction(true);
-
         selectedTable.getComponentAt(selectedRow, selectedColumn).requestFocus();
-        windowClose();
 
     }//GEN-LAST:event_cancelButtonTableCellPopupActionPerformed
 
     private void editButtonTableCellPopupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonTableCellPopupActionPerformed
 
+        inEditMode = true;
         projectManager.makeTableEditable(true);
-        setEnableEdit(true);
+        setEnableEdit();
         textAreatableCellPopup.selectAll();
         System.out.println("set edit " + textAreatableCellPopup.isEditable());
         editBtnIsClick = true;
@@ -227,6 +238,16 @@ public class PopupWindowInTableCell extends JFrame {
             y = cellRectTable.y + 335;
         }
         this.setLocation(x, y);
+    }
+    
+    private void setWindowFocusListener(){
+        this.addWindowFocusListener(new WindowAdapter(){
+            public void windowGainedFocus(WindowEvent e) {
+                
+                textAreatableCellPopup.requestFocusInWindow();
+                System.out.println("gained!");
+    }
+        });
     }
 
     private void setControlTabKeyEvent() {
@@ -282,61 +303,36 @@ public class PopupWindowInTableCell extends JFrame {
         projectManager.setDisableProjecetManagerFunction(b);
     }
 
-    private void setEnableEdit(boolean editable) {
-        this.setFocusable(editable);
-        textAreatableCellPopup.setEditable(editable);
+    private void setEnableEdit() {
+        System.out.println("frame get focused? " + this.isFocused());
+        textAreatableCellPopup.setEditable(inEditMode);
         textAreatableCellPopup.requestFocusInWindow();
+
+        editButtonTableCellPopup.setEnabled(!inEditMode);
+        editButtonTableCellPopup.setVisible(!inEditMode);
+
+        confirmButtonTableCellPopup.setVisible(inEditMode);
+        confirmButtonTableCellPopup.setEnabled(inEditMode);
+        cancelButtonTableCellPopup.setVisible(inEditMode);
+        cancelButtonTableCellPopup.setEnabled(inEditMode);
+    }
+
+    
+
+    private void showWindow() {
+        projectManager.setPopupWindowShowInPM(true);
         
-        editButtonTableCellPopup.setEnabled(!editable);
-        editButtonTableCellPopup.setVisible(!editable);
-
-        confirmButtonTableCellPopup.setVisible(editable);
-        confirmButtonTableCellPopup.setEnabled(editable);
-        cancelButtonTableCellPopup.setVisible(editable);
-        cancelButtonTableCellPopup.setEnabled(editable);
-    }
-
-    private void popupWindowShowInRecordByDiffTable() {
-
-        if (selectedTable.getName().equals(TASKS_TABLE_NAME)) {
-            if (selectedTable.getColumnName(selectedColumn).equals("title")
-                    || selectedTable.getColumnName(selectedColumn).equals("description")) {
-                this.showWindow();
-                //to check it is edit mode or not in project manager
-                //or in add records window it directly into edit mode
-                this.editModeSwich();
-            } else {
-                this.windowClose();
-            }
-        } else if (selectedTable.getName().equals(TASKFILES_TABLE_NAME)) {
-            if (selectedTable.getColumnName(selectedColumn).equals("files")
-                    || selectedTable.getColumnName(selectedColumn).equals("notes")
-                    || selectedTable.getColumnName(selectedColumn).equals("path")) {
-                // popup table cell edit window
-                this.showWindow();
-                //to check it is edit mode or not in project manager
-                //or in add records window it directly into edit mode
-                this.editModeSwich();
-            } else {
-                this.windowClose();
-            }
-        } else if (selectedTable.getName().equals(TASKNOTES_TABLE_NAME)) {
-            if (selectedTable.getColumnName(selectedColumn).equals("status_notes")) {
-                // popup table cell edit window
-                this.showWindow();
-                //to check it is edit mode or not in project manager
-                //or in add records window it directly into edit mode
-                this.editModeSwich();
-            } else {
-                this.windowClose();
-            }
-        }
-    }
-
-    public void showWindow() {
         textAreatableCellPopup.setText((String) selectedTable.getValueAt(selectedRow, selectedColumn));
+        
         this.setVisible(true);
-        popupWindowShow = true;
+        
+        this.setFocusable(inEditMode);
+        this.requestFocus();
+        
+        setEnableEdit();
+        projectManager.setDisableProjecetManagerFunction(!inEditMode);
+        
+//        popupWindowShow = true;
     }
 
     public void setPopupWindowShow(boolean b) {
@@ -350,27 +346,23 @@ public class PopupWindowInTableCell extends JFrame {
     public boolean isEditButtonClicked() {
         return editBtnIsClick;
     }
+    
 
     public void windowClose() {
-        popupWindowShow = false;
+        System.out.println("closed!");
+//        popupWindowShow = false;
         projectManager.setPopupWindowShowInPM(false);
+        
         this.dispose();
     }
 
-    private void editModeSwich() {
+    private void isEditMode() {
         if (selectedFrame instanceof ProjectManagerWindow) {
             System.out.println(" in edit mode? " + projectManager.getEditMode());
             if (!projectManager.getEditMode()) {
-                System.out.println("here");
-                setEnableEdit(false);
-//                selectedTable.setEnabled(true);
-                setProjectManagerFunction(true);
+                inEditMode = false;
             } else {
-                System.out.println("there");
-                setEnableEdit(true);
-                projectManager.makeTableEditable(true);
-//                selectedTable.setEnabled(false);
-                setProjectManagerFunction(false);
+                inEditMode = true;;
             }
         } else if (selectedFrame instanceof AddIssueFileWindow) {
 

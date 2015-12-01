@@ -26,7 +26,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
     private TableRowSorter<TableModel> sorter;             // the table sorter
     private Map<Integer, ArrayList<Object>> filterItems;    // distinct items to filter
     private Color color;                                   // color to paint header
-    private boolean isFiltering;                           // is filtering items
+    private boolean isFiltering; 
 
     /**
      * CONSTRUCTOR TableFilter
@@ -140,7 +140,6 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      * applyFilter
      */
     public void applyFilter() {
-
         sorter = new TableRowSorter<TableModel>(table.getModel());
         table.setRowSorter(sorter);
         sorter.setRowFilter(this);
@@ -298,6 +297,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      * highlights
      */
     public void clearAllFilters() {
+        System.out.println("here");
 
         removeAllFilterItems();      // load all rows
         removeAllColorHeaders();     // remove all header highlighted Colors

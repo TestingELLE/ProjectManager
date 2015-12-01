@@ -88,7 +88,7 @@ public class Tab implements ITableConstants {
     /**
      * ************************************************************************
      ********************** Setters & Getters *********************************
-     *************************************************************************
+     * ************************************************************************
      */
     public JTable getTable() {
         return table;
@@ -123,6 +123,7 @@ public class Tab implements ITableConstants {
     }
 
     public int getRecordsShown() {
+//        System.out.println("table name: " + getTableName() + " row count " +  getTable().getRowCount());
         return getTable().getRowCount();
     }
 
@@ -264,7 +265,7 @@ public class Tab implements ITableConstants {
     /**
      * ************************************************************************
      *************************** Methods **************************************
-     *************************************************************************
+     * ************************************************************************
      */
     /**
      * This method subtracts an amount from the totalRecords value This is used
@@ -297,25 +298,50 @@ public class Tab implements ITableConstants {
         String output;
 
         switch (getTableName()) {
-            case TASKS_TABLE_NAME:
+//            case TASKS_TABLE_NAME:
+//                output = "<html><pre>"
+//                        + "     Number of records shown: " + getRecordsShown()
+//                        + "<br/> Number of records in Issues: " + getTotalRecords()
+//                        + "</pre></html>";
+//                System.out.println(output);
+//                break;
+            case "PM":
                 output = "<html><pre>"
-                        + "          Number of records shown: " + getRecordsShown()
-                        + "<br/> Number of records in Assignments: " + getTotalRecords()
+                        + "     Number of records shown: " + getRecordsShown()
+                        + "<br/> Number of records in Issues: " + getTotalRecords()
                         + "</pre></html>";
-                System.out.println(output);
                 break;
+            case "ELLEGUI":
+                output = "<html><pre>"
+                        + "     Number of records shown: " + getRecordsShown()
+                        + "<br/> Number of records in Issues: " + getTotalRecords()
+                        + "</pre></html>";
+                break;
+            case "Analyster":
+                output = "<html><pre>"
+                        + "     Number of records shown: " + getRecordsShown()
+                        + "<br/> Number of records in Issues: " + getTotalRecords()
+                        + "</pre></html>";
+                break;
+            case "Other":
+                output = "<html><pre>"
+                        + "     Number of records shown: " + getRecordsShown()
+                        + "<br/> Number of records in Issues: " + getTotalRecords()
+                        + "</pre></html>";
+                break;
+
             case TASKFILES_TABLE_NAME:
                 output = "<html><pre>"
                         + "      Number of records shown: " + getRecordsShown()
                         + "<br/> Number of records in Reports: " + getTotalRecords()
                         + "</pre></html>";
                 break;
-            case TASKNOTES_TABLE_NAME:
-                output = "<html><pre>"
-                        + "      Number of records shown: " + getRecordsShown()
-                        + "<br/> Number of records in Archive: " + getTotalRecords()
-                        + "</pre></html>";
-                break;
+//            case TASKNOTES_TABLE_NAME:
+//                output = "<html><pre>"
+//                        + "      Number of records shown: " + getRecordsShown()
+//                        + "<br/> Number of records in Archive: " + getTotalRecords()
+//                        + "</pre></html>";
+//                break;
             default:
                 // this means an invalid table name constant was passed
                 // this exception will be handled and thrown here
