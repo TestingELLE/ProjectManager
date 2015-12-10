@@ -1371,7 +1371,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 cellValue = table.getValueAt(row, col).toString();
             }
 
-            if (cellValue.equals(target)) {
+            if (cellValue.equalsIgnoreCase(target)) {
 
                 count++;
             }
@@ -1750,12 +1750,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 numOfAddIssueWindowOpened++;
                 //addRecordWindow become visible
                 addIssueWindowShow = true;
-                makeTableEditable(true);
+//                makeTableEditable(true);
             } else {
                 numOfAddIssueWindowOpened++;
                 addIssueFileWindow = new AddIssueFileWindow();
                 addIssueFileWindow.setVisible(true);
             }
+        } else {
+            JOptionPane.showMessageDialog(null, "The number of add issue window opened reached its maximum!");
         }
 //        } // if window is already open then set the focus
 //        else {
@@ -1831,16 +1833,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String tabName = getSelectedTabName();
         Tab tab = tabs.get(tabName);
         JTable table = tab.getTable();
-
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
-
-//        System.out.println(sorter + " current sorter");
         String sqlDelete = deleteRecordsSelected(table);
 
-        table.setRowSorter(sorter);
-        sorter.sort();
         String levelMessage = "3:" + sqlDelete;
         logWindow.addMessageWithDate(levelMessage);
+        System.out.println(levelMessage);
 //        logWindow.setLevel(deleteRecordLevel);
     }
 
@@ -2076,34 +2073,48 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void menuitemViewOneIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuitemViewOneIssueActionPerformed
 
-//        JTable tableSelected = getSelectedTable();
-        Tab tab = tabs.get(getSelectedTabName());
-        JTable tableSelected = tab.getTable();
+        if (numOfAddIssueWindowOpened <= 6) {
 
-        if (addIssueWindow == null || !addIssueWindow.isDisplayable()) {
+            Tab tab = tabs.get(getSelectedTabName());
+            JTable table = tab.getTable();
 
-            Object[] cellsValue = new Object[tableSelected.getColumnCount()];
-            int row = tableSelected.getSelectedRow();
+            Object[] cellsValue = new Object[table.getColumnCount()];
 
-            for (int col = 1; col < tableSelected.getColumnCount(); col++) {
-                cellsValue[col - 1] = tableSelected.getValueAt(row, col);
+            int row = table.getSelectedRow();
+            int column = table.getSelectedColumn();
+
+            for (int col = 1; col < table.getColumnCount(); col++) {
+                cellsValue[col - 1] = table.getValueAt(row, col);
+
             }
-            int idNum = (int) tableSelected.getValueAt(row, 0);
+            boolean alreadyOpened = false;
 
-            addIssueWindow = new AddIssueWindow(cellsValue, idNum, row, "");
-            addIssueWindow.setVisible(true);
-            makeTableEditable(true);
+            Integer openningIssue = (Integer) table.getValueAt(row, 0);
+
+            for (int issue : idNumOfOpenningIssues) {
+                if (issue == openningIssue) {
+                    alreadyOpened = true;
+                }
+            }
+
+            if (alreadyOpened) {
+                addIssueWindow.toFront();
+            } else {
+                idNumOfOpenningIssues.add(openningIssue);
+
+                String columnName = table.getColumnName(column);
+//                                            System.out.println("send " + columnName + " to add issue!");
+
+                int size = idNumOfOpenningIssues.size();
+
+                addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(size - 1), row, columnName, size);
+                addIssueWindow.setVisible(true);
+                numOfAddIssueWindowOpened++;
+            }
+            makeTableEditable(false);
         } else {
-
-//                            JOptionPane.showMessageDialog(frame, "Finishing working "
-//                                    + "with other add record window first!.");
+            JOptionPane.showMessageDialog(null, "The number of add issue window opened reached its maximum!");
         }
-//        if (labelEditModeState.getText().equals("ON ")) {
-//            addIssueWindow.setEditable(true);
-//
-//        } else {
-//            addIssueWindow.setEditable(false);
-//        }
     }//GEN-LAST:event_menuitemViewOneIssueActionPerformed
 
     private void comboBoxSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxSearchActionPerformed
@@ -2186,8 +2197,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         Object[] cellsValue = new Object[table.getColumnCount()];
 
+        System.out.print("next cell value is ");
         for (int col = 1; col < table.getColumnCount(); col++) {
             cellsValue[col - 1] = table.getValueAt(row, col);
+
+            System.out.print(cellsValue[col - 1] + " ");
         }
         boolean alreadyOpened = false;
 
@@ -2204,11 +2218,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         if (alreadyOpened) {
             addIssueWindow.toFront();
+
         } else {
             idNumOfOpenningIssues.add(openningIssue);
+            addIssueWindow.setId(openningIssue);
+            addIssueWindow.setFormValue(cellsValue);
+//            int size = idNumOfOpenningIssues.size();
 
-            addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(idNumOfOpenningIssues.size() - 1), row, columnName);
-            addIssueWindow.setVisible(true);
+//            addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(size - 1), row, columnName, size);
+//            addIssueWindow.setVisible(true);
         }
         makeTableEditable(false);
 
@@ -2344,18 +2362,25 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                                         String columnName = table.getColumnName(column);
 //                                            System.out.println("send " + columnName + " to add issue!");
+                                        int size = idNumOfOpenningIssues.size();
 
-                                        addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(idNumOfOpenningIssues.size() - 1), row, columnName);
+                                        addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(size - 1), row, columnName, size - 1);
                                         addIssueWindow.setVisible(true);
                                         numOfAddIssueWindowOpened++;
-                                        
-                                    System.out.println(numOfAddIssueWindowOpened + " add issue window Opened!");
+
+                                        System.out.println(numOfAddIssueWindowOpened + " add issue window Opened!");
                                     }
                                     makeTableEditable(false);
 
-                                }else if ( numOfAddIssueWindowOpened > 6){
-                                     JOptionPane.showMessageDialog(frame, "It has already " 
-                                             + numOfAddIssueWindowOpened + " ! Can't open more!");
+                                    System.out.print("there are ");
+                                    for (int issue : idNumOfOpenningIssues) {
+                                        System.out.print(issue + ", ");
+                                    }
+                                    System.out.print("opened!");
+
+                                } else if (numOfAddIssueWindowOpened > 6) {
+                                    JOptionPane.showMessageDialog(frame, "It has already "
+                                            + numOfAddIssueWindowOpened + " ! Can't open more!");
                                 }
                             }
                         }
@@ -3107,11 +3132,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 String columnName = table.getColumnName(column);
 //                                            System.out.println("send " + columnName + " to add issue!");
 
-                                addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(idNumOfOpenningIssues.size() - 1), row, columnName);
+                                int size = idNumOfOpenningIssues.size();
+
+                                addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(size - 1), row, columnName, size);
                                 addIssueWindow.setVisible(true);
                                 numOfAddIssueWindowOpened++;
                             }
                             makeTableEditable(false);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "The number of add issue window opened reached its maximum!");
                         }
                     }
                 }
@@ -3791,6 +3820,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public void setPopupWindowShowInPM(boolean b) {
         popupWindowShowInPM = b;
     }
+
     public JLabel getInformationLabel() {
         return this.informationLabel;
     }

@@ -21,6 +21,7 @@ import java.awt.GridBagLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.PopupMenu;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -159,7 +160,7 @@ public class AddIssueWindow extends JFrame {
         this.pack();
     }
 
-    public AddIssueWindow(Object[] cellsValue, int id, int row, String columnName) {
+    public AddIssueWindow(Object[] cellsValue, int id, int row, String columnName, int numWindow) {
         CellsNotEmpty = new ArrayList<>();
         notEmpty = false;
         addIssueMode = false;
@@ -218,6 +219,10 @@ public class AddIssueWindow extends JFrame {
             }
         } else {
         }
+        // set this window to appear in the middle of Project Manager
+        this.setLocationRelativeTo(projectManager);
+        System.out.println("this is the " + numWindow + " window");
+        this.setLocation(numWindow * 30, numWindow * 15);
 
         this.pack();
     }
@@ -467,7 +472,6 @@ public class AddIssueWindow extends JFrame {
         app = new javax.swing.JLabel();
         title = new javax.swing.JLabel();
         id = new javax.swing.JLabel();
-        idText = new javax.swing.JTextField();
         programmer = new javax.swing.JLabel();
         programmerText = new javax.swing.JTextField();
         rk = new javax.swing.JLabel();
@@ -490,6 +494,7 @@ public class AddIssueWindow extends JFrame {
         appText = new javax.swing.JTextField();
         description = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        idText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -507,14 +512,6 @@ public class AddIssueWindow extends JFrame {
         title.setText(" title");
 
         id.setText(" id");
-
-        idText.setText("jTextField1");
-        idText.setName("id"); // NOI18N
-        idText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idTextActionPerformed(evt);
-            }
-        });
 
         programmer.setText(" programmer");
 
@@ -688,6 +685,8 @@ public class AddIssueWindow extends JFrame {
             .addGap(0, 38, Short.MAX_VALUE)
         );
 
+        idText.setText("jLabel1");
+
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
         formPane.setLayout(formPaneLayout);
         formPaneLayout.setHorizontalGroup(
@@ -703,9 +702,9 @@ public class AddIssueWindow extends JFrame {
                             .addGroup(formPaneLayout.createSequentialGroup()
                                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(idText, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(id))
-                                .addGap(12, 12, 12)
+                                    .addComponent(id)
+                                    .addComponent(idText))
+                                .addGap(15, 15, 15)
                                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(dateOpened))
@@ -748,10 +747,10 @@ public class AddIssueWindow extends JFrame {
                     .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, 0)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(idText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(idText))
                 .addGap(0, 0, 0)
                 .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
@@ -814,10 +813,6 @@ public class AddIssueWindow extends JFrame {
         projectManager.deleteNumOfAddIssueWindowOpened();
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
-
-    private void idTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idTextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_idTextActionPerformed
 
     private void rkTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rkTextActionPerformed
         // TODO add your handling code here:
@@ -890,6 +885,7 @@ public class AddIssueWindow extends JFrame {
 
     private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
 
+        System.out.println(contentChanged + " !");
         if (rowInView == projectManager.getSelectedTable().getRowCount() - 1) {
             JOptionPane.showMessageDialog(this, "This is the last row!");
         } else {
@@ -901,16 +897,45 @@ public class AddIssueWindow extends JFrame {
                     }
                 }
                 projectManager.uploadChanges();
+                contentChanged = false;
             }
 //            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView+1, 2));
 
             projectManager.deleteNumOfAddIssueWindowOpened();
-            this.dispose();
+//            this.dispose();
+
             projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
-            projectManager.viewNextIssue(rowInView + 1, columnFocused);
+            rowInView = rowInView + 1;
+            projectManager.viewNextIssue(rowInView, columnFocused);
+            updateForm();
             projectManager.makeTableEditable(false);
         }
     }//GEN-LAST:event_BtnNextActionPerformed
+
+    public void updateForm() {
+        for (int i = 0; i < columnNames.length; i++) {
+            Object tableValue = formValues[i];
+            if (columnNames[i].equals("description")) {
+
+                if (tableValue != null) {
+                    descriptionText.setText(tableValue.toString());
+                } else {
+                    descriptionText.setText("");
+                }
+            } else {
+                if (tableValue != null) {
+                    textAreasInForm.get(columnNames[i]).setText(tableValue.toString());
+                    
+                } else {
+                    textAreasInForm.get(columnNames[i]).setText("");
+                }
+                
+            }
+            System.out.println(columnNames[i] + " set text: " + formValues[i]);
+            formValues[i] = null;
+        }
+        contentChanged = false;
+    }
 
     private void BtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPreviousActionPerformed
         if (rowInView == 0) {
@@ -928,9 +953,11 @@ public class AddIssueWindow extends JFrame {
 //            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView-1, 2));
 
             projectManager.deleteNumOfAddIssueWindowOpened();
-            this.dispose();
+//            this.dispose();
             projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
-            projectManager.viewNextIssue(rowInView - 1, columnFocused);
+            rowInView = rowInView -1;
+            projectManager.viewNextIssue(rowInView, columnFocused);
+            updateForm();
         }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
@@ -1123,6 +1150,20 @@ public class AddIssueWindow extends JFrame {
         dateArea.setText(today);
     }
 
+    public void setFormValue(Object[] CellValue) {
+        formValues = CellValue;
+        
+        System.out.print("new formValue is ");
+        for(Object value : formValues){
+            
+        System.out.print(value + " ");
+        }
+    }
+
+    public void setId(int id) {
+        idText.setText(Integer.toString(id));
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnNext;
     private javax.swing.JButton BtnPrevious;
@@ -1139,7 +1180,7 @@ public class AddIssueWindow extends JFrame {
     private javax.swing.JTextArea descriptionText;
     private javax.swing.JPanel formPane;
     private javax.swing.JLabel id;
-    private javax.swing.JTextField idText;
+    private javax.swing.JLabel idText;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane7;
@@ -1158,16 +1199,15 @@ public class AddIssueWindow extends JFrame {
 //        labelsInForm = new HashMap<String, JLabel>();
         textAreasInForm = new HashMap<String, JTextField>();
 
-        JTextField textAreaArray[] = new JTextField[8];
+        JTextField textAreaArray[] = new JTextField[7];
         textAreaArray[0] = appText;
         textAreaArray[1] = (dateOpenedText);
 //        textAreaArray[2] = (descriptionText);
         textAreaArray[2] = (programmerText);
-        textAreaArray[3] = (idText);
-        textAreaArray[4] = (titleText);
-        textAreaArray[5] = (rkText);
-        textAreaArray[6] = (dateClosedText);
-        textAreaArray[7] = (versionText);
+        textAreaArray[3] = (titleText);
+        textAreaArray[4] = (rkText);
+        textAreaArray[5] = (dateClosedText);
+        textAreaArray[6] = (versionText);
         String areaName = "";
         for (int i = 0; i < columnNames.length; i++) {
             Object tableValue = formValues[i];
@@ -1196,8 +1236,6 @@ public class AddIssueWindow extends JFrame {
                 }
             }
         }
-
-        idText.setEditable(false);
 
         setDocumentListener();
 
