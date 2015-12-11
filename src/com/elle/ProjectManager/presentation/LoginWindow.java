@@ -1,4 +1,3 @@
-
 /**
  * @author Louis W.
  * @author Carlos Igreja
@@ -8,6 +7,7 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.database.DBConnection;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 import javax.swing.*;
@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 
-
 public class LoginWindow extends JFrame {
 
     // class attributes 
@@ -30,39 +29,54 @@ public class LoginWindow extends JFrame {
     private String selectedDB;                  // selected database
     private String userName;                    // user name to login 
     private String userPassword;                // user password to login
-    
+
     // class component instances
     private ProjectManagerWindow projectManager;
     private EditDatabaseWindow editDatabaseList;
     private LogWindow logWindow;
-    
-    Image backgroundImg;
-    
+
+//    Image backgroundImg;backgroundImg;
+//    class ImagePanel extends JComponent {
+//
+//        private Image image;
+//
+//        public ImagePanel(Image image) {
+//            this.image = image;
+//        }
+//
+//        @Override
+//        protected void paintComponent(Graphics g) {
+//            super.paintComponent(g);
+//            g.drawImage(image, 0, 0, this);
+//        }
+//    }
+
     public LoginWindow() {
-        try{
-        this.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("/Users/fuxiaoqian/Desktop"
-                + "/Elle Investment/ProjectManagerFromMaster/src/com/elle/ProjectManager/image.png")))));
-        }catch(IOException e){
+//        BufferedImage myImage = ImageIO.load(new File("/Users/fuxiaoqian/Desktop"
+//                    + "/ProjectManagerFromMaster/src/com/elle/ProjectManager/image.png"));
+//        this.setContentPane(new ImagePanel(myImage))
+
+        try {
+            this.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("/Users/fuxiaoqian/Desktop"
+                    + "/ProjectManagerFromMaster/src/com/elle/ProjectManager/image.png")))));
+        } catch (IOException e) {
             System.out.println("image does not exist!");
         }
-        
+
         // initialize
         initComponents();
         logWindow = new LogWindow(); // this is for reporting connections to log
-        
+
         // load selectedDB selections from the text file for the combobox
-        loadDBList(); 
-//        comboBoxDatabase.setSelectedIndex(2);
-//        comboBoxServer.setSelectedIndex(0);
-//        textFieldUsername.setText("pupone_Xiao");
-//        passwordFieldPW.setText("XiaoXXXX8");
-        
+        loadDBList();
+        comboBoxDatabase.setSelectedIndex(2);
+        comboBoxServer.setSelectedIndex(0);
+        textFieldUsername.setText("pupone_Xiao");
+        passwordFieldPW.setText("XiaoXXXX8");
+
 //        comboBoxDatabase.setSelectedIndex(3);
-        
-        
-        
         // show window
-        this.setTitle("Log in"); 
+        this.setTitle("Log in");
         this.pack();
     }
 
@@ -273,13 +287,13 @@ public class LoginWindow extends JFrame {
 
     private void btnCancelActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         this.close();
-        
+
     }//GEN-LAST:event_btnCancelActionPerformed
 
     /**
      * Close down application properly
      */
-    public void close(){
+    public void close() {
 
         // terminate window and return resources
         this.dispose();
@@ -305,7 +319,7 @@ public class LoginWindow extends JFrame {
     }//GEN-LAST:event_comboBoxServerActionPerformed
 
     private void btnEditDBActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnEditDBActionPerformed
-        
+
         // create a new edit selectedDB window
         editDatabaseList = new EditDatabaseWindow(this); // maybe we can make it not dependant on this
         editDatabaseList.setLocationRelativeTo(this);
@@ -320,14 +334,15 @@ public class LoginWindow extends JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_passwordFieldPWActionPerformed
 
-    public String getUserName(){
-        String userNameToPM = userName.substring(6, userName.length()-1);
+    public String getUserName() {
+        String userNameToPM = userName.substring(6, userName.length() - 1);
         return userNameToPM;
     }
+
     /**
-     *  Loads the names of the databases from a text file
-     * this is if the actual selectedDB list is edited in EditDatabaseWindow
-     * then it updates the combobox with the new values in LoginWindow.
+     * Loads the names of the databases from a text file this is if the actual
+     * selectedDB list is edited in EditDatabaseWindow then it updates the
+     * combobox with the new values in LoginWindow.
      */
     public void loadDBList() {
         String temp = null;
@@ -375,41 +390,38 @@ public class LoginWindow extends JFrame {
      * login
      */
     public void login() {
-        
+
         // get user data
         selectedServer = comboBoxServer.getSelectedItem().toString();
         selectedDB = comboBoxDatabase.getSelectedItem().toString();
         userName = textFieldUsername.getText();
         char[] pw = passwordFieldPW.getPassword();
         userPassword = String.valueOf(pw);
-              
 
         // connect to database
         try {
             logWindow.addMessageWithDate("3:Start to connect local database...");
             DBConnection.connect(selectedServer, selectedDB, userName, userPassword);
             logWindow.addMessageWithDate("Connect successfully!");
-            
-        } 
-        catch (SQLException ex) {
+
+        } catch (SQLException ex) {
 
             JOptionPane.showMessageDialog(null,
                     "Invalid password. Try again.",
                     "Error Message",
                     JOptionPane.ERROR_MESSAGE);
-            String levelMessage = "1:"+ex.getMessage();
+            String levelMessage = "1:" + ex.getMessage();
 
             logWindow.addMessageWithDate(levelMessage);
             passwordFieldPW.setText("");
         }
         userName = userName.substring(7);
         System.out.println(userName);
-        
+
         // create an projectManager object
         projectManager = new ProjectManagerWindow(userName);
-        
-//        projectManager.setUserName(userName.substring(7));
 
+//        projectManager.setUserName(userName.substring(7));
         // pass the log window to projectManager
         projectManager.setLogWindow(logWindow);
 
@@ -419,7 +431,7 @@ public class LoginWindow extends JFrame {
 
         // show the database name in menubar
         projectManager.showDatabase();
-        
+
         // show projectManager
         projectManager.setLocationRelativeTo(this);
         projectManager.setVisible(true);
@@ -428,7 +440,7 @@ public class LoginWindow extends JFrame {
         this.dispose();// returns used resources
 
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnEditDB;
