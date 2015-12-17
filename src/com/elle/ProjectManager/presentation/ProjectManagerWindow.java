@@ -56,8 +56,8 @@ import javax.swing.event.RowSorterListener;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-11-25";
-    private final String VERSION = "0.9.9c";
+    private final String CREATION_DATE = "2015-12-17";
+    private final String VERSION = "0.9.9d";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
@@ -636,7 +636,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
             }
         ) {
             Class[] types = new Class [] {
@@ -1074,7 +1074,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSearch)))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(83, Short.MAX_VALUE))
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1111,7 +1111,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         );
 
         menuFile.setText("File");
-        menuFile.setSize(new java.awt.Dimension(42, 21));
 
         menuItemVersion.setText("Version");
         menuItemVersion.addActionListener(new java.awt.event.ActionListener() {
@@ -2877,10 +2876,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 if ("".equals(value)) {
                     value = null;
                     sqlChange = "UPDATE " + tableName + " SET " + columnName
-                            + " = " + value + " WHERE taskID = " + id + ";";
+                            + " = " + value + " WHERE ID = " + id + ";";
                 } else {
                     sqlChange = "UPDATE " + tableName + " SET " + columnName
-                            + " = '" + value + "' WHERE taskID = " + id + ";";
+                            + " = '" + value + "' WHERE ID = " + id + ";";
                 }
                 System.out.println(sqlChange);
 
@@ -3363,7 +3362,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             String sql;
             if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
                 sql = "SELECT * FROM " + str + " ORDER BY "
-                        + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, taskID ASC";
+                        + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
             } else {
                 sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
             }
