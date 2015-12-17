@@ -15,9 +15,6 @@
         <Menu class="javax.swing.JMenu" name="menuFile">
           <Properties>
             <Property name="text" type="java.lang.String" value="File"/>
-            <Property name="size" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[42, 21]"/>
-            </Property>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemVersion">
@@ -311,7 +308,7 @@
                     <Property name="autoCreateRowSorter" type="boolean" value="true"/>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="9" rowCount="15">
-                        <Column editable="false" title="taskID" type="java.lang.Integer"/>
+                        <Column editable="false" title="ID" type="java.lang.Integer"/>
                         <Column editable="true" title="app" type="java.lang.Object"/>
                         <Column editable="true" title="title" type="java.lang.Object"/>
                         <Column editable="true" title="description" type="java.lang.Object"/>
@@ -1056,7 +1053,7 @@
                               <Component id="btnSearch" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="41" max="32767" attributes="0"/>
+                      <EmptySpace pref="83" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
