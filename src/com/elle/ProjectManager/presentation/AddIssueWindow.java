@@ -199,7 +199,7 @@ public class AddIssueWindow extends JFrame {
 
         this.setTitle("view issue in " + table.getName());
 
-        this.setPreferredSize(new Dimension(600, 730));
+        this.setPreferredSize(new Dimension(600, 750));
 
         // set this window to appear in the middle of Project Manager
         this.setLocationRelativeTo(projectManager);
@@ -497,6 +497,7 @@ public class AddIssueWindow extends JFrame {
         idText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -783,7 +784,7 @@ public class AddIssueWindow extends JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE))
+                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE))
         );
 
         pack();
