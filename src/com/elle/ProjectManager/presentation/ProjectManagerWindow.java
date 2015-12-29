@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import javax.imageio.ImageIO;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 
@@ -3301,6 +3303,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     if (tabbedPanel.getTitleAt(i).equals(table.getName())) {
 //                        String text = "<html><b>" + table.getName() + "</b></html>";
                         String title = tabbedPanel.getTitleAt(i);
+                        
+//                        ImageIcon imcon = new ImageIcon("/Users/fuxiaoqian/Desktop/ProjectManagerFromMaster/images/orange-dot.png");
+//                        tabbedPanel.setIconAt(i, imcon);
                         tabbedPanel.setTabComponentAt(i, this.getLabel(title,"/Users/fuxiaoqian/Desktop/ProjectManagerFromMaster/images/orange-dot.png"));
                     }
                 }
@@ -3308,8 +3313,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }
     protected JLabel getLabel(String title, String icon) {
-        JLabel label = new JLabel(title);
-            label.setIcon(new ImageIcon(icon));
+        ImageIcon imcon = new ImageIcon(icon);
+        JLabel label = new JLabel(imcon);
+        label.setText(title);
+        
+        label.setIconTextGap(10);
+        
+        label.setHorizontalTextPosition(JLabel.LEFT);
+        label.setVerticalTextPosition(JLabel.TOP);
         return label;
     }
 
