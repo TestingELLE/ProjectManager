@@ -139,7 +139,7 @@ public class BatchEditWindow extends JFrame {
             }
         });
 
-        btnQuit.setText("Quit");
+        btnQuit.setText("Close");
         btnQuit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnQuitActionPerformed(evt);
@@ -200,11 +200,11 @@ public class BatchEditWindow extends JFrame {
         String columnName = comboBoxFieldSelect.getSelectedItem().toString();      // column name   
         String newValue = textFieldNewValue.getText();                             // new value to replace old value(s)
         int[] rows = table.getSelectedRows();                                      // selected rows
-        
+
         projectManagerWindow.loadTableWhenSelectedRows(rows, table);               // move seleted rows to end
-        
+
         rows = table.getSelectedRows();
-        
+
         int columnIndex;                                                           // column index
         int rowIndex;                                                              // row index
         int rowCount = table.getSelectedRowCount();                                // number of rows
@@ -265,9 +265,9 @@ public class BatchEditWindow extends JFrame {
         projectManagerWindow.setIsBatchEditWindowShow(false);
         // this instance should dispose
         projectManagerWindow.getBatchEditWindow().dispose();
+        projectManagerWindow.setIsBatchEditWindowShow(false);
 
 //        projectManagerWindow.loadTable(table);
-
 //        if(!btnConfirmClicked){
 //        projectManagerWindow.makeTableEditable(false);
 //        }
@@ -289,6 +289,7 @@ public class BatchEditWindow extends JFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         projectManagerWindow.makeTableEditable(false);
         this.dispose();
+        projectManagerWindow.setIsBatchEditWindowShow(false);
     }//GEN-LAST:event_formWindowClosing
 
     private void setKeyBoardFocusManager() {
@@ -321,6 +322,55 @@ public class BatchEditWindow extends JFrame {
                             selectCom.setText(today);
                         }
                     }
+                } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    projectManagerWindow.makeTableEditable(true);
+
+                    String columnName = comboBoxFieldSelect.getSelectedItem().toString();      // column name   
+                    String newValue = textFieldNewValue.getText();                             // new value to replace old value(s)
+                    int[] rows = table.getSelectedRows();                                      // selected rows
+
+                    projectManagerWindow.loadTableWhenSelectedRows(rows, table);               // move seleted rows to end
+
+                    rows = table.getSelectedRows();
+
+                    int columnIndex;                                                           // column index
+                    int rowIndex;                                                              // row index
+                    int rowCount = table.getSelectedRowCount();                                // number of rows
+
+                    // get column index for the combobox selection
+                    for (columnIndex = 0; columnIndex < table.getColumnCount(); columnIndex++) {
+                        if (columnName.equals(table.getColumnName(columnIndex))) {
+                            break;
+                        }
+                    }
+
+                    // set the value to the table model
+                    // this also envokes the TableModelListener 
+                    // and adds the change to the mofified data list for the table
+                    for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+                        table.setValueAt(newValue, rows[rowIndex], columnIndex);
+                    }
+                    //        projectManagerWindow.loadTableWhenSelectedRows(rows, table);
+
+                    // Add any new changes to be filtered as well
+                    // so that the records modified do not disappear after the upload.
+                    TableFilter filter = tab.getFilter();
+
+                    // get the filter items for this column
+                    ArrayList<Object> filterItems
+                            = new ArrayList<>(filter.getFilterItems().get(columnIndex));
+
+                    if (!filterItems.isEmpty()) {
+                        if (!filterItems.contains(newValue)) {
+
+                            // add item to the array
+                            filterItems.add(newValue);
+
+                            // add the array to the filter items list
+                            filter.addFilterItems(columnIndex, filterItems);
+                        }
+                    }
+                    btnConfirmClicked = true;
                 }
                 return false;
             }
