@@ -3687,7 +3687,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         modifiedTableData.getNewData().clear();  // clear any stored changes (new data)
         loadTable(table); // reverts the model back
 
-        informationLabel.setText("Changes Revert!");
+        informationLabel.setText("Nothing has been Changed!");
         startCountDownFromNow(5);
 
         modifiedTableData.reloadData();  // reloads data of new table (old data) to compare with new changes (new data)

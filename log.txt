@@ -7847,3 +7847,7 @@ cancel' WHERE taskID = 119' at line 1
 -------------------------2015-12-29 02:34:16 PM-------------------------
 3:2015-12-29 02:34:23 PM: Start to connect local database...
 2015-12-29 02:34:24 PM: Connect successfully!
+
+-------------------------2015-12-29 04:45:44 PM-------------------------
+3:2015-12-29 04:45:50 PM: Start to connect local database...
+2015-12-29 04:45:52 PM: Connect successfully!
