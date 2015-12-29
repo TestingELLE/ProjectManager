@@ -7785,3 +7785,8 @@ cancel' WHERE taskID = 119' at line 1
 2015-12-28 10:35:16 PM: Connect successfully!
 
 -------------------------2015-12-28 10:53:24 PM-------------------------
+
+-------------------------2015-12-29 11:51:35 AM-------------------------
+3:2015-12-29 11:51:42 AM: Start to connect local database...
+2015-12-29 11:51:44 AM: Connect successfully!
+3:2015-12-29 11:53:05 AM: DELETE FROM pupone_dummy.issues WHERE ID IN (225);
