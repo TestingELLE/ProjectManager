@@ -31,6 +31,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -43,6 +44,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import javax.imageio.ImageIO;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 
@@ -2323,9 +2327,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                                
 //                            }
                     if (e.getClickCount() == 2) {
-//                                System.out.println("double Click!");
                         if (e.isControlDown()) {
-//                                    System.out.println("click");
                             filterByDoubleClick(table);
                         } else {
                             if (e.getComponent() instanceof JTable) {
@@ -3299,12 +3301,27 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             if (openIssue) {
                 for (int i = 0; i < tabbedPanel.getTabCount(); i++) {
                     if (tabbedPanel.getTitleAt(i).equals(table.getName())) {
-                        String text = "<html><b>" + table.getName() + "</b></html>";
-                        tabbedPanel.setTitleAt(i, text);
+//                        String text = "<html><b>" + table.getName() + "</b></html>";
+                        String title = tabbedPanel.getTitleAt(i);
+                        
+//                        ImageIcon imcon = new ImageIcon("/Users/fuxiaoqian/Desktop/ProjectManagerFromMaster/images/orange-dot.png");
+//                        tabbedPanel.setIconAt(i, imcon);
+                        tabbedPanel.setTabComponentAt(i, this.getLabel(title,"/Users/fuxiaoqian/Desktop/ProjectManagerFromMaster/images/orange-dot.png"));
                     }
                 }
             }
         }
+    }
+    protected JLabel getLabel(String title, String icon) {
+        ImageIcon imcon = new ImageIcon(icon);
+        JLabel label = new JLabel(imcon);
+        label.setText(title);
+        
+        label.setIconTextGap(10);
+        
+        label.setHorizontalTextPosition(JLabel.LEFT);
+        label.setVerticalTextPosition(JLabel.TOP);
+        return label;
     }
 
     /**
