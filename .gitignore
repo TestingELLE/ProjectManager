@@ -4,3 +4,6 @@
 /src/com/elle/ProjectManager/database/servers.xml
 /target/
 /log.txt
+/.data/
+/classes/.data/
+/classes/com/elle/ProjectManager/database/servers.xml
