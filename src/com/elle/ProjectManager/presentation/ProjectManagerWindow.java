@@ -1837,6 +1837,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         Tab tab = tabs.get(tabName);
         JTable table = tab.getTable();
         String sqlDelete = deleteRecordsSelected(table);
+        reloadData();
 
         String levelMessage = "3:" + sqlDelete;
         logWindow.addMessageWithDate(levelMessage);
@@ -1872,6 +1873,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     private void menuItemReloadDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadDataActionPerformed
 
+        reloadData();
+    }//GEN-LAST:event_menuItemReloadDataActionPerformed
+
+    //reload the data in table
+    private void reloadData(){
         String tabName = getSelectedTabName();
         Tab tab = tabs.get(tabName);
         JTableCellRenderer cellRenderer = tab.getCellRenderer();
@@ -1890,8 +1896,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // set label record information
         String recordsLabel = tab.getRecordsLabel();
         labelRecords.setText(recordsLabel);
-    }//GEN-LAST:event_menuItemReloadDataActionPerformed
-
+    }
 ////    /**
 ////     * jArchiveRecordActionPerformed
 ////     *
@@ -3572,6 +3577,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 informationLabel.setText("There was an SQL Error.");
                 startCountDownFromNow(10);
             }
+            
         }
         return sqlDelete;
     }

@@ -58,6 +58,7 @@
         <zipfileset src="lib/mysql-connector-java-5.1.23-bin.jar" excludes="META-INF/*" />
         <manifest>
             <attribute name="Main-Class" value="com.elle.ProjectManager.ProjectManager"/>
+            <attribute name="SplashScreen-Image" value="com/elle/ProjectManager/image.png"/>
         </manifest>
       </jar>
       <delete dir="dist"/>
