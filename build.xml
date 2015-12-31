@@ -7,11 +7,11 @@
     <import file="nbproject/build-impl.xml"/>
     
     <!-- set the version of ProjectManager here -->
-    <property name="version" value="ProjectManager-0.9.1"/>
+    <property name="version" value="ProjectManager-1.0.0"/>
     
     <!-- this is used to allow the jar file to use customised
      manifest files -->
-    <target name="-pre-init">
+<target name="-pre-init">
         <property name="project.name" value="ProjectManager"/>
         <property name="version.num" value="1.4.1"/>
         <tstamp>
@@ -46,7 +46,6 @@
             <!--<attribute name="Bundle-Revision" value="${svna.version}" />-->
         </manifest>
  </target>
-
     <!-- This creates the jar that we want with the included dependencies -->
     <!-- There should be no need to edit this code -->
     <!-- other than adding or removing dependancies-->
@@ -59,6 +58,7 @@
         <zipfileset src="lib/mysql-connector-java-5.1.23-bin.jar" excludes="META-INF/*" />
         <manifest>
             <attribute name="Main-Class" value="com.elle.ProjectManager.ProjectManager"/>
+            <attribute name="SplashScreen-Image" value="com/elle/ProjectManager/image.png"/>
         </manifest>
       </jar>
       <delete dir="dist"/>

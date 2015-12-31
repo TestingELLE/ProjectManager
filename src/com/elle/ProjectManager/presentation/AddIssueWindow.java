@@ -854,7 +854,8 @@ public class AddIssueWindow extends JFrame {
                 projectManager.getSelectedTable().setValueAt(formValues[col], rowInView, col + 1);
             }
         }
-
+        
+        projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
         projectManager.deleteNumOfAddIssueWindowOpened();
         this.dispose();
         projectManager.setAddRecordsWindowShow(false);
