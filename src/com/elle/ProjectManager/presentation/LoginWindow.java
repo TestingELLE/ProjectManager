@@ -65,8 +65,7 @@ public class LoginWindow extends JFrame {
 
         // initialize
         initComponents();
-        logWindow = new LogWindow(); // this is for reporting connections to log
-
+        logWindow = new LogWindow(); // this is for reporting99
         // load selectedDB selections from the text file for the combobox
         loadDBList();
         comboBoxDatabase.setSelectedIndex(2);
