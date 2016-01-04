@@ -10,7 +10,7 @@ package com.elle.ProjectManager.logic;
  * This interface stores all the table constants
  * @author Carlos Igreja
  * @since June 10, 2015
- * @version 0.6.3
+ * @version 1.0.0
  */
 public interface ITableConstants {
     

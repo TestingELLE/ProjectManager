@@ -97,10 +97,7 @@
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="app" min="-2" max="-2" attributes="0"/>
-                                          <Component id="description" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="app" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
@@ -113,6 +110,14 @@
                                   </Group>
                               </Group>
                               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="description" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="BtnPrevious" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="BtnNext" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -142,7 +147,11 @@
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="titleText" min="-2" pref="26" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                      <Component id="description" min="-2" pref="20" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="description" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                          <Component id="BtnNext" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="BtnPrevious" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="jScrollPane7" min="-2" pref="505" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
@@ -246,8 +255,10 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="btnCloseIssue" min="-2" pref="103" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="buttonConfirm" min="-2" pref="89" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="buttonSubmit" min="-2" pref="88" max="-2" attributes="0"/>
@@ -255,12 +266,8 @@
                           <Component id="buttonCancel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" attributes="0">
                           <EmptySpace max="32767" attributes="0"/>
-                          <Component id="BtnPrevious" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="BtnNext" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="dateClosedText" min="-2" pref="108" max="-2" attributes="0"/>
                               <Component id="dateClosed" min="-2" max="-2" attributes="0"/>
@@ -285,14 +292,13 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="dateClosedText" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="versionText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="BtnNext" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="BtnPrevious" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="11" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="14" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="buttonSubmit" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="buttonCancel" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
                               <Component id="buttonConfirm" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnCloseIssue" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -349,20 +355,12 @@
                     <Property name="name" type="java.lang.String" value="version" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JButton" name="BtnPrevious">
+                <Component class="javax.swing.JButton" name="btnCloseIssue">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="&lt;&lt;"/>
+                    <Property name="text" type="java.lang.String" value="Close Issue"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnPreviousActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="BtnNext">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="&gt;&gt;"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnNextActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCloseIssueActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
@@ -406,6 +404,22 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="jLabel1"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="BtnNext">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&gt;"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnNextActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="BtnPrevious">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&lt;"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnPreviousActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

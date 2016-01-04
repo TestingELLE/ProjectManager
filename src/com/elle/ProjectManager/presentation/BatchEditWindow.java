@@ -55,7 +55,7 @@ public class BatchEditWindow extends JFrame {
 
         batchEditWindowShow = true;
         btnConfirmClicked = false;
-
+        
         // set the interface to the middle of the window
         this.setLocationRelativeTo(projectManagerWindow);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // quit button should be used
@@ -199,11 +199,14 @@ public class BatchEditWindow extends JFrame {
 
         String columnName = comboBoxFieldSelect.getSelectedItem().toString();      // column name   
         String newValue = textFieldNewValue.getText();                             // new value to replace old value(s)
-        int[] rows = table.getSelectedRows();                                      // selected rows
+        
 
-        projectManagerWindow.loadTableWhenSelectedRows(rows, table);               // move seleted rows to end
+//        projectManagerWindow.loadTableWhenSelectedRows(rows, table);               // move seleted rows to end
 
-        rows = table.getSelectedRows();
+        int[] rows = table.getSelectedRows();
+        for ( int row: rows){
+            System.out.println("after rows selected: " + row);
+        }
 
         int columnIndex;                                                           // column index
         int rowIndex;                                                              // row index
@@ -309,7 +312,7 @@ public class BatchEditWindow extends JFrame {
                 if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
                     String columnName = comboBoxFieldSelect.getSelectedItem().toString();      // column name  
                     System.out.println("control d pressed! " + columnName);
-                    if (columnName.equals("dateDone")) {
+                    if (columnName.contains("date")) {
                         if (e.getID() != 401) { // 401 = key down, 402 = key released
                             return false;
                         } else {
@@ -327,12 +330,7 @@ public class BatchEditWindow extends JFrame {
 
                     String columnName = comboBoxFieldSelect.getSelectedItem().toString();      // column name   
                     String newValue = textFieldNewValue.getText();                             // new value to replace old value(s)
-                    int[] rows = table.getSelectedRows();                                      // selected rows
-
-                    projectManagerWindow.loadTableWhenSelectedRows(rows, table);               // move seleted rows to end
-
-                    rows = table.getSelectedRows();
-
+                    int[] rows = table.getSelectedRows();                                      // get selected rows
                     int columnIndex;                                                           // column index
                     int rowIndex;                                                              // row index
                     int rowCount = table.getSelectedRowCount();                                // number of rows
@@ -350,7 +348,6 @@ public class BatchEditWindow extends JFrame {
                     for (rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                         table.setValueAt(newValue, rows[rowIndex], columnIndex);
                     }
-                    //        projectManagerWindow.loadTableWhenSelectedRows(rows, table);
 
                     // Add any new changes to be filtered as well
                     // so that the records modified do not disappear after the upload.
