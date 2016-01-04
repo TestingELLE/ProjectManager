@@ -8057,3 +8057,11 @@ cancel' WHERE taskID = 119' at line 1
 
 -------------------------2016-01-04 03:11:02 PM-------------------------
 3:2016-01-04 03:17:41 PM: DELETE FROM pupone_dummy.issues WHERE ID IN (129);
+
+-------------------------2016-01-04 03:26:50 PM-------------------------
+3:2016-01-04 03:26:52 PM: Start to connect local database...
+1:2016-01-04 03:26:54 PM: Access denied for user ''@'ool-457fa8c1.dyn.optonline.net' (using password: NO)
+3:2016-01-04 03:27:03 PM: Start to connect local database...
+1:2016-01-04 03:27:08 PM: Access denied for user 'pupone_Xiao'@'ool-457fa8c1.dyn.optonline.net' (using password: YES)
+3:2016-01-04 03:27:18 PM: Start to connect local database...
+2016-01-04 03:27:18 PM: Connect successfully!

@@ -3352,15 +3352,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
 //                        ImageIcon imcon = new ImageIcon("/Users/fuxiaoqian/Desktop/ProjectManagerFromMaster/images/orange-dot.png");
 //                        tabbedPanel.setIconAt(i, imcon);
-                        tabbedPanel.setTabComponentAt(i, this.getLabel(title, "/Users/fuxiaoqian/Desktop/ProjectManagerFromMaster/src/com/elle/ProjectManager/presentation/orange-dot.png"));
+                        tabbedPanel.setTabComponentAt(i, this.getLabel(title));
                     }
                 }
             }
         }
     }
 
-    protected JLabel getLabel(String title, String icon) {
-        ImageIcon imcon = new ImageIcon(icon);
+    protected JLabel getLabel(String title) {
+        ImageIcon imcon = new ImageIcon( getClass().getResource("orange-dot.png") );
         JLabel label = new JLabel(imcon);
         label.setText(title);
 
