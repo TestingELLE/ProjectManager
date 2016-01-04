@@ -103,6 +103,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private String currentTabName;
     private String userName;
     private ArrayList<Integer> idNumOfOpenningIssues;
+    
+    private ArrayList<String> programmersActiveForSearching;
 
     /**
      * CONSTRUCTOR
@@ -124,6 +126,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         idNumOfOpenningIssues.add(-1);
         // initialize tabs
         tabs = new HashMap();
+        programmersActiveForSearching = new ArrayList<String>();
 
         // create tabName objects -> this has to be before initcomponents();
 //        tabs.put(TASKNOTES_TABLE_NAME, new Tab());
@@ -255,7 +258,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKFILES_TABLE_NAME).getFilter()));
 //        tabs.get(TASKNOTES_TABLE_NAME)
 //                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKNOTES_TABLE_NAME).getFilter()));
-
         // load data from database to tables
         loadTables(tabs);
 
@@ -308,6 +310,20 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnBatchEdit.setVisible(false);
 
         numOfAddIssueWindowOpened = 0;
+        
+        programmersActiveForSearching.add("professor");
+//        JTable table = this.getSelectedTable();
+//        
+//        String name = "";
+//        String currentName = "";
+//        for(int i = 0; i < table.getRowCount();i++){
+//            currentName = table.getValueAt(i, 4).toString();
+//            if(!currentName.equalsIgnoreCase(name)){
+//                name = currentName;
+//                System.out.println("here: "+ name);
+//                programmersActiveForSearching.add(name);
+//            }
+//        }
 
 //        this.btnSwitchEditMode.setEnabled(false);
         // set title of window to Project Manager
@@ -1078,7 +1094,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSearch)))
-                .addContainerGap(83, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1308,6 +1324,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void textFieldForSearchMouseClicked(MouseEvent evt) {//GEN-FIRST:event_textFieldForSearchMouseClicked
 
         textFieldForSearch.setText(""); // clears text
+        if(evt.isControlDown()){
+            
+        }
     }//GEN-LAST:event_textFieldForSearchMouseClicked
 
     /**
@@ -3311,7 +3330,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         
 //                        ImageIcon imcon = new ImageIcon("/Users/fuxiaoqian/Desktop/ProjectManagerFromMaster/images/orange-dot.png");
 //                        tabbedPanel.setIconAt(i, imcon);
-                        tabbedPanel.setTabComponentAt(i, this.getLabel(title,"/Users/fuxiaoqian/Desktop/ProjectManagerFromMaster/images/orange-dot.png"));
+                        tabbedPanel.setTabComponentAt(i, this.getLabel(title,"/Users/fuxiaoqian/Desktop/ProjectManagerFromMaster/src/com/elle/ProjectManager/presentation/orange-dot.png"));
                     }
                 }
             }
@@ -3415,6 +3434,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         for (int row : rows) {
             model.addSelectionInterval(row, row);
         }
+        
         return table;
     }
 
