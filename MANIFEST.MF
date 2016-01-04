@@ -8,7 +8,7 @@ Caller-Allowable-Codebase: www.javaquery.com javaquery.com
 Application-Name: javaQuery
 Bundle-Name: ProjectManager
 Bundle-Version: 1.4.1
-Bundle-Date: 2016-01-04 15:26:39 EST
+Bundle-Date: 2016-01-04 15:35:54 EST
 Implementation-Title: ProjectManager
 Implementation-Version: 1.4.1
 Implementation-URL: http://www.javaquery.com

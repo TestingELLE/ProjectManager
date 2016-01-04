@@ -70,6 +70,8 @@ public class LoginWindow extends JFrame {
         loadDBList();
         comboBoxDatabase.setSelectedIndex(2);
         comboBoxServer.setSelectedIndex(0);
+//        textFieldUsername.setText("pupone_Xiao");
+//        passwordFieldPW.setText("XiaoXXXX8");
 
 //        comboBoxDatabase.setSelectedIndex(3);
         // show window
