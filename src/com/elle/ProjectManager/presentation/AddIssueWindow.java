@@ -867,7 +867,7 @@ public class AddIssueWindow extends JFrame {
                 projectManager.getSelectedTable().setValueAt(formValues[col], rowInView, col + 1);
             }
         }
-        
+
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
         projectManager.deleteNumOfAddIssueWindowOpened();
         this.dispose();
@@ -941,11 +941,11 @@ public class AddIssueWindow extends JFrame {
             } else {
                 if (tableValue != null) {
                     textAreasInForm.get(columnNames[i]).setText(tableValue.toString());
-                    
+
                 } else {
                     textAreasInForm.get(columnNames[i]).setText("");
                 }
-                
+
             }
             System.out.println(columnNames[i] + " set text: " + formValues[i]);
             formValues[i] = null;
@@ -971,7 +971,7 @@ public class AddIssueWindow extends JFrame {
             projectManager.deleteNumOfAddIssueWindowOpened();
 //            this.dispose();
             projectManager.deleteFromIdNumOfOpenningIssues(rowInView);
-            rowInView = rowInView -1;
+            rowInView = rowInView - 1;
             projectManager.viewNextIssue(rowInView, columnFocused);
             updateForm();
             projectManager.getSelectedTable().setRowSelectionInterval(rowInView, rowInView);
@@ -982,6 +982,26 @@ public class AddIssueWindow extends JFrame {
     private void btnCloseIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseIssueActionPerformed
         // set dateClosed text field with date today
         makeContentDate(dateClosedText);
+        String version = projectManager.getVersion();
+        
+        int length = version.length();
+        int digit = -1;
+        if (version.substring(4, 5).equals("9")) {
+            if (version.substring(2, 3).equals("9")) {
+                digit = Integer.parseInt(version.substring(0, 1));
+                digit++;
+                version = digit + ".0.0";
+            }else{
+                digit = Integer.parseInt(version.substring(2, 3));
+                digit++;
+                version = version.substring(0,2) + digit + ".0";
+            }
+        } else {
+            digit = Integer.parseInt(version.substring(length-1, length));
+            digit++;
+            version = version.substring(0,4) + digit;
+        }
+        versionText.setText(version);
     }//GEN-LAST:event_btnCloseIssueActionPerformed
 
     /**
@@ -1175,11 +1195,11 @@ public class AddIssueWindow extends JFrame {
 
     public void setFormValue(Object[] CellValue) {
         formValues = CellValue;
-        
+
         System.out.print("new formValue is ");
-        for(Object value : formValues){
-            
-        System.out.print(value + " ");
+        for (Object value : formValues) {
+
+            System.out.print(value + " ");
         }
     }
 

@@ -7953,3 +7953,107 @@ cancel' WHERE taskID = 119' at line 1
 -------------------------2016-01-03 10:54:05 PM-------------------------
 3:2016-01-03 10:54:38 PM: Start to connect local database...
 2016-01-03 10:54:40 PM: Connect successfully!
+
+-------------------------2016-01-04 12:36:20 PM-------------------------
+3:2016-01-04 12:36:26 PM: Start to connect local database...
+2016-01-04 12:36:28 PM: Connect successfully!
+
+-------------------------2016-01-04 01:23:00 PM-------------------------
+3:2016-01-04 01:23:02 PM: Start to connect local database...
+2016-01-04 01:23:03 PM: Connect successfully!
+
+-------------------------2016-01-04 01:25:52 PM-------------------------
+3:2016-01-04 01:26:24 PM: Start to connect local database...
+2016-01-04 01:26:26 PM: Connect successfully!
+
+-------------------------2016-01-04 01:44:30 PM-------------------------
+
+-------------------------2016-01-04 01:45:43 PM-------------------------
+
+-------------------------2016-01-04 01:47:14 PM-------------------------
+3:2016-01-04 01:47:32 PM: Start to connect local database...
+2016-01-04 01:47:33 PM: Connect successfully!
+3:2016-01-04 01:47:53 PM: DELETE FROM pupone_dummy.issues WHERE ID IN (257);
+3:2016-01-04 01:48:06 PM: DELETE FROM pupone_dummy.issues WHERE ID IN (256, 258);
+
+-------------------------2016-01-04 01:51:30 PM-------------------------
+3:2016-01-04 01:51:32 PM: Start to connect local database...
+2016-01-04 01:51:34 PM: Connect successfully!
+
+-------------------------2016-01-04 01:52:18 PM-------------------------
+3:2016-01-04 01:52:20 PM: Start to connect local database...
+2016-01-04 01:52:21 PM: Connect successfully!
+
+-------------------------2016-01-04 01:55:28 PM-------------------------
+3:2016-01-04 01:55:30 PM: Start to connect local database...
+2016-01-04 01:55:32 PM: Connect successfully!
+
+-------------------------2016-01-04 01:57:39 PM-------------------------
+3:2016-01-04 01:57:41 PM: Start to connect local database...
+2016-01-04 01:57:42 PM: Connect successfully!
+
+-------------------------2016-01-04 02:01:41 PM-------------------------
+3:2016-01-04 02:01:43 PM: Start to connect local database...
+2016-01-04 02:01:44 PM: Connect successfully!
+
+-------------------------2016-01-04 02:05:03 PM-------------------------
+3:2016-01-04 02:05:07 PM: Start to connect local database...
+2016-01-04 02:05:08 PM: Connect successfully!
+
+-------------------------2016-01-04 02:07:30 PM-------------------------
+3:2016-01-04 02:07:33 PM: Start to connect local database...
+2016-01-04 02:07:36 PM: Connect successfully!
+
+-------------------------2016-01-04 02:08:42 PM-------------------------
+3:2016-01-04 02:08:55 PM: Start to connect local database...
+2016-01-04 02:08:57 PM: Connect successfully!
+
+-------------------------2016-01-04 02:14:45 PM-------------------------
+3:2016-01-04 02:14:48 PM: Start to connect local database...
+2016-01-04 02:14:49 PM: Connect successfully!
+
+-------------------------2016-01-04 02:18:24 PM-------------------------
+3:2016-01-04 02:18:27 PM: Start to connect local database...
+2016-01-04 02:18:29 PM: Connect successfully!
+
+-------------------------2016-01-04 02:21:29 PM-------------------------
+3:2016-01-04 02:21:32 PM: Start to connect local database...
+2016-01-04 02:21:33 PM: Connect successfully!
+
+-------------------------2016-01-04 02:28:11 PM-------------------------
+
+-------------------------2016-01-04 02:32:15 PM-------------------------
+3:2016-01-04 02:32:19 PM: Start to connect local database...
+2016-01-04 02:32:20 PM: Connect successfully!
+3:2016-01-04 02:33:04 PM: DELETE FROM pupone_dummy.issues WHERE ID IN (260, 259);
+
+-------------------------2016-01-04 02:57:31 PM-------------------------
+3:2016-01-04 02:57:33 PM: Start to connect local database...
+2016-01-04 02:57:34 PM: Connect successfully!
+
+-------------------------2016-01-04 03:00:13 PM-------------------------
+3:2016-01-04 03:00:16 PM: Start to connect local database...
+2016-01-04 03:00:17 PM: Connect successfully!
+
+-------------------------2016-01-04 03:02:02 PM-------------------------
+3:2016-01-04 03:02:04 PM: Start to connect local database...
+2016-01-04 03:02:05 PM: Connect successfully!
+
+-------------------------2016-01-04 03:02:43 PM-------------------------
+3:2016-01-04 03:02:48 PM: Start to connect local database...
+2016-01-04 03:02:49 PM: Connect successfully!
+
+-------------------------2016-01-04 03:03:42 PM-------------------------
+3:2016-01-04 03:03:44 PM: Start to connect local database...
+2016-01-04 03:03:46 PM: Connect successfully!
+
+-------------------------2016-01-04 03:05:44 PM-------------------------
+3:2016-01-04 03:05:46 PM: Start to connect local database...
+2016-01-04 03:05:48 PM: Connect successfully!
+
+-------------------------2016-01-04 03:06:16 PM-------------------------
+3:2016-01-04 03:06:23 PM: Start to connect local database...
+2016-01-04 03:06:24 PM: Connect successfully!
+
+-------------------------2016-01-04 03:11:02 PM-------------------------
+3:2016-01-04 03:17:41 PM: DELETE FROM pupone_dummy.issues WHERE ID IN (129);
