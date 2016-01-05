@@ -278,7 +278,7 @@
           <Properties>
             <Property name="alignmentX" type="float" value="0.0"/>
             <Property name="alignmentY" type="float" value="0.0"/>
-            <Property name="name" type="java.lang.String" value="" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="Analyster" noResource="true"/>
           </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Reports"/>
@@ -372,7 +372,7 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[10, 240]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="PM" noResource="true"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
@@ -463,7 +463,7 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[10, 240]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="ELLEGUI" noResource="true"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
@@ -645,7 +645,7 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[10, 240]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="Other" noResource="true"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
@@ -738,6 +738,7 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[10, 240]"/>
                     </Property>
+                    <Property name="name" type="java.lang.String" value="issue_files" noResource="true"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
@@ -1089,17 +1090,19 @@
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="textFieldForSearchMouseClicked"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textFieldForSearchActionPerformed"/>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="textFieldForSearchKeyPressed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JComboBox" name="comboBoxSearch">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
+                  <StringArray count="5">
                     <StringItem index="0" value="programmer"/>
                     <StringItem index="1" value="dateOpened"/>
-                    <StringItem index="2" value="done"/>
+                    <StringItem index="2" value="dateClosed"/>
                     <StringItem index="3" value="rk"/>
+                    <StringItem index="4" value="version"/>
                   </StringArray>
                 </Property>
               </Properties>

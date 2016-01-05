@@ -311,21 +311,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         numOfAddIssueWindowOpened = 0;
 
-        programmersActiveForSearching.add("professor");
-//        JTable table = this.getSelectedTable();
-//        
-//        String name = "";
-//        String currentName = "";
-//        for(int i = 0; i < table.getRowCount();i++){
-//            currentName = table.getValueAt(i, 4).toString();
-//            if(!currentName.equalsIgnoreCase(name)){
-//                name = currentName;
-//                System.out.println("here: "+ name);
-//                programmersActiveForSearching.add(name);
-//            }
-//        }
-
-//        this.btnSwitchEditMode.setEnabled(false);
+        JTable table = getSelectedTable();
+        String searchContent = comboBoxSearch.getSelectedItem().toString();
+        this.createPopupMenu(searchContent, table);
         // set title of window to Project Manager
         this.setTitle("Project Manager");
 
@@ -629,7 +617,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         tabbedPanel.setAlignmentX(0.0F);
         tabbedPanel.setAlignmentY(0.0F);
-        tabbedPanel.setName(""); // NOI18N
+        tabbedPanel.setName("Analyster"); // NOI18N
         tabbedPanel.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 tabbedPanelStateChanged(evt);
@@ -676,7 +664,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         PMTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         PMTable.setMinimumSize(new java.awt.Dimension(10, 240));
-        PMTable.setName(""); // NOI18N
+        PMTable.setName("PM"); // NOI18N
         jScrollPane1.setViewportView(PMTable);
 
         tabbedPanel.addTab("PM", jScrollPane1);
@@ -721,7 +709,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         ELLEGUITable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         ELLEGUITable.setMinimumSize(new java.awt.Dimension(10, 240));
-        ELLEGUITable.setName(""); // NOI18N
+        ELLEGUITable.setName("ELLEGUI"); // NOI18N
         jScrollPane6.setViewportView(ELLEGUITable);
 
         tabbedPanel.addTab("ELLEGUI", jScrollPane6);
@@ -811,7 +799,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         OtherTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         OtherTable.setMinimumSize(new java.awt.Dimension(10, 240));
-        OtherTable.setName(""); // NOI18N
+        OtherTable.setName("Other"); // NOI18N
         jScrollPane5.setViewportView(OtherTable);
 
         tabbedPanel.addTab("Other", jScrollPane5);
@@ -848,6 +836,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         issue_filesTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         issue_filesTable.setMinimumSize(new java.awt.Dimension(10, 240));
+        issue_filesTable.setName("issue_files"); // NOI18N
         jScrollPane4.setViewportView(issue_filesTable);
 
         tabbedPanel.addTab("issue_files", jScrollPane4);
@@ -1058,13 +1047,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 textFieldForSearchMouseClicked(evt);
             }
         });
+        textFieldForSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textFieldForSearchActionPerformed(evt);
+            }
+        });
         textFieldForSearch.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 textFieldForSearchKeyPressed(evt);
             }
         });
 
-        comboBoxSearch.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "programmer", "dateOpened", "done", "rk" }));
+        comboBoxSearch.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "programmer", "dateOpened", "dateClosed", "rk", "version" }));
         comboBoxSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxSearchActionPerformed(evt);
@@ -1323,11 +1317,49 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void textFieldForSearchMouseClicked(MouseEvent evt) {//GEN-FIRST:event_textFieldForSearchMouseClicked
 
-        textFieldForSearch.setText(""); // clears text
-        if (evt.isControlDown()) {
+        textFieldForSearch.selectAll();
 
-        }
     }//GEN-LAST:event_textFieldForSearchMouseClicked
+
+    private void createPopupMenu(String title, JTable table) {
+        JPopupMenu textFieldPopupMenu = new JPopupMenu(title);
+        ArrayList valueList = new ArrayList<Object>();
+        for (int col = 0; col < table.getColumnCount(); col++) {
+            String tableColName = table.getColumnName(col);
+            if (tableColName.equalsIgnoreCase(title)) {
+
+                Object cellValue = table.getValueAt(0, col);
+                Object newValue;
+                if (cellValue != null) {
+                    valueList.add(cellValue);
+                }
+                for (int row = 0; row < table.getRowCount(); row++) {
+                    newValue = table.getValueAt(row, col);
+                    if (newValue != null) {
+                        if (cellValue == null) {
+                            valueList.add(" ");
+                            cellValue = newValue;
+                        } else {
+                            if (!cellValue.equals(newValue) && !valueList.contains(newValue)) {
+                                cellValue = newValue;
+                                valueList.add(cellValue);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Object[] values = new Object[valueList.size()];
+        for (int i = 0; i < valueList.size(); i++) {
+            values[i] = valueList.get(i);
+        }
+
+        JList itemList = new JList(values);
+        textFieldPopupMenu.add(itemList);
+        textFieldForSearch.setComponentPopupMenu(textFieldPopupMenu);
+
+    }
 
     /**
      * This method is called when the search button is pressed
@@ -2144,6 +2176,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void comboBoxSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxSearchActionPerformed
 
+        String searchColName = comboBoxSearch.getSelectedItem().toString();
+        JTable table = this.getSelectedTable();
+        createPopupMenu(searchColName, table);
     }//GEN-LAST:event_comboBoxSearchActionPerformed
 
     private void menuItemTurnEditModeOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTurnEditModeOffActionPerformed
@@ -2181,6 +2216,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         moveSelectedRowsToTheEnd(rows, table);
 //        loadTableWhenSelectedRows(rows, table);
     }//GEN-LAST:event_menuItemMoveSeletedRowsToEndActionPerformed
+
+    private void textFieldForSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldForSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textFieldForSearchActionPerformed
 
     public void moveSelectedRowsToTheEnd(int[] rows, JTable table) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -3291,9 +3330,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return jPanelEdit;
     }
 
-    public String getVersion(){
+    public String getVersion() {
         return this.VERSION;
     }
+
     /**
      * initTotalRowCounts called once to initialize the total rowIndex counts of
      * each tabs tableSelected
@@ -3360,7 +3400,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
 
     protected JLabel getLabel(String title) {
-        ImageIcon imcon = new ImageIcon( getClass().getResource("orange-dot.png") );
+        ImageIcon imcon = new ImageIcon(getClass().getResource("orange-dot.png"));
         JLabel label = new JLabel(imcon);
         label.setText(title);
 
@@ -3783,6 +3823,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public String getEditingTabName() {
         return editingTabName;
     }
+    
 
     // @formatter:off
     // Variables declaration - do not modify//GEN-BEGIN:variables
