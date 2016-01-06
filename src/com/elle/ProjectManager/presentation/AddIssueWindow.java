@@ -217,13 +217,10 @@ public class AddIssueWindow extends JFrame {
             }
         } else {
         }
-        Point pmWindowLocation = projectManager.getLocationOnScreen();
-//        // set this window to appear in the middle of Project Manager
-//        this.setLocationRelativeTo(projectManager);
-        System.out.println("this is the " + numWindow + " window");
-        int x = pmWindowLocation.x - 400;
+        Point pmWindowLocation = projectManager.getLocationOnScreen(); //get the project manager window in screen
+        int x = pmWindowLocation.x - 500;
         int y = pmWindowLocation.y - 200;
-        this.setLocation(x+numWindow * 30, y+numWindow * 15);
+        this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
         this.pack();
     }
 
@@ -982,26 +979,28 @@ public class AddIssueWindow extends JFrame {
     private void btnCloseIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseIssueActionPerformed
         // set dateClosed text field with date today
         makeContentDate(dateClosedText);
-        String version = projectManager.getVersion();
-        
-        int length = version.length();
-        int digit = -1;
-        if (version.substring(4, 5).equals("9")) {
-            if (version.substring(2, 3).equals("9")) {
-                digit = Integer.parseInt(version.substring(0, 1));
+        if (projectManager.getSelectedTabName().equalsIgnoreCase("pm")) {
+            String version = projectManager.getVersion();
+
+            int length = version.length();
+            int digit = -1;
+            if (version.substring(4, 5).equals("9")) {
+                if (version.substring(2, 3).equals("9")) {
+                    digit = Integer.parseInt(version.substring(0, 1));
+                    digit++;
+                    version = digit + ".0.0";
+                } else {
+                    digit = Integer.parseInt(version.substring(2, 3));
+                    digit++;
+                    version = version.substring(0, 2) + digit + ".0";
+                }
+            } else {
+                digit = Integer.parseInt(version.substring(length - 1, length));
                 digit++;
-                version = digit + ".0.0";
-            }else{
-                digit = Integer.parseInt(version.substring(2, 3));
-                digit++;
-                version = version.substring(0,2) + digit + ".0";
+                version = version.substring(0, 4) + digit;
             }
-        } else {
-            digit = Integer.parseInt(version.substring(length-1, length));
-            digit++;
-            version = version.substring(0,4) + digit;
+            versionText.setText(version);
         }
-        versionText.setText(version);
     }//GEN-LAST:event_btnCloseIssueActionPerformed
 
     /**
@@ -1303,8 +1302,10 @@ public class AddIssueWindow extends JFrame {
 
                 if (addIssueMode) {
                     buttonSubmit.setEnabled(true);
+                    btnCloseIssue.setEnabled(false);
                 } else {
                     buttonConfirm.setEnabled(true);
+                    btnCloseIssue.setEnabled(true);
                 }
                 contentChanged = true;
             }
@@ -1321,8 +1322,10 @@ public class AddIssueWindow extends JFrame {
                 updateValueToTableAt(value, columnName);
                 if (addIssueMode) {
                     buttonSubmit.setEnabled(true);
+                    btnCloseIssue.setEnabled(false);
                 } else {
                     buttonConfirm.setEnabled(true);
+                    btnCloseIssue.setEnabled(true);
                 }
                 contentChanged = true;
             }
@@ -1391,6 +1394,9 @@ public class AddIssueWindow extends JFrame {
 
         buttonConfirm.setEnabled(false);
         buttonConfirm.setVisible(!b);
+
+        btnCloseIssue.setEnabled(!b);
+        btnCloseIssue.setVisible(!b);
 
         BtnNext.setVisible(!b);
         BtnPrevious.setVisible(!b);

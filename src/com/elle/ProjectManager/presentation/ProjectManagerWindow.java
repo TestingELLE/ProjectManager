@@ -1058,7 +1058,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
 
-        comboBoxSearch.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "programmer", "dateOpened", "dateClosed", "rk", "version" }));
+        comboBoxSearch.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "programmer", "title", "description", "dateOpened", "dateClosed", "rk", "version" }));
         comboBoxSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxSearchActionPerformed(evt);
@@ -1427,7 +1427,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 cellValue = table.getValueAt(row, col).toString();
             }
 
-            if (cellValue.equalsIgnoreCase(target)) {
+            if (cellValue.toLowerCase().contains(target.toLowerCase())) {
 
                 count++;
             }
@@ -2274,9 +2274,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
 
     public void viewNextIssue(int row, String columnName) {
+        JTable table = this.getTabs().get(getSelectedTabName()).getTable();
 
-        Tab tab = tabs.get(getSelectedTabName());
-        JTable table = tab.getTable();
+//        Tab tab = tabs.get(getSelectedTabName());
+//        JTable table = tab.getTable();
 
         Object[] cellsValue = new Object[table.getColumnCount()];
 
