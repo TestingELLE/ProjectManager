@@ -311,9 +311,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         numOfAddIssueWindowOpened = 0;
 
-        JTable table = getSelectedTable();
-        String searchContent = comboBoxSearch.getSelectedItem().toString();
-        this.createPopupMenu(searchContent, table);
+//        JTable table = getSelectedTable();
+//        String searchContent = comboBoxSearch.getSelectedItem().toString();
+//        this.createPopupMenu(searchContent, table);
         // set title of window to Project Manager
         this.setTitle("Project Manager");
 
@@ -1317,49 +1317,51 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void textFieldForSearchMouseClicked(MouseEvent evt) {//GEN-FIRST:event_textFieldForSearchMouseClicked
 
-        textFieldForSearch.selectAll();
+        if (evt.getClickCount() == 2) {
+            textFieldForSearch.selectAll();
+        }
 
     }//GEN-LAST:event_textFieldForSearchMouseClicked
 
-    private void createPopupMenu(String title, JTable table) {
-        JPopupMenu textFieldPopupMenu = new JPopupMenu(title);
-        ArrayList valueList = new ArrayList<Object>();
-        for (int col = 0; col < table.getColumnCount(); col++) {
-            String tableColName = table.getColumnName(col);
-            if (tableColName.equalsIgnoreCase(title)) {
-
-                Object cellValue = table.getValueAt(0, col);
-                Object newValue;
-                if (cellValue != null) {
-                    valueList.add(cellValue);
-                }
-                for (int row = 0; row < table.getRowCount(); row++) {
-                    newValue = table.getValueAt(row, col);
-                    if (newValue != null) {
-                        if (cellValue == null) {
-                            valueList.add(" ");
-                            cellValue = newValue;
-                        } else {
-                            if (!cellValue.equals(newValue) && !valueList.contains(newValue)) {
-                                cellValue = newValue;
-                                valueList.add(cellValue);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Object[] values = new Object[valueList.size()];
-        for (int i = 0; i < valueList.size(); i++) {
-            values[i] = valueList.get(i);
-        }
-
-        JList itemList = new JList(values);
-        textFieldPopupMenu.add(itemList);
-        textFieldForSearch.setComponentPopupMenu(textFieldPopupMenu);
-
-    }
+//    private void createPopupMenu(String title, JTable table) {
+//        JPopupMenu textFieldPopupMenu = new JPopupMenu(title);
+//        ArrayList valueList = new ArrayList<Object>();
+//        for (int col = 0; col < table.getColumnCount(); col++) {
+//            String tableColName = table.getColumnName(col);
+//            if (tableColName.equalsIgnoreCase(title)) {
+//
+//                Object cellValue = table.getValueAt(0, col);
+//                Object newValue;
+//                if (cellValue != null) {
+//                    valueList.add(cellValue);
+//                }
+//                for (int row = 0; row < table.getRowCount(); row++) {
+//                    newValue = table.getValueAt(row, col);
+//                    if (newValue != null) {
+//                        if (cellValue == null) {
+//                            valueList.add(" ");
+//                            cellValue = newValue;
+//                        } else {
+//                            if (!cellValue.equals(newValue) && !valueList.contains(newValue)) {
+//                                cellValue = newValue;
+//                                valueList.add(cellValue);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        Object[] values = new Object[valueList.size()];
+//        for (int i = 0; i < valueList.size(); i++) {
+//            values[i] = valueList.get(i);
+//        }
+//
+//        JList itemList = new JList(values);
+//        textFieldPopupMenu.add(itemList);
+//        textFieldForSearch.setComponentPopupMenu(textFieldPopupMenu);
+//
+//    }
 
     /**
      * This method is called when the search button is pressed
@@ -2176,9 +2178,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void comboBoxSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxSearchActionPerformed
 
-        String searchColName = comboBoxSearch.getSelectedItem().toString();
-        JTable table = this.getSelectedTable();
-        createPopupMenu(searchColName, table);
+//        String searchColName = comboBoxSearch.getSelectedItem().toString();
+//        JTable table = this.getSelectedTable();
+//        createPopupMenu(searchColName, table);
     }//GEN-LAST:event_comboBoxSearchActionPerformed
 
     private void menuItemTurnEditModeOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTurnEditModeOffActionPerformed
@@ -3823,7 +3825,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public String getEditingTabName() {
         return editingTabName;
     }
-    
 
     // @formatter:off
     // Variables declaration - do not modify//GEN-BEGIN:variables

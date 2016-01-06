@@ -20,6 +20,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Point;
 import java.awt.PopupMenu;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -201,9 +202,6 @@ public class AddIssueWindow extends JFrame {
 
         this.setPreferredSize(new Dimension(600, 750));
 
-        // set this window to appear in the middle of Project Manager
-        this.setLocationRelativeTo(projectManager);
-
         addIssueMode(addIssueMode);
 
         if (!columnName.equals("")) {
@@ -219,11 +217,13 @@ public class AddIssueWindow extends JFrame {
             }
         } else {
         }
-        // set this window to appear in the middle of Project Manager
-        this.setLocationRelativeTo(projectManager);
+        Point pmWindowLocation = projectManager.getLocationOnScreen();
+//        // set this window to appear in the middle of Project Manager
+//        this.setLocationRelativeTo(projectManager);
         System.out.println("this is the " + numWindow + " window");
-        this.setLocation(numWindow * 30, numWindow * 15);
-
+        int x = pmWindowLocation.x - 400;
+        int y = pmWindowLocation.y - 200;
+        this.setLocation(x+numWindow * 30, y+numWindow * 15);
         this.pack();
     }
 
