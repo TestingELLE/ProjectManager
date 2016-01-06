@@ -60,7 +60,7 @@ import javax.swing.event.RowSorterListener;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2015-12-30";
+    private final String CREATION_DATE = "2016-01-04";
     private final String VERSION = "1.0.1";
 
     // attributes
