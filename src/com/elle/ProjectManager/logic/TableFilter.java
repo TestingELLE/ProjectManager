@@ -26,7 +26,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
     private TableRowSorter<TableModel> sorter;             // the table sorter
     private Map<Integer, ArrayList<Object>> filterItems;    // distinct items to filter
     private Color color;                                   // color to paint header
-    private boolean isFiltering; 
+    private boolean isFiltering;
 
     /**
      * CONSTRUCTOR TableFilter
@@ -345,8 +345,14 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
                 } else {
                     // search for a match and ignore case
                     for (Object distinctItem : distinctItems) {
-                        if (cellValue.toString().equalsIgnoreCase(distinctItem.toString())) {
-                            itemsFound++;
+                        if (col == 2 || col == 3) {
+                            if (cellValue.toString().toLowerCase().contains(distinctItem.toString().toLowerCase())) {
+                                itemsFound++;
+                            }
+                        }else{
+                            if(cellValue.toString().equalsIgnoreCase(distinctItem.toString())){
+                                itemsFound++;
+                            }
                         }
                     }
                 }

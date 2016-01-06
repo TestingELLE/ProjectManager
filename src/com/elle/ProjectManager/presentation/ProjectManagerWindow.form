@@ -1097,12 +1097,14 @@
             <Component class="javax.swing.JComboBox" name="comboBoxSearch">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="5">
+                  <StringArray count="7">
                     <StringItem index="0" value="programmer"/>
-                    <StringItem index="1" value="dateOpened"/>
-                    <StringItem index="2" value="dateClosed"/>
-                    <StringItem index="3" value="rk"/>
-                    <StringItem index="4" value="version"/>
+                    <StringItem index="1" value="title"/>
+                    <StringItem index="2" value="description"/>
+                    <StringItem index="3" value="dateOpened"/>
+                    <StringItem index="4" value="dateClosed"/>
+                    <StringItem index="5" value="rk"/>
+                    <StringItem index="6" value="version"/>
                   </StringArray>
                 </Property>
               </Properties>
