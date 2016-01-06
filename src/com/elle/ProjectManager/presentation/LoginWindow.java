@@ -65,14 +65,13 @@ public class LoginWindow extends JFrame {
 
         // initialize
         initComponents();
-        logWindow = new LogWindow(); // this is for reporting connections to log
-
+        logWindow = new LogWindow(); // this is for reporting99
         // load selectedDB selections from the text file for the combobox
         loadDBList();
         comboBoxDatabase.setSelectedIndex(2);
         comboBoxServer.setSelectedIndex(0);
-        textFieldUsername.setText("");
-        passwordFieldPW.setText("");
+        textFieldUsername.setText("pupone_Xiao");
+        passwordFieldPW.setText("XiaoXXXX8");
 
 //        comboBoxDatabase.setSelectedIndex(3);
         // show window
@@ -416,7 +415,7 @@ public class LoginWindow extends JFrame {
             passwordFieldPW.setText("");
         }
         userName = userName.substring(7);
-        System.out.println(userName);
+        System.out.println("userName: "+ userName);
 
         // create an projectManager object
         projectManager = new ProjectManagerWindow(userName);
@@ -440,6 +439,7 @@ public class LoginWindow extends JFrame {
         this.dispose();// returns used resources
 
     }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;

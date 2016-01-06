@@ -25,6 +25,8 @@ public class LogWindow extends JFrame {
     private static final String HYPHENS = "-------------------------"; // delimiter
     private JScrollPane scrollPane;
     private JTextArea logText;
+    
+    private LoginWindow loginWindow;
 
     private final ArrayList<LogMessage> logMessages = new ArrayList<>();
     private final JPanel panelLogWindowButtons;

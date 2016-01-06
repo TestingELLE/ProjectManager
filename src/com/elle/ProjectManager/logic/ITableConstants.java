@@ -10,7 +10,7 @@ package com.elle.ProjectManager.logic;
  * This interface stores all the table constants
  * @author Carlos Igreja
  * @since June 10, 2015
- * @version 0.6.3
+ * @version 1.0.0
  */
 public interface ITableConstants {
     
@@ -27,12 +27,12 @@ public interface ITableConstants {
 //    public static final float[] COL_WIDTH_PER_ARCHIVE = {60, 60, 115, 845, 105};
     
     // search fields for the comboBox for each table
-    public static final String[] TASKS_SEARCH_FIELDS = {"programmer", "dateOpened", "done", "rk"};
+    public static final String[] TASKS_SEARCH_FIELDS = {"programmer", "dateOpened", "dateClosed", "rk", "version"};
     public static final String[] TASKFILES_SEARCH_FIELDS = {"submitter"};
 //    public static final String[] TASKNOTES_SEARCH_FIELDS = {"submitter"};
     
     // batch edit combobox selections for each table
-    public static final String[] TASKS_BATCHEDIT_CB_FIELDS = {"programmer", "rk", "dateOpened", "notes", "done", "dateClosed"};
+    public static final String[] TASKS_BATCHEDIT_CB_FIELDS = {"programmer", "rk", "dateOpened", "dateClosed", "version"};
     public static final String[] TASKFILES_BATCHEDIT_CB_FIELDS = {"submitter", "date", "path", "notes"};
 //    public static final String[] TASKNOTES_BATCHEDIT_CB_FIELDS = {"submitter", "status_notes", "date"};
 }
