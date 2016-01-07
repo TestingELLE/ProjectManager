@@ -21,12 +21,12 @@ import java.util.*;
 public class LogWindow extends JFrame {
 
     // constants
-    private final String FILENAME = "log.txt";
+    private String FILENAME;
     private static final String HYPHENS = "-------------------------"; // delimiter
     private JScrollPane scrollPane;
     private JTextArea logText;
     
-    private LoginWindow loginWindow;
+    
 
     private final ArrayList<LogMessage> logMessages = new ArrayList<>();
     private final JPanel panelLogWindowButtons;
@@ -42,8 +42,9 @@ public class LogWindow extends JFrame {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
 
     // constructor
-    public LogWindow() {
-
+    public LogWindow(String userName) {
+        
+        FILENAME = "PM_" + userName + "_log.txt";
         this.setTitle("Log Window");
         ImageIcon imag = new ImageIcon(
                 "Images/elle gui image.jpg");
