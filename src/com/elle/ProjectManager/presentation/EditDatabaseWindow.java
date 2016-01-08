@@ -58,7 +58,7 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         jConfirm = new javax.swing.JButton();
         jCancel = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AWS", "Local" }));
         jServer.addActionListener(new java.awt.event.ActionListener() {
