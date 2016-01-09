@@ -56,11 +56,12 @@ public class LoginWindow extends JFrame {
 //                    + "/ProjectManagerFromMaster/src/com/elle/ProjectManager/image.png"));
 //        this.setContentPane(new ImagePanel(myImage))
 
-//        try {
-            this.setContentPane(new JLabel(new ImageIcon(getClass().getResource("image.png"))));
-//        } catch (IOException e) {
-//            System.out.println("image does not exist!");
-//        }
+        try {
+            this.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("/Users/fuxiaoqian/Desktop"
+                    + "/ProjectManagerFromMaster/src/com/elle/ProjectManager/image.png")))));
+        } catch (IOException e) {
+            System.out.println("image does not exist!");
+        }
 
         // initialize
         initComponents();
@@ -69,8 +70,8 @@ public class LoginWindow extends JFrame {
         loadDBList();
         comboBoxDatabase.setSelectedIndex(2);
         comboBoxServer.setSelectedIndex(0);
-//        textFieldUsername.setText("pupone_Xiao");
-//        passwordFieldPW.setText("XiaoXXXX8");
+        textFieldUsername.setText("pupone_Xiao");
+        passwordFieldPW.setText("XiaoXXXX8");
 
 //        comboBoxDatabase.setSelectedIndex(3);
         // show window
