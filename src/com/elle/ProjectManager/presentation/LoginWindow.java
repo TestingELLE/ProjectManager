@@ -50,22 +50,20 @@ public class LoginWindow extends JFrame {
 //            g.drawImage(image, 0, 0, this);
 //        }
 //    }
-
     public LoginWindow() {
 //        BufferedImage myImage = ImageIO.load(new File("/Users/fuxiaoqian/Desktop"
 //                    + "/ProjectManagerFromMaster/src/com/elle/ProjectManager/image.png"));
 //        this.setContentPane(new ImagePanel(myImage))
 
-        try {
-            this.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("/Users/fuxiaoqian/Desktop"
-                    + "/ProjectManagerFromMaster/src/com/elle/ProjectManager/image.png")))));
-        } catch (IOException e) {
-            System.out.println("image does not exist!");
-        }
+//        try {
+        this.setContentPane(new JLabel(new ImageIcon(getClass().getResource("image.png"))));
+//        } catch (IOException e) {
+//            System.out.println("image does not exist!");
+//        }
 
         // initialize
         initComponents();
-        logWindow = new LogWindow(); // this is for reporting99
+
         // load selectedDB selections from the text file for the combobox
         loadDBList();
         comboBoxDatabase.setSelectedIndex(2);
@@ -77,6 +75,7 @@ public class LoginWindow extends JFrame {
         // show window
         this.setTitle("Log in");
         this.pack();
+        //   logWindow = new LogWindow(this.getUserName()); // this is for reporting99
     }
 
     /**
@@ -334,7 +333,7 @@ public class LoginWindow extends JFrame {
     }                                               
 
     public String getUserName() {
-        String userNameToPM = userName.substring(6, userName.length() - 1);
+        String userNameToPM = userName.substring(7);
         return userNameToPM;
     }
 
@@ -396,7 +395,7 @@ public class LoginWindow extends JFrame {
         userName = textFieldUsername.getText();
         char[] pw = passwordFieldPW.getPassword();
         userPassword = String.valueOf(pw);
-
+        logWindow = new LogWindow(this.getUserName());
         // connect to database
         try {
             logWindow.addMessageWithDate("3:Start to connect local database...");
@@ -415,8 +414,8 @@ public class LoginWindow extends JFrame {
             passwordFieldPW.setText("");
         }
         userName = userName.substring(7);
-        System.out.println("userName: "+ userName);
-
+        System.out.println("userName: " + userName);
+      
         // create an projectManager object
         projectManager = new ProjectManagerWindow(userName);
 
@@ -439,7 +438,7 @@ public class LoginWindow extends JFrame {
         this.dispose();// returns used resources
 
     }
-    
+
 
     // Variables declaration - do not modify                     
     private javax.swing.JButton btnCancel;
