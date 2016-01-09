@@ -876,25 +876,6 @@ public class AddIssueWindow extends JFrame {
 
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
-    private void descriptionTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionTextKeyReleased
-        JTextArea dateArea = (JTextArea) evt.getComponent();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        String today = dateFormat.format(date);
-        String value = dateArea.getText();
-        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
-            dateArea.requestFocusInWindow();
-            dateArea.selectAll();
-            value = value + " " + today;
-            dateArea.setText(value);
-        } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
-
-            String userName = projectManager.getUserName();
-            value = value + "\n" + "-- by " + userName + " on " + today + "-- \n";
-            dateArea.setText(value);
-        }
-    }//GEN-LAST:event_descriptionTextKeyReleased
-
     private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
 
         System.out.println(contentChanged + " !");
@@ -1002,6 +983,25 @@ public class AddIssueWindow extends JFrame {
             versionText.setText(version);
         }
     }//GEN-LAST:event_btnCloseIssueActionPerformed
+
+    private void descriptionTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionTextKeyReleased
+        JTextArea dateArea = (JTextArea) evt.getComponent();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String today = dateFormat.format(date);
+        String value = dateArea.getText();
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
+            dateArea.requestFocusInWindow();
+            dateArea.selectAll();
+            value = value + " " + today;
+            dateArea.setText(value);
+        } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
+
+            String userName = projectManager.getUserName();
+            value = value + "\n" + "-- by " + userName + " on " + today + "-- \n";
+            dateArea.setText(value);
+        }
+    }//GEN-LAST:event_descriptionTextKeyReleased
 
     /**
      * submit This is used when the submit button is pressed or if the enter key
@@ -1257,7 +1257,7 @@ public class AddIssueWindow extends JFrame {
             if (columnNames[i].equals("description")) {
 
                 if (tableValue != null) {
-                    descriptionText.setText(tableValue.toString());
+                   descriptionText.setText(tableValue.toString());
                 } else {
                     descriptionText.setText("");
                 }
