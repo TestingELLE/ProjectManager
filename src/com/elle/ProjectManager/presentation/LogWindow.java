@@ -38,20 +38,16 @@ public class LogWindow extends JFrame {
     private final JButton btnLevelThree;
     //private final JCheckBox jCheckBoxOrder;  // check box for order of dates
     private JButton showAll;
-    
-    private String userName;
     //private final JLabel jLabelOrder; // label for checkbox order
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
 
     // constructor
-    public LogWindow(String userN) {
+    public LogWindow() {
 
         this.setTitle("Log Window");
         ImageIcon imag = new ImageIcon(
                 "Images/elle gui image.jpg");
         this.setIconImage(imag.getImage());
-        
-        userName=userN;
 
         logText = new JTextArea(5, 30);
         logText.setEditable(false);
@@ -227,6 +223,7 @@ public class LogWindow extends JFrame {
      * @param str
      */
     public void addMessage(String str) {
+
         File file = new File(FILENAME);
         try {
             if (!file.exists()) {
