@@ -9,6 +9,7 @@ import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import com.elle.ProjectManager.presentation.LoginWindow;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
 import java.awt.geom.Rectangle2D;
@@ -68,9 +69,13 @@ public static SplashScreen loadingScreen;
 //            loadingGraphics.setPaint(Color.GRAY);
 //            loadingGraphics.fill(loadingTextArea);
 
-            loadingGraphics.setPaint(Color.BLACK);
+            loadingGraphics.setPaint(Color.BLUE);
+            Font font = new Font("Courier", Font.BOLD,16);
+            loadingGraphics.setFont(font);
+            
+            loadingGraphics.drawString("Version: 1.0.2        CreationDate: 01/08/2016", (int) loadingTextArea.getX() +5, (int) loadingTextArea.getY());
 
-            loadingGraphics.drawString(string, (int) loadingTextArea.getX() + 10, (int) loadingTextArea.getY() + 20);
+            loadingGraphics.drawString(string, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY() + 20);
 
             loadingScreen.update();
         }

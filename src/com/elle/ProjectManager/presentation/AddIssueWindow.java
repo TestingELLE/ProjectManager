@@ -218,8 +218,8 @@ public class AddIssueWindow extends JFrame {
         } else {
         }
         Point pmWindowLocation = projectManager.getLocationOnScreen(); //get the project manager window in screen
-        int x = pmWindowLocation.x - 500;
-        int y = pmWindowLocation.y - 200;
+        int x = 30;
+        int y = 15;
         this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
         this.pack();
     }

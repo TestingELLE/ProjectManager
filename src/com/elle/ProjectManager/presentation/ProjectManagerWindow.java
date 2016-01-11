@@ -49,6 +49,7 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
+import javax.swing.text.DefaultEditorKit;
 
 /**
  * ProjectManagerWindow
@@ -224,6 +225,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         } else {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
+
+        //set
+        setKeyBindingForCopyAndPaste();
 
         // show and hide components
         btnUploadChanges.setVisible(false);
@@ -610,6 +614,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemLogChkBx = new javax.swing.JCheckBoxMenuItem();
         menuItemSQLCmdChkBx = new javax.swing.JCheckBoxMenuItem();
         menuitemViewOneIssue = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
         menuItemReloadData = new javax.swing.JMenuItem();
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
@@ -1000,7 +1005,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
@@ -1025,19 +1030,20 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE))
+                    .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                    .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(labelTimeLastUpdate)
                 .addGap(0, 0, 0)
-                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         searchPanel.setPreferredSize(new java.awt.Dimension(584, 76));
@@ -1081,12 +1087,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 563, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(searchPanelLayout.createSequentialGroup()
                         .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSearch)))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1097,8 +1103,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch)
                     .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addComponent(searchInformationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addGap(0, 7, Short.MAX_VALUE)
+                .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout addPanel_controlLayout = new javax.swing.GroupLayout(addPanel_control);
@@ -1113,12 +1120,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addPanel_controlLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(addPanel_controlLayout.createSequentialGroup()
                 .addGroup(addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16))
+                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         menuFile.setText("File");
@@ -1241,6 +1247,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuView.add(menuitemViewOneIssue);
 
+        jMenuItem1.setText("View Splash Screen");
+        menuView.add(jMenuItem1);
+
         menuBar.add(menuView);
 
         menuTools.setText("Tools");
@@ -1296,10 +1305,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, 0)
+                .addContainerGap()
                 .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -1394,6 +1403,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //        Tab tab = tabs.get(tabName);
 //        JTable table = tab.getTable();
             String searchColName = comboBoxSearch.getSelectedItem().toString();
+            int count = 0;
 
             // this matches the combobox newValue with the column name newValue to get the column index
             for (int col = 0; col < table.getColumnCount(); col++) {
@@ -1416,8 +1426,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         filter.applyFilter();
 
                     } else {
-                        text = text + "There is no " + searchBoxValue
-                                + " under " + searchColName + " in table " + table.getName() + "\n";
+                        if (text.equals("")) {
+
+                            text = text + "There is no " + searchBoxValue
+                                    + " under " + searchColName + " in table " + table.getName();
+                        } else {
+                            text = text + " and " + table.getName();
+                        }
+                        count++;
+                    }
+                    System.out.println(count);
+                    if (count == 4) {
+                        text = "There is no " + searchBoxValue
+                                + " under " + searchColName + " in all tables";
                     }
 
                     // set label record information
@@ -1426,8 +1447,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
             }
         }
+        System.out.println("text is: " + text);
         if (!text.equals("")) {
-            System.out.println(text);
             searchInformationLabel.setText(text);
             startCountDownFromNow(10);
         }
@@ -3130,6 +3151,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public void setDisableProjecetManagerFunction(boolean f) {
         setEnableProjectManagerFunction(f);
     }
+
     private void setEnableProjectManagerFunction(boolean disable) {
 
         tabbedPanel.setEnabled(disable);
@@ -3160,7 +3182,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         }
     }
-    
+
     public static ProjectManagerWindow getInstance() {
         return instance;
     }
@@ -3736,6 +3758,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JLabel informationLabel;
     private javax.swing.JTable issue_filesTable;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanelEdit;
@@ -3823,6 +3846,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public JLabel getLabelEditModeState() {
         return this.labelEditModeState;
+    }
+
+    private void setKeyBindingForCopyAndPaste() {
+        InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
     }
 
     /**
