@@ -31,6 +31,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -49,6 +51,7 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
+import javax.swing.text.DefaultEditorKit;
 
 /**
  * ProjectManagerWindow
@@ -224,6 +227,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         } else {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
+
+        //set
+        setKeyBindingForCopyAndPaste();
 
         // show and hide components
         btnUploadChanges.setVisible(false);
@@ -610,6 +616,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemLogChkBx = new javax.swing.JCheckBoxMenuItem();
         menuItemSQLCmdChkBx = new javax.swing.JCheckBoxMenuItem();
         menuitemViewOneIssue = new javax.swing.JMenuItem();
+        menuItemViewSplashScreen = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
         menuItemReloadData = new javax.swing.JMenuItem();
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
@@ -1000,8 +1007,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1025,19 +1032,20 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE))
+                    .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                    .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(labelTimeLastUpdate)
                 .addGap(0, 0, 0)
-                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         searchPanel.setPreferredSize(new java.awt.Dimension(584, 76));
@@ -1079,14 +1087,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(btnClearAllFilter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(searchPanelLayout.createSequentialGroup()
-                        .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSearch)))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addComponent(btnSearch)
+                .addGap(0, 114, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1098,7 +1107,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(btnSearch)
                     .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0)
-                .addComponent(searchInformationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout addPanel_controlLayout = new javax.swing.GroupLayout(addPanel_control);
@@ -1108,17 +1118,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             .addGroup(addPanel_controlLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 663, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addPanel_controlLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(addPanel_controlLayout.createSequentialGroup()
                 .addGroup(addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16))
+                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         menuFile.setText("File");
@@ -1241,6 +1250,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuView.add(menuitemViewOneIssue);
 
+        menuItemViewSplashScreen.setText("View Splash Screen");
+        menuItemViewSplashScreen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemViewSplashScreenActionPerformed(evt);
+            }
+        });
+        menuView.add(menuItemViewSplashScreen);
+
         menuBar.add(menuView);
 
         menuTools.setText("Tools");
@@ -1298,8 +1315,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -1394,6 +1411,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //        Tab tab = tabs.get(tabName);
 //        JTable table = tab.getTable();
             String searchColName = comboBoxSearch.getSelectedItem().toString();
+            int count = 0;
 
             // this matches the combobox newValue with the column name newValue to get the column index
             for (int col = 0; col < table.getColumnCount(); col++) {
@@ -1416,8 +1434,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         filter.applyFilter();
 
                     } else {
-                        text = text + "There is no " + searchBoxValue
-                                + " under " + searchColName + " in table " + table.getName() + "\n";
+                        if (text.equals("")) {
+
+                            text = text + "There is no " + searchBoxValue
+                                    + " under " + searchColName + " in table " + table.getName();
+                        } else {
+                            text = text + " and " + table.getName();
+                        }
+                        count++;
+                    }
+                    System.out.println(count);
+                    if (count == 4) {
+                        text = "There is no " + searchBoxValue
+                                + " under " + searchColName + " in all tables";
                     }
 
                     // set label record information
@@ -1426,8 +1455,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
             }
         }
+        System.out.println("text is: " + text);
         if (!text.equals("")) {
-            System.out.println(text);
             searchInformationLabel.setText(text);
             startCountDownFromNow(10);
         }
@@ -2188,6 +2217,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void comboBoxForSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxForSearchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_comboBoxForSearchActionPerformed
+
+    private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
+        ImageIcon img = new ImageIcon(getClass().getResource("splashImage.png"));
+        JFrame splashScreenImage = new JFrame();
+        JLabel image = new JLabel(img);
+        splashScreenImage.add(image);
+        splashScreenImage.pack();
+        splashScreenImage.setLocationRelativeTo(this);
+        splashScreenImage.setVisible(true);
+    }//GEN-LAST:event_menuItemViewSplashScreenActionPerformed
 
     public void comboBoxForSearchMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -3130,6 +3169,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public void setDisableProjecetManagerFunction(boolean f) {
         setEnableProjectManagerFunction(f);
     }
+
     private void setEnableProjectManagerFunction(boolean disable) {
 
         tabbedPanel.setEnabled(disable);
@@ -3160,7 +3200,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         }
     }
-    
+
     public static ProjectManagerWindow getInstance() {
         return instance;
     }
@@ -3282,6 +3322,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     protected JLabel getLabel(String title) {
         ImageIcon imcon = new ImageIcon(getClass().getResource("orange-dot.png"));
+        
+        ImageIcon icon = new ImageIcon(getClass().getResource("splashImage.png"));
         JLabel label = new JLabel(imcon);
         label.setText(title);
 
@@ -3772,6 +3814,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemSaveFile;
     private javax.swing.JMenuItem menuItemTurnEditModeOff;
     private javax.swing.JMenuItem menuItemVersion;
+    private javax.swing.JMenuItem menuItemViewSplashScreen;
     private javax.swing.JMenu menuPrint;
     private javax.swing.JMenu menuReports;
     private javax.swing.JMenu menuSelectConn;
@@ -3823,6 +3866,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public JLabel getLabelEditModeState() {
         return this.labelEditModeState;
+    }
+
+    private void setKeyBindingForCopyAndPaste() {
+        InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit()
+                .getMenuShortcutKeyMask()), DefaultEditorKit.copyAction);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit()
+                .getMenuShortcutKeyMask()), DefaultEditorKit.pasteAction);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit()
+                .getMenuShortcutKeyMask()), DefaultEditorKit.cutAction);
     }
 
     /**
