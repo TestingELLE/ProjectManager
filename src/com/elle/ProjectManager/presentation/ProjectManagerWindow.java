@@ -31,6 +31,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -614,7 +616,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemLogChkBx = new javax.swing.JCheckBoxMenuItem();
         menuItemSQLCmdChkBx = new javax.swing.JCheckBoxMenuItem();
         menuitemViewOneIssue = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        menuItemViewSplashScreen = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
         menuItemReloadData = new javax.swing.JMenuItem();
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
@@ -1006,7 +1008,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1085,14 +1087,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(btnClearAllFilter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 563, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(searchPanelLayout.createSequentialGroup()
-                        .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSearch)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btnSearch)
+                .addGap(0, 114, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1103,9 +1106,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch)
                     .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 7, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout addPanel_controlLayout = new javax.swing.GroupLayout(addPanel_control);
@@ -1115,7 +1118,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             .addGroup(addPanel_controlLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 663, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         addPanel_controlLayout.setVerticalGroup(
@@ -1247,8 +1250,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuView.add(menuitemViewOneIssue);
 
-        jMenuItem1.setText("View Splash Screen");
-        menuView.add(jMenuItem1);
+        menuItemViewSplashScreen.setText("View Splash Screen");
+        menuItemViewSplashScreen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemViewSplashScreenActionPerformed(evt);
+            }
+        });
+        menuView.add(menuItemViewSplashScreen);
 
         menuBar.add(menuView);
 
@@ -1305,7 +1313,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -2209,6 +2217,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void comboBoxForSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxForSearchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_comboBoxForSearchActionPerformed
+
+    private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
+        ImageIcon img = new ImageIcon(getClass().getResource("splashImage.png"));
+        JFrame splashScreenImage = new JFrame();
+        JLabel image = new JLabel(img);
+        splashScreenImage.add(image);
+        splashScreenImage.pack();
+        splashScreenImage.setLocationRelativeTo(this);
+        splashScreenImage.setVisible(true);
+    }//GEN-LAST:event_menuItemViewSplashScreenActionPerformed
 
     public void comboBoxForSearchMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -3304,6 +3322,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     protected JLabel getLabel(String title) {
         ImageIcon imcon = new ImageIcon(getClass().getResource("orange-dot.png"));
+        
+        ImageIcon icon = new ImageIcon(getClass().getResource("splashImage.png"));
         JLabel label = new JLabel(imcon);
         label.setText(title);
 
@@ -3758,7 +3778,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JLabel informationLabel;
     private javax.swing.JTable issue_filesTable;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanelEdit;
@@ -3795,6 +3814,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemSaveFile;
     private javax.swing.JMenuItem menuItemTurnEditModeOff;
     private javax.swing.JMenuItem menuItemVersion;
+    private javax.swing.JMenuItem menuItemViewSplashScreen;
     private javax.swing.JMenu menuPrint;
     private javax.swing.JMenu menuReports;
     private javax.swing.JMenu menuSelectConn;
@@ -3850,9 +3870,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void setKeyBindingForCopyAndPaste() {
         InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit()
+                .getMenuShortcutKeyMask()), DefaultEditorKit.copyAction);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit()
+                .getMenuShortcutKeyMask()), DefaultEditorKit.pasteAction);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit()
+                .getMenuShortcutKeyMask()), DefaultEditorKit.cutAction);
     }
 
     /**

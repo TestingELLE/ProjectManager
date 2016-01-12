@@ -64,6 +64,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
 
 /**
  *
@@ -218,8 +219,11 @@ public class AddIssueWindow extends JFrame {
         } else {
         }
         Point pmWindowLocation = projectManager.getLocationOnScreen(); //get the project manager window in screen
-        int x = 30;
-        int y = 15;
+        System.out.println("pm location is: " + pmWindowLocation.x + " " + pmWindowLocation.y);
+        
+        int x = pmWindowLocation.x - 150;
+        int y = pmWindowLocation.y - 120;
+        System.out.println("there are " + numWindow + " opened !");
         this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
         this.pack();
     }
@@ -237,6 +241,16 @@ public class AddIssueWindow extends JFrame {
         makeContentDate(dateOpenedText);
         buttonSubmit.setEnabled(false);
 
+    }
+    
+    private void setKeyBindingForCopyAndPaste(JTextComponent tF) {
+        InputMap im = tF.getInputMap();
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit()
+                .getMenuShortcutKeyMask()), DefaultEditorKit.copyAction);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit()
+                .getMenuShortcutKeyMask()), DefaultEditorKit.pasteAction);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit()
+                .getMenuShortcutKeyMask()), DefaultEditorKit.cutAction);
     }
 
     /**
@@ -960,28 +974,30 @@ public class AddIssueWindow extends JFrame {
     private void btnCloseIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseIssueActionPerformed
         // set dateClosed text field with date today
         makeContentDate(dateClosedText);
-        if (projectManager.getSelectedTabName().equalsIgnoreCase("pm")) {
-            String version = projectManager.getVersion();
-
-            int length = version.length();
-            int digit = -1;
-            if (version.substring(4, 5).equals("9")) {
-                if (version.substring(2, 3).equals("9")) {
-                    digit = Integer.parseInt(version.substring(0, 1));
-                    digit++;
-                    version = digit + ".0.0";
-                } else {
-                    digit = Integer.parseInt(version.substring(2, 3));
-                    digit++;
-                    version = version.substring(0, 2) + digit + ".0";
-                }
-            } else {
-                digit = Integer.parseInt(version.substring(length - 1, length));
-                digit++;
-                version = version.substring(0, 4) + digit;
-            }
-            versionText.setText(version);
-        }
+        String temperaryVersion = "XXX";
+        versionText.setText(temperaryVersion);
+//        if (projectManager.getSelectedTabName().equalsIgnoreCase("pm")) {
+//            String version = projectManager.getVersion();
+//
+//            int length = version.length();
+//            int digit = -1;
+//            if (version.substring(4, 5).equals("9")) {
+//                if (version.substring(2, 3).equals("9")) {
+//                    digit = Integer.parseInt(version.substring(0, 1));
+//                    digit++;
+//                    version = digit + ".0.0";
+//                } else {
+//                    digit = Integer.parseInt(version.substring(2, 3));
+//                    digit++;
+//                    version = version.substring(0, 2) + digit + ".0";
+//                }
+//            } else {
+//                digit = Integer.parseInt(version.substring(length - 1, length));
+//                digit++;
+//                version = version.substring(0, 4) + digit;
+//            }
+//            versionText.setText(version);
+//        }
     }//GEN-LAST:event_btnCloseIssueActionPerformed
 
     private void descriptionTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionTextKeyReleased
@@ -1261,6 +1277,7 @@ public class AddIssueWindow extends JFrame {
                 } else {
                     descriptionText.setText("");
                 }
+                setKeyBindingForCopyAndPaste(descriptionText);
             } else {
                 for (int j = 0; j < textAreaArray.length; j++) {
                     areaName = textAreaArray[j].getName();
@@ -1272,6 +1289,7 @@ public class AddIssueWindow extends JFrame {
                         } else {
                             textAreasInForm.get(columnNames[i]).setText("");
                         }
+                        setKeyBindingForCopyAndPaste(textAreasInForm.get(columnNames[i]));
 
                         formValues[i] = null;
                         break;

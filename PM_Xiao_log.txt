@@ -70,3 +70,71 @@
 -------------------------2016-01-10 07:22:01 PM-------------------------
 3:2016-01-10 07:22:01 PM: Start to connect local database...
 2016-01-10 07:22:02 PM: Connect successfully!
+
+-------------------------2016-01-11 03:50:56 PM-------------------------
+3:2016-01-11 03:50:56 PM: Start to connect local database...
+2016-01-11 03:50:57 PM: Connect successfully!
+
+-------------------------2016-01-11 03:54:21 PM-------------------------
+3:2016-01-11 03:54:21 PM: Start to connect local database...
+2016-01-11 03:54:22 PM: Connect successfully!
+
+-------------------------2016-01-11 03:57:53 PM-------------------------
+3:2016-01-11 03:57:53 PM: Start to connect local database...
+2016-01-11 03:57:54 PM: Connect successfully!
+
+-------------------------2016-01-11 03:59:23 PM-------------------------
+3:2016-01-11 03:59:23 PM: Start to connect local database...
+2016-01-11 03:59:24 PM: Connect successfully!
+
+-------------------------2016-01-11 04:01:23 PM-------------------------
+3:2016-01-11 04:01:23 PM: Start to connect local database...
+2016-01-11 04:01:24 PM: Connect successfully!
+
+-------------------------2016-01-11 04:05:08 PM-------------------------
+3:2016-01-11 04:05:08 PM: Start to connect local database...
+2016-01-11 04:05:09 PM: Connect successfully!
+
+-------------------------2016-01-11 04:10:01 PM-------------------------
+3:2016-01-11 04:10:01 PM: Start to connect local database...
+2016-01-11 04:10:02 PM: Connect successfully!
+
+-------------------------2016-01-11 04:11:43 PM-------------------------
+3:2016-01-11 04:11:43 PM: Start to connect local database...
+2016-01-11 04:11:45 PM: Connect successfully!
+
+-------------------------2016-01-11 04:16:28 PM-------------------------
+3:2016-01-11 04:16:28 PM: Start to connect local database...
+2016-01-11 04:16:29 PM: Connect successfully!
+
+-------------------------2016-01-11 06:19:44 PM-------------------------
+3:2016-01-11 06:19:44 PM: Start to connect local database...
+2016-01-11 06:19:46 PM: Connect successfully!
+
+-------------------------2016-01-11 06:42:23 PM-------------------------
+3:2016-01-11 06:42:23 PM: Start to connect local database...
+2016-01-11 06:42:26 PM: Connect successfully!
+
+-------------------------2016-01-11 06:45:05 PM-------------------------
+3:2016-01-11 06:45:05 PM: Start to connect local database...
+2016-01-11 06:45:06 PM: Connect successfully!
+
+-------------------------2016-01-11 06:46:46 PM-------------------------
+3:2016-01-11 06:46:46 PM: Start to connect local database...
+2016-01-11 06:46:49 PM: Connect successfully!
+
+-------------------------2016-01-11 06:47:47 PM-------------------------
+3:2016-01-11 06:47:47 PM: Start to connect local database...
+2016-01-11 06:47:49 PM: Connect successfully!
+
+-------------------------2016-01-11 06:48:47 PM-------------------------
+3:2016-01-11 06:48:47 PM: Start to connect local database...
+2016-01-11 06:48:49 PM: Connect successfully!
+
+-------------------------2016-01-11 06:49:45 PM-------------------------
+3:2016-01-11 06:49:45 PM: Start to connect local database...
+2016-01-11 06:49:47 PM: Connect successfully!
+
+-------------------------2016-01-11 06:50:55 PM-------------------------
+3:2016-01-11 06:50:55 PM: Start to connect local database...
+2016-01-11 06:50:56 PM: Connect successfully!
