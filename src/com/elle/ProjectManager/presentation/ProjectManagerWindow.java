@@ -1631,24 +1631,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 str = str + " WHERE app != 'PM' and app != 'Analyster' "
                         + "and app != 'ELLEGUI' or app IS NULL";
             }
-            try {
-                // open connection because might time out
-                DBConnection.open();
-                statement = DBConnection.getStatement();
-                String sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
-//                System.out.println(sql);
-                loadTable(sql, table);
-
-            } catch (SQLException ex) {
-                // for debugging
-                ex.printStackTrace();
-                logWindow.addMessageWithDate(ex.getMessage());
-
-                // notify the user that there was an issue
-//                JOptionPane.showMessageDialog(this, "connection failed");
-                informationLabel.setText("connection failed!");
+            
+            // connection might time out
+            if(DBConnection.isClosed()){
+                while(DBConnection.open() == false){
+                    informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
+                    startCountDownFromNow(10);
+                }
+                informationLabel.setText("Connection has been reopened!");
                 startCountDownFromNow(10);
             }
+                
+            statement = DBConnection.getStatement();
+            String sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
+//                System.out.println(sql);
+            loadTable(sql, table);
         }
         currentTabName = getSelectedTabName();
 
@@ -2730,29 +2727,25 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             str = str + " WHEN taskID = " + table.getValueAt(selectedRows[row], 0) + " THEN " + (selectedRows.length + 1 - row);
         }
         str = str + " ELSE ";
-        try {
-            // open connection because might time out
-            DBConnection.open();
-            statement = DBConnection.getStatement();
-            String sql;
-            if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
-                sql = "SELECT * FROM " + str
-                        + "CASE WHEN dateClosed IS NULL THEN 1 ELSE 0 END END, dateClosed asc, taskID ASC";
-            } else {
-                sql = "SELECT * FROM " + str + "0 END, taskId ASC";
+      
+        // connection might time out
+        if(DBConnection.isClosed()){
+            while(DBConnection.open() == false){
+                informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
+                startCountDownFromNow(10);
             }
-            loadTable(sql, table);
-
-        } catch (SQLException ex) {
-            // for debugging
-            ex.printStackTrace();
-            logWindow.addMessageWithDate(ex.getMessage());
-
-            // notify the user that there was an issue
-//            JOptionPane.showMessageDialog(this, "connection failed");
-            informationLabel.setText("connection failed!");
+            informationLabel.setText("Connection has been reopened!");
             startCountDownFromNow(10);
         }
+        statement = DBConnection.getStatement();
+        String sql;
+        if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
+            sql = "SELECT * FROM " + str
+                    + "CASE WHEN dateClosed IS NULL THEN 1 ELSE 0 END END, dateClosed asc, taskID ASC";
+        } else {
+            sql = "SELECT * FROM " + str + "0 END, taskId ASC";
+        }
+        loadTable(sql, table);
 
         informationLabel.setText("Selected Rows Move to the End...");
         startCountDownFromNow(10);
@@ -3465,30 +3458,25 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     + "and app != 'ELLEGUI' or app IS NULL";
         }
 
-        try {
-            // open connection because might time out
-            DBConnection.open();
-            statement = DBConnection.getStatement();
-            String sql;
-            if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
-                sql = "SELECT * FROM " + str + " ORDER BY "
-                        + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
-            } else {
-                sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
+        // connection might time out
+        if(DBConnection.isClosed()){
+            while(DBConnection.open() == false){
+                informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
+                startCountDownFromNow(10);
             }
-            System.out.println(sql);
-            loadTable(sql, table);
-
-        } catch (SQLException ex) {
-            // for debugging
-            ex.printStackTrace();
-            logWindow.addMessageWithDate(ex.getMessage());
-
-            // notify the user that there was an issue
-//            JOptionPane.showMessageDialog(this, "connection failed");
-            informationLabel.setText("connection failed!");
+            informationLabel.setText("Connection has been reopened!");
             startCountDownFromNow(10);
         }
+        statement = DBConnection.getStatement();
+        String sql;
+        if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
+            sql = "SELECT * FROM " + str + " ORDER BY "
+                    + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
+        } else {
+            sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
+        }
+        System.out.println(sql);
+        loadTable(sql, table);
 
         for (int i = 0; i < selectedRowsID.length; i++) {
             for (int r = 0; r < table.getRowCount(); r++) {
