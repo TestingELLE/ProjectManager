@@ -320,7 +320,7 @@ public class PopupWindowInTableCell extends JFrame {
     
 
     private void showWindow() {
-        projectManager.setPopupWindowShowInPM(true);
+//        projectManager.setPopupWindowShowInPM(true);
         
         textAreatableCellPopup.setText((String) selectedTable.getValueAt(selectedRow, selectedColumn));
         
@@ -330,7 +330,7 @@ public class PopupWindowInTableCell extends JFrame {
         this.requestFocus();
         
         setEnableEdit();
-        projectManager.setDisableProjecetManagerFunction(!inEditMode);
+//        projectManager.setDisableProjecetManagerFunction(!inEditMode);
         
 //        popupWindowShow = true;
     }
@@ -351,7 +351,7 @@ public class PopupWindowInTableCell extends JFrame {
     public void windowClose() {
         System.out.println("closed!");
 //        popupWindowShow = false;
-        projectManager.setPopupWindowShowInPM(false);
+//        projectManager.setPopupWindowShowInPM(false);
         
         this.dispose();
     }
