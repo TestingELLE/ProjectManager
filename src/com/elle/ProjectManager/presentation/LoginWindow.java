@@ -8,6 +8,11 @@ package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.database.DBConnection;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.AlphaComposite;
+import java.awt.GraphicsEnvironment;
+import java.awt.Transparency;
+import java.awt.image.BufferedImage;
 import java.awt.Image;
 import java.awt.Toolkit;
 import javax.swing.*;
@@ -21,6 +26,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import static java.awt.GraphicsDevice.WindowTranslucency.*;
 
 public class LoginWindow extends JFrame {
 
@@ -51,16 +57,43 @@ public class LoginWindow extends JFrame {
 //        }
 //    }
     public LoginWindow() {
+        
 //        BufferedImage myImage = ImageIO.load(new File("/Users/fuxiaoqian/Desktop"
 //                    + "/ProjectManagerFromMaster/src/com/elle/ProjectManager/image.png"));
 //        this.setContentPane(new ImagePanel(myImage))
 
 //        try {
-        this.setContentPane(new JLabel(new ImageIcon(getClass().getResource("image.png"))));
+
+        // read in the splashscreen image file
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(this.getClass().getResource("image.png"));
+        } catch (IOException e) {
+            System.out.println("SplashScreen image does not exist!");
+        }
+        
+        int width = img.getWidth();
+        int height = img.getHeight();
+        // create another object that is a translucent version of the
+        //  splashscreen
+       BufferedImage imgTmp = new BufferedImage(width, height,BufferedImage.TYPE_INT_ARGB);
+        try {
+            Graphics2D g2d = (Graphics2D) imgTmp.getGraphics();
+            g2d.setComposite(AlphaComposite.SrcOver.derive(0.5f)); 
+            // set the transparency level in range 0.0f - 1.0f 
+            g2d.drawImage(img, 0, 0, null);
+            img = imgTmp;
+            //imgTranslucent = GraphicsEnvironment.getLocalGraphicsEnvironment().
+              //  getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(width, height, Transparency.OPAQUE);
+        } catch (RuntimeException e) {
+        }
+        
+        this.setContentPane(new JLabel(new ImageIcon(img)));
+        //this.setContentPane(new JLabel(new ImageIcon(getClass().getResource("image.png"))));
 //        } catch (IOException e) {
 //            System.out.println("image does not exist!");
 //        }
-
+       
         // initialize
         initComponents();
 
