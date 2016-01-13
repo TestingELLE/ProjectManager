@@ -1,5 +1,6 @@
 package com.elle.ProjectManager.database;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -33,6 +34,7 @@ public class SQL_Commands {
      */
     public SQL_Commands(Connection connection){
         this.connection = connection;
+        createStatement(connection);    // initialize statement
     }
     /**
      * This constructor creates a connection with the parameters
@@ -47,6 +49,7 @@ public class SQL_Commands {
         this.host = host;
         this.database = database;
         createConnection(host, database, username, password);
+        createStatement(connection);
     }
     
     /**
@@ -240,6 +243,58 @@ public class SQL_Commands {
     public Connection getConnection() {
         return connection;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    public Statement getStatement() {
+        return statement;
+    }
+
+    public void setStatement(Statement statement) {
+        this.statement = statement;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
     
     /**
      * This closes the connection and statement objects
@@ -271,7 +326,7 @@ public class SQL_Commands {
      * @param tableName
      * @return 
      */
-    public ArrayList<HashMap<String,String>> getTableData(String tableName){
+    public HashMap<String,ArrayList<Object>> getTableData(String tableName){
         
         // get the result set from the database
         String query = "SELECT * FROM " + tableName + ";";
@@ -285,7 +340,7 @@ public class SQL_Commands {
      * @param columnNames
      * @return 
      */
-    public ArrayList<HashMap<String,String>> getTableData(String tableName, String[] columnNames){
+    public HashMap<String,ArrayList<Object>> getTableData(String tableName, String[] columnNames){
 
         // create the sql query
         String query = "SELECT ";
@@ -306,28 +361,31 @@ public class SQL_Commands {
      * @param numColumns
      * @return 
      */
-    public ArrayList<HashMap<String,String>> getTableData(ResultSet resultSet){
+    public HashMap<String,ArrayList<Object>> getTableData(ResultSet resultSet){
 
         // declare and initialize array list
-        ArrayList<HashMap<String,String>> a = new ArrayList<>();
+        HashMap<String,ArrayList<Object>> map = new HashMap<>();
 
         // fill the array list with the data from the result set and return
         try {
             // get the result set meta data
             ResultSetMetaData meta = resultSet.getMetaData();
             
+            // add the column names to the map
+            for(int i = 1; i < meta.getColumnCount() +1; i++){
+                map.put(meta.getColumnName(i), new ArrayList<>());
+            }
+            
             String columnName;       // to store column name
-            String cellData;         // to store the cell data
-            HashMap<String,String> map = new HashMap<>();
+            Object cellValue;        // to store the cell value
+            Object[][] cellData;       // data of the column 
             
             while(resultSet.next()){
-                for(int i = 0; i < meta.getColumnCount(); i++){
+                for(int i = 1; i < meta.getColumnCount() + 1; i++){
                     columnName = meta.getColumnName(i);
-                    cellData = resultSet.getString(i);
-                    map.put(columnName, cellData);      // add field data
+                    cellValue = resultSet.getObject(columnName);
+                    map.get(columnName).add(cellValue);
                 }
-                a.add(map);         // add record to the array list
-                map.clear();        // clear HashMap data
             }
         } catch (SQLException ex) {
             Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
@@ -335,7 +393,7 @@ public class SQL_Commands {
             handleSQLexWithMessageBox(ex);
         }
         
-        return a;
+        return map;
     }
     
     public ResultSet executeQuery(String query) {
@@ -348,5 +406,13 @@ public class SQL_Commands {
             return null;
         }
     }
+    
+    public HashMap<String,ArrayList<Object>> getDistinctColumnValues(String tableName, String colName){
 
+        String query = "SELECT DISTINCT " + colName 
+                     + " FROM " + tableName 
+                     + " WHERE " + colName + " IS NOT NULL "
+                     + " AND " + colName + " != \"\";";
+        return getTableData(executeQuery(query));
+    }
 }
