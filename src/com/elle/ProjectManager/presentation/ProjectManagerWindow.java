@@ -2235,7 +2235,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemViewSplashScreenActionPerformed
 
     private void menuItemCompIssuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCompIssuesActionPerformed
-        CompIssuesWireFrame frame = new CompIssuesWireFrame();
+        CompIssuesListWindow frame = new CompIssuesListWindow();
         frame.setTitle("Compile Issue List");
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(this);
