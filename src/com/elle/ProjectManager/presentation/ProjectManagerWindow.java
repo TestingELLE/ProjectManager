@@ -1,18 +1,9 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.database.DBConnection;
-import com.elle.ProjectManager.logic.ColumnPopupMenu;
-import com.elle.ProjectManager.logic.CreateDocumentFilter;
-import com.elle.ProjectManager.logic.EditableTableModel;
-import com.elle.ProjectManager.logic.ITableConstants;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
-import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
-//import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
-import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
-import com.elle.ProjectManager.logic.Tab;
-import com.elle.ProjectManager.logic.TableFilter;
-import com.elle.ProjectManager.logic.JTableCellRenderer;
+import com.elle.ProjectManager.logic.*;
 //import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 
 import javax.swing.*;
@@ -84,6 +75,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private EditDatabaseWindow editDatabaseWindow;
 //    private ReportWindow reportWindow;
     private AddIssueFileWindow addIssueFileWindow;
+    private ShortCutSetting changeShortCut;
 
     // colors - Edit mode labels
     private Color editModeDefaultTextColor;
@@ -228,8 +220,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
 
-        //set
-        setKeyBindingForCopyAndPaste();
+        //changing the text field copy and paste short cut to default control key
+        //(depend on system) + c/v
+        InputMap ip = (InputMap) UIManager.get("TextField.focusInputMap");
+        changeShortCut = new ShortCutSetting(ip);
+        changeShortCut.copyAndPasteShortCut();
 
         // show and hide components
         btnUploadChanges.setVisible(false);
@@ -1404,6 +1399,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public void filterBySearch() {
         String text = "";
 
+        int count = 0;
         for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
@@ -1411,14 +1407,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //        Tab tab = tabs.get(tabName);
 //        JTable table = tab.getTable();
             String searchColName = comboBoxSearch.getSelectedItem().toString();
-            int count = 0;
+            String searchBoxValue = comboBoxForSearch.getSelectedItem().toString();  // store string from text box
 
             // this matches the combobox newValue with the column name newValue to get the column index
             for (int col = 0; col < table.getColumnCount(); col++) {
                 String tableColName = table.getColumnName(col);
                 if (tableColName.equalsIgnoreCase(searchColName)) {
-
-                    String searchBoxValue = comboBoxForSearch.getSelectedItem().toString();  // store string from text box
 
                     // add item to filter
                     TableFilter filter = tab.getFilter();
@@ -1434,25 +1428,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         filter.applyFilter();
 
                     } else {
-                        if (text.equals("")) {
-
-                            text = text + "There is no " + searchBoxValue
-                                    + " under " + searchColName + " in table " + table.getName();
-                        } else {
-                            text = text + " and " + table.getName();
-                        }
                         count++;
-                    }
-                    System.out.println(count);
-                    if (count == 4) {
-                        text = "There is no " + searchBoxValue
-                                + " under " + searchColName + " in all tables";
                     }
 
                     // set label record information
                     String recordsLabel = tab.getRecordsLabel();
                     labelRecords.setText(recordsLabel);
                 }
+            }
+            if (count == 4) {
+                text = "There is no " + searchBoxValue
+                        + " under " + searchColName + " in all tables";
             }
         }
         System.out.println("text is: " + text);
@@ -1496,7 +1482,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     private void btnUploadChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadChangesActionPerformed
 
-        uploadChanges();
+        uploadChanges(getSelectedTabName());
     }//GEN-LAST:event_btnUploadChangesActionPerformed
 
     /**
@@ -1505,9 +1491,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * btnUploadChangesActionPerformed(java.awt.event.ActionEvent evt) and also
      * a keylistener when editing mode is on and enter is pressed
      */
-    public void uploadChanges() {
-
-        String tabName = getSelectedTabName();
+    public void uploadChanges(String tabName) {
+//        String tabName;
+        if (addIssueWindowShow) {
+            tabName = addIssueWindow.getIssueActiveTabName();
+        } else {
+            tabName = getSelectedTabName();
+        }
         Tab tab = tabs.get(tabName);
         JTable table = tab.getTable();
         JTableCellRenderer cellRenderer = tab.getCellRenderer();
@@ -1533,7 +1523,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // reload modified tableSelected data with current tableSelected model
             data.reloadData();
 
-            makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false);
+            makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false, tabName);
 
             data.getNewData().clear();    // reset the arraylist to record future changes
             setLastUpdateTime();          // update time
@@ -1600,10 +1590,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      *
      * @param makeTableEditable // takes boolean true or false to make editable
      */
-    public void makeTableEditable(boolean makeTableEditable) {
+    public void makeTableEditable(boolean makeTableEditable, String selectedTable) {
 
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
+        Tab tab = tabs.get(selectedTable);
         boolean isAddRecordsBtnVisible = tab.isAddRecordsBtnVisible();
         boolean isBatchEditBtnVisible = tab.isBatchEditBtnVisible();
 
@@ -1711,7 +1700,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         boolean editing = tab.isEditing();
 
         if (table.getModel() instanceof EditableTableModel) {
-            makeTableEditable(editing);
+            makeTableEditable(editing, tabName);
         }
 
         // set the color of the edit mode text
@@ -1787,7 +1776,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.moveSelectedRowsToTheEnd(rows, table);
 
         // set the tab to editing
-        makeTableEditable(true);
+        makeTableEditable(true, tabName);
 
         // set the color of the edit mode text
         editModeTextColor(tab.isEditing());
@@ -2134,7 +2123,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         if (numOfAddIssueWindowOpened <= 6) {
 
-            Tab tab = tabs.get(getSelectedTabName());
+            String tabName = getSelectedTabName();
+            Tab tab = tabs.get(tabName);
             JTable table = tab.getTable();
 
             Object[] cellsValue = new Object[table.getColumnCount()];
@@ -2169,7 +2159,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 addIssueWindow.setVisible(true);
                 numOfAddIssueWindowOpened++;
             }
-            makeTableEditable(false);
+            makeTableEditable(false, tabName);
         } else {
             JOptionPane.showMessageDialog(null, "The number of add issue window opened reached its maximum!");
         }
@@ -2183,7 +2173,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_comboBoxSearchActionPerformed
 
     private void menuItemTurnEditModeOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTurnEditModeOffActionPerformed
-        makeTableEditable(false);
+        String tabName = getSelectedTabName();
+        makeTableEditable(false, tabName);
     }//GEN-LAST:event_menuItemTurnEditModeOffActionPerformed
 
     /**
@@ -2239,14 +2230,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public void moveSelectedRowsToTheEnd(int[] rows, JTable table) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         int rowNum = table.getRowCount();
-        System.out.println("in table it has: " + rowNum);
+//        System.out.println("in table it has: " + rowNum);
         int count = 0;
         for (int row : rows) {
             if (count != 0) {
                 row = row - 1;
             }
 
-            System.out.println("before row: " + row);
+//            System.out.println("before row: " + row);
             model.moveRow(row, row, rowNum - 1);
             count++;
         }
@@ -2287,19 +2278,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         loadTables(tabs);
     }
 
-    public void viewNextIssue(int row, String columnName) {
-//        JTable table = this.getTabs().get(getSelectedTabName()).getTable();
+    public void viewNextIssue(int row, String columnName, JTable selectedTable) {
 
-        Tab tab = tabs.get(getSelectedTabName());
-        JTable table = tab.getTable();
-
-        Object[] cellsValue = new Object[table.getColumnCount()];
-        for (int col = 1; col < table.getColumnCount(); col++) {
-            cellsValue[col - 1] = table.getValueAt(row, col);
+        Object[] cellsValue = new Object[selectedTable.getColumnCount()];
+        for (int col = 1; col < selectedTable.getColumnCount(); col++) {
+            cellsValue[col - 1] = selectedTable.getValueAt(row, col);
         }
         boolean alreadyOpened = false;
 
-        Integer openningIssue = (Integer) table.getValueAt(row, 0);
+        Integer openningIssue = (Integer) selectedTable.getValueAt(row, 0);
 
         String value = "openning issues are: ";
         for (int issue : idNumOfOpenningIssues) {
@@ -2317,7 +2304,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             addIssueWindow.setId(openningIssue);
             addIssueWindow.setFormValue(cellsValue);
         }
-        makeTableEditable(false);
+        makeTableEditable(false, selectedTable.getName());
 
     }
 
@@ -2325,8 +2312,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.idNumOfOpenningIssues;
     }
 
-    public void deleteFromIdNumOfOpenningIssues(int rowNum) {
-        int id = (Integer) this.getSelectedTable().getValueAt(rowNum, 0);
+    public void deleteFromIdNumOfOpenningIssues(int rowNum, JTable table) {
+        int id = (Integer) table.getValueAt(rowNum, 0);
 
         for (Integer IssueId : this.idNumOfOpenningIssues) {
             if (IssueId == id) {
@@ -2402,7 +2389,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             if (e.getComponent() instanceof JTable) {
                                 if (numOfAddIssueWindowOpened < 6) {
 
-                                    Tab tab = tabs.get(getSelectedTabName());
+                                    String tabName = getSelectedTabName();
+                                    Tab tab = tabs.get(tabName);
                                     JTable table = tab.getTable();
 
                                     Object[] cellsValue = new Object[table.getColumnCount()];
@@ -2436,7 +2424,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                         addIssueWindow.setVisible(true);
                                         numOfAddIssueWindowOpened++;
                                     }
-                                    makeTableEditable(false);
+                                    makeTableEditable(false, tabName);
 
                                 } else if (numOfAddIssueWindowOpened > 6) {
                                     JOptionPane.showMessageDialog(frame, "It has already "
@@ -2473,7 +2461,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         if (thisTabIsEditing || noTabIsEditing) {
 
                             // set the states for this tab
-                            makeTableEditable(true);
+                            makeTableEditable(true, table.getName());
                             setEnabledEditingButtons(true, true, true);
                             setBatchEditButtonStates(tab);
 
@@ -2565,12 +2553,23 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             public void tableChanged(TableModelEvent e) {
 
                 int row = e.getFirstRow();
-                System.out.println("changed row: " + row);
                 int col = e.getColumn();
-                System.out.println("changed column: " + col);
-                String tab = getSelectedTabName();
-                JTable table = tabs.get(tab).getTable();
+                String tab;
+//                JTable table;
+
+//                if (addIssueWindowShow) {
+//                    table = addIssueWindow.getIssueActiveTable();
+//                    tab = table.getName();
+//                } else {
+//                    tab = getSelectedTabName();
+//                    table = tabs.get(tab).getTable();
+//                }
+                tab = table.getName();
+//                if (!addIssueWindowShow) {
+                System.out.println(addIssueWindowShow + "changed in : " + tab);
+
                 ModifiedTableData data = tabs.get(tab).getTableData();
+
                 if (col != -1) {
                     Object oldValue = data.getOldData()[row][col];
                     Object newValue = table.getModel().getValueAt(row, col);
@@ -2609,6 +2608,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         btnBatchEdit.setVisible(false);
                     }
                 }
+//                }
             }
         });
 
@@ -2620,7 +2620,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                     // I believe this is meant to toggle edit mode
                     // so I passed the conditional
-                    makeTableEditable(labelEditModeState.getText().equals("ON ") ? false : true);
+                    makeTableEditable(labelEditModeState.getText().equals("ON ") ? false : true, getSelectedTabName());
                 }
             }
         });
@@ -3051,7 +3051,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 switch (selectedOption) {
                                     case 0:
                                         // if Commit, upload changes and return to editing
-                                        uploadChanges();  // upload changes to database
+                                        uploadChanges(getSelectedTabName());  // upload changes to database
                                         break;
                                     case 1:
                                         // if Revert, revert changes
@@ -3121,7 +3121,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     if (e.getComponent() instanceof JTable) {
                         if (numOfAddIssueWindowOpened <= 6) {
 
-                            Tab tab = tabs.get(getSelectedTabName());
+                            String tabName = getSelectedTabName();
+                            Tab tab = tabs.get(tabName);
                             JTable table = tab.getTable();
 
                             Object[] cellsValue = new Object[table.getColumnCount()];
@@ -3154,7 +3155,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 addIssueWindow.setVisible(true);
                                 numOfAddIssueWindowOpened++;
                             }
-                            makeTableEditable(false);
+                            makeTableEditable(false, tabName);
                         } else {
                             JOptionPane.showMessageDialog(null, "The number of add issue window opened reached its maximum!");
                         }
@@ -3322,7 +3323,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     protected JLabel getLabel(String title) {
         ImageIcon imcon = new ImageIcon(getClass().getResource("orange-dot.png"));
-        
+
         ImageIcon icon = new ImageIcon(getClass().getResource("splashImage.png"));
         JLabel label = new JLabel(imcon);
         label.setText(title);
@@ -3343,9 +3344,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public Map<String, Tab> loadTables(Map<String, Tab> tabs) {
 
         for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-            System.out.println("now loading: " + entry.getKey());
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
+            System.out.println("now loading: " + entry.getKey());
             loadTable(table);
             informationLabel.setText("Table loaded succesfully");
             startCountDownFromNow(10);
@@ -3370,10 +3371,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String str = table.getName();
 
         int[] rows = table.getSelectedRows();
-        for (int row : rows) {
-            System.out.println("before load selected row is: " + row);
-        }
-
         Object[] selectedRowsID = new Object[rows.length];
 
         //get selected rows' id store it into an object array
@@ -3715,7 +3712,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         modifiedTableData.reloadData();  // reloads data of new table (old data) to compare with new changes (new data)
 
-        makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false);
+        makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false, tabName);
         // no changes to upload or revert
         setEnabledEditingButtons(true, false, false);
 
@@ -3855,6 +3852,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public void deleteNumOfAddIssueWindowOpened() {
         this.numOfAddIssueWindowOpened--;
+        if (numOfAddIssueWindowOpened == 0) {
+            addIssueWindowShow = false;
+        }
     }
 
 //    public void setPopupWindowShowInPM(boolean b) {
@@ -3866,16 +3866,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public JLabel getLabelEditModeState() {
         return this.labelEditModeState;
-    }
-
-    private void setKeyBindingForCopyAndPaste() {
-        InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit()
-                .getMenuShortcutKeyMask()), DefaultEditorKit.copyAction);
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit()
-                .getMenuShortcutKeyMask()), DefaultEditorKit.pasteAction);
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit()
-                .getMenuShortcutKeyMask()), DefaultEditorKit.cutAction);
     }
 
     /**
