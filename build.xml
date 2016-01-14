@@ -7,7 +7,7 @@
     <import file="nbproject/build-impl.xml"/>
     
     <!-- set the version of ProjectManager here -->
-    <property name="version" value="ProjectManager-1.0.2"/>
+    <property name="version" value="ProjectManager-1.0.3"/>
     
     <!-- this is used to allow the jar file to use customised
      manifest files -->
@@ -56,6 +56,7 @@
       <jar jarfile="target/${version}.jar">
         <zipfileset src="${dist.jar}" excludes="META-INF/*" />
         <zipfileset src="lib/mysql-connector-java-5.1.23-bin.jar" excludes="META-INF/*" />
+        <zipfileset src="lib/swingx-all-1.6.4.jar" excludes="META-INF/*" />
         <manifest>
             <attribute name="Main-Class" value="com.elle.ProjectManager.ProjectManager"/>
             <attribute name="SplashScreen-Image" value="com/elle/ProjectManager/image.png"/>
