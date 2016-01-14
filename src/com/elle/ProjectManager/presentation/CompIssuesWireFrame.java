@@ -4,13 +4,17 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.SQL_Commands;
 import com.elle.ProjectManager.logic.ReadWriteFiles;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -56,6 +60,8 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         
         // initialize all combo boxes
         initComboBoxes();
+
+        textAreaFileInformation.setLineWrap(true);
         
     }
 
@@ -83,7 +89,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         labelDisplayPath = new javax.swing.JLabel();
         datePickerFrom = new org.jdesktop.swingx.JXDatePicker();
         datePickerTo = new org.jdesktop.swingx.JXDatePicker();
-        btnShowInTextArea = new javax.swing.JButton();
+        btnReadFromTextFile = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -132,10 +138,10 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
 
         labelChooseFileLocation.setText("Choose file location:");
 
-        btnShowInTextArea.setText("Show in Text Area");
-        btnShowInTextArea.addActionListener(new java.awt.event.ActionListener() {
+        btnReadFromTextFile.setText("Read from Text File");
+        btnReadFromTextFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnShowInTextAreaActionPerformed(evt);
+                btnReadFromTextFileActionPerformed(evt);
             }
         });
 
@@ -177,7 +183,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnShowInTextArea, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnReadFromTextFile, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(49, 49, 49)
                         .addComponent(btnWriteToTextFile, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(labelDisplayPath, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -215,7 +221,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnWriteToTextFile)
-                    .addComponent(btnShowInTextArea))
+                    .addComponent(btnReadFromTextFile))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -299,11 +305,24 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_cboxOpenCloseDBActionPerformed
 
-    private void btnShowInTextAreaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowInTextAreaActionPerformed
+    private void btnReadFromTextFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReadFromTextFileActionPerformed
         
+        try{
+            String file = fc.getSelectedFile().getAbsolutePath(); // check first for null pointer
+            BufferedReader reader = rwFiles.getReader(file);
+            textAreaFileInformation.setText("");
+            String line = reader.readLine();
+            while(line != null){
+                textAreaFileInformation.append(line + "\n");
+                line = reader.readLine();
+            }
+        }catch(NullPointerException e){
+            messageBox("Please select a file.");
+        } catch (IOException ex) {
+            messageBox(ex.getMessage());
+        }
         
-        
-    }//GEN-LAST:event_btnShowInTextAreaActionPerformed
+    }//GEN-LAST:event_btnReadFromTextFileActionPerformed
 
     /**
      * @param args the command line arguments
@@ -342,7 +361,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowse;
-    private javax.swing.JButton btnShowInTextArea;
+    private javax.swing.JButton btnReadFromTextFile;
     private javax.swing.JButton btnWriteToTextFile;
     private javax.swing.JComboBox<String> cboxApp;
     private javax.swing.JComboBox<String> cboxOpenCloseDB;
