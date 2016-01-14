@@ -36,6 +36,8 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
     private final String DATES_CLOSED = "Closed Dates";   // dates combo box selection
     private final String DATES_STILL_OPENED = "Still Open";   // dates combo box selection
     
+    private final String DATE_FORMAT = "yyyy-MM-dd";  // format of date
+    
     private SQL_Commands sql;
     private ReadWriteFiles rwFiles;
     private JFileChooser fc;
@@ -397,7 +399,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         if(!useDates.equals(DATES_NONE)){
             if(!useDates.equals(DATES_STILL_OPENED)){
                 //!Validator.isValidDate("yyyy-MM-dd", cellValue.toString())
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
                 String from = sdf.format(dateFrom);
                 String to = sdf.format(dateTo);
                 if(useDates.equals(DATES_OPENED))
