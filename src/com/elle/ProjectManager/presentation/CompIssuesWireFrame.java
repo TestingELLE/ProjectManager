@@ -232,7 +232,14 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnWriteToTextFileActionPerformed
 
     private void cboxOpenCloseDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboxOpenCloseDBActionPerformed
-        
+        if(cboxOpenCloseDB.getSelectedItem() != null
+                && cboxOpenCloseDB.getSelectedItem().toString().equals(DATES_NONE)){
+            datePickerFrom.setEnabled(false);
+            datePickerTo.setEnabled(false);
+        }else{
+            datePickerFrom.setEnabled(true);
+            datePickerTo.setEnabled(true);
+        }
     }//GEN-LAST:event_cboxOpenCloseDBActionPerformed
 
     /**
