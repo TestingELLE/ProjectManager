@@ -16,7 +16,21 @@ import javax.swing.JFileChooser;
  */
 public class CompIssuesWireFrame extends javax.swing.JFrame {
 
-    private final String ALL = "All";  // used for the all option
+    private final String DB_TABLE_NAME = "issues"; // database table name
+    private final String COL_ID = "ID";
+    private final String COL_APP = "app";
+    private final String COL_TITLE = "title";
+    private final String COL_DESCRIPTION = "description";
+    private final String COL_PROGRAMMER = "programmer";
+    private final String COL_DATE_OPENED = "dateOpened";
+    private final String COL_RK = "rk";
+    private final String COL_VERSION = "version";
+    private final String COL_DATE_CLOSED = "dateClosed";
+    
+    private final String ALL = "All";         // used for the all option
+    private final String DATES_NONE = "None";   // dates combo box selection
+    private final String DATES_OPENED = "Opened Dates";   // dates combo box selection
+    private final String DATES_CLOSED = "Closed Dates";   // dates combo box selection
     
     private SQL_Commands sql;
     private ReadWriteFiles rwFiles;
@@ -34,6 +48,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         
         // initialize all combo boxes
         initComboBoxes();
+        
     }
 
     /**
@@ -77,6 +92,11 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         labelToDB.setText("To:");
 
         cboxOpenCloseDB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboxOpenCloseDB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboxOpenCloseDBActionPerformed(evt);
+            }
+        });
 
         cboxProgrammer.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboxProgrammer.addActionListener(new java.awt.event.ActionListener() {
@@ -88,6 +108,11 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         cboxApp.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnWriteToTextFile.setText("Write to Text File");
+        btnWriteToTextFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnWriteToTextFileActionPerformed(evt);
+            }
+        });
 
         btnBrowse.setText("Browse");
         btnBrowse.addActionListener(new java.awt.event.ActionListener() {
@@ -190,6 +215,26 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_cboxProgrammerActionPerformed
 
+    private void btnWriteToTextFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWriteToTextFileActionPerformed
+        // get all the information
+        String useDates = cboxOpenCloseDB.getSelectedItem().toString();
+        String dateFrom = datePickerFrom.getDate().toString();
+        String dateTo = datePickerTo.getDate().toString();
+        String programmer = cboxProgrammer.getSelectedItem().toString();
+        String file = fc.getSelectedFile().getAbsolutePath();
+        
+        // test
+        System.out.println("useDates = " + useDates);
+        System.out.println("dateFrom = " + dateFrom);
+        System.out.println("dateTo = " + dateTo);
+        System.out.println("programmer = " + programmer);
+        System.out.println("file = " + file);
+    }//GEN-LAST:event_btnWriteToTextFileActionPerformed
+
+    private void cboxOpenCloseDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboxOpenCloseDBActionPerformed
+        
+    }//GEN-LAST:event_cboxOpenCloseDBActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -255,26 +300,26 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         
         // Opened or Closed Dates
         cboxOpenCloseDB.removeAllItems();
-        cboxOpenCloseDB.addItem("None");
-        cboxOpenCloseDB.addItem("Opened Dates");
-        cboxOpenCloseDB.addItem("Closed Dates");
+        cboxOpenCloseDB.addItem(DATES_NONE);
+        cboxOpenCloseDB.addItem(DATES_CLOSED);
+        cboxOpenCloseDB.addItem(DATES_OPENED);
         datePickerFrom.setEnabled(false);
         datePickerTo.setEnabled(false);
         
         // App combobox
-        map = sql.getDistinctColumnValues("issues", "app");
+        map = sql.getDistinctColumnValues(DB_TABLE_NAME, COL_APP);
         cboxApp.removeAllItems();
         cboxApp.addItem(ALL);
-        for(int i = 0; i < map.get("app").size(); i++){
-            cboxApp.addItem(map.get("app").get(i).toString());
+        for(int i = 0; i < map.get(COL_APP).size(); i++){
+            cboxApp.addItem(map.get(COL_APP).get(i).toString());
         }
         
         // Programmer combobox
-        map = sql.getDistinctColumnValues("issues", "programmer");
+        map = sql.getDistinctColumnValues(DB_TABLE_NAME, COL_PROGRAMMER);
         cboxProgrammer.removeAllItems();
         cboxProgrammer.addItem(ALL);
-        for(int i = 0; i < map.get("programmer").size(); i++){
-            cboxProgrammer.addItem(map.get("programmer").get(i).toString());
+        for(int i = 0; i < map.get(COL_PROGRAMMER).size(); i++){
+            cboxProgrammer.addItem(map.get(COL_PROGRAMMER).get(i).toString());
         }
     }
 }
