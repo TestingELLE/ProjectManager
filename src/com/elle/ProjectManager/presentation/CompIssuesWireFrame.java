@@ -6,13 +6,16 @@ import com.elle.ProjectManager.database.SQL_Commands;
 import com.elle.ProjectManager.logic.ReadWriteFiles;
 import java.io.File;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import javax.swing.JFileChooser;
 
 /**
  *
  * @author Carlos Igreja
+ * @since  2016 January 2
  */
 public class CompIssuesWireFrame extends javax.swing.JFrame {
 
@@ -31,6 +34,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
     private final String DATES_NONE = "None";   // dates combo box selection
     private final String DATES_OPENED = "Opened Dates";   // dates combo box selection
     private final String DATES_CLOSED = "Closed Dates";   // dates combo box selection
+    private final String DATES_STILL_OPENED = "Still Open";   // dates combo box selection
     
     private SQL_Commands sql;
     private ReadWriteFiles rwFiles;
@@ -216,24 +220,68 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_cboxProgrammerActionPerformed
 
     private void btnWriteToTextFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWriteToTextFileActionPerformed
-        // get all the information
-        String useDates = cboxOpenCloseDB.getSelectedItem().toString();
-        String dateFrom = datePickerFrom.getDate().toString();
-        String dateTo = datePickerTo.getDate().toString();
-        String programmer = cboxProgrammer.getSelectedItem().toString();
-        String file = fc.getSelectedFile().getAbsolutePath();
         
-        // test
-        System.out.println("useDates = " + useDates);
-        System.out.println("dateFrom = " + dateFrom);
-        System.out.println("dateTo = " + dateTo);
-        System.out.println("programmer = " + programmer);
-        System.out.println("file = " + file);
+        // file must be selected or null pointer is thrown
+        try{
+            // get all the information
+            String file = fc.getSelectedFile().getAbsolutePath(); // check first for null pointer
+            String useDates = cboxOpenCloseDB.getSelectedItem().toString();
+            Date dateFrom = datePickerFrom.getDate();
+            Date dateTo = datePickerTo.getDate();
+            String app = cboxApp.getSelectedItem().toString();
+            String programmer = cboxProgrammer.getSelectedItem().toString();
+
+            /**
+             * example
+             *  SELECT app, title, description, programmer, dateOpened, dateClosed, rk
+             *  FROM issues
+             *  WHERE app = 'Analyster'
+             *  AND programmer = 'Carlos'
+             *  AND dateOpened BETWEEN '2014-01-01' AND '2016-02-02'
+             *  ORDER BY rk ASC;
+             */
+            
+            String query = "SELECT * FROM " + DB_TABLE_NAME + " ";
+            ArrayList<String> queries = new ArrayList<>();
+            queries.add(getAppQuery(app));
+            queries.add(getProgrammerQuery(programmer));
+            queries.add(getDatesQuery(useDates,dateFrom,dateTo));
+            queries.add("ORDER BY " + COL_RK + " ASC");
+            boolean needsWhereClause = true;
+            for(int i = 0; i < queries.size(); i++){
+                if(!queries.get(i).equals("")){
+                    if(i == queries.size() - 1 && needsWhereClause){
+                        query += queries.get(i) + " ";
+                    }else if(needsWhereClause){
+                        query += "WHERE " + queries.get(i) + " ";
+                        needsWhereClause = false;
+                    }else{
+                        query += "AND " + queries.get(i) + " ";
+                    }
+                }
+            }
+            DBConnection.close();
+            DBConnection.open();
+            sql = new SQL_Commands(DBConnection.getConnection());
+            HashMap<String,ArrayList<Object>> map;
+            map = sql.getTableData(sql.executeQuery(query));
+            if(writeToFile(file,map)){
+                //TODO
+                // was successfull output message to user
+            }
+            
+        }
+        catch(NullPointerException e){
+            //TODO
+            // output message to user
+            // Please select a file
+        }
     }//GEN-LAST:event_btnWriteToTextFileActionPerformed
 
     private void cboxOpenCloseDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboxOpenCloseDBActionPerformed
         if(cboxOpenCloseDB.getSelectedItem() != null
-                && cboxOpenCloseDB.getSelectedItem().toString().equals(DATES_NONE)){
+                && (cboxOpenCloseDB.getSelectedItem().toString().equals(DATES_NONE)
+                || cboxOpenCloseDB.getSelectedItem().toString().equals(DATES_STILL_OPENED))){
             datePickerFrom.setEnabled(false);
             datePickerTo.setEnabled(false);
         }else{
@@ -308,6 +356,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         // Opened or Closed Dates
         cboxOpenCloseDB.removeAllItems();
         cboxOpenCloseDB.addItem(DATES_NONE);
+        cboxOpenCloseDB.addItem(DATES_STILL_OPENED);
         cboxOpenCloseDB.addItem(DATES_CLOSED);
         cboxOpenCloseDB.addItem(DATES_OPENED);
         datePickerFrom.setEnabled(false);
@@ -328,5 +377,44 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         for(int i = 0; i < map.get(COL_PROGRAMMER).size(); i++){
             cboxProgrammer.addItem(map.get(COL_PROGRAMMER).get(i).toString());
         }
+    }
+
+    private String getAppQuery(String app) {
+        if(!app.equals(ALL)){
+            return COL_APP + " = '" + app + "' ";
+        }
+        return "";
+    }
+
+    private String getProgrammerQuery(String programmer) {
+        if(!programmer.equals(ALL)){
+            return COL_PROGRAMMER + " = '" + programmer + "' ";
+        }
+        return "";
+    }
+
+    private String getDatesQuery(String useDates, Date dateFrom, Date dateTo) {
+        if(!useDates.equals(DATES_NONE)){
+            if(!useDates.equals(DATES_STILL_OPENED)){
+                //!Validator.isValidDate("yyyy-MM-dd", cellValue.toString())
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String from = sdf.format(dateFrom);
+                String to = sdf.format(dateTo);
+                if(useDates.equals(DATES_OPENED))
+                    return COL_DATE_OPENED + " BETWEEN '" + from + "' AND '" + to + "' ";
+                else 
+                    return COL_DATE_CLOSED + " BETWEEN '" + from + "' AND '" + to + "' ";
+            }
+            return COL_DATE_CLOSED + " IS NULL ";
+        }
+        return "";
+    }
+
+    private boolean writeToFile(String file, HashMap<String, ArrayList<Object>> map) {
+        PrintWriter writer = rwFiles.getWriter(file);
+        writer.append("Testing the writer and application so far !!!!");
+        writer.flush();
+        System.out.println("Made it !!!!!");
+        return true;
     }
 }
