@@ -95,7 +95,6 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
 
         textAreaFileInformation.setColumns(20);
         textAreaFileInformation.setRows(5);
-        textAreaFileInformation.setText("\nID  Title   Description     \n------------------------\nnotes here\n\nSays you want dates?\nshould dates be included somewhere.\nasdf");
         jScrollPane1.setViewportView(textAreaFileInformation);
 
         labelProgrammer.setText("Programmer:");

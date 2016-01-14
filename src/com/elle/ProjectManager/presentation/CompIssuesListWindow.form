@@ -135,7 +135,6 @@
           <Properties>
             <Property name="columns" type="int" value="20"/>
             <Property name="rows" type="int" value="5"/>
-            <Property name="text" type="java.lang.String" value="&#xa;ID  Title   Description     &#xa;------------------------&#xa;notes here&#xa;&#xa;Says you want dates?&#xa;should dates be included somewhere.&#xa;asdf"/>
           </Properties>
         </Component>
       </SubComponents>
