@@ -396,20 +396,16 @@ public class LoginWindow extends JFrame {
         userPassword = String.valueOf(pw);
         logWindow = new LogWindow(this.getUserName());
         // connect to database
-        try {
-            logWindow.addMessageWithDate("3:Start to connect local database...");
-            DBConnection.connect(selectedServer, selectedDB, userName, userPassword);
+        logWindow.addMessageWithDate("3:Start to connect local database...");
+        if(DBConnection.connect(selectedServer, selectedDB, userName, userPassword)){
             logWindow.addMessageWithDate("Connect successfully!");
+        } else {
 
-        } catch (SQLException ex) {
-
-            JOptionPane.showMessageDialog(null,
-                    "Invalid password. Try again.",
+            JOptionPane.showMessageDialog(this,
+                    "There was an error.\n Please try again or contact support if you need further assistance.",
                     "Error Message",
                     JOptionPane.ERROR_MESSAGE);
-            String levelMessage = "1:" + ex.getMessage();
-
-            logWindow.addMessageWithDate(levelMessage);
+       
             passwordFieldPW.setText("");
         }
         userName = userName.substring(7);
