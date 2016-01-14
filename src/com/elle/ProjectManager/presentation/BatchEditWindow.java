@@ -195,7 +195,7 @@ public class BatchEditWindow extends JFrame {
      */
     private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
 
-        projectManagerWindow.makeTableEditable(true);
+        projectManagerWindow.makeTableEditable(true, table.getName());
 
         String columnName = comboBoxFieldSelect.getSelectedItem().toString();      // column name   
         String newValue = textFieldNewValue.getText();                             // new value to replace old value(s)
@@ -290,7 +290,7 @@ public class BatchEditWindow extends JFrame {
     }//GEN-LAST:event_comboBoxFieldSelectActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        projectManagerWindow.makeTableEditable(false);
+        projectManagerWindow.makeTableEditable(false, table.getName());
         this.dispose();
         projectManagerWindow.setIsBatchEditWindowShow(false);
     }//GEN-LAST:event_formWindowClosing
@@ -326,7 +326,7 @@ public class BatchEditWindow extends JFrame {
                         }
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    projectManagerWindow.makeTableEditable(true);
+                    projectManagerWindow.makeTableEditable(true, table.getName());
 
                     String columnName = comboBoxFieldSelect.getSelectedItem().toString();      // column name   
                     String newValue = textFieldNewValue.getText();                             // new value to replace old value(s)

@@ -196,7 +196,7 @@ public class PopupWindowInTableCell extends JFrame {
     private void editButtonTableCellPopupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonTableCellPopupActionPerformed
 
         inEditMode = true;
-        projectManager.makeTableEditable(true);
+        projectManager.makeTableEditable(true, selectedTable.getName());
         setEnableEdit();
         textAreatableCellPopup.selectAll();
         System.out.println("set edit " + textAreatableCellPopup.isEditable());
@@ -293,7 +293,7 @@ public class PopupWindowInTableCell extends JFrame {
             String newTableCellValue = textAreatableCellPopup.getText();
 
             selectedTable.setValueAt(newTableCellValue, row, column);
-            projectManager.uploadChanges();
+            projectManager.uploadChanges(selectedTable.getName());
 
         }
         selectedTable.changeSelection(selectedRow, selectedColumn + 1, false, false);
