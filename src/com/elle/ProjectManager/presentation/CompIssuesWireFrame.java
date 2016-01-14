@@ -250,8 +250,16 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
             // get all the information for the query
             String file = fc.getSelectedFile().getAbsolutePath(); // check first for null pointer
             String useDates = cboxOpenCloseDB.getSelectedItem().toString();
-            Date dateFrom = datePickerFrom.getDate();
+            Date date = new Date();
+            if(datePickerTo.getDate()==null){
+               datePickerTo.setDate(date); // set today's date
+            }
             Date dateTo = datePickerTo.getDate();
+            if(datePickerFrom.getDate()==null){
+               date = new Date(-1900,0,1);
+               datePickerFrom.setDate(date);
+            }
+            Date dateFrom = datePickerFrom.getDate();
             String app = cboxApp.getSelectedItem().toString();
             String programmer = cboxProgrammer.getSelectedItem().toString();
             // write the query
