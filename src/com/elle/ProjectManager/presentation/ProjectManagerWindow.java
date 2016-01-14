@@ -37,12 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import javax.imageio.ImageIO;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
-import javax.swing.text.DefaultEditorKit;
 
 /**
  * ProjectManagerWindow
@@ -1441,7 +1435,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         + " under " + searchColName + " in all tables";
             }
         }
-        System.out.println("text is: " + text);
         if (!text.equals("")) {
             searchInformationLabel.setText(text);
             startCountDownFromNow(10);
@@ -2210,13 +2203,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_comboBoxForSearchActionPerformed
 
     private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
-        ImageIcon img = new ImageIcon(getClass().getResource("splashImage.png"));
-        JFrame splashScreenImage = new JFrame();
-        JLabel image = new JLabel(img);
-        splashScreenImage.add(image);
-        splashScreenImage.pack();
-        splashScreenImage.setLocationRelativeTo(this);
-        splashScreenImage.setVisible(true);
+//        ImageIcon img = new ImageIcon(getClass().getResource("splashImage.png"));
+//        JFrame splashScreenImage = new JFrame();
+//        JLabel image = new JLabel(img);
+//        splashScreenImage.add(image);
+//        splashScreenImage.pack();
+//        splashScreenImage.setLocationRelativeTo(this);
+//        splashScreenImage.setVisible(true);
     }//GEN-LAST:event_menuItemViewSplashScreenActionPerformed
 
     public void comboBoxForSearchMouseClicked(MouseEvent e) {
@@ -2230,18 +2223,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public void moveSelectedRowsToTheEnd(int[] rows, JTable table) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         int rowNum = table.getRowCount();
-//        System.out.println("in table it has: " + rowNum);
         int count = 0;
         for (int row : rows) {
             if (count != 0) {
                 row = row - 1;
             }
 
-//            System.out.println("before row: " + row);
             model.moveRow(row, row, rowNum - 1);
             count++;
         }
-//        table.setRowSelectionInterval(rowNum - count, rowNum - 1);
+        table.setRowSelectionInterval(rowNum - count, rowNum - 1);
     }
 //    private void buttonFilteringTables(JTable table, String str) {
 //
@@ -2554,19 +2545,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 int row = e.getFirstRow();
                 int col = e.getColumn();
-                String tab;
-//                JTable table;
-
-//                if (addIssueWindowShow) {
-//                    table = addIssueWindow.getIssueActiveTable();
-//                    tab = table.getName();
-//                } else {
-//                    tab = getSelectedTabName();
-//                    table = tabs.get(tab).getTable();
-//                }
-                tab = table.getName();
-//                if (!addIssueWindowShow) {
-                System.out.println(addIssueWindowShow + "changed in : " + tab);
+                String tab = table.getName();
 
                 ModifiedTableData data = tabs.get(tab).getTableData();
 
@@ -3324,7 +3303,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     protected JLabel getLabel(String title) {
         ImageIcon imcon = new ImageIcon(getClass().getResource("orange-dot.png"));
 
-        ImageIcon icon = new ImageIcon(getClass().getResource("splashImage.png"));
+//        ImageIcon icon = new ImageIcon(getClass().getResource("splashImage.png"));
         JLabel label = new JLabel(imcon);
         label.setText(title);
 
@@ -3346,7 +3325,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
-            System.out.println("now loading: " + entry.getKey());
             loadTable(table);
             informationLabel.setText("Table loaded succesfully");
             startCountDownFromNow(10);
