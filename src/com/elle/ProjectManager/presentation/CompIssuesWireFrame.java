@@ -37,7 +37,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
     private final String COL_DATE_CLOSED = "dateClosed";
     
     private final String ALL = "All";         // used for the all option
-    private final String DATES_NONE = "None";   // dates combo box selection
+    private final String DATES_ALL = "All";   // dates combo box selection
     private final String DATES_OPENED = "Opened Dates";   // dates combo box selection
     private final String DATES_CLOSED = "Closed Dates";   // dates combo box selection
     private final String DATES_STILL_OPENED = "Still Open";   // dates combo box selection
@@ -295,7 +295,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
 
     private void cboxOpenCloseDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboxOpenCloseDBActionPerformed
         if(cboxOpenCloseDB.getSelectedItem() != null
-                && (cboxOpenCloseDB.getSelectedItem().toString().equals(DATES_NONE)
+                && (cboxOpenCloseDB.getSelectedItem().toString().equals(DATES_ALL)
                 || cboxOpenCloseDB.getSelectedItem().toString().equals(DATES_STILL_OPENED))){
             datePickerFrom.setEnabled(false);
             datePickerTo.setEnabled(false);
@@ -390,7 +390,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         
         // Opened or Closed Dates
         cboxOpenCloseDB.removeAllItems();
-        cboxOpenCloseDB.addItem(DATES_NONE);
+        cboxOpenCloseDB.addItem(DATES_ALL);
         cboxOpenCloseDB.addItem(DATES_STILL_OPENED);
         cboxOpenCloseDB.addItem(DATES_CLOSED);
         cboxOpenCloseDB.addItem(DATES_OPENED);
@@ -429,7 +429,7 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
     }
 
     private String getDatesQuery(String useDates, Date dateFrom, Date dateTo) {
-        if(!useDates.equals(DATES_NONE)){
+        if(!useDates.equals(DATES_ALL)){
             if(!useDates.equals(DATES_STILL_OPENED)){
                 //!Validator.isValidDate("yyyy-MM-dd", cellValue.toString())
                 SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
