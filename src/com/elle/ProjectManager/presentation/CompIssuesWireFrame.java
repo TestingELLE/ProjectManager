@@ -390,10 +390,10 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         
         // Opened or Closed Dates
         cboxOpenCloseDB.removeAllItems();
-        cboxOpenCloseDB.addItem(DATES_ALL);
         cboxOpenCloseDB.addItem(DATES_STILL_OPENED);
         cboxOpenCloseDB.addItem(DATES_CLOSED);
         cboxOpenCloseDB.addItem(DATES_OPENED);
+        cboxOpenCloseDB.addItem(DATES_ALL);
         datePickerFrom.setEnabled(false);
         datePickerTo.setEnabled(false);
         
