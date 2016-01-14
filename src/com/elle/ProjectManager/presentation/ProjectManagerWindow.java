@@ -63,8 +63,8 @@ import javax.swing.text.DefaultEditorKit;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2016-01-08";
-    private final String VERSION = "1.0.2";
+    private final String CREATION_DATE = "2016-01-14";
+    private final String VERSION = "1.0.3";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
