@@ -875,7 +875,7 @@ public class AddIssueWindow extends JFrame {
 
         projectManager.uploadChanges(selectedTableName);
 
-        projectManager.makeTableEditable(false,selectedTableName);
+        projectManager.makeTableEditable(false, selectedTableName);
 
     }//GEN-LAST:event_buttonConfirmActionPerformed
 

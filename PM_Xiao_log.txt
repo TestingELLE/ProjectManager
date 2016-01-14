@@ -1,0 +1,20 @@
+
+-------------------------2016-01-13 09:48:40 PM-------------------------
+3:2016-01-13 09:48:40 PM: Start to connect local database...
+2016-01-13 09:48:41 PM: Connect successfully!
+
+-------------------------2016-01-14 10:35:35 AM-------------------------
+3:2016-01-14 10:35:35 AM: Start to connect local database...
+2016-01-14 10:35:37 AM: Connect successfully!
+
+-------------------------2016-01-14 10:42:58 AM-------------------------
+3:2016-01-14 10:42:58 AM: Start to connect local database...
+2016-01-14 10:42:59 AM: Connect successfully!
+
+-------------------------2016-01-14 10:49:12 AM-------------------------
+3:2016-01-14 10:49:12 AM: Start to connect local database...
+2016-01-14 10:49:13 AM: Connect successfully!
+
+-------------------------2016-01-14 02:17:23 PM-------------------------
+3:2016-01-14 02:17:23 PM: Start to connect local database...
+2016-01-14 02:17:24 PM: Connect successfully!

@@ -164,20 +164,20 @@ public class ProjectManager {
     private static void saveImage() {
 
         try {
-            URL url = ProjectManager.class.getResource("image.png");
-            String imageUrl = url.toURI().toString();
-            imageUrl = imageUrl.substring(5, imageUrl.length()-9);
-            imageUrl = imageUrl + "presentation";
+//            URL url = ProjectManager.class.getResource("image.png");
+//            String imageUrl = url.toURI().toString();
+//            imageUrl = imageUrl.substring(5, imageUrl.length()-9);
+//            imageUrl = imageUrl + "presentation";
+//            
+////            imageUrl = imageUrl + "presentation/splashImage";
+//            
+//            System.out.println("file store at: " + imageUrl);
             
-//            imageUrl = imageUrl + "presentation/splashImage";
-            
-            System.out.println("file store at: " + imageUrl);
-            
-            ImageIO.write(image, "png", new File(imageUrl, "splashImage.png"));
+            ImageIO.write(image, "png", new File("splashImage.png"));
         } catch (IOException ex) {
             System.out.println("image save failed!" + " Due to: " + ex.getMessage());
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(ProjectManager.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (URISyntaxException ex) {
+//            Logger.getLogger(ProjectManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
