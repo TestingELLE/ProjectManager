@@ -396,6 +396,8 @@ public class CompIssuesWireFrame extends javax.swing.JFrame {
         cboxOpenCloseDB.addItem(DATES_ALL);
         datePickerFrom.setEnabled(false);
         datePickerTo.setEnabled(false);
+        Date date = new Date();
+        datePickerTo.setDate(date);
         
         // App combobox
         map = sql.getDistinctColumnValues(DB_TABLE_NAME, COL_APP);
