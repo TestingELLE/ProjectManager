@@ -99,7 +99,7 @@ public class ProjectManager {
             loadingGraphics.setFont(font);
             g.setFont(font);
             
-            String information = "Version: 1.0.3        CreationDate: 01/14/2016";
+            String information = "Version: 1.0.4        CreationDate: 01/14/2016";
             loadingGraphics.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
             g.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
             
