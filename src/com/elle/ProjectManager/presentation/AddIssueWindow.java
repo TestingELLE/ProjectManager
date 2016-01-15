@@ -1041,7 +1041,6 @@ public class AddIssueWindow extends JFrame {
 
             // Now get the values to add to the database
             String values = "";
-//            for (row = 0; row < table.getRowCount(); row++) {
             values = "VALUES (";  // start the values statement
 
             for (col = 0; col < table.getColumnCount(); col++) {
@@ -1069,8 +1068,6 @@ public class AddIssueWindow extends JFrame {
                     values += cellValue + ");";
                 }
             }
-//            System.out.println(insertInto);
-//            System.out.println(values);
 
             try {
                 // execute the sql statement
