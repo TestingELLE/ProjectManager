@@ -43,8 +43,12 @@ public class LogWindow extends JFrame {
 
     // constructor
     public LogWindow(String userName) {
+        String PortfolioManager = "PortfolioManager/";
+        File dir = new File(PortfolioManager); 
+        dir.mkdir();
         
-        FILENAME = "PM_" + userName + "_log.txt";
+        FILENAME = PortfolioManager + "PM_" + userName + "_log.txt";
+        
         this.setTitle("Log Window");
         ImageIcon imag = new ImageIcon(
                 "Images/elle gui image.jpg");

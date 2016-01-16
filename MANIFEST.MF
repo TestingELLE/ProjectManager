@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.9.4
-Created-By: 1.8.0_60-b27 (Oracle Corporation)
+Created-By: 1.8.0_45-b14 (Oracle Corporation)
 Codebase: *
 Permission: all-permissions
 Application-Library-Allowable-Codebase: javaquery.com
@@ -8,7 +8,7 @@ Caller-Allowable-Codebase: www.javaquery.com javaquery.com
 Application-Name: javaQuery
 Bundle-Name: ProjectManager
 Bundle-Version: 1.4.1
-Bundle-Date: 2016-01-16 10:34:44 EST
+Bundle-Date: 2016-01-16 12:15:45 EST
 Implementation-Title: ProjectManager
 Implementation-Version: 1.4.1
 Implementation-URL: http://www.javaquery.com
