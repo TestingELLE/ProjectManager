@@ -52,8 +52,8 @@ import javax.imageio.ImageIO;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2016-01-14";
-    private final String VERSION = "1.0.4";
+    private final String CREATION_DATE = "2016-01-16";
+    private final String VERSION = "1.0.5";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
@@ -2218,7 +2218,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
         try {
-            ImageIcon img = new ImageIcon(ImageIO.read(new File("splashImage.png")));
+            ImageIcon img = new ImageIcon(ImageIO.read(new File("/User/alvinreyes/splashImage.png")));
             JFrame splashScreenImage = new JFrame();
             JLabel image = new JLabel(img);
             splashScreenImage.add(image);
