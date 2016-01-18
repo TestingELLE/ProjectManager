@@ -582,6 +582,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         comboBoxSearch = new javax.swing.JComboBox();
         btnClearAllFilter = new javax.swing.JButton();
         searchInformationLabel = new javax.swing.JLabel();
+        btnFiles = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemVersion = new javax.swing.JMenuItem();
@@ -1073,6 +1074,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
 
+        btnFiles.setText("files");
+        btnFiles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFilesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
         searchPanel.setLayout(searchPanelLayout);
         searchPanelLayout.setHorizontalGroup(
@@ -1088,7 +1096,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addGroup(searchPanelLayout.createSequentialGroup()
                         .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSearch)))
+                        .addComponent(btnSearch)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnFiles)))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
         searchPanelLayout.setVerticalGroup(
@@ -1099,7 +1109,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(btnClearAllFilter)
                     .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSearch))
+                    .addComponent(btnSearch)
+                    .addComponent(btnFiles))
                 .addGap(0, 0, 0)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14))
@@ -2223,6 +2234,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void textFieldForSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldForSearchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textFieldForSearchActionPerformed
+
+    private void btnFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnFilesActionPerformed
 
     public void moveSelectedRowsToTheEnd(int[] rows, JTable table) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -3842,6 +3857,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JButton btnClearAllFilter;
     private javax.swing.JButton btnCloseSQL;
     private javax.swing.JButton btnEnterSQL;
+    private javax.swing.JButton btnFiles;
     private javax.swing.JButton btnRevertChanges;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnUploadChanges;

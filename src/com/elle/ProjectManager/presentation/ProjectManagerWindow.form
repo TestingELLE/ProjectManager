@@ -1053,6 +1053,8 @@
                               <Component id="textFieldForSearch" min="-2" pref="141" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnSearch" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnFiles" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace pref="40" max="32767" attributes="0"/>
@@ -1068,6 +1070,7 @@
                           <Component id="comboBoxSearch" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="textFieldForSearch" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnSearch" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnFiles" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="searchInformationLabel" min="-2" pref="20" max="-2" attributes="0"/>
@@ -1122,6 +1125,14 @@
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="searchInformationLabel">
+            </Component>
+            <Component class="javax.swing.JButton" name="btnFiles">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="files"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFilesActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
