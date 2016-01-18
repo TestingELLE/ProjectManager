@@ -18,7 +18,6 @@
             <format pattern="yyyy-MM-dd HH:mm:ss z" property="NOW"></format>
         </tstamp>
 
-	<!-- Uncomment this if SVN is used instead of git -->
     <!--
     <exec outputproperty="svna.version" executable="svnversion">
      <arg value="-c" />
@@ -57,13 +56,12 @@
       <jar jarfile="target/${version}.jar">
         <zipfileset src="${dist.jar}" excludes="META-INF/*" />
         <zipfileset src="lib/mysql-connector-java-5.1.23-bin.jar" excludes="META-INF/*" />
-		<zipfileset src="lib/swingx-all-1.6.4.jar" excludes="META-INF/*" />
+        <zipfileset src="lib/swingx-all-1.6.4.jar" excludes="META-INF/*" />
         <manifest>
             <attribute name="Main-Class" value="com.elle.ProjectManager.ProjectManager"/>
             <attribute name="SplashScreen-Image" value="com/elle/ProjectManager/image.png"/>
         </manifest>
       </jar>
       <delete dir="dist"/>
-    </target>
-
+    </target> 
 </project>

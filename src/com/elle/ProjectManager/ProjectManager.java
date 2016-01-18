@@ -61,7 +61,7 @@ public class ProjectManager {
     public static Graphics2D loadingGraphics;
     public static BufferedImage image;
     public static Graphics2D g;
-
+    
     public static void loadingMethod() {
         loadingScreen = SplashScreen.getSplashScreen();
         if (loadingScreen != null) {
@@ -73,8 +73,8 @@ public class ProjectManager {
             loadingProgressArea = new Rectangle2D.Double(20, height * 0.8, width * 0.9, 5);
 
             loadingGraphics = loadingScreen.createGraphics();
-			
-			image = new BufferedImage(loadingScreen.getSize().width,
+            
+            image = new BufferedImage(loadingScreen.getSize().width,
                     loadingScreen.getSize().height, BufferedImage.TYPE_INT_ARGB);
 
             g = image.createGraphics();
@@ -145,12 +145,12 @@ public class ProjectManager {
 //            + comps[i-1] + "...");
             loadingProgress(i * 20);
             try {
-                Thread.sleep(500);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
             }
         }
-		
-		saveImage();
+
+        saveImage();
         loadingScreen.close();
         // this is the first window that is shown to log in to the database.
         // Once the database connection is made, then an instance
@@ -160,8 +160,8 @@ public class ProjectManager {
         loginWindow.setLocationRelativeTo(null);
         loginWindow.setVisible(true);
     }
-	
-	private static void saveImage() {
+
+    private static void saveImage() {
 
         try {
             ImageIO.write(image, "png", new File("splashImage.png"));

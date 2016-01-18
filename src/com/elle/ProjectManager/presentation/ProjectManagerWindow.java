@@ -1,18 +1,9 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.database.DBConnection;
-import com.elle.ProjectManager.logic.ColumnPopupMenu;
-import com.elle.ProjectManager.logic.CreateDocumentFilter;
-import com.elle.ProjectManager.logic.EditableTableModel;
-import com.elle.ProjectManager.logic.ITableConstants;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
-import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
-//import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
-import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
-import com.elle.ProjectManager.logic.Tab;
-import com.elle.ProjectManager.logic.TableFilter;
-import com.elle.ProjectManager.logic.JTableCellRenderer;
+import com.elle.ProjectManager.logic.*;
 //import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 
 import javax.swing.*;
@@ -31,6 +22,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -44,11 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
 
 /**
  * ProjectManagerWindow
@@ -60,11 +52,12 @@ import javax.swing.event.RowSorterListener;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2016-01-04";
-    private final String VERSION = "1.0.1";
+    private final String CREATION_DATE = "2016-01-16";
+    private final String VERSION = "1.0.5";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
+    private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
     private static Statement statement;
     private String database;
 
@@ -80,6 +73,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private EditDatabaseWindow editDatabaseWindow;
 //    private ReportWindow reportWindow;
     private AddIssueFileWindow addIssueFileWindow;
+    private ShortCutSetting changeShortCut;
 
     // colors - Edit mode labels
     private Color editModeDefaultTextColor;
@@ -126,6 +120,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         idNumOfOpenningIssues.add(-1);
         // initialize tabs
         tabs = new HashMap();
+        // initialize comboBoxForSeachDropDownList
+        comboBoxForSearchDropDown = new HashMap();
         programmersActiveForSearching = new ArrayList<String>();
 
         // create tabName objects -> this has to be before initcomponents();
@@ -222,6 +218,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
 
+        //changing the text field copy and paste short cut to default control key
+        //(depend on system) + c/v
+        InputMap ip = (InputMap) UIManager.get("TextField.focusInputMap");
+        changeShortCut = new ShortCutSetting(ip);
+        changeShortCut.copyAndPasteShortCut();
+
         // show and hide components
         btnUploadChanges.setVisible(false);
         jPanelSQL.setVisible(false);
@@ -311,9 +313,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         numOfAddIssueWindowOpened = 0;
 
-//        JTable table = getSelectedTable();
-//        String searchContent = comboBoxSearch.getSelectedItem().toString();
-//        this.createPopupMenu(searchContent, table);
+        String tabName = getSelectedTabName();
+
+        String searchContent = comboBoxSearch.getSelectedItem().toString();
+        this.updateComboList(searchContent, tabName);
+
+        this.comboBoxForSearch.getEditor().getEditorComponent().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                comboBoxForSearchMouseClicked(e);
+            }
+        });
         // set title of window to Project Manager
         this.setTitle("Project Manager");
 
@@ -321,9 +330,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.setPreferredSize(new Dimension(1014, 550));
         this.setMinimumSize(new Dimension(1000, 550));
 
-//        scrollDown(jScrollPane1);
-//        scrollDown(jScrollPane3);
-//        scrollDown(jScrollPane4);
         this.pack();
     }
 
@@ -578,11 +584,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         labelTimeLastUpdate = new javax.swing.JLabel();
         searchPanel = new javax.swing.JPanel();
         btnSearch = new javax.swing.JButton();
-        textFieldForSearch = new javax.swing.JTextField();
         comboBoxSearch = new javax.swing.JComboBox();
         btnClearAllFilter = new javax.swing.JButton();
         searchInformationLabel = new javax.swing.JLabel();
-        btnFiles = new javax.swing.JButton();
+        comboBoxForSearch = new javax.swing.JComboBox();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemVersion = new javax.swing.JMenuItem();
@@ -604,10 +609,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemLogChkBx = new javax.swing.JCheckBoxMenuItem();
         menuItemSQLCmdChkBx = new javax.swing.JCheckBoxMenuItem();
         menuitemViewOneIssue = new javax.swing.JMenuItem();
+        menuItemViewSplashScreen = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
         menuItemReloadData = new javax.swing.JMenuItem();
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
         menuItemMoveSeletedRowsToEnd = new javax.swing.JMenuItem();
+        menuItemCompIssues = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemRepBugSugg = new javax.swing.JMenuItem();
 
@@ -618,7 +625,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         tabbedPanel.setAlignmentX(0.0F);
         tabbedPanel.setAlignmentY(0.0F);
-        tabbedPanel.setFocusable(false);
         tabbedPanel.setName("Analyster"); // NOI18N
         tabbedPanel.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -841,7 +847,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         issue_filesTable.setName("issue_files"); // NOI18N
         jScrollPane4.setViewportView(issue_filesTable);
 
-        tabbedPanel.addTab("files", jScrollPane4);
+        tabbedPanel.addTab("Files", jScrollPane4);
 
         jPanelEdit.setPreferredSize(new java.awt.Dimension(636, 180));
 
@@ -899,7 +905,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRevertChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                         .addComponent(btnAddIssue)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnBatchEdit)
@@ -989,17 +995,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)
             .addComponent(jPanelSQL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 905, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(tabbedPanel)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(tabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+                .addContainerGap())
         );
 
         tabbedPanel.getAccessibleContext().setAccessibleName("Reports");
@@ -1019,19 +1026,20 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE))
+                    .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                    .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(labelTimeLastUpdate)
                 .addGap(0, 0, 0)
-                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         searchPanel.setPreferredSize(new java.awt.Dimension(584, 76));
@@ -1040,23 +1048,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSearchActionPerformed(evt);
-            }
-        });
-
-        textFieldForSearch.setText("Enter Symbol name");
-        textFieldForSearch.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                textFieldForSearchMouseClicked(evt);
-            }
-        });
-        textFieldForSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textFieldForSearchActionPerformed(evt);
-            }
-        });
-        textFieldForSearch.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                textFieldForSearchKeyPressed(evt);
             }
         });
 
@@ -1074,10 +1065,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
 
-        btnFiles.setText("files");
-        btnFiles.addActionListener(new java.awt.event.ActionListener() {
+        comboBoxForSearch.setEditable(true);
+        comboBoxForSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFilesActionPerformed(evt);
+                comboBoxForSearchActionPerformed(evt);
             }
         });
 
@@ -1090,16 +1081,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(btnClearAllFilter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(searchPanelLayout.createSequentialGroup()
-                        .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSearch)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnFiles)))
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addComponent(btnSearch)
+                .addGap(0, 101, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37))
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1108,12 +1098,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnClearAllFilter)
                     .addComponent(comboBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(textFieldForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch)
-                    .addComponent(btnFiles))
+                    .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0)
-                .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14))
+                .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout addPanel_controlLayout = new javax.swing.GroupLayout(addPanel_control);
@@ -1122,18 +1111,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(addPanel_controlLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 663, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 645, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addPanel_controlLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0))
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         menuFile.setText("File");
@@ -1256,6 +1245,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuView.add(menuitemViewOneIssue);
 
+        menuItemViewSplashScreen.setText("View Splash Screen");
+        menuItemViewSplashScreen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemViewSplashScreenActionPerformed(evt);
+            }
+        });
+        menuView.add(menuItemViewSplashScreen);
+
         menuBar.add(menuView);
 
         menuTools.setText("Tools");
@@ -1283,6 +1280,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemMoveSeletedRowsToEnd);
+
+        menuItemCompIssues.setText("Compile Issue List");
+        menuItemCompIssues.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemCompIssuesActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemCompIssues);
 
         menuBar.add(menuTools);
 
@@ -1312,9 +1317,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -1327,53 +1332,62 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 + "Version: " + VERSION);
     }//GEN-LAST:event_menuItemVersionActionPerformed
 
-    private void textFieldForSearchMouseClicked(MouseEvent evt) {//GEN-FIRST:event_textFieldForSearchMouseClicked
-
-        if (evt.getClickCount() == 2) {
-            textFieldForSearch.selectAll();
+    private Map loadingDropdownListToMap(JTable table, String[] colNames) {
+        Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
+        for (int col = 0; col < table.getColumnCount(); col++) {
+            String colName = colNames[col];
+            ArrayList valueList = new ArrayList<Object>();
+            if (colName.equalsIgnoreCase("title") || colName.equalsIgnoreCase("description")) {
+                valueList.add("");
+            } else {
+                valueList.add("Enter " + colName + " here");
+                Object cellValue = table.getValueAt(0, col);
+                Object newValue;
+                if (cellValue != null) {
+                    valueList.add(cellValue);
+                }
+                for (int row = 0; row < table.getRowCount(); row++) {
+                    newValue = table.getValueAt(row, col);
+                    if (newValue != null) {
+                        if (cellValue == null) {
+                            valueList.add(" ");
+                            cellValue = newValue;
+                        } else {
+                            if (!cellValue.equals(newValue) && !valueList.contains(newValue)) {
+                                cellValue = newValue;
+                                valueList.add(cellValue);
+                            }
+                        }
+                    }
+                }
+            }
+            valueListMap.put(col, valueList);
         }
-
-    }//GEN-LAST:event_textFieldForSearchMouseClicked
-
-//    private void createPopupMenu(String title, JTable table) {
-//        JPopupMenu textFieldPopupMenu = new JPopupMenu(title);
-//        ArrayList valueList = new ArrayList<Object>();
-//        for (int col = 0; col < table.getColumnCount(); col++) {
-//            String tableColName = table.getColumnName(col);
-//            if (tableColName.equalsIgnoreCase(title)) {
-//
-//                Object cellValue = table.getValueAt(0, col);
-//                Object newValue;
-//                if (cellValue != null) {
-//                    valueList.add(cellValue);
-//                }
-//                for (int row = 0; row < table.getRowCount(); row++) {
-//                    newValue = table.getValueAt(row, col);
-//                    if (newValue != null) {
-//                        if (cellValue == null) {
-//                            valueList.add(" ");
-//                            cellValue = newValue;
-//                        } else {
-//                            if (!cellValue.equals(newValue) && !valueList.contains(newValue)) {
-//                                cellValue = newValue;
-//                                valueList.add(cellValue);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
+//        DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
+//        comboBoxForSearch.setModel(comboBoxSearchModel);
+//        for (Object item : valueList) {
+//            comboBoxSearchModel.addElement(item);
 //        }
-//
-//        Object[] values = new Object[valueList.size()];
-//        for (int i = 0; i < valueList.size(); i++) {
-//            values[i] = valueList.get(i);
-//        }
-//
-//        JList itemList = new JList(values);
-//        textFieldPopupMenu.add(itemList);
-//        textFieldForSearch.setComponentPopupMenu(textFieldPopupMenu);
-//
-//    }
+        return valueListMap;
+
+    }
+
+    private void updateComboList(String colName, String tableName) {
+        DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
+        comboBoxForSearch.setModel(comboBoxSearchModel);
+
+        Map comboBoxForSearchValue = this.comboBoxForSearchDropDown.get(tableName);
+
+        JTable table = tabs.get(tableName).getTable();
+        for (int col = 0; col < table.getColumnCount(); col++) {
+            if (table.getColumnName(col).equalsIgnoreCase(colName)) {
+                ArrayList<Object> dropDownList = (ArrayList<Object>) comboBoxForSearchValue.get(col);
+                for (Object item : dropDownList) {
+                    comboBoxSearchModel.addElement(item);
+                }
+            }
+        }
+    }
 
     /**
      * This method is called when the search button is pressed
@@ -1391,43 +1405,56 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * textForSearchKeyPressed method
      */
     public void filterBySearch() {
+        String text = "";
 
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        String searchColName = comboBoxSearch.getSelectedItem().toString();
+        int count = 0;
+        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+            Tab tab = tabs.get(entry.getKey());
+            JTable table = tab.getTable();
+            
+            String searchColName = comboBoxSearch.getSelectedItem().toString();
+            String searchBoxValue = comboBoxForSearch.getSelectedItem().toString();  // store string from text box
 
-        // this matches the combobox newValue with the column name newValue to get the column index
-        for (int col = 0; col < table.getColumnCount(); col++) {
-            String tableColName = table.getColumnName(col);
-            if (tableColName.equalsIgnoreCase(searchColName)) {
+            // this matches the combobox newValue with the column name newValue to get the column index
+            for (int col = 0; col < table.getColumnCount(); col++) {
+                String tableColName = table.getColumnName(col);
+                if (tableColName.equalsIgnoreCase(searchColName)) {
 
-                String searchBoxValue = textFieldForSearch.getText();  // store string from text box
-
-                // add item to filter
-                TableFilter filter = tab.getFilter();
-                filter.clearAllFilters();
-                filter.applyFilter();
-
-                boolean isValueInTable = false;
-                isValueInTable = checkValueInTableCell(col, searchBoxValue, table);
-
-                if (isValueInTable) {
-
-                    filter.addFilterItem(col, searchBoxValue);
+                    // add item to filter
+                    TableFilter filter = tab.getFilter();
+                    filter.clearAllFilters();
                     filter.applyFilter();
 
-                } else {
-                    searchInformationLabel.setText("There is no " + searchBoxValue
-                            + " under " + searchColName + " in table " + table.getName());
-                    startCountDownFromNow(10);
-                }
-//                }
+                    boolean isValueInTable = false;
+                    isValueInTable = checkValueInTableCell(col, searchBoxValue, table);
 
-                // set label record information
-                String recordsLabel = tab.getRecordsLabel();
-                labelRecords.setText(recordsLabel);
+//                    if (isValueInTable) {
+//
+//                        filter.addFilterItem(col, searchBoxValue);
+//                        filter.applyFilter();
+//
+//                    } else {
+//                        count++;
+//                    }
+                    filter.addFilterItem(col, searchBoxValue);
+                    filter.applyFilter();
+                    if(!isValueInTable){
+                        count++;
+                    }
+
+                    // set label record information
+                    String recordsLabel = tab.getRecordsLabel();
+                    labelRecords.setText(recordsLabel);
+                }
             }
+            if (count == 4) {
+                text = "There is no " + searchBoxValue
+                        + " under " + searchColName + " in all tables";
+            }
+        }
+        if (!text.equals("")) {
+            searchInformationLabel.setText(text);
+            startCountDownFromNow(10);
         }
     }
 
@@ -1465,7 +1492,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     private void btnUploadChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadChangesActionPerformed
 
-        uploadChanges();
+        uploadChanges(getSelectedTabName());
     }//GEN-LAST:event_btnUploadChangesActionPerformed
 
     /**
@@ -1474,16 +1501,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * btnUploadChangesActionPerformed(java.awt.event.ActionEvent evt) and also
      * a keylistener when editing mode is on and enter is pressed
      */
-    public void uploadChanges() {
-
-        String tabName = getSelectedTabName();
+    public void uploadChanges(String tabName) {
+//        String tabName;
+        if (addIssueWindowShow) {
+            tabName = addIssueWindow.getIssueActiveTabName();
+        } else {
+            tabName = getSelectedTabName();
+        }
         Tab tab = tabs.get(tabName);
         JTable table = tab.getTable();
         JTableCellRenderer cellRenderer = tab.getCellRenderer();
         ModifiedTableData data = tab.getTableData();
-//        for (int i = 0; i < data.getNewData().size(); i++) {
-//            System.out.println("new " + data.getNewData().get(i).getValue().toString());
-//        }
 
         boolean uploaded = updateTable(table, data.getNewData());
         if (uploaded) {
@@ -1505,7 +1533,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // reload modified tableSelected data with current tableSelected model
             data.reloadData();
 
-            makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false);
+            makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false, tabName);
 
             data.getNewData().clear();    // reset the arraylist to record future changes
             setLastUpdateTime();          // update time
@@ -1572,10 +1600,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      *
      * @param makeTableEditable // takes boolean true or false to make editable
      */
-    public void makeTableEditable(boolean makeTableEditable) {
+    public void makeTableEditable(boolean makeTableEditable, String selectedTable) {
 
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
+        Tab tab = tabs.get(selectedTable);
         boolean isAddRecordsBtnVisible = tab.isAddRecordsBtnVisible();
         boolean isBatchEditBtnVisible = tab.isBatchEditBtnVisible();
 
@@ -1643,24 +1670,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 str = str + " WHERE app != 'PM' and app != 'Analyster' "
                         + "and app != 'ELLEGUI' or app IS NULL";
             }
-            try {
-                // open connection because might time out
-                DBConnection.open();
-                statement = DBConnection.getStatement();
-                String sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
-//                System.out.println(sql);
-                loadTable(sql, table);
 
-            } catch (SQLException ex) {
-                // for debugging
-                ex.printStackTrace();
-                logWindow.addMessageWithDate(ex.getMessage());
-
-                // notify the user that there was an issue
-//                JOptionPane.showMessageDialog(this, "connection failed");
-                informationLabel.setText("connection failed!");
+            // connection might time out
+            if (DBConnection.isClosed()) {
+                while (DBConnection.open() == false) {
+                    informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
+                    startCountDownFromNow(10);
+                }
+                informationLabel.setText("Connection has been reopened!");
                 startCountDownFromNow(10);
             }
+
+            statement = DBConnection.getStatement();
+            String sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
+//                System.out.println(sql);
+            loadTable(sql, table);
         }
         currentTabName = getSelectedTabName();
 
@@ -1683,7 +1707,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         boolean editing = tab.isEditing();
 
         if (table.getModel() instanceof EditableTableModel) {
-            makeTableEditable(editing);
+            makeTableEditable(editing, tabName);
         }
 
         // set the color of the edit mode text
@@ -1756,15 +1780,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         Tab tab = tabs.get(tabName);
         JTable table = tab.getTable();
         int[] rows = table.getSelectedRows();
-        this.moveSelectedRowsToTheEnd(rows, table);
+//        this.moveSelectedRowsToTheEnd(rows, table);
 
         // set the tab to editing
-        makeTableEditable(true);
+        makeTableEditable(true, tabName);
 
         // set the color of the edit mode text
         editModeTextColor(tab.isEditing());
 
-//        loadTableWhenSelectedRows(rows, table);
         // open a batch edit window and make visible only to this tab
         batchEditWindow = new BatchEditWindow();
         batchEditWindow.setVisible(true);
@@ -1776,14 +1799,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // show the batch edit window in front of the Main Window
         showWindowInFront(batchEditWindow);
-
-//        batchEditWindow.setFocusable(true);
-//        batchEditWindow.toFront();
-//        
-//        batchEditWindow.setAutoRequestFocus(true);
-//        batchEditWindow.requestFocus();
-//        System.out.println(batchEditWindow.requestFocusInWindow());
-
     }//GEN-LAST:event_btnBatchEditActionPerformed
 
     private void menuItemManageDBsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemManageDBsActionPerformed
@@ -1801,13 +1816,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     private void btnAddIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddIssueActionPerformed
 
-////        //set popup Window become invisible
-//        if (popupWindowShowInPM) {
-//            tableCellPopupWindow.windowClose();
-//        }
-        // if no add records window is open
-//        if ((addIssueWindow == null || !addIssueWindow.isDisplayable())
-//                && (addIssueFileWindow == null || !addIssueFileWindow.isDisplayable())) {
         if (numOfAddIssueWindowOpened <= 6) {
             if (btnAddIssue.getText().contains("Add issue to")) {
                 addIssueWindow = new AddIssueWindow();
@@ -1815,7 +1823,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 numOfAddIssueWindowOpened++;
                 //addRecordWindow become visible
                 addIssueWindowShow = true;
-//                makeTableEditable(true);
             } else {
                 numOfAddIssueWindowOpened++;
                 addIssueFileWindow = new AddIssueFileWindow();
@@ -1824,14 +1831,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         } else {
             JOptionPane.showMessageDialog(null, "The number of add issue window opened reached its maximum!");
         }
-//        } // if window is already open then set the focus
-//        else {
-//            if (addIssueWindowShow) {
-//                addIssueWindow.toFront();
-//            } else {
-//                addIssueFileWindow.toFront();
-//            }
-//        }
 
         // update records
         String tabName = getSelectedTabName();
@@ -1839,21 +1838,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String recordsLabel = tab.getRecordsLabel();
         labelRecords.setText(recordsLabel);
     }//GEN-LAST:event_btnAddIssueActionPerformed
-
-    /**
-     * This method listens if the enter key was pressed in the search text box.
-     * This allows the newValue to be entered without having to click the search
-     * button.
-     *
-     * @param evt
-     */
-    private void textFieldForSearchKeyPressed(KeyEvent evt) {//GEN-FIRST:event_textFieldForSearchKeyPressed
-
-        // if the enter key is pressed call the filterBySearch method.
-        if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
-            filterBySearch();
-        }
-    }//GEN-LAST:event_textFieldForSearchKeyPressed
 
     /**
      * jMenuItemLogOffActionPerformed Log Off menu item action performed
@@ -2146,7 +2130,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         if (numOfAddIssueWindowOpened <= 6) {
 
-            Tab tab = tabs.get(getSelectedTabName());
+            String tabName = getSelectedTabName();
+            Tab tab = tabs.get(tabName);
             JTable table = tab.getTable();
 
             Object[] cellsValue = new Object[table.getColumnCount()];
@@ -2174,7 +2159,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 idNumOfOpenningIssues.add(openningIssue);
 
                 String columnName = table.getColumnName(column);
-//                                            System.out.println("send " + columnName + " to add issue!");
 
                 int size = idNumOfOpenningIssues.size();
 
@@ -2182,7 +2166,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 addIssueWindow.setVisible(true);
                 numOfAddIssueWindowOpened++;
             }
-            makeTableEditable(false);
+            makeTableEditable(false, tabName);
         } else {
             JOptionPane.showMessageDialog(null, "The number of add issue window opened reached its maximum!");
         }
@@ -2190,13 +2174,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void comboBoxSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxSearchActionPerformed
 
-//        String searchColName = comboBoxSearch.getSelectedItem().toString();
-//        JTable table = this.getSelectedTable();
-//        createPopupMenu(searchColName, table);
+        String searchColName = comboBoxSearch.getSelectedItem().toString();
+        String tabName = getSelectedTabName();
+        updateComboList(searchColName, tabName);
     }//GEN-LAST:event_comboBoxSearchActionPerformed
 
     private void menuItemTurnEditModeOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTurnEditModeOffActionPerformed
-        makeTableEditable(false);
+        String tabName = getSelectedTabName();
+        makeTableEditable(false, tabName);
     }//GEN-LAST:event_menuItemTurnEditModeOffActionPerformed
 
     /**
@@ -2216,9 +2201,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         if (searchFields != null) {
             comboBoxSearch.setModel(new DefaultComboBoxModel(searchFields));
         }
-        //        if (popupWindowShowInPM) {
-        //            tableCellPopupWindow.windowClose();
-        //        }
     }//GEN-LAST:event_tabbedPanelStateChanged
 
     private void menuItemMoveSeletedRowsToEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemMoveSeletedRowsToEndActionPerformed
@@ -2228,27 +2210,49 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         int[] rows = table.getSelectedRows();
 
         moveSelectedRowsToTheEnd(rows, table);
-//        loadTableWhenSelectedRows(rows, table);
     }//GEN-LAST:event_menuItemMoveSeletedRowsToEndActionPerformed
 
-    private void textFieldForSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldForSearchActionPerformed
+    private void comboBoxForSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxForSearchActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_textFieldForSearchActionPerformed
+    }//GEN-LAST:event_comboBoxForSearchActionPerformed
 
-    private void btnFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnFilesActionPerformed
+    private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
+        try {
+            ImageIcon img = new ImageIcon(ImageIO.read(new File("/User/alvinreyes/splashImage.png")));
+            JFrame splashScreenImage = new JFrame();
+            JLabel image = new JLabel(img);
+            splashScreenImage.add(image);
+            splashScreenImage.pack();
+            splashScreenImage.setLocationRelativeTo(this);
+            splashScreenImage.setVisible(true);
+        } catch (IOException ex) {
+            logWindow.addMessageWithDate("3:" + ex.getMessage());
+        }
+    }//GEN-LAST:event_menuItemViewSplashScreenActionPerformed
+
+    private void menuItemCompIssuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCompIssuesActionPerformed
+        CompIssuesListWindow frame = new CompIssuesListWindow();
+        frame.setTitle("Compile Issue List");
+        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        frame.setLocationRelativeTo(this);
+        frame.setVisible(true);
+    }//GEN-LAST:event_menuItemCompIssuesActionPerformed
+
+    public void comboBoxForSearchMouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            comboBoxForSearch.getEditor().selectAll();
+        } else if (e.isControlDown()) {
+            comboBoxForSearch.showPopup();
+        }
+    }
 
     public void moveSelectedRowsToTheEnd(int[] rows, JTable table) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         int rowNum = table.getRowCount();
         int count = 0;
         for (int row : rows) {
-            if (count != 0) {
-                row = row - 1;
-            }
+            row = row - count;
 
-            System.out.println("row: " + row);
             model.moveRow(row, row, rowNum - 1);
             count++;
         }
@@ -2289,23 +2293,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         loadTables(tabs);
     }
 
-    public void viewNextIssue(int row, String columnName) {
-        JTable table = this.getTabs().get(getSelectedTabName()).getTable();
+    public void viewNextIssue(int row, String columnName, JTable selectedTable) {
 
-//        Tab tab = tabs.get(getSelectedTabName());
-//        JTable table = tab.getTable();
-
-        Object[] cellsValue = new Object[table.getColumnCount()];
-
-        System.out.print("next cell value is ");
-        for (int col = 1; col < table.getColumnCount(); col++) {
-            cellsValue[col - 1] = table.getValueAt(row, col);
-
-            System.out.print(cellsValue[col - 1] + " ");
+        Object[] cellsValue = new Object[selectedTable.getColumnCount()];
+        for (int col = 1; col < selectedTable.getColumnCount(); col++) {
+            cellsValue[col - 1] = selectedTable.getValueAt(row, col);
         }
         boolean alreadyOpened = false;
 
-        Integer openningIssue = (Integer) table.getValueAt(row, 0);
+        Integer openningIssue = (Integer) selectedTable.getValueAt(row, 0);
 
         String value = "openning issues are: ";
         for (int issue : idNumOfOpenningIssues) {
@@ -2314,7 +2310,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 alreadyOpened = true;
             }
         }
-//        System.out.println(value);
 
         if (alreadyOpened) {
             addIssueWindow.toFront();
@@ -2323,12 +2318,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             idNumOfOpenningIssues.add(openningIssue);
             addIssueWindow.setId(openningIssue);
             addIssueWindow.setFormValue(cellsValue);
-//            int size = idNumOfOpenningIssues.size();
-
-//            addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(size - 1), row, columnName, size);
-//            addIssueWindow.setVisible(true);
         }
-        makeTableEditable(false);
+        makeTableEditable(false, selectedTable.getName());
 
     }
 
@@ -2336,14 +2327,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.idNumOfOpenningIssues;
     }
 
-    public void deleteFromIdNumOfOpenningIssues(int rowNum) {
-        int id = (Integer) this.getSelectedTable().getValueAt(rowNum, 0);
+    public void deleteFromIdNumOfOpenningIssues(int rowNum, JTable table) {
+        int id = (Integer) table.getValueAt(rowNum, 0);
 
         for (Integer IssueId : this.idNumOfOpenningIssues) {
             if (IssueId == id) {
-//                System.out.println("before delete: " + IssueId + " is " + this.idNumOfOpenningIssues);
                 this.idNumOfOpenningIssues.remove(IssueId);
-//                System.out.println("after delete: " + IssueId + " is " + this.idNumOfOpenningIssues);
                 break;
             }
         }
@@ -2365,9 +2354,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 public void mouseClicked(MouseEvent e) {
 
                     if (e.getClickCount() == 2) {
-//                        if (!tableCellPopupWindow.isEditButtonClicked()) {
                         clearFilterDoubleClick(e, table);
-//                        }
                     }
                 }
 
@@ -2410,28 +2397,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 // if left mouse clicks
                 if (SwingUtilities.isLeftMouseButton(e)) {
-//                            if (isClickOnce) {
-//                                isClickOnce = false;
-//                                doubleClick = true;
-//                                theSecondClick = new Date().getTime();
-//                            } else {
-//                                isClickOnce = true;
-//                                doubleClick = false;
-//                                theFirstClick = new Date().getTime();
-//                            }
-//                            if (theSecondClick - theFirstClick <= 200 && theSecondClick
-//                            - theFirstClick > 20 && doubleClick) {
-//                                
-//                            }
                     if (e.getClickCount() == 2) {
                         if (e.isControlDown()) {
                             filterByDoubleClick(table);
                         } else {
                             if (e.getComponent() instanceof JTable) {
-                                System.out.println("add issue window has already opened: " + numOfAddIssueWindowOpened);
                                 if (numOfAddIssueWindowOpened < 6) {
 
-                                    Tab tab = tabs.get(getSelectedTabName());
+                                    String tabName = getSelectedTabName();
+                                    Tab tab = tabs.get(tabName);
                                     JTable table = tab.getTable();
 
                                     Object[] cellsValue = new Object[table.getColumnCount()];
@@ -2459,22 +2433,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                         idNumOfOpenningIssues.add(openningIssue);
 
                                         String columnName = table.getColumnName(column);
-//                                            System.out.println("send " + columnName + " to add issue!");
                                         int size = idNumOfOpenningIssues.size();
 
                                         addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(size - 1), row, columnName, size - 1);
                                         addIssueWindow.setVisible(true);
                                         numOfAddIssueWindowOpened++;
-
-//                                        System.out.println(numOfAddIssueWindowOpened + " add issue window Opened!");
                                     }
-                                    makeTableEditable(false);
-
-                                    System.out.print("there are ");
-                                    for (int issue : idNumOfOpenningIssues) {
-                                        System.out.print(issue + ", ");
-                                    }
-                                    System.out.print("opened!");
+                                    makeTableEditable(false, tabName);
 
                                 } else if (numOfAddIssueWindowOpened > 6) {
                                     JOptionPane.showMessageDialog(frame, "It has already "
@@ -2488,7 +2453,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             int[] rows = table.getSelectedRows();
 
                             if (rows.length >= 2) {
-//                                        loadTableWhenSelectedRows(rows, table);
 
                                 btnBatchEdit.setEnabled(true);
                                 btnBatchEdit.setVisible(true);
@@ -2512,7 +2476,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         if (thisTabIsEditing || noTabIsEditing) {
 
                             // set the states for this tab
-                            makeTableEditable(true);
+                            makeTableEditable(true, table.getName());
                             setEnabledEditingButtons(true, true, true);
                             setBatchEditButtonStates(tab);
 
@@ -2604,12 +2568,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             public void tableChanged(TableModelEvent e) {
 
                 int row = e.getFirstRow();
-                System.out.println("changed row: " + row);
                 int col = e.getColumn();
-                System.out.println("changed column: " + col);
-                String tab = getSelectedTabName();
-                JTable table = tabs.get(tab).getTable();
+                String tab = table.getName();
+
                 ModifiedTableData data = tabs.get(tab).getTableData();
+
                 if (col != -1) {
                     Object oldValue = data.getOldData()[row][col];
                     Object newValue = table.getModel().getValueAt(row, col);
@@ -2648,18 +2611,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         btnBatchEdit.setVisible(false);
                     }
                 }
+//                }
             }
         });
 
-//        ListSelectionListener listener = new ListSelectionListener() {
-//
-//            @Override
-//            public void valueChanged(ListSelectionEvent e) {
-//                
-//            }
-//        };
-//        table.getSelectionModel().addListSelectionListener(listener);
-//        table.getColumnModel().getSelectionModel().addListSelectionListener(listener);
         // add keyListener to the tableSelected
         table.addKeyListener(new KeyAdapter() {
             @Override
@@ -2668,22 +2623,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                     // I believe this is meant to toggle edit mode
                     // so I passed the conditional
-                    makeTableEditable(labelEditModeState.getText().equals("ON ") ? false : true);
+                    makeTableEditable(labelEditModeState.getText().equals("ON ") ? false : true, getSelectedTabName());
                 }
             }
         });
 
-//        this.addMouseListener(new MouseAdapter() {
-//
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                if (!(e.getComponent() instanceof JTable) && !(getEditMode())) {
-//                    if (popupWindowShowInPM) {
-//                        tableCellPopupWindow.windowClose();
-//                    }
-//                }
-//            }
-//        });
     }
 
 //    private void popupWindowShowInTableByDiffTitle(JTable selectedTable) {
@@ -2746,29 +2690,25 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             str = str + " WHEN taskID = " + table.getValueAt(selectedRows[row], 0) + " THEN " + (selectedRows.length + 1 - row);
         }
         str = str + " ELSE ";
-        try {
-            // open connection because might time out
-            DBConnection.open();
-            statement = DBConnection.getStatement();
-            String sql;
-            if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
-                sql = "SELECT * FROM " + str
-                        + "CASE WHEN dateClosed IS NULL THEN 1 ELSE 0 END END, dateClosed asc, taskID ASC";
-            } else {
-                sql = "SELECT * FROM " + str + "0 END, taskId ASC";
+
+        // connection might time out
+        if (DBConnection.isClosed()) {
+            while (DBConnection.open() == false) {
+                informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
+                startCountDownFromNow(10);
             }
-            loadTable(sql, table);
-
-        } catch (SQLException ex) {
-            // for debugging
-            ex.printStackTrace();
-            logWindow.addMessageWithDate(ex.getMessage());
-
-            // notify the user that there was an issue
-//            JOptionPane.showMessageDialog(this, "connection failed");
-            informationLabel.setText("connection failed!");
+            informationLabel.setText("Connection has been reopened!");
             startCountDownFromNow(10);
         }
+        statement = DBConnection.getStatement();
+        String sql;
+        if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
+            sql = "SELECT * FROM " + str
+                    + "CASE WHEN dateClosed IS NULL THEN 1 ELSE 0 END END, dateClosed asc, taskID ASC";
+        } else {
+            sql = "SELECT * FROM " + str + "0 END, taskId ASC";
+        }
+        loadTable(sql, table);
 
         informationLabel.setText("Selected Rows Move to the End...");
         startCountDownFromNow(10);
@@ -2925,20 +2865,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
                 break;
             }
-
-//            // Set the format for tableSelected task_notes
-//            case TASKNOTES_TABLE_NAME: {
-//                for (int i = 0; i < width.length; i++) {
-//                    int pWidth = Math.round(width[i]);
-//                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
-//                    if (i == 3) {
-//                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
-//                    } else {
-//                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-//                    }
-//                }
-//                break;
-//            }
             default: {
                 System.out.println("Load table errer!");
                 break;
@@ -2984,14 +2910,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     sqlChange = "UPDATE " + tableName + " SET " + columnName
                             + " = '" + value + "' WHERE ID = " + id + ";";
                 }
-                System.out.println(sqlChange);
 
                 DBConnection.open();
                 statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlChange);
 
             } catch (SQLException e) {
-//                JOptionPane.showMessageDialog(this, "Upload failed!");
                 logWindow.addMessageWithDate("3:" + e.getMessage());
                 logWindow.addMessageWithDate("3:" + e.getSQLState() + "\n");
                 informationLabel.setText(("Upload failed! " + e.getMessage()));
@@ -3003,7 +2927,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             informationLabel.setText(("Edits uploaded successfully!"));
             startCountDownFromNow(5);
         }
-//        JOptionPane.showMessageDialog(this, "Edits uploaded!");
         return updateSuccessful;
     }
 
@@ -3051,13 +2974,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         }
                         setEnabledEditingButtons(true, true, true);
 
-//                            // make sure in editing mode
-//                            if (labelEditModeState.getText().equals("ON ")
-//                                    && !table.isEditing()
-//                                    && e.getID() == KeyEvent.KEY_PRESSED) {
-//                                System.out.println(table.isEditing() + " cell is being edited");
-//                            }
-//                        }
                     } else {
                         if (labelEditModeState.getText().equals("ON ")) {
                             if (e.getComponent() instanceof JTable) {
@@ -3134,7 +3050,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 switch (selectedOption) {
                                     case 0:
                                         // if Commit, upload changes and return to editing
-                                        uploadChanges();  // upload changes to database
+                                        uploadChanges(getSelectedTabName());  // upload changes to database
                                         break;
                                     case 1:
                                         // if Revert, revert changes
@@ -3204,7 +3120,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     if (e.getComponent() instanceof JTable) {
                         if (numOfAddIssueWindowOpened <= 6) {
 
-                            Tab tab = tabs.get(getSelectedTabName());
+                            String tabName = getSelectedTabName();
+                            Tab tab = tabs.get(tabName);
                             JTable table = tab.getTable();
 
                             Object[] cellsValue = new Object[table.getColumnCount()];
@@ -3230,17 +3147,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 addIssueWindow.toFront();
                             } else {
                                 idNumOfOpenningIssues.add(openningIssue);
-
                                 String columnName = table.getColumnName(column);
-//                                            System.out.println("send " + columnName + " to add issue!");
-
                                 int size = idNumOfOpenningIssues.size();
 
                                 addIssueWindow = new AddIssueWindow(cellsValue, idNumOfOpenningIssues.get(size - 1), row, columnName, size);
                                 addIssueWindow.setVisible(true);
                                 numOfAddIssueWindowOpened++;
                             }
-                            makeTableEditable(false);
+                            makeTableEditable(false, tabName);
                         } else {
                             JOptionPane.showMessageDialog(null, "The number of add issue window opened reached its maximum!");
                         }
@@ -3263,7 +3177,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnBatchEdit.setEnabled(disable);
         btnClearAllFilter.setEnabled(disable);
         btnSearch.setEnabled(disable);
-//        btnSwitchEditMode.setEnabled(disable);
         btnUploadChanges.setEnabled(disable);
         btnRevertChanges.setEnabled(disable);
         comboBoxSearch.setEnabled(disable);
@@ -3275,7 +3188,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuTools.setEnabled(disable);
         menuReports.setEnabled(disable);
         searchPanel.setEnabled(disable);
-        textFieldForSearch.setEnabled(disable);
 
         String tabName = getSelectedTabName();
         Tab tab = tabs.get(tabName);
@@ -3289,9 +3201,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }
 
-//    public JFrame getPopupWindowInProjectManager() {
-//        return this.tableCellPopupWindow;
-//    }
     public static ProjectManagerWindow getInstance() {
         return instance;
     }
@@ -3373,12 +3282,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             tab.setTotalRecords(totalRecords);
 
             if (entry.getKey().equals("PM")) {
-
-//            if (isFirstTabRecordLabelSet == false) {
                 String recordsLabel = tab.getRecordsLabel();
 
                 labelRecords.setText(recordsLabel);
-//                isFirstTabRecordLabelSet = true; // now its set
 //            }
             }
         }
@@ -3406,11 +3312,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             if (openIssue) {
                 for (int i = 0; i < tabbedPanel.getTabCount(); i++) {
                     if (tabbedPanel.getTitleAt(i).equals(table.getName())) {
-//                        String text = "<html><b>" + table.getName() + "</b></html>";
                         String title = tabbedPanel.getTitleAt(i);
-
-//                        ImageIcon imcon = new ImageIcon("/Users/fuxiaoqian/Desktop/ProjectManagerFromMaster/images/orange-dot.png");
-//                        tabbedPanel.setIconAt(i, imcon);
                         tabbedPanel.setTabComponentAt(i, this.getLabel(title));
                     }
                 }
@@ -3420,6 +3322,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     protected JLabel getLabel(String title) {
         ImageIcon imcon = new ImageIcon(getClass().getResource("orange-dot.png"));
+
+//        ImageIcon icon = new ImageIcon(getClass().getResource("splashImage.png"));
         JLabel label = new JLabel(imcon);
         label.setText(title);
 
@@ -3445,6 +3349,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             informationLabel.setText("Table loaded succesfully");
             startCountDownFromNow(10);
             setTableListeners(table, this);
+
+            String[] colNames = tab.getTableColNames();
+            Map tableComboBoxForSearchDropDownList = this.loadingDropdownListToMap(table, colNames);
+            this.comboBoxForSearchDropDown.put(entry.getKey(), tableComboBoxForSearchDropDownList);
         }
         setLastUpdateTime();
         return tabs;
@@ -3461,10 +3369,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String str = table.getName();
 
         int[] rows = table.getSelectedRows();
-        for (int row : rows) {
-            System.out.println("before load selected row is: " + row);
-        }
-
         Object[] selectedRowsID = new Object[rows.length];
 
         //get selected rows' id store it into an object array
@@ -3481,30 +3385,24 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     + "and app != 'ELLEGUI' or app IS NULL";
         }
 
-        try {
-            // open connection because might time out
-            DBConnection.open();
-            statement = DBConnection.getStatement();
-            String sql;
-            if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
-                sql = "SELECT * FROM " + str + " ORDER BY "
-                        + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
-            } else {
-                sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
+        // connection might time out
+        if (DBConnection.isClosed()) {
+            while (DBConnection.open() == false) {
+                informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
+                startCountDownFromNow(10);
             }
-            System.out.println(sql);
-            loadTable(sql, table);
-
-        } catch (SQLException ex) {
-            // for debugging
-            ex.printStackTrace();
-            logWindow.addMessageWithDate(ex.getMessage());
-
-            // notify the user that there was an issue
-//            JOptionPane.showMessageDialog(this, "connection failed");
-            informationLabel.setText("connection failed!");
+            informationLabel.setText("Connection has been reopened!");
             startCountDownFromNow(10);
         }
+        statement = DBConnection.getStatement();
+        String sql;
+        if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
+            sql = "SELECT * FROM " + str + " ORDER BY "
+                    + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
+        } else {
+            sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
+        }
+        loadTable(sql, table);
 
         for (int i = 0; i < selectedRowsID.length; i++) {
             for (int r = 0; r < table.getRowCount(); r++) {
@@ -3520,6 +3418,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             model.addSelectionInterval(row, row);
         }
         return table;
+
     }
 
     public JTable loadTable(String sql, JTable table) {
@@ -3599,7 +3498,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return table;
     }
 
-    //set the timer for information Label show
+    /**
+     * set the timer for information Label show
+     *
+     * @param waitSeconds
+     */
     public void startCountDownFromNow(int waitSeconds) {
         Timer timer = new Timer(waitSeconds * 1000, new ActionListener() {
 
@@ -3802,7 +3705,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         modifiedTableData.reloadData();  // reloads data of new table (old data) to compare with new changes (new data)
 
-        makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false);
+        makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false, tabName);
         // no changes to upload or revert
         setEnabledEditingButtons(true, false, false);
 
@@ -3857,10 +3760,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JButton btnClearAllFilter;
     private javax.swing.JButton btnCloseSQL;
     private javax.swing.JButton btnEnterSQL;
-    private javax.swing.JButton btnFiles;
     private javax.swing.JButton btnRevertChanges;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnUploadChanges;
+    private javax.swing.JComboBox comboBoxForSearch;
     private javax.swing.JComboBox comboBoxSearch;
     private javax.swing.JLabel informationLabel;
     private javax.swing.JTable issue_filesTable;
@@ -3888,6 +3791,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemAWSAssign;
     private javax.swing.JMenuItem menuItemActivateRecord;
     private javax.swing.JMenuItem menuItemArchiveRecord;
+    private javax.swing.JMenuItem menuItemCompIssues;
     private javax.swing.JMenuItem menuItemDeleteRecord;
     private javax.swing.JCheckBoxMenuItem menuItemLogChkBx;
     private javax.swing.JMenuItem menuItemLogOff;
@@ -3901,6 +3805,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemSaveFile;
     private javax.swing.JMenuItem menuItemTurnEditModeOff;
     private javax.swing.JMenuItem menuItemVersion;
+    private javax.swing.JMenuItem menuItemViewSplashScreen;
     private javax.swing.JMenu menuPrint;
     private javax.swing.JMenu menuReports;
     private javax.swing.JMenu menuSelectConn;
@@ -3910,7 +3815,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JLabel searchInformationLabel;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JTabbedPane tabbedPanel;
-    private javax.swing.JTextField textFieldForSearch;
     // End of variables declaration//GEN-END:variables
     // @formatter:on
 
@@ -3942,12 +3846,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public void deleteNumOfAddIssueWindowOpened() {
         this.numOfAddIssueWindowOpened--;
+        if (numOfAddIssueWindowOpened == 0) {
+            addIssueWindowShow = false;
+        }
     }
 
-    public void setPopupWindowShowInPM(boolean b) {
-        popupWindowShowInPM = b;
-    }
-
+//    public void setPopupWindowShowInPM(boolean b) {
+//        popupWindowShowInPM = b;
+//    }
     public JLabel getInformationLabel() {
         return this.informationLabel;
     }
