@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -24,6 +25,13 @@ import javax.swing.JOptionPane;
  * @since  2016 January 2
  */
 public class CompIssuesListWindow extends javax.swing.JFrame {
+    
+    // the USER name that is logged in and default path / file
+    private final String FRAME_TITLE = "Compile Issue List";
+    private final String USER = DBConnection.getUserName().substring(7);
+    private final String DIR_PATH = ".\\PM Support Files\\";
+    private final File DIR = new File(DIR_PATH); // DIR to keep compile.txt files
+    private String path = ".\\PM Support Files\\" + USER + "_Compile.txt";
 
     private final String DB_TABLE_NAME = "issues"; // database table name
     private final String COL_ID = "ID";
@@ -47,6 +55,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     private SQL_Commands sql;
     private ReadWriteFiles rwFiles;
     private JFileChooser fc;
+    private HashMap<String,ArrayList<Object>> map;
     
     /**
      * Creates new form CompIssuesWireFrame
@@ -54,14 +63,27 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     public CompIssuesListWindow() {
         initComponents();
         
+        this.setTitle(FRAME_TITLE);
+        
         // initialize class variables
         sql = new SQL_Commands(DBConnection.getConnection());
         rwFiles = new ReadWriteFiles();
+        map = new HashMap<>();
         
         // initialize all combo boxes
         initComboBoxes();
 
-        textAreaFileInformation.setLineWrap(true);
+        textAreaCompiledOutputPane.setLineWrap(true);
+        
+        // JFileChooser for choosing a file or directory
+        fc = new JFileChooser();
+        fc.setCurrentDirectory(new File("."));
+        fc.setDialogTitle("File Chooser");
+        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        if(!DIR.exists())
+            DIR.mkdirs(); // make directory if does not exist
+        fc.setCurrentDirectory(DIR);
+        fc.setSelectedFile(new File(path));
         
     }
 
@@ -75,7 +97,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        textAreaFileInformation = new javax.swing.JTextArea();
+        textAreaCompiledOutputPane = new javax.swing.JTextArea();
         labelProgrammer = new javax.swing.JLabel();
         labelApp = new javax.swing.JLabel();
         labelFromDB = new javax.swing.JLabel();
@@ -84,18 +106,19 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         cboxProgrammer = new javax.swing.JComboBox<>();
         cboxApp = new javax.swing.JComboBox<>();
         btnWriteToTextFile = new javax.swing.JButton();
-        btnBrowse = new javax.swing.JButton();
-        labelChooseFileLocation = new javax.swing.JLabel();
-        labelDisplayPath = new javax.swing.JLabel();
         datePickerFrom = new org.jdesktop.swingx.JXDatePicker();
         datePickerTo = new org.jdesktop.swingx.JXDatePicker();
         btnReadFromTextFile = new javax.swing.JButton();
+        btnCompile = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        textAreaFileInformation.setColumns(20);
-        textAreaFileInformation.setRows(5);
-        jScrollPane1.setViewportView(textAreaFileInformation);
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(163, 76));
+        jScrollPane1.setRequestFocusEnabled(false);
+
+        textAreaCompiledOutputPane.setColumns(20);
+        textAreaCompiledOutputPane.setRows(5);
+        jScrollPane1.setViewportView(textAreaCompiledOutputPane);
 
         labelProgrammer.setText("Programmer:");
 
@@ -128,19 +151,17 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             }
         });
 
-        btnBrowse.setText("Browse");
-        btnBrowse.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBrowseActionPerformed(evt);
-            }
-        });
-
-        labelChooseFileLocation.setText("Choose file location:");
-
         btnReadFromTextFile.setText("Read from Text File");
         btnReadFromTextFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReadFromTextFileActionPerformed(evt);
+            }
+        });
+
+        btnCompile.setText("Compile");
+        btnCompile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCompileActionPerformed(evt);
             }
         });
 
@@ -163,15 +184,10 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
                             .addComponent(datePickerTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(labelChooseFileLocation)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(btnBrowse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(labelProgrammer)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(cboxProgrammer, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(labelProgrammer)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboxProgrammer, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(labelApp)
                                 .addGap(18, 18, 18)
@@ -180,12 +196,12 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnCompile, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnReadFromTextFile, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(49, 49, 49)
-                        .addComponent(btnWriteToTextFile, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(labelDisplayPath, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnWriteToTextFile, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(38, 38, 38))
         );
         layout.setVerticalGroup(
@@ -211,13 +227,10 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
                             .addComponent(cboxApp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(labelChooseFileLocation)
-                            .addComponent(btnBrowse)
                             .addComponent(labelToDB)
-                            .addComponent(datePickerTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelDisplayPath, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(datePickerTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnCompile))))
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnWriteToTextFile)
                     .addComponent(btnReadFromTextFile))
@@ -227,73 +240,20 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrowseActionPerformed
-        // JFileChooser for choosing a file or directory
-        fc = new JFileChooser();
-        fc.setCurrentDirectory(new File("."));
-        fc.setDialogTitle("File Chooser");
-        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fc.showOpenDialog(this);
-        String path = fc.getSelectedFile().getAbsolutePath();
-        labelDisplayPath.setText(path);
-    }//GEN-LAST:event_btnBrowseActionPerformed
-
     private void cboxProgrammerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboxProgrammerActionPerformed
         
     }//GEN-LAST:event_cboxProgrammerActionPerformed
 
     private void btnWriteToTextFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWriteToTextFileActionPerformed
+
+        
+        fc.showOpenDialog(this); 
         
         // file must be selected or null pointer is thrown
         try{
-            // get all the information for the query
-            String file = fc.getSelectedFile().getAbsolutePath(); // check first for null pointer
-            String useDates = cboxOpenCloseDB.getSelectedItem().toString();
-            Date date = new Date();
-            if(datePickerTo.getDate()==null){
-               datePickerTo.setDate(date); // set today's date
-            }
-            Date dateTo = datePickerTo.getDate();
-            if(datePickerFrom.getDate()==null){
-               date = new Date(-1900,0,1);
-               datePickerFrom.setDate(date);
-            }
-            Date dateFrom = datePickerFrom.getDate();
-            String app = cboxApp.getSelectedItem().toString();
-            String programmer = cboxProgrammer.getSelectedItem().toString();
-            // write the query
-            String query = "SELECT * FROM " + DB_TABLE_NAME + " ";
-            ArrayList<String> queries = new ArrayList<>();
-            queries.add(getAppQuery(app));
-            queries.add(getProgrammerQuery(programmer));
-            queries.add(getDatesQuery(useDates,dateFrom,dateTo));
-            queries.add("ORDER BY " + COL_RK + " ASC");
-            boolean needsWhereClause = true;
-            for(int i = 0; i < queries.size(); i++){
-                if(!queries.get(i).equals("")){
-                    if(i == queries.size() - 1){ // this is the sorting query
-                        query += queries.get(i) + " ";
-                    }else if(needsWhereClause){
-                        query += "WHERE " + queries.get(i) + " ";
-                        needsWhereClause = false;
-                    }else{
-                        query += "AND " + queries.get(i) + " ";
-                    }
-                }
-            }
-            // make sure connection is open
-            DBConnection.close();
-            DBConnection.open();
-            // execute query and return data to hash map
-            sql = new SQL_Commands(DBConnection.getConnection());
-            HashMap<String,ArrayList<Object>> map;
-            System.out.println(query); // for debugging
-            map = sql.getTableData(sql.executeQuery(query));
-            // write data to file
-            if(writeToFile(file,map)){
-                messageBox("Write finished succecssfully.");
-            }
-            
+            path = fc.getSelectedFile().getAbsolutePath();
+            if(writeFromTextAreaToTextFile(textAreaCompiledOutputPane, path))
+                messageBox("written successfully!");
         }
         catch(NullPointerException e){
             messageBox("Please select a file.");
@@ -314,13 +274,16 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
 
     private void btnReadFromTextFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReadFromTextFileActionPerformed
         
+        fc.showOpenDialog(this); 
+        
+        // file must be selected or null pointer is 
         try{
-            String file = fc.getSelectedFile().getAbsolutePath(); // check first for null pointer
-            BufferedReader reader = rwFiles.getReader(file);
-            textAreaFileInformation.setText("");
+            path = fc.getSelectedFile().getAbsolutePath(); // check first for null pointer
+            BufferedReader reader = rwFiles.getReader(path);
+            textAreaCompiledOutputPane.setText("");
             String line = reader.readLine();
             while(line != null){
-                textAreaFileInformation.append(line + "\n");
+                textAreaCompiledOutputPane.append(line + "\n");
                 line = reader.readLine();
             }
         }catch(NullPointerException e){
@@ -330,6 +293,11 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_btnReadFromTextFileActionPerformed
+
+    private void btnCompileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompileActionPerformed
+        map = getTableData();
+        writeToTextArea(textAreaCompiledOutputPane, map);
+    }//GEN-LAST:event_btnCompileActionPerformed
 
     /**
      * @param args the command line arguments
@@ -368,7 +336,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBrowse;
+    private javax.swing.JButton btnCompile;
     private javax.swing.JButton btnReadFromTextFile;
     private javax.swing.JButton btnWriteToTextFile;
     private javax.swing.JComboBox<String> cboxApp;
@@ -378,12 +346,10 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     private org.jdesktop.swingx.JXDatePicker datePickerTo;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelApp;
-    private javax.swing.JLabel labelChooseFileLocation;
-    private javax.swing.JLabel labelDisplayPath;
     private javax.swing.JLabel labelFromDB;
     private javax.swing.JLabel labelProgrammer;
     private javax.swing.JLabel labelToDB;
-    private javax.swing.JTextArea textAreaFileInformation;
+    private javax.swing.JTextArea textAreaCompiledOutputPane;
     // End of variables declaration//GEN-END:variables
 
     private void initComboBoxes() {
@@ -455,35 +421,40 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         return "";
     }
 
+    // writes the text area content to file
     private boolean writeToFile(String file, HashMap<String, ArrayList<Object>> map) {
+        
         PrintWriter writer = rwFiles.getWriter(file); // writer to write to file
+        
         // get data for each record
         int records = map.get(COL_APP).size(); // had to hard code - used app
         for(int i = 0; i < records; i++){
-            String app = COL_APP + ": ";
+            
+            String app = "";
+            String title= "";
+            String rk= "";
+            String programmer= "";
+            String opened= "";
+            String closed= "";
+            String version= "";
+            String description= "";
+            
             if(map.get(COL_APP).get(i) != null)
-                app += map.get(COL_APP).get(i).toString() + " ";
-            String title = COL_TITLE + ": ";
+                app = COL_APP + ": " + map.get(COL_APP).get(i).toString() + " ";
             if(map.get(COL_TITLE).get(i) != null)
-                title += map.get(COL_TITLE).get(i).toString() + " ";
-            String rk = COL_RK + ": ";
+                title = COL_TITLE + ": " + map.get(COL_TITLE).get(i).toString() + " ";
             if(map.get(COL_RK).get(i) != null)
-                rk += map.get(COL_RK).get(i).toString() + " ";
-            String programmer = COL_PROGRAMMER + ": ";
+                rk = COL_RK + ": " + map.get(COL_RK).get(i).toString() + " ";
             if(map.get(COL_PROGRAMMER).get(i) != null)
-                programmer += map.get(COL_PROGRAMMER).get(i).toString() + " ";
-            String opened = COL_DATE_OPENED + ": ";
+                programmer = COL_PROGRAMMER + ": " + map.get(COL_PROGRAMMER).get(i).toString() + " ";
             if(map.get(COL_DATE_OPENED).get(i) != null)
-                opened += map.get(COL_DATE_OPENED).get(i).toString() + " ";
-            String closed = COL_DATE_CLOSED + ": ";
+                opened = COL_DATE_OPENED + ": " + map.get(COL_DATE_OPENED).get(i).toString() + " ";
             if(map.get(COL_DATE_CLOSED).get(i) != null)
-                closed += map.get(COL_DATE_CLOSED).get(i).toString() + " ";
-            String version = COL_VERSION + ": ";
+                closed = COL_DATE_CLOSED + ": " + map.get(COL_DATE_CLOSED).get(i).toString() + " ";
             if(map.get(COL_VERSION).get(i) != null)
-                version += map.get(COL_VERSION).get(i).toString() + " ";
-            String description = COL_DESCRIPTION + ": ";
+                version = COL_VERSION + ": " + map.get(COL_VERSION).get(i).toString() + " ";
             if(map.get(COL_DESCRIPTION).get(i) != null)
-                description += map.get(COL_DESCRIPTION).get(i).toString() + " ";
+                description = COL_DESCRIPTION + ": " + map.get(COL_DESCRIPTION).get(i).toString() + " ";
             
             /**
              * print to file
@@ -510,8 +481,150 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         writer.close();
         return true;
     }
+    
+    // writes the text area content to file
+    public boolean writeToTextArea(JTextArea textArea, HashMap<String, ArrayList<Object>> map) {
+        
+        textArea.setText("");
+        
+        // get data for each record
+        int records = map.get(COL_APP).size(); // had to hard code - used app
+        for(int i = 0; i < records; i++){
+            
+            String app = "";
+            String title= "";
+            String rk= "";
+            String programmer= "";
+            String opened= "";
+            String closed= "";
+            String version= "";
+            String description= "";
+            
+            if(map.get(COL_APP).get(i) != null)
+                app = COL_APP + ": " + map.get(COL_APP).get(i).toString() + " ";
+            if(map.get(COL_TITLE).get(i) != null)
+                title = COL_TITLE + ": " + map.get(COL_TITLE).get(i).toString() + " ";
+            if(map.get(COL_RK).get(i) != null)
+                rk = COL_RK + ": " + map.get(COL_RK).get(i).toString() + " ";
+            if(map.get(COL_PROGRAMMER).get(i) != null)
+                programmer = COL_PROGRAMMER + ": " + map.get(COL_PROGRAMMER).get(i).toString() + " ";
+            if(map.get(COL_DATE_OPENED).get(i) != null)
+                opened = COL_DATE_OPENED + ": " + map.get(COL_DATE_OPENED).get(i).toString() + " ";
+            if(map.get(COL_DATE_CLOSED).get(i) != null)
+                closed = COL_DATE_CLOSED + ": " + map.get(COL_DATE_CLOSED).get(i).toString() + " ";
+            if(map.get(COL_VERSION).get(i) != null)
+                version = COL_VERSION + ": " + map.get(COL_VERSION).get(i).toString() + " ";
+            if(map.get(COL_DESCRIPTION).get(i) != null)
+                description = COL_DESCRIPTION + ": " + map.get(COL_DESCRIPTION).get(i).toString() + " ";
+            
+            /**
+             * print to text area
+             * FORMAT
+             * rk app title programmer opened closed version
+             * ----------------------------------------------
+             * descriptions
+             */
+            textArea.append(rk + app + title + programmer + "\n");
+            textArea.append("--------------------------------------------------------\n");
+
+            // 90 is the number of max characters per line
+            ArrayList<String> lines = formatLineBreaks(description, 90);
+            for(int index = 0; index < lines.size(); index++){
+                textArea.append(lines.get(index) + "\n");
+            }
+
+            // Just appending and let word wrap handle length.
+            // length of the textArea is the length of the issue window text area.
+            textArea.append("\n"); // a line break between records
+        }
+        return true;
+    }
+    
+    public boolean writeFromTextAreaToTextFile(JTextArea textArea, String path ){
+        
+        PrintWriter writer = rwFiles.getWriter(path); // writer to write to file
+        String[] lines = textArea.getText().split("\n");
+        for(int i =0; i < lines.length; i++){
+            writer.println(lines[i]);
+        }
+        writer.flush();
+        writer.close();
+        return true;
+    }
 
     private void messageBox(String message) {
         JOptionPane.showMessageDialog(this, message);
+    }
+
+    private HashMap<String, ArrayList<Object>> getTableData() {
+        
+        // get all the information for the query
+        String useDates = cboxOpenCloseDB.getSelectedItem().toString();
+        Date date = new Date();
+        if(datePickerTo.getDate()==null){
+           datePickerTo.setDate(date); // set today's date
+        }
+        Date dateTo = datePickerTo.getDate();
+        if(datePickerFrom.getDate()==null){
+           date = new Date(-1900,0,1);
+           datePickerFrom.setDate(date);
+        }
+        Date dateFrom = datePickerFrom.getDate();
+        String app = cboxApp.getSelectedItem().toString();
+        String programmer = cboxProgrammer.getSelectedItem().toString();
+        // write the query
+        String query = "SELECT * FROM " + DB_TABLE_NAME + " ";
+        ArrayList<String> queries = new ArrayList<>();
+        queries.add(getAppQuery(app));
+        queries.add(getProgrammerQuery(programmer));
+        queries.add(getDatesQuery(useDates,dateFrom,dateTo));
+        queries.add("ORDER BY " + COL_RK + " ASC");
+        boolean needsWhereClause = true;
+        for(int i = 0; i < queries.size(); i++){
+            if(!queries.get(i).equals("")){
+                if(i == queries.size() - 1){ // this is the sorting query
+                    query += queries.get(i) + " ";
+                }else if(needsWhereClause){
+                    query += "WHERE " + queries.get(i) + " ";
+                    needsWhereClause = false;
+                }else{
+                    query += "AND " + queries.get(i) + " ";
+                }
+            }
+        }
+        // make sure connection is open
+        DBConnection.close();
+        DBConnection.open();
+        // execute query and return data to hash map
+        sql = new SQL_Commands(DBConnection.getConnection());
+        HashMap<String,ArrayList<Object>> map;
+        System.out.println(query); // for debugging
+        map = sql.getTableData(sql.executeQuery(query));
+        return map;
+    }
+    
+    /**
+     * This formats long string into lines of a fixed length.
+     * This checks if a word will fit on that line so that words are not 
+     * split up.
+     * @param string the string to format the lines
+     * @param maxCharsPerLine the max char length of the line breaks
+     * @return ArrayList<String> the formatted lines
+     */
+    public ArrayList formatLineBreaks(String string, int maxCharsPerLine){
+        
+        ArrayList<String> lines = new ArrayList<>();
+        String[] words = string.split(" ");
+        String line = "";
+
+        for(int i = 0; i < words.length; i++){
+            if(line.length() + words[i].length() + 1 > maxCharsPerLine){
+                lines.add(line);
+                line = "";
+            }
+            line += words[i] + " ";
+        }
+        lines.add(line);
+        return lines;
     }
 }
