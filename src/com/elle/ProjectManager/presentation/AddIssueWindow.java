@@ -960,19 +960,23 @@ public class AddIssueWindow extends JFrame {
 
 
     private void btnCloseIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseIssueActionPerformed
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String today = dateFormat.format(date);
+        String userName = projectManager.getUserName();
+        String value = descriptionText.getText();
         if (btnCloseIssue.getText().equalsIgnoreCase("close issue")) {
             // set dateClosed text field with date today
             makeContentDate(dateClosedText);
             String temperaryVersion = "XXX";
             versionText.setText(temperaryVersion);
             btnCloseIssue.setText("Reopen Issue");
+            value = value + "\n--- Issue Closed by "
+                    + userName + " on " + today + "\n";
         } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = new Date();
-            String today = dateFormat.format(date);
-            String userName = projectManager.getUserName();
-            String value = descriptionText.getText() + "--- Issue reopened by " + 
-                    userName + " on " + today + " of version " + versionText.getText()+" \n";
+            value = value + "\n \n--- Issue reopened by "
+                    + userName + " on " + today + " (version " + versionText.getText() + ") \n";
             descriptionText.setText(value);
             versionText.setText("");
             dateClosedText.setText("");
