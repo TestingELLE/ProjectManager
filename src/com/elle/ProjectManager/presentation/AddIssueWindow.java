@@ -97,8 +97,7 @@ public class AddIssueWindow extends JFrame {
         logWindow = projectManager.getLogWindow();
         tabs = projectManager.getTabs();
         statement = projectManager.getStatement();
-        
-        
+
         selectedTable = projectManager.getSelectedTable();
 
         projectManager.setAddRecordsWindowShow(true);
@@ -114,7 +113,7 @@ public class AddIssueWindow extends JFrame {
 
         // initialize components
         initComponents();
-       
+
         // create a new empty tableSelected
         createTable();
 
@@ -145,7 +144,7 @@ public class AddIssueWindow extends JFrame {
         logWindow = projectManager.getLogWindow();
         tabs = projectManager.getTabs();
         statement = projectManager.getStatement();
-        
+
         selectedTable = projectManager.getSelectedTable();
 
         projectManager.setAddRecordsWindowShow(true);
@@ -609,7 +608,7 @@ public class AddIssueWindow extends JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btnCloseIssue, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnCloseIssue, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -707,7 +706,7 @@ public class AddIssueWindow extends JFrame {
                                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(dateOpened))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 223, Short.MAX_VALUE)
                                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(formPaneLayout.createSequentialGroup()
                                         .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -718,7 +717,7 @@ public class AddIssueWindow extends JFrame {
                                         .addGap(60, 60, 60)
                                         .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(13, Short.MAX_VALUE))
                     .addGroup(formPaneLayout.createSequentialGroup()
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(formPaneLayout.createSequentialGroup()
@@ -802,7 +801,7 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_buttonSubmitActionPerformed
 
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        
+
         projectManager.makeTableEditable(false, getIssueActiveTabName());
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
         projectManager.deleteNumOfAddIssueWindowOpened();
@@ -813,8 +812,8 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_buttonCancelActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        
-        projectManager.makeTableEditable(false,getIssueActiveTabName());
+
+        projectManager.makeTableEditable(false, getIssueActiveTabName());
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
         projectManager.deleteNumOfAddIssueWindowOpened();
         this.dispose();
@@ -853,13 +852,13 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_dateOpenedTextKeyReleased
 
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
-        
+
         System.out.println("at " + table.getName() + " " + selectedTable.getColumnCount());
-        
-        for(int row =0; row < selectedTable.getRowCount(); row++){
+
+        for (int row = 0; row < selectedTable.getRowCount(); row++) {
             System.out.println(selectedTable.getValueAt(row, 0) + " " + selectedTable.getValueAt(row, 2));
         }
-        
+
         for (int col = 0; col < formValues.length; col++) {
             System.out.println(col);
             if (formValues[col] != null) {
@@ -904,7 +903,7 @@ public class AddIssueWindow extends JFrame {
             rowInView = rowInView + 1;
             projectManager.viewNextIssue(rowInView, columnFocused, selectedTable);
             updateForm();
-            projectManager.makeTableEditable(false,getIssueActiveTabName());
+            projectManager.makeTableEditable(false, getIssueActiveTabName());
             selectedTable.setRowSelectionInterval(rowInView, rowInView);
         }
     }//GEN-LAST:event_BtnNextActionPerformed
@@ -961,10 +960,24 @@ public class AddIssueWindow extends JFrame {
 
 
     private void btnCloseIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseIssueActionPerformed
-        // set dateClosed text field with date today
-        makeContentDate(dateClosedText);
-        String temperaryVersion = "XXX";
-        versionText.setText(temperaryVersion);
+        if (btnCloseIssue.getText().equalsIgnoreCase("close issue")) {
+            // set dateClosed text field with date today
+            makeContentDate(dateClosedText);
+            String temperaryVersion = "XXX";
+            versionText.setText(temperaryVersion);
+            btnCloseIssue.setText("Reopen Issue");
+        } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = new Date();
+            String today = dateFormat.format(date);
+            String userName = projectManager.getUserName();
+            String value = descriptionText.getText() + "--- Issue reopened by " + 
+                    userName + " on " + today + " of version " + versionText.getText()+" \n";
+            descriptionText.setText(value);
+            versionText.setText("");
+            dateClosedText.setText("");
+            btnCloseIssue.setText("Close Issue");
+        }
 //        if (projectManager.getSelectedTabName().equalsIgnoreCase("pm")) {
 //            String version = projectManager.getVersion();
 //
@@ -1003,7 +1016,7 @@ public class AddIssueWindow extends JFrame {
         } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
 
             String userName = projectManager.getUserName();
-            value = value + "\n" + "-- by " + userName + " on " + today + "-- \n";
+            value = value + "-- by " + userName + " on " + today + "-- \n";
             dateArea.setText(value);
         }
     }//GEN-LAST:event_descriptionTextKeyReleased
@@ -1041,7 +1054,6 @@ public class AddIssueWindow extends JFrame {
 
             // Now get the values to add to the database
             String values = "";
-//            for (row = 0; row < table.getRowCount(); row++) {
             values = "VALUES (";  // start the values statement
 
             for (col = 0; col < table.getColumnCount(); col++) {
@@ -1069,8 +1081,6 @@ public class AddIssueWindow extends JFrame {
                     values += cellValue + ");";
                 }
             }
-//            System.out.println(insertInto);
-//            System.out.println(values);
 
             try {
                 // execute the sql statement
@@ -1147,7 +1157,7 @@ public class AddIssueWindow extends JFrame {
                 projectManager.startCountDownFromNow(5);
             }
 
-            projectManager.makeTableEditable(false,getIssueActiveTabName());
+            projectManager.makeTableEditable(false, getIssueActiveTabName());
 
         }
     }
@@ -1210,12 +1220,12 @@ public class AddIssueWindow extends JFrame {
     public void setId(int id) {
         idText.setText(Integer.toString(id));
     }
-    
-    public JTable getIssueActiveTable(){
+
+    public JTable getIssueActiveTable() {
         return this.selectedTable;
     }
-    
-    public String getIssueActiveTabName(){
+
+    public String getIssueActiveTabName() {
         return this.selectedTable.getName();
     }
 
@@ -1265,7 +1275,7 @@ public class AddIssueWindow extends JFrame {
         textAreaArray[5] = (dateClosedText);
         textAreaArray[6] = (versionText);
         String areaName = "";
-        
+
         InputMap ip = null;
         for (int i = 0; i < columnNames.length; i++) {
             Object tableValue = formValues[i];
@@ -1422,6 +1432,12 @@ public class AddIssueWindow extends JFrame {
 
         buttonSubmit.setEnabled(false);
         buttonSubmit.setVisible(b);
+
+        if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
+            btnCloseIssue.setText("Close Issue");
+        } else {
+            btnCloseIssue.setText("Reopen Issue");
+        }
 
     }
 

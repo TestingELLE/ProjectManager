@@ -76,7 +76,7 @@
                                           <Component id="dateOpenedText" alignment="0" min="-2" pref="111" max="-2" attributes="0"/>
                                           <Component id="dateOpened" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace max="32767" attributes="0"/>
+                                      <EmptySpace pref="223" max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" attributes="0">
                                               <Component id="programmerText" min="-2" pref="115" max="-2" attributes="0"/>
@@ -92,7 +92,7 @@
                                   </Group>
                                   <Component id="jScrollPane7" min="-2" pref="580" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="13" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -257,7 +257,7 @@
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          <Component id="btnCloseIssue" min="-2" pref="103" max="-2" attributes="0"/>
+                          <Component id="btnCloseIssue" min="-2" pref="126" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="buttonConfirm" min="-2" pref="89" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>

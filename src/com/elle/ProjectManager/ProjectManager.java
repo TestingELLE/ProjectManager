@@ -99,7 +99,7 @@ public class ProjectManager {
             loadingGraphics.setFont(font);
             g.setFont(font);
             
-            String information = "Version: 1.0.2        CreationDate: 01/08/2016";
+            String information = "Version: 1.0.5        CreationDate: 01/16/2016";
             loadingGraphics.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
             g.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
             
@@ -164,20 +164,9 @@ public class ProjectManager {
     private static void saveImage() {
 
         try {
-//            URL url = ProjectManager.class.getResource("image.png");
-//            String imageUrl = url.toURI().toString();
-//            imageUrl = imageUrl.substring(5, imageUrl.length()-9);
-//            imageUrl = imageUrl + "presentation";
-//            
-////            imageUrl = imageUrl + "presentation/splashImage";
-//            
-//            System.out.println("file store at: " + imageUrl);
-            
             ImageIO.write(image, "png", new File("splashImage.png"));
         } catch (IOException ex) {
             System.out.println("image save failed!" + " Due to: " + ex.getMessage());
-//        } catch (URISyntaxException ex) {
-//            Logger.getLogger(ProjectManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

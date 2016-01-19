@@ -24,6 +24,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
+import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -37,6 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  * ProjectManagerWindow
@@ -48,8 +52,8 @@ import java.util.Vector;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2016-01-14";
-    private final String VERSION = "1.0.4";
+    private final String CREATION_DATE = "2016-01-16";
+    private final String VERSION = "1.0.5";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
@@ -1022,7 +1026,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
                     .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1081,11 +1085,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 119, Short.MAX_VALUE))
+                .addGap(0, 96, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(37, 37, 37))
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1107,17 +1111,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(addPanel_controlLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 663, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 645, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(addPanel_controlLayout.createSequentialGroup()
-                .addGroup(addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 6, Short.MAX_VALUE))
+            .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addPanel_controlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         menuFile.setText("File");
@@ -1312,7 +1317,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1406,9 +1411,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
-//        String tabName = getSelectedTabName();
-//        Tab tab = tabs.get(tabName);
-//        JTable table = tab.getTable();
+            
             String searchColName = comboBoxSearch.getSelectedItem().toString();
             String searchBoxValue = comboBoxForSearch.getSelectedItem().toString();  // store string from text box
 
@@ -1425,12 +1428,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     boolean isValueInTable = false;
                     isValueInTable = checkValueInTableCell(col, searchBoxValue, table);
 
-                    if (isValueInTable) {
-
-                        filter.addFilterItem(col, searchBoxValue);
-                        filter.applyFilter();
-
-                    } else {
+//                    if (isValueInTable) {
+//
+//                        filter.addFilterItem(col, searchBoxValue);
+//                        filter.applyFilter();
+//
+//                    } else {
+//                        count++;
+//                    }
+                    filter.addFilterItem(col, searchBoxValue);
+                    filter.applyFilter();
+                    if(!isValueInTable){
                         count++;
                     }
 
@@ -1662,17 +1670,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 str = str + " WHERE app != 'PM' and app != 'Analyster' "
                         + "and app != 'ELLEGUI' or app IS NULL";
             }
-            
+
             // connection might time out
-            if(DBConnection.isClosed()){
-                while(DBConnection.open() == false){
+            if (DBConnection.isClosed()) {
+                while (DBConnection.open() == false) {
                     informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
                     startCountDownFromNow(10);
                 }
                 informationLabel.setText("Connection has been reopened!");
                 startCountDownFromNow(10);
             }
-                
+
             statement = DBConnection.getStatement();
             String sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
 //                System.out.println(sql);
@@ -1772,7 +1780,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         Tab tab = tabs.get(tabName);
         JTable table = tab.getTable();
         int[] rows = table.getSelectedRows();
-        this.moveSelectedRowsToTheEnd(rows, table);
+//        this.moveSelectedRowsToTheEnd(rows, table);
 
         // set the tab to editing
         makeTableEditable(true, tabName);
@@ -2209,13 +2217,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_comboBoxForSearchActionPerformed
 
     private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
-//        ImageIcon img = new ImageIcon(getClass().getResource("splashImage.png"));
-//        JFrame splashScreenImage = new JFrame();
-//        JLabel image = new JLabel(img);
-//        splashScreenImage.add(image);
-//        splashScreenImage.pack();
-//        splashScreenImage.setLocationRelativeTo(this);
-//        splashScreenImage.setVisible(true);
+        try {
+            ImageIcon img = new ImageIcon(ImageIO.read(new File("/User/alvinreyes/splashImage.png")));
+            JFrame splashScreenImage = new JFrame();
+            JLabel image = new JLabel(img);
+            splashScreenImage.add(image);
+            splashScreenImage.pack();
+            splashScreenImage.setLocationRelativeTo(this);
+            splashScreenImage.setVisible(true);
+        } catch (IOException ex) {
+            logWindow.addMessageWithDate("3:" + ex.getMessage());
+        }
     }//GEN-LAST:event_menuItemViewSplashScreenActionPerformed
 
     private void menuItemCompIssuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCompIssuesActionPerformed
@@ -2239,9 +2251,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         int rowNum = table.getRowCount();
         int count = 0;
         for (int row : rows) {
-            if (count != 0) {
-                row = row - 1;
-            }
+            row = row - count;
 
             model.moveRow(row, row, rowNum - 1);
             count++;
@@ -2680,10 +2690,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             str = str + " WHEN taskID = " + table.getValueAt(selectedRows[row], 0) + " THEN " + (selectedRows.length + 1 - row);
         }
         str = str + " ELSE ";
-      
+
         // connection might time out
-        if(DBConnection.isClosed()){
-            while(DBConnection.open() == false){
+        if (DBConnection.isClosed()) {
+            while (DBConnection.open() == false) {
                 informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
                 startCountDownFromNow(10);
             }
@@ -3376,8 +3386,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         // connection might time out
-        if(DBConnection.isClosed()){
-            while(DBConnection.open() == false){
+        if (DBConnection.isClosed()) {
+            while (DBConnection.open() == false) {
                 informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
                 startCountDownFromNow(10);
             }
@@ -3392,7 +3402,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         } else {
             sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
         }
-        System.out.println(sql);
         loadTable(sql, table);
 
         for (int i = 0; i < selectedRowsID.length; i++) {
