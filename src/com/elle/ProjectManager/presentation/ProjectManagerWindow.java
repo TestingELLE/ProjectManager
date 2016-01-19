@@ -2218,7 +2218,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
         try {
-            ImageIcon img = new ImageIcon(ImageIO.read(new File("/User/alvinreyes/splashImage.png")));
+            ImageIcon img = new ImageIcon(ImageIO.read(new File("splashImage.png")));
             JFrame splashScreenImage = new JFrame();
             JLabel image = new JLabel(img);
             splashScreenImage.add(image);
