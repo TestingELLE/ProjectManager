@@ -73,7 +73,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private EditDatabaseWindow editDatabaseWindow;
 //    private ReportWindow reportWindow;
     private AddIssueFileWindow addIssueFileWindow;
-    private ShortCutSetting changeShortCut;
+    private ShortCutSetting ShortCut;
+    private ConsistencyOfTableColumnName ColumnNameConsistency;
 
     // colors - Edit mode labels
     private Color editModeDefaultTextColor;
@@ -221,8 +222,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         //changing the text field copy and paste short cut to default control key
         //(depend on system) + c/v
         InputMap ip = (InputMap) UIManager.get("TextField.focusInputMap");
-        changeShortCut = new ShortCutSetting(ip);
-        changeShortCut.copyAndPasteShortCut();
+        ShortCut.copyAndPasteShortCut(ip);
 
         // show and hide components
         btnUploadChanges.setVisible(false);
@@ -652,7 +652,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "a", "dateClosed"
             }
         ) {
             Class[] types = new Class [] {
@@ -1411,7 +1411,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
-            
+
             String searchColName = comboBoxSearch.getSelectedItem().toString();
             String searchBoxValue = comboBoxForSearch.getSelectedItem().toString();  // store string from text box
 
@@ -1438,7 +1438,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                    }
                     filter.addFilterItem(col, searchBoxValue);
                     filter.applyFilter();
-                    if(!isValueInTable){
+                    if (!isValueInTable) {
                         count++;
                     }
 
@@ -3246,6 +3246,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.userName = userName;
     }
 
+    public void setInformationLabel(String inf, int second) {
+        this.informationLabel.setText(inf);
+        startCountDownFromNow(second);
+    }
+
     public String getUserName() {
         return this.userName;
     }
@@ -3353,9 +3358,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             String[] colNames = tab.getTableColNames();
             Map tableComboBoxForSearchDropDownList = this.loadingDropdownListToMap(table, colNames);
             this.comboBoxForSearchDropDown.put(entry.getKey(), tableComboBoxForSearchDropDownList);
+
+            boolean isColumnNameTheSame = ColumnNameConsistency.IsTableColumnNameTheSame(tab, table);
+            if (!isColumnNameTheSame) {
+                logWindow.addMessageWithDate(ColumnNameConsistency.getErrorMessage());
+                setInformationLabel("column Name(s) is(are) different from what in database", 5);
+            }
         }
         setLastUpdateTime();
         return tabs;
+    }
+
+    public void compareTablesColumnName(Tab tab, JTable table) {
+
     }
 
     /**

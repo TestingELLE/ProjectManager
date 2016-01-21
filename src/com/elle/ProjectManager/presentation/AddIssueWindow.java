@@ -246,6 +246,10 @@ public class AddIssueWindow extends JFrame {
      */
     private void createTable(String appDefaultValue) {
         columnNames = projectManager.getTabs().get(table.getName()).getTableColNames();
+        for (String name : columnNames) {
+
+            System.out.println(name);
+        }
         // get tableSelected column width format
         columnWidths = tabs.get(table.getName()).getColWidthPercent();
         // we don't want the ID column 
@@ -977,11 +981,11 @@ public class AddIssueWindow extends JFrame {
         } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
             value = value + "\n \n--- Issue reopened by "
                     + userName + " on " + today + " (version " + versionText.getText() + ") \n";
-            descriptionText.setText(value);
             versionText.setText("");
             dateClosedText.setText("");
             btnCloseIssue.setText("Close Issue");
         }
+        descriptionText.setText(value);
 //        if (projectManager.getSelectedTabName().equalsIgnoreCase("pm")) {
 //            String version = projectManager.getVersion();
 //
@@ -1309,8 +1313,7 @@ public class AddIssueWindow extends JFrame {
                     }
                 }
             }
-            ShortCut = new ShortCutSetting(ip);
-            ShortCut.copyAndPasteShortCut();
+            ShortCut.copyAndPasteShortCut(ip);
         }
 
         setDocumentListener();

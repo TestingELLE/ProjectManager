@@ -332,7 +332,7 @@
                         <Column editable="true" title="programmer" type="java.lang.Object"/>
                         <Column editable="true" title="dateOpened" type="java.lang.Object"/>
                         <Column editable="true" title="rk" type="java.lang.Object"/>
-                        <Column editable="true" title="version" type="java.lang.Object"/>
+                        <Column editable="true" title="a" type="java.lang.Object"/>
                         <Column editable="true" title="dateClosed" type="java.lang.Object"/>
                       </Table>
                     </Property>
