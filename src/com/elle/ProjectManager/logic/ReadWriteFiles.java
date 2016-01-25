@@ -41,6 +41,7 @@ public class ReadWriteFiles {
     public PrintWriter getWriter(String fileName){
         try{
             file = new File(fileName);
+            file.getParentFile().mkdirs(); // makes directories if don't exist
             writer = new PrintWriter(new BufferedWriter(new FileWriter(file)), true);
             return writer;
         } catch (IOException ex) {
