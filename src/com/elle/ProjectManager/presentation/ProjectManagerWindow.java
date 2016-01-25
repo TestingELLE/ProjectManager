@@ -4,6 +4,7 @@ import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.logic.*;
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 //import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 
 import javax.swing.*;
@@ -22,8 +23,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -33,13 +32,13 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
@@ -1411,7 +1410,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
-            
+
             String searchColName = comboBoxSearch.getSelectedItem().toString();
             String searchBoxValue = comboBoxForSearch.getSelectedItem().toString();  // store string from text box
 
@@ -1438,7 +1437,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                    }
                     filter.addFilterItem(col, searchBoxValue);
                     filter.applyFilter();
-                    if(!isValueInTable){
+                    if (!isValueInTable) {
                         count++;
                     }
 
@@ -2355,6 +2354,58 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     if (e.getClickCount() == 2) {
                         clearFilterDoubleClick(e, table);
                     }
+//                    if (e.getClickCount() == 1) {
+//                        for (int j = 0; j < table.getColumnCount(); j++) {
+//                            // Locate columns under "ID"
+//                            String columnName = table.getColumnName(j);
+//                            if (columnName.equalsIgnoreCase("ID")) {
+//                                ArrayList<String> ID = new ArrayList<>();
+//
+//                                for (int row = 0; row < table.getModel().getRowCount(); row++) {
+//
+//                                    String Value = table.getModel().getValueAt(row, 0).toString();
+//
+//                                    ID.add(Value);
+//                                }
+//                                TableRowSorter<DefaultTableModel> RowSorter = (TableRowSorter<DefaultTableModel>) table.getRowSorter();
+//                                RowSorter.setComparator(0, new Comparator<String>() {
+//
+//                                    @Override
+//                                    public int compare(String o1, String o2) {
+//                                        return Integer.parseInt(o1) - Integer.parseInt(o2);
+//                                    }
+//
+//                                });
+//
+//                            }
+//                        }
+//                    }
+//
+//
+//                    for (int j = 0; j < table.getColumnCount(); j++) {
+//                        // Locate columns under "ID"
+//                        String columnName = table.getColumnName(j);
+//                        if (e.getClickCount() == 1 && columnName.equalsIgnoreCase("ID")) {
+//                            ArrayList<String> ID = new ArrayList<>();
+//
+//                            for (int row = 0; row < table.getModel().getRowCount(); row++) {
+//
+//                                String Value = table.getModel().getValueAt(row, 0).toString();
+//
+//                                ID.add(Value);
+//                            }
+//                            TableRowSorter<DefaultTableModel> rowSorter = (TableRowSorter<DefaultTableModel>) table.getRowSorter();
+//                            rowSorter.setComparator(0, new Comparator<String>() {
+//
+//                                @Override
+//                                public int compare(String o1, String o2) {
+//                                    return Integer.parseInt(o1) - Integer.parseInt(o2);
+//                                }
+//
+//                            });
+//
+//                        }
+//                    }
                 }
 
                 /**
@@ -2382,7 +2433,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 .getColumnPopupMenu().showPopupMenu(e);
                     }
                 }
-            });
+            }
+            );
         }
 
         // add mouselistener to the tableSelected
@@ -2628,50 +2680,50 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
 
     }
+    //    private void popupWindowShowInTableByDiffTitle(JTable selectedTable) {
+    //        int selectedColumn = selectedTable.getSelectedColumn();
+    //
+    //        if (selectedTable.getName().equals(TASKS_TABLE_NAME)) {
+    //            if (selectedTable.getColumnName(selectedColumn).equals("title")
+    //                    || selectedTable.getColumnName(selectedColumn).equals("description")) {
+    //                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
+    ////                tableCellPopupWindow.showWindow();
+    ////                //to check it is edit mode or not in project manager
+    ////                //or in add records window it directly into edit mode
+    ////                tableCellPopupWindow.editModeSwich();
+    ////            } else {
+    ////                tableCellPopupWindow.windowClose();
+    //            }
+    //        } else if (selectedTable.getName().equals(TASKFILES_TABLE_NAME)) {
+    //            if (selectedTable.getColumnName(selectedColumn).equals("files")
+    //                    || selectedTable.getColumnName(selectedColumn).equals("notes")
+    //                    || selectedTable.getColumnName(selectedColumn).equals("path")) {
+    //
+    //                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
+    //
+    ////                // popup table cell edit window
+    ////                tableCellPopupWindow.showWindow();
+    ////                //to check it is edit mode or not in project manager
+    ////                //or in add records window it directly into edit mode
+    ////                tableCellPopupWindow.editModeSwich();
+    ////            } else {
+    ////                tableCellPopupWindow.windowClose();
+    //            }
+    //        } else if (selectedTable.getName().equals(TASKNOTES_TABLE_NAME)) {
+    //            if (selectedTable.getColumnName(selectedColumn).equals("status_notes")) {
+    //
+    //                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
+    ////                // popup table cell edit window
+    ////                tableCellPopupWindow.showWindow();
+    ////                //to check it is edit mode or not in project manager
+    ////                //or in add records window it directly into edit mode
+    ////                tableCellPopupWindow.editModeSwich();
+    ////            } else {
+    ////                tableCellPopupWindow.windowClose();
+    //            }
+    //        }
+    //    }
 
-//    private void popupWindowShowInTableByDiffTitle(JTable selectedTable) {
-//        int selectedColumn = selectedTable.getSelectedColumn();
-//
-//        if (selectedTable.getName().equals(TASKS_TABLE_NAME)) {
-//            if (selectedTable.getColumnName(selectedColumn).equals("title")
-//                    || selectedTable.getColumnName(selectedColumn).equals("description")) {
-//                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
-////                tableCellPopupWindow.showWindow();
-////                //to check it is edit mode or not in project manager
-////                //or in add records window it directly into edit mode
-////                tableCellPopupWindow.editModeSwich();
-////            } else {
-////                tableCellPopupWindow.windowClose();
-//            }
-//        } else if (selectedTable.getName().equals(TASKFILES_TABLE_NAME)) {
-//            if (selectedTable.getColumnName(selectedColumn).equals("files")
-//                    || selectedTable.getColumnName(selectedColumn).equals("notes")
-//                    || selectedTable.getColumnName(selectedColumn).equals("path")) {
-//
-//                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
-//
-////                // popup table cell edit window
-////                tableCellPopupWindow.showWindow();
-////                //to check it is edit mode or not in project manager
-////                //or in add records window it directly into edit mode
-////                tableCellPopupWindow.editModeSwich();
-////            } else {
-////                tableCellPopupWindow.windowClose();
-//            }
-//        } else if (selectedTable.getName().equals(TASKNOTES_TABLE_NAME)) {
-//            if (selectedTable.getColumnName(selectedColumn).equals("status_notes")) {
-//
-//                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
-////                // popup table cell edit window
-////                tableCellPopupWindow.showWindow();
-////                //to check it is edit mode or not in project manager
-////                //or in add records window it directly into edit mode
-////                tableCellPopupWindow.editModeSwich();
-////            } else {
-////                tableCellPopupWindow.windowClose();
-//            }
-//        }
-//    }
     public void loadTableWhenSelectedRows(int[] selectedRows, JTable table) {
         String str = table.getName();
 
@@ -3416,6 +3468,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         for (int row : rows) {
             model.addSelectionInterval(row, row);
         }
+
         return table;
 
     }

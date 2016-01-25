@@ -25,8 +25,6 @@ public class LogWindow extends JFrame {
     private static final String HYPHENS = "-------------------------"; // delimiter
     private JScrollPane scrollPane;
     private JTextArea logText;
-    
-    
 
     private final ArrayList<LogMessage> logMessages = new ArrayList<>();
     private final JPanel panelLogWindowButtons;
@@ -43,12 +41,15 @@ public class LogWindow extends JFrame {
 
     // constructor
     public LogWindow(String userName) {
-        String PortfolioManager = "PortfolioManager/";
-        File dir = new File(PortfolioManager); 
+        String ProjectManager = "/Users/"+ System.getProperty("user.name") + "/Library/Application Support/ProjectManager/";
+        File dir = new File(ProjectManager); 
         dir.mkdir();
-        
-        FILENAME = PortfolioManager + "PM_" + userName + "_log.txt";
-        
+//        String PortfolioManager = "PortfolioManager/";
+//        File dir = new File(PortfolioManager);
+//        dir.mkdir();
+
+        FILENAME = ProjectManager + "PM_" + userName + "_log.txt";
+
         this.setTitle("Log Window");
         ImageIcon imag = new ImageIcon(
                 "Images/elle gui image.jpg");
@@ -343,9 +344,9 @@ public class LogWindow extends JFrame {
 
         // print log messages to log window text box
         for (LogMessage logMessage : logMessages) {
-            
+
             String message = logMessage.getMessage();
-            
+
             if (message.startsWith("\n")) {
                 if (!message.endsWith("\n")) {
                     message = message + "\n";
