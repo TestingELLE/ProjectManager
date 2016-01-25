@@ -17,7 +17,8 @@ public class ConsistencyOfTableColumnName {
 
     public static boolean IsTableColumnNameTheSame(Tab tab, JTable table) {
         boolean columnNameIsTheSame = true;
-        ErrorMessage = ErrorMessage + "In " + table.getName();
+        ErrorMessage = "";
+        ErrorMessage = ErrorMessage + "In " + table.getName() + ", ";
         for (int index = 0; index < table.getColumnCount(); index++) {
             if (!tab.getTableColNames()[index].equalsIgnoreCase(table.getColumnName(index))) {
                 columnNameIsTheSame = false;

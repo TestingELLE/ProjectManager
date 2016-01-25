@@ -116,9 +116,11 @@ public class AddIssueWindow extends JFrame {
 
         // create a new empty tableSelected
         createTable();
-
+        
+        // create a new empty edit form
         createEmptyForm();
-
+        
+        //
         addIssueMode(addIssueMode);
 
         defaultSetting();
@@ -146,6 +148,7 @@ public class AddIssueWindow extends JFrame {
         statement = projectManager.getStatement();
 
         selectedTable = projectManager.getSelectedTable();
+        System.out.println(selectedTable.getValueAt(0, 0) + " and " + selectedTable.getValueAt(row, 0));
 
         projectManager.setAddRecordsWindowShow(true);
 
@@ -222,7 +225,6 @@ public class AddIssueWindow extends JFrame {
 
         int x = pmWindowLocation.x - 200;
         int y = pmWindowLocation.y - 120;
-        System.out.println("there are " + numWindow + " opened !");
         this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
 
         this.pack();
@@ -246,10 +248,10 @@ public class AddIssueWindow extends JFrame {
      */
     private void createTable(String appDefaultValue) {
         columnNames = projectManager.getTabs().get(table.getName()).getTableColNames();
-        for (String name : columnNames) {
-
-            System.out.println(name);
-        }
+//        for (String name : columnNames) {
+//
+//            System.out.println(name);
+//        }
         // get tableSelected column width format
         columnWidths = tabs.get(table.getName()).getColWidthPercent();
         // we don't want the ID column 
@@ -805,7 +807,8 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_buttonSubmitActionPerformed
 
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-
+        System.out.println(selectedTable.getValueAt(0, 0));
+        
         projectManager.makeTableEditable(false, getIssueActiveTabName());
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
         projectManager.deleteNumOfAddIssueWindowOpened();
@@ -857,14 +860,14 @@ public class AddIssueWindow extends JFrame {
 
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
 
-        System.out.println("at " + table.getName() + " " + selectedTable.getColumnCount());
+//        System.out.println("at " + table.getName() + " " + selectedTable.getColumnCount());
 
-        for (int row = 0; row < selectedTable.getRowCount(); row++) {
-            System.out.println(selectedTable.getValueAt(row, 0) + " " + selectedTable.getValueAt(row, 2));
-        }
+//        for (int row = 0; row < selectedTable.getRowCount(); row++) {
+//            System.out.println(selectedTable.getValueAt(row, 0) + " " + selectedTable.getValueAt(row, 2));
+//        }
 
         for (int col = 0; col < formValues.length; col++) {
-            System.out.println(col);
+//            System.out.println(col);
             if (formValues[col] != null) {
 
                 selectedTable.setValueAt(formValues[col], rowInView, col + 1);
@@ -931,7 +934,7 @@ public class AddIssueWindow extends JFrame {
                 }
 
             }
-            System.out.println(columnNames[i] + " set text: " + formValues[i]);
+//            System.out.println(columnNames[i] + " set text: " + formValues[i]);
             formValues[i] = null;
         }
         contentChanged = false;
@@ -1218,11 +1221,11 @@ public class AddIssueWindow extends JFrame {
     public void setFormValue(Object[] CellValue) {
         formValues = CellValue;
 
-        System.out.print("new formValue is ");
-        for (Object value : formValues) {
-
-            System.out.print(value + " ");
-        }
+//        System.out.print("new formValue is ");
+//        for (Object value : formValues) {
+//
+//            System.out.print(value + " ");
+//        }
     }
 
     public void setId(int id) {
@@ -1295,6 +1298,7 @@ public class AddIssueWindow extends JFrame {
                     descriptionText.setText("");
                 }
                 ip = descriptionText.getInputMap();
+                ShortCut.undoAndRedoShortCut(descriptionText);
             } else {
                 for (int j = 0; j < textAreaArray.length; j++) {
                     areaName = textAreaArray[j].getName();
@@ -1307,7 +1311,8 @@ public class AddIssueWindow extends JFrame {
                             textAreasInForm.get(columnNames[i]).setText("");
                         }
                         ip = textAreasInForm.get(columnNames[i]).getInputMap();
-
+                        ShortCut.undoAndRedoShortCut(textAreasInForm.get(columnNames[i]));
+                        
                         formValues[i] = null;
                         break;
                     }

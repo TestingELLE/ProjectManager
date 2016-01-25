@@ -218,11 +218,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         } else {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
-
-        //changing the text field copy and paste short cut to default control key
-        //(depend on system) + c/v
-        InputMap ip = (InputMap) UIManager.get("TextField.focusInputMap");
-        ShortCut.copyAndPasteShortCut(ip);
+        
+        textComponentShortCutSetting();
 
         // show and hide components
         btnUploadChanges.setVisible(false);
@@ -652,7 +649,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "a", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
             }
         ) {
             Class[] types = new Class [] {
@@ -787,7 +784,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "a", "dateClosed"
             }
         ) {
             Class[] types = new Class [] {
@@ -898,9 +895,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(labelEditModeState)
                 .addGap(233, 233, 233)
                 .addGroup(jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelEditLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(informationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(informationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanelEditLayout.createSequentialGroup()
                         .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -972,7 +967,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(btnEnterSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnCloseSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(4, 4, 4)
-                .addComponent(jScrollPane2))
+                .addComponent(jScrollPane2)
+                .addContainerGap())
         );
         jPanelSQLLayout.setVerticalGroup(
             jPanelSQLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1006,7 +1002,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
 
         tabbedPanel.getAccessibleContext().setAccessibleName("Reports");
@@ -1332,7 +1328,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 + "Version: " + VERSION);
     }//GEN-LAST:event_menuItemVersionActionPerformed
 
-    private Map loadingDropdownListToMap(JTable table, String[] colNames) {
+    private Map loadingDropdownListToTable(JTable table, String[] colNames) {
+        //create empty value List to store drop down list value
         Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
         for (int col = 0; col < table.getColumnCount(); col++) {
             String colName = colNames[col];
@@ -1348,6 +1345,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
                 for (int row = 0; row < table.getRowCount(); row++) {
                     newValue = table.getValueAt(row, col);
+                    
+                    //get distinct value 
                     if (newValue != null) {
                         if (cellValue == null) {
                             valueList.add(" ");
@@ -2225,6 +2224,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             splashScreenImage.pack();
             splashScreenImage.setLocationRelativeTo(this);
             splashScreenImage.setVisible(true);
+            logWindow.addMessageWithDate("3:" + "splash screen image show.");
         } catch (IOException ex) {
             logWindow.addMessageWithDate("3:" + ex.getMessage());
         }
@@ -2357,7 +2357,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         clearFilterDoubleClick(e, table);
                     }
                 }
-
                 /**
                  * Popup menus are triggered differently on different platforms
                  * Therefore, isPopupTrigger should be checked in both
@@ -3356,13 +3355,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             setTableListeners(table, this);
 
             String[] colNames = tab.getTableColNames();
-            Map tableComboBoxForSearchDropDownList = this.loadingDropdownListToMap(table, colNames);
+            Map tableComboBoxForSearchDropDownList = this.loadingDropdownListToTable(table, colNames);
             this.comboBoxForSearchDropDown.put(entry.getKey(), tableComboBoxForSearchDropDownList);
 
             boolean isColumnNameTheSame = ColumnNameConsistency.IsTableColumnNameTheSame(tab, table);
             if (!isColumnNameTheSame) {
-                logWindow.addMessageWithDate(ColumnNameConsistency.getErrorMessage());
-                setInformationLabel("column Name(s) is(are) different from what in database", 5);
+                System.out.println(ColumnNameConsistency.getErrorMessage());
+//                logWindow.addMessage(a);
+//                logWindow.addMessageWithDate("3:" + a);
+                setInformationLabel("Column Name(s) is(are) different from what in database", 5);
             }
         }
         setLastUpdateTime();
@@ -3875,6 +3876,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public JLabel getLabelEditModeState() {
         return this.labelEditModeState;
+    }
+
+    private void textComponentShortCutSetting() {
+        //changing the text field copy and paste short cut to default control key
+        //(depend on system) + c/v
+        InputMap ip = (InputMap) UIManager.get("TextField.focusInputMap");
+        InputMap ip2 = this.jTextAreaSQL.getInputMap();
+//        InputMap ip2 = (InputMap) UIManager.get("TextArea.focusInputMap");
+        ShortCut.copyAndPasteShortCut(ip);
+        ShortCut.copyAndPasteShortCut(ip2);
+        
+        // add redo and undo short cut to text component
+        
     }
 
     /**
