@@ -51,8 +51,8 @@ import javax.imageio.ImageIO;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2016-01-25";
-    private final String VERSION = "1.0.7b";
+    private final String CREATION_DATE = "2016-01-26";
+    private final String VERSION = "1.0.8";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
@@ -1670,14 +1670,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
 
             // connection might time out
-            if (DBConnection.isClosed()) {
-                while (DBConnection.open() == false) {
-                    informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
-                    startCountDownFromNow(10);
-                }
-                informationLabel.setText("Connection has been reopened!");
-                startCountDownFromNow(10);
-            }
+            DBConnection.close();
+            DBConnection.open();
 
             statement = DBConnection.getStatement();
             String sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
@@ -2742,14 +2736,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         str = str + " ELSE ";
 
         // connection might time out
-        if (DBConnection.isClosed()) {
-            while (DBConnection.open() == false) {
-                informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
-                startCountDownFromNow(10);
-            }
-            informationLabel.setText("Connection has been reopened!");
-            startCountDownFromNow(10);
-        }
+        DBConnection.close();
+        DBConnection.open();
         statement = DBConnection.getStatement();
         String sql;
         if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
@@ -2961,6 +2949,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             + " = '" + value + "' WHERE ID = " + id + ";";
                 }
 
+                DBConnection.close();
                 DBConnection.open();
                 statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlChange);
@@ -3453,14 +3442,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         // connection might time out
-        if (DBConnection.isClosed()) {
-            while (DBConnection.open() == false) {
-                informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
-                startCountDownFromNow(10);
-            }
-            informationLabel.setText("Connection has been reopened!");
-            startCountDownFromNow(10);
-        }
+        DBConnection.close();
+        DBConnection.open();
+        
         statement = DBConnection.getStatement();
         String sql;
         if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
@@ -3625,6 +3609,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             try {
 
                 // delete records from database
+                DBConnection.close();
                 DBConnection.open();
                 statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlDelete);
