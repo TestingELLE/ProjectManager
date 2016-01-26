@@ -14,17 +14,22 @@ import java.awt.Component;
  */
 public class Authorization {
     
-    // Information will probably come from the database at start up
-    
-    // user information
-    // userid - LOGIN (pupone_Carlos) - issue can't access users table if exists?
-    // userLevel - Admin or Developer
-    private static String userLogin;
-    private static int userLevel;
-    
     // constants
-    private static final int ADMINISTRATOR = 1;
-    private static final int DEVELOPER = 2;
+    private static final String DB_TABLE_NAME = "adf";
+    private static final String DB_COLUMN_1 = "adf";
+    private static final String DB_COLUMN_2 = "adf";
+    private static final String LEVEL_1 = "Administrator";
+    private static final String LEVEL_2 = "Developer";
+    
+    // class variables
+    private static String userLogin;
+    private static String accessLevel;
+    
+    /**
+     * users table
+     * username accesslevel -> Auth table id, nameType-admin, dev
+     * column names userLogin, userLevel
+     */
 
     /**
      * we might want to cascade permissions / restrictions
@@ -44,8 +49,9 @@ public class Authorization {
      */
     public static void getInfoFromDB(){
         userLogin = DBConnection.getUserName();
-        // use sql query to get the userLevel from DB
-        userLevel = 2; // DB needs to be implemented
+        // use sql query to get the accesslevel from DB
+        accessLevel = "Developer"; // DB needs to be implemented
+        System.out.println("info ran");
     }
     
     /**
@@ -57,15 +63,16 @@ public class Authorization {
      */
     public static void authorize( Component c){
         
-        switch(userLevel){
-            case ADMINISTRATOR:
-                break;
-            case DEVELOPER:
-                developerPermissions(c);
-                break;
-            default:
-                break;
-        }
+        if(accessLevel != null) // changed tab state is called from initComponents
+            switch(accessLevel){
+                case LEVEL_1:
+                    break;
+                case LEVEL_2:
+                    developerPermissions(c);
+                    break;
+                default:
+                    break;
+            }
     }
 
     /**
