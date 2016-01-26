@@ -26,6 +26,15 @@ public class Authorization {
     private static final int ADMINISTRATOR = 1;
     private static final int DEVELOPER = 2;
 
+    /**
+     * we might want to cascade permissions / restrictions
+     * For example. Level 1, 2, 3 (highest to lowest)
+     * Example: Level 2 disable menu items 1,2 
+     *          and Level 3 disable menu items 1,2,3
+     * Level 3 will have all of Level 2 restrictions plus additional 
+     * restrictions. If this is the case, then the restrictions for 
+     * level 2 may be applied and then level 3. 
+     */
     
     /**
      * When the user logs in, we will need to know the access level and 
