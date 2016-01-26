@@ -229,7 +229,8 @@ public class AddIssueWindow extends JFrame {
 
         this.pack();
     }
-
+    
+    
     private void defaultSetting() {
 
         int idNum = (int) selectedTable.getValueAt(selectedTable.getRowCount() - 1, 0) + 1;
