@@ -3453,14 +3453,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         // connection might time out
-        if (DBConnection.isClosed()) {
-            while (DBConnection.open() == false) {
-                informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
-                startCountDownFromNow(10);
-            }
-            informationLabel.setText("Connection has been reopened!");
-            startCountDownFromNow(10);
-        }
+        DBConnection.close();
+        DBConnection.open();
+        
         statement = DBConnection.getStatement();
         String sql;
         if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
