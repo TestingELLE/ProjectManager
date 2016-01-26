@@ -297,6 +297,7 @@ public class AddIssueFileWindow extends JFrame {
                     // execute the sql statement
                     if (!values.equals("VALUES (")) {      //skip if nothing was added
                         // open connection because might time out
+                        DBConnection.close();
                         DBConnection.open();
                         statement = DBConnection.getStatement();
                         statement.executeUpdate(insertInto + values);
