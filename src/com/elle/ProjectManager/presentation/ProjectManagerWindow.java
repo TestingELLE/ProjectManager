@@ -331,6 +331,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.setMinimumSize(new Dimension(1000, 550));
 
         this.pack();
+        
+        // Authorize init - get user level from DB
+        Authorization.getInfoFromDB();
     }
 
     /*
@@ -1775,6 +1778,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         } else {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
+        
+        
     }
 
     private void btnBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatchEditActionPerformed
