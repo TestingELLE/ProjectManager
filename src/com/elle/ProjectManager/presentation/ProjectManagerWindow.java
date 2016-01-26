@@ -1779,7 +1779,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
         
-        
+        // Authorization
+        Authorization.authorize(this);
     }
 
     private void btnBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatchEditActionPerformed
