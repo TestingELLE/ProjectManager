@@ -1,8 +1,11 @@
 package com.elle.ProjectManager.logic;
 
 import com.elle.ProjectManager.database.DBConnection;
+import com.elle.ProjectManager.database.SQL_Commands;
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This class will simply override any original behavior depending on the 
@@ -12,14 +15,16 @@ import java.awt.Component;
  * throughout the application.
  * @author Carlos Igreja
  */
-public class Authorization {
+public class Authorization1 {
     
     // constants
-    private static final String DB_TABLE_NAME = "adf";
-    private static final String DB_COLUMN_1 = "adf";
-    private static final String DB_COLUMN_2 = "adf";
-    private static final String LEVEL_1 = "Administrator";
-    private static final String LEVEL_2 = "Developer";
+    private static final String DB_TABLE_NAME = "A_accessLevel_tbl";
+    private static final String DB_COLUMN_1 = "user";
+    private static final String DB_COLUMN_2 = "accessLevel";
+    private static final String LEVEL_1 = "administrator";
+    private static final String LEVEL_2 = "developer";
+    private static final String LEVEL_3 = "user";
+    private static final String LEVEL_4 = "viewer";
     
     // class variables
     private static String userLogin;
@@ -50,8 +55,13 @@ public class Authorization {
     public static void getInfoFromDB(){
         userLogin = DBConnection.getUserName();
         // use sql query to get the accesslevel from DB
-        accessLevel = "Developer"; // DB needs to be implemented
-        System.out.println("info ran");
+        SQL_Commands sql_commands 
+                = new SQL_Commands(DBConnection.getConnection());
+        String query = "SELECT * FROM " + DB_TABLE_NAME +
+                      " WHERE " + DB_COLUMN_1 + " = '" + userLogin +"';";
+        HashMap<String,ArrayList<Object>> map;
+        map = sql_commands.getTableData(sql_commands.executeQuery(query));
+        accessLevel = map.get(DB_COLUMN_2).get(0).toString();
     }
     
     /**
@@ -68,6 +78,12 @@ public class Authorization {
                 case LEVEL_1:
                     break;
                 case LEVEL_2:
+                    developerPermissions(c);
+                    break;
+                case LEVEL_3:
+                    developerPermissions(c);
+                    break;
+                case LEVEL_4:
                     developerPermissions(c);
                     break;
                 default:
