@@ -407,6 +407,18 @@ public class SQL_Commands {
         }
     }
     
+    public boolean updateQuery(String query) {
+        try {
+            statement.executeUpdate(query);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+            handleSQLexWithMessageBox(ex);
+            return false;
+        }
+    }
+    
     public HashMap<String,ArrayList<Object>> getDistinctColumnValues(String tableName, String colName){
 
         String query = "SELECT DISTINCT " + colName 
