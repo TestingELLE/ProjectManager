@@ -1,5 +1,6 @@
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.database.BackupDBTables;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
@@ -620,6 +621,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemMoveSeletedRowsToEnd = new javax.swing.JMenuItem();
         menuItemCompIssues = new javax.swing.JMenuItem();
         menuItemDummy = new javax.swing.JMenuItem();
+        menuItemBackup = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemRepBugSugg = new javax.swing.JMenuItem();
 
@@ -1296,6 +1298,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         menuItemDummy.setText("dummy");
         menuTools.add(menuItemDummy);
+
+        menuItemBackup.setText("Backup");
+        menuItemBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemBackupActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemBackup);
 
         menuBar.add(menuTools);
 
@@ -2247,6 +2257,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         frame.setLocationRelativeTo(this);
         frame.setVisible(true);
     }//GEN-LAST:event_menuItemCompIssuesActionPerformed
+
+    private void menuItemBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemBackupActionPerformed
+        // open new connection
+        DBConnection.close(); // connection might be timed out on server
+        DBConnection.open();  // open a new connection
+
+        String tableName = "issues"; // table name to backup
+        BackupDBTables backupDBTables = new BackupDBTables(DBConnection.getConnection(), tableName, this);
+    }//GEN-LAST:event_menuItemBackupActionPerformed
 
     public void comboBoxForSearchMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -3801,6 +3820,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemAWSAssign;
     private javax.swing.JMenuItem menuItemActivateRecord;
     private javax.swing.JMenuItem menuItemArchiveRecord;
+    private javax.swing.JMenuItem menuItemBackup;
     private javax.swing.JMenuItem menuItemCompIssues;
     private javax.swing.JMenuItem menuItemDeleteRecord;
     private javax.swing.JMenuItem menuItemDummy;
