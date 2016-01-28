@@ -1,5 +1,6 @@
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.database.BackupDBTables;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
@@ -327,6 +328,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.setMinimumSize(new Dimension(1000, 550));
 
         this.pack();
+        
+        // Authorize init - get user level from DB
+        Authorization.getInfoFromDB();
+        Authorization.authorize(this);
     }
 
     /*
@@ -611,6 +616,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
         menuItemMoveSeletedRowsToEnd = new javax.swing.JMenuItem();
         menuItemCompIssues = new javax.swing.JMenuItem();
+        menuItemDummy = new javax.swing.JMenuItem();
+        menuItemBackup = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemRepBugSugg = new javax.swing.JMenuItem();
 
@@ -1080,7 +1087,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 96, Short.MAX_VALUE))
+                .addGap(0, 187, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1283,6 +1290,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemCompIssues);
+
+        menuItemDummy.setText("dummy");
+        menuTools.add(menuItemDummy);
+
+        menuItemBackup.setText("Backup");
+        menuItemBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemBackupActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemBackup);
 
         menuBar.add(menuTools);
 
@@ -1763,6 +1781,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         } else {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
+        
+        // Authorization
+        Authorization.authorize(this);
     }
 
     private void btnBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatchEditActionPerformed
@@ -2229,6 +2250,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         frame.setLocationRelativeTo(this);
         frame.setVisible(true);
     }//GEN-LAST:event_menuItemCompIssuesActionPerformed
+
+    private void menuItemBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemBackupActionPerformed
+        // open new connection
+        DBConnection.close(); // connection might be timed out on server
+        DBConnection.open();  // open a new connection
+
+        String tableName = "issues"; // table name to backup
+        BackupDBTables backupDBTables = new BackupDBTables(DBConnection.getConnection(), tableName, this);
+    }//GEN-LAST:event_menuItemBackupActionPerformed
 
     public void comboBoxForSearchMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -3844,8 +3874,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemAWSAssign;
     private javax.swing.JMenuItem menuItemActivateRecord;
     private javax.swing.JMenuItem menuItemArchiveRecord;
+    private javax.swing.JMenuItem menuItemBackup;
     private javax.swing.JMenuItem menuItemCompIssues;
     private javax.swing.JMenuItem menuItemDeleteRecord;
+    private javax.swing.JMenuItem menuItemDummy;
     private javax.swing.JCheckBoxMenuItem menuItemLogChkBx;
     private javax.swing.JMenuItem menuItemLogOff;
     private javax.swing.JMenuItem menuItemManageDBs;
@@ -3915,6 +3947,311 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.labelEditModeState;
     }
 
+    public String getCREATION_DATE() {
+        return CREATION_DATE;
+    }
+
+    public String getVERSION() {
+        return VERSION;
+    }
+
+    public Map<String, Map<Integer, ArrayList<Object>>> getComboBoxForSearchDropDown() {
+        return comboBoxForSearchDropDown;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public String[] getTableNames() {
+        return tableNames;
+    }
+
+    public AddIssueWindow getAddIssueWindow() {
+        return addIssueWindow;
+    }
+
+    public LoginWindow getLoginWindow() {
+        return loginWindow;
+    }
+
+    public EditDatabaseWindow getEditDatabaseWindow() {
+        return editDatabaseWindow;
+    }
+
+    public AddIssueFileWindow getAddIssueFileWindow() {
+        return addIssueFileWindow;
+    }
+
+    public Color getEditModeDefaultTextColor() {
+        return editModeDefaultTextColor;
+    }
+
+    public Color getEditModeActiveTextColor() {
+        return editModeActiveTextColor;
+    }
+
+    public boolean isAddIssueWindowShow() {
+        return addIssueWindowShow;
+    }
+
+    public boolean isIsBatchEditWindowShow() {
+        return isBatchEditWindowShow;
+    }
+
+    public boolean isPopupWindowShowInPM() {
+        return popupWindowShowInPM;
+    }
+
+    public JLabel getDatabaseLabel() {
+        return databaseLabel;
+    }
+
+    public String getCurrentTabName() {
+        return currentTabName;
+    }
+
+    public ArrayList<String> getProgrammersActiveForSearching() {
+        return programmersActiveForSearching;
+    }
+
+    public JTable getAnalysterTable() {
+        return AnalysterTable;
+    }
+
+    public JTable getELLEGUITable() {
+        return ELLEGUITable;
+    }
+
+    public JTable getOtherTable() {
+        return OtherTable;
+    }
+
+    public JTable getPMTable() {
+        return PMTable;
+    }
+
+    public ButtonGroup getTableFilterBtnGroup() {
+        return TableFilterBtnGroup;
+    }
+
+    public JButton getBtnAddIssue() {
+        return btnAddIssue;
+    }
+
+    public JButton getBtnCancelSQL() {
+        return btnCancelSQL;
+    }
+
+    public JButton getBtnClearAllFilter() {
+        return btnClearAllFilter;
+    }
+
+    public JButton getBtnCloseSQL() {
+        return btnCloseSQL;
+    }
+
+    public JButton getBtnEnterSQL() {
+        return btnEnterSQL;
+    }
+
+    public JButton getBtnRevertChanges() {
+        return btnRevertChanges;
+    }
+
+    public JButton getBtnSearch() {
+        return btnSearch;
+    }
+
+    public JButton getBtnUploadChanges() {
+        return btnUploadChanges;
+    }
+
+    public JComboBox getComboBoxForSearch() {
+        return comboBoxForSearch;
+    }
+
+    public JComboBox getComboBoxSearch() {
+        return comboBoxSearch;
+    }
+
+    public JTable getIssue_filesTable() {
+        return issue_filesTable;
+    }
+
+    public JCheckBoxMenuItem getjCheckBoxMenuItem1() {
+        return jCheckBoxMenuItem1;
+    }
+
+    public JPanel getjPanel1() {
+        return jPanel1;
+    }
+
+    public JScrollPane getjScrollPane1() {
+        return jScrollPane1;
+    }
+
+    public JScrollPane getjScrollPane2() {
+        return jScrollPane2;
+    }
+
+    public JScrollPane getjScrollPane4() {
+        return jScrollPane4;
+    }
+
+    public JScrollPane getjScrollPane5() {
+        return jScrollPane5;
+    }
+
+    public JScrollPane getjScrollPane6() {
+        return jScrollPane6;
+    }
+
+    public JScrollPane getjScrollPane7() {
+        return jScrollPane7;
+    }
+
+    public JTextArea getjTextAreaSQL() {
+        return jTextAreaSQL;
+    }
+
+    public JLabel getLabelEditMode() {
+        return labelEditMode;
+    }
+
+    public JLabel getLabelRecords() {
+        return labelRecords;
+    }
+
+    public JLabel getLabelTimeLastUpdate() {
+        return labelTimeLastUpdate;
+    }
+
+    public JMenu getMenuEdit() {
+        return menuEdit;
+    }
+
+    public JMenu getMenuFile() {
+        return menuFile;
+    }
+
+    public JMenu getMenuFind() {
+        return menuFind;
+    }
+
+    public JMenu getMenuHelp() {
+        return menuHelp;
+    }
+
+    public JMenuItem getMenuItemAWSAssign() {
+        return menuItemAWSAssign;
+    }
+
+    public JMenuItem getMenuItemActivateRecord() {
+        return menuItemActivateRecord;
+    }
+
+    public JMenuItem getMenuItemArchiveRecord() {
+        return menuItemArchiveRecord;
+    }
+
+    public JMenuItem getMenuItemCompIssues() {
+        return menuItemCompIssues;
+    }
+
+    public JMenuItem getMenuItemDeleteRecord() {
+        return menuItemDeleteRecord;
+    }
+
+    public JMenuItem getMenuItemDummy() {
+        return menuItemDummy;
+    }
+
+    public JCheckBoxMenuItem getMenuItemLogChkBx() {
+        return menuItemLogChkBx;
+    }
+
+    public JMenuItem getMenuItemLogOff() {
+        return menuItemLogOff;
+    }
+
+    public JMenuItem getMenuItemManageDBs() {
+        return menuItemManageDBs;
+    }
+
+    public JMenuItem getMenuItemMoveSeletedRowsToEnd() {
+        return menuItemMoveSeletedRowsToEnd;
+    }
+
+    public JMenuItem getMenuItemPrintDisplay() {
+        return menuItemPrintDisplay;
+    }
+
+    public JMenuItem getMenuItemPrintGUI() {
+        return menuItemPrintGUI;
+    }
+
+    public JMenuItem getMenuItemReloadData() {
+        return menuItemReloadData;
+    }
+
+    public JMenuItem getMenuItemRepBugSugg() {
+        return menuItemRepBugSugg;
+    }
+
+    public JCheckBoxMenuItem getMenuItemSQLCmdChkBx() {
+        return menuItemSQLCmdChkBx;
+    }
+
+    public JMenuItem getMenuItemSaveFile() {
+        return menuItemSaveFile;
+    }
+
+    public JMenuItem getMenuItemTurnEditModeOff() {
+        return menuItemTurnEditModeOff;
+    }
+
+    public JMenuItem getMenuItemVersion() {
+        return menuItemVersion;
+    }
+
+    public JMenuItem getMenuItemViewSplashScreen() {
+        return menuItemViewSplashScreen;
+    }
+
+    public JMenu getMenuPrint() {
+        return menuPrint;
+    }
+
+    public JMenu getMenuReports() {
+        return menuReports;
+    }
+
+    public JMenu getMenuSelectConn() {
+        return menuSelectConn;
+    }
+
+    public JMenu getMenuTools() {
+        return menuTools;
+    }
+
+    public JMenu getMenuView() {
+        return menuView;
+    }
+
+    public JMenuItem getMenuitemViewOneIssue() {
+        return menuitemViewOneIssue;
+    }
+
+    public JLabel getSearchInformationLabel() {
+        return searchInformationLabel;
+    }
+
+    public JTabbedPane getTabbedPanel() {
+        return tabbedPanel;
+    }
+    
+    
     private void textComponentShortCutSetting() {
         //changing the text field copy and paste short cut to default control key
         //(depend on system) + c/v
