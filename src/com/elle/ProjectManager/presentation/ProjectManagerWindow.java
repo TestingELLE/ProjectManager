@@ -5,6 +5,7 @@ import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.logic.*;
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 //import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 
 import javax.swing.*;
@@ -23,8 +24,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -34,13 +33,13 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
@@ -53,8 +52,8 @@ import javax.imageio.ImageIO;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2016-01-19";
-    private final String VERSION = "1.0.7";
+    private final String CREATION_DATE = "2016-01-26";
+    private final String VERSION = "1.0.8";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
@@ -74,7 +73,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private EditDatabaseWindow editDatabaseWindow;
 //    private ReportWindow reportWindow;
     private AddIssueFileWindow addIssueFileWindow;
-    private ShortCutSetting changeShortCut;
+    private ShortCutSetting ShortCut;
+    private ConsistencyOfTableColumnName ColumnNameConsistency;
 
     // colors - Edit mode labels
     private Color editModeDefaultTextColor;
@@ -218,12 +218,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         } else {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
-
-        //changing the text field copy and paste short cut to default control key
-        //(depend on system) + c/v
-        InputMap ip = (InputMap) UIManager.get("TextField.focusInputMap");
-        changeShortCut = new ShortCutSetting(ip);
-        changeShortCut.copyAndPasteShortCut();
+        
+        textComponentShortCutSetting();
 
         // show and hide components
         btnUploadChanges.setVisible(false);
@@ -794,7 +790,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "a", "dateClosed"
             }
         ) {
             Class[] types = new Class [] {
@@ -905,9 +901,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(labelEditModeState)
                 .addGap(233, 233, 233)
                 .addGroup(jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelEditLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(informationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(informationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanelEditLayout.createSequentialGroup()
                         .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -979,7 +973,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(btnEnterSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnCloseSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(4, 4, 4)
-                .addComponent(jScrollPane2))
+                .addComponent(jScrollPane2)
+                .addContainerGap())
         );
         jPanelSQLLayout.setVerticalGroup(
             jPanelSQLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1013,7 +1008,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
 
         tabbedPanel.getAccessibleContext().setAccessibleName("Reports");
@@ -1350,7 +1345,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 + "Version: " + VERSION);
     }//GEN-LAST:event_menuItemVersionActionPerformed
 
-    private Map loadingDropdownListToMap(JTable table, String[] colNames) {
+    private Map loadingDropdownListToTable(JTable table, String[] colNames) {
+        //create empty value List to store drop down list value
         Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
         for (int col = 0; col < table.getColumnCount(); col++) {
             String colName = colNames[col];
@@ -1366,6 +1362,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
                 for (int row = 0; row < table.getRowCount(); row++) {
                     newValue = table.getValueAt(row, col);
+                    
+                    //get distinct value 
                     if (newValue != null) {
                         if (cellValue == null) {
                             valueList.add(" ");
@@ -1429,7 +1427,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
-            
+
             String searchColName = comboBoxSearch.getSelectedItem().toString();
             String searchBoxValue = comboBoxForSearch.getSelectedItem().toString();  // store string from text box
 
@@ -1456,7 +1454,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                    }
                     filter.addFilterItem(col, searchBoxValue);
                     filter.applyFilter();
-                    if(!isValueInTable){
+                    if (!isValueInTable) {
                         count++;
                     }
 
@@ -1690,14 +1688,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
 
             // connection might time out
-            if (DBConnection.isClosed()) {
-                while (DBConnection.open() == false) {
-                    informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
-                    startCountDownFromNow(10);
-                }
-                informationLabel.setText("Connection has been reopened!");
-                startCountDownFromNow(10);
-            }
+            DBConnection.close();
+            DBConnection.open();
 
             statement = DBConnection.getStatement();
             String sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
@@ -2246,6 +2238,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             splashScreenImage.pack();
             splashScreenImage.setLocationRelativeTo(this);
             splashScreenImage.setVisible(true);
+            logWindow.addMessageWithDate("3:" + "splash screen image show.");
         } catch (IOException ex) {
             logWindow.addMessageWithDate("3:" + ex.getMessage());
         }
@@ -2385,8 +2378,59 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     if (e.getClickCount() == 2) {
                         clearFilterDoubleClick(e, table);
                     }
+//                    if (e.getClickCount() == 1) {
+//                        for (int j = 0; j < table.getColumnCount(); j++) {
+//                            // Locate columns under "ID"
+//                            String columnName = table.getColumnName(j);
+//                            if (columnName.equalsIgnoreCase("ID")) {
+//                                ArrayList<String> ID = new ArrayList<>();
+//
+//                                for (int row = 0; row < table.getModel().getRowCount(); row++) {
+//
+//                                    String Value = table.getModel().getValueAt(row, 0).toString();
+//
+//                                    ID.add(Value);
+//                                }
+//                                TableRowSorter<DefaultTableModel> RowSorter = (TableRowSorter<DefaultTableModel>) table.getRowSorter();
+//                                RowSorter.setComparator(0, new Comparator<String>() {
+//
+//                                    @Override
+//                                    public int compare(String o1, String o2) {
+//                                        return Integer.parseInt(o1) - Integer.parseInt(o2);
+//                                    }
+//
+//                                });
+//
+//                            }
+//                        }
+//                    }
+//
+//
+//                    for (int j = 0; j < table.getColumnCount(); j++) {
+//                        // Locate columns under "ID"
+//                        String columnName = table.getColumnName(j);
+//                        if (e.getClickCount() == 1 && columnName.equalsIgnoreCase("ID")) {
+//                            ArrayList<String> ID = new ArrayList<>();
+//
+//                            for (int row = 0; row < table.getModel().getRowCount(); row++) {
+//
+//                                String Value = table.getModel().getValueAt(row, 0).toString();
+//
+//                                ID.add(Value);
+//                            }
+//                            TableRowSorter<DefaultTableModel> rowSorter = (TableRowSorter<DefaultTableModel>) table.getRowSorter();
+//                            rowSorter.setComparator(0, new Comparator<String>() {
+//
+//                                @Override
+//                                public int compare(String o1, String o2) {
+//                                    return Integer.parseInt(o1) - Integer.parseInt(o2);
+//                                }
+//
+//                            });
+//
+//                        }
+//                    }
                 }
-
                 /**
                  * Popup menus are triggered differently on different platforms
                  * Therefore, isPopupTrigger should be checked in both
@@ -2412,7 +2456,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 .getColumnPopupMenu().showPopupMenu(e);
                     }
                 }
-            });
+            }
+            );
         }
 
         // add mouselistener to the tableSelected
@@ -2658,50 +2703,50 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
 
     }
+    //    private void popupWindowShowInTableByDiffTitle(JTable selectedTable) {
+    //        int selectedColumn = selectedTable.getSelectedColumn();
+    //
+    //        if (selectedTable.getName().equals(TASKS_TABLE_NAME)) {
+    //            if (selectedTable.getColumnName(selectedColumn).equals("title")
+    //                    || selectedTable.getColumnName(selectedColumn).equals("description")) {
+    //                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
+    ////                tableCellPopupWindow.showWindow();
+    ////                //to check it is edit mode or not in project manager
+    ////                //or in add records window it directly into edit mode
+    ////                tableCellPopupWindow.editModeSwich();
+    ////            } else {
+    ////                tableCellPopupWindow.windowClose();
+    //            }
+    //        } else if (selectedTable.getName().equals(TASKFILES_TABLE_NAME)) {
+    //            if (selectedTable.getColumnName(selectedColumn).equals("files")
+    //                    || selectedTable.getColumnName(selectedColumn).equals("notes")
+    //                    || selectedTable.getColumnName(selectedColumn).equals("path")) {
+    //
+    //                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
+    //
+    ////                // popup table cell edit window
+    ////                tableCellPopupWindow.showWindow();
+    ////                //to check it is edit mode or not in project manager
+    ////                //or in add records window it directly into edit mode
+    ////                tableCellPopupWindow.editModeSwich();
+    ////            } else {
+    ////                tableCellPopupWindow.windowClose();
+    //            }
+    //        } else if (selectedTable.getName().equals(TASKNOTES_TABLE_NAME)) {
+    //            if (selectedTable.getColumnName(selectedColumn).equals("status_notes")) {
+    //
+    //                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
+    ////                // popup table cell edit window
+    ////                tableCellPopupWindow.showWindow();
+    ////                //to check it is edit mode or not in project manager
+    ////                //or in add records window it directly into edit mode
+    ////                tableCellPopupWindow.editModeSwich();
+    ////            } else {
+    ////                tableCellPopupWindow.windowClose();
+    //            }
+    //        }
+    //    }
 
-//    private void popupWindowShowInTableByDiffTitle(JTable selectedTable) {
-//        int selectedColumn = selectedTable.getSelectedColumn();
-//
-//        if (selectedTable.getName().equals(TASKS_TABLE_NAME)) {
-//            if (selectedTable.getColumnName(selectedColumn).equals("title")
-//                    || selectedTable.getColumnName(selectedColumn).equals("description")) {
-//                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
-////                tableCellPopupWindow.showWindow();
-////                //to check it is edit mode or not in project manager
-////                //or in add records window it directly into edit mode
-////                tableCellPopupWindow.editModeSwich();
-////            } else {
-////                tableCellPopupWindow.windowClose();
-//            }
-//        } else if (selectedTable.getName().equals(TASKFILES_TABLE_NAME)) {
-//            if (selectedTable.getColumnName(selectedColumn).equals("files")
-//                    || selectedTable.getColumnName(selectedColumn).equals("notes")
-//                    || selectedTable.getColumnName(selectedColumn).equals("path")) {
-//
-//                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
-//
-////                // popup table cell edit window
-////                tableCellPopupWindow.showWindow();
-////                //to check it is edit mode or not in project manager
-////                //or in add records window it directly into edit mode
-////                tableCellPopupWindow.editModeSwich();
-////            } else {
-////                tableCellPopupWindow.windowClose();
-//            }
-//        } else if (selectedTable.getName().equals(TASKNOTES_TABLE_NAME)) {
-//            if (selectedTable.getColumnName(selectedColumn).equals("status_notes")) {
-//
-//                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
-////                // popup table cell edit window
-////                tableCellPopupWindow.showWindow();
-////                //to check it is edit mode or not in project manager
-////                //or in add records window it directly into edit mode
-////                tableCellPopupWindow.editModeSwich();
-////            } else {
-////                tableCellPopupWindow.windowClose();
-//            }
-//        }
-//    }
     public void loadTableWhenSelectedRows(int[] selectedRows, JTable table) {
         String str = table.getName();
 
@@ -2721,14 +2766,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         str = str + " ELSE ";
 
         // connection might time out
-        if (DBConnection.isClosed()) {
-            while (DBConnection.open() == false) {
-                informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
-                startCountDownFromNow(10);
-            }
-            informationLabel.setText("Connection has been reopened!");
-            startCountDownFromNow(10);
-        }
+        DBConnection.close();
+        DBConnection.open();
         statement = DBConnection.getStatement();
         String sql;
         if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
@@ -2940,6 +2979,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             + " = '" + value + "' WHERE ID = " + id + ";";
                 }
 
+                DBConnection.close();
                 DBConnection.open();
                 statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlChange);
@@ -3275,6 +3315,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.userName = userName;
     }
 
+    public void setInformationLabel(String inf, int second) {
+        this.informationLabel.setText(inf);
+        startCountDownFromNow(second);
+    }
+
     public String getUserName() {
         return this.userName;
     }
@@ -3380,11 +3425,23 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             setTableListeners(table, this);
 
             String[] colNames = tab.getTableColNames();
-            Map tableComboBoxForSearchDropDownList = this.loadingDropdownListToMap(table, colNames);
+            Map tableComboBoxForSearchDropDownList = this.loadingDropdownListToTable(table, colNames);
             this.comboBoxForSearchDropDown.put(entry.getKey(), tableComboBoxForSearchDropDownList);
+
+            boolean isColumnNameTheSame = ColumnNameConsistency.IsTableColumnNameTheSame(tab, table);
+            if (!isColumnNameTheSame) {
+                System.out.println(ColumnNameConsistency.getErrorMessage());
+//                logWindow.addMessage(a);
+//                logWindow.addMessageWithDate("3:" + a);
+                setInformationLabel("Column Name(s) is(are) different from what in database", 5);
+            }
         }
         setLastUpdateTime();
         return tabs;
+    }
+
+    public void compareTablesColumnName(Tab tab, JTable table) {
+
     }
 
     /**
@@ -3415,14 +3472,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         // connection might time out
-        if (DBConnection.isClosed()) {
-            while (DBConnection.open() == false) {
-                informationLabel.setText("connection timed out! Reopening connection. Please wait ...");
-                startCountDownFromNow(10);
-            }
-            informationLabel.setText("Connection has been reopened!");
-            startCountDownFromNow(10);
-        }
+        DBConnection.close();
+        DBConnection.open();
+        
         statement = DBConnection.getStatement();
         String sql;
         if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
@@ -3446,6 +3498,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         for (int row : rows) {
             model.addSelectionInterval(row, row);
         }
+
         return table;
 
     }
@@ -3586,6 +3639,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             try {
 
                 // delete records from database
+                DBConnection.close();
                 DBConnection.open();
                 statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlDelete);
@@ -3929,10 +3983,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return addIssueFileWindow;
     }
 
-    public ShortCutSetting getChangeShortCut() {
-        return changeShortCut;
-    }
-
     public Color getEditModeDefaultTextColor() {
         return editModeDefaultTextColor;
     }
@@ -4202,6 +4252,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
     
     
+    private void textComponentShortCutSetting() {
+        //changing the text field copy and paste short cut to default control key
+        //(depend on system) + c/v
+        InputMap ip = (InputMap) UIManager.get("TextField.focusInputMap");
+        InputMap ip2 = this.jTextAreaSQL.getInputMap();
+//        InputMap ip2 = (InputMap) UIManager.get("TextArea.focusInputMap");
+        ShortCut.copyAndPasteShortCut(ip);
+        ShortCut.copyAndPasteShortCut(ip2);
+        
+        // add redo and undo short cut to text component
+        
+    }
 
     /**
      * CLASS
