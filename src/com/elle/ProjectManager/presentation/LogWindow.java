@@ -10,6 +10,7 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import org.jdesktop.swingx.util.OS;
 
 /**
  * LogWindow
@@ -40,15 +41,24 @@ public class LogWindow extends JFrame {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
 
     // constructor
+   
+    
     public LogWindow(String userName) {
-        String ProjectManager = "/Users/"+ System.getProperty("user.name") + "/Library/Application Support/ProjectManager/";
-        File dir = new File(ProjectManager); 
-        dir.mkdir();
-//        String PortfolioManager = "PortfolioManager/";
-//        File dir = new File(PortfolioManager);
-//        dir.mkdir();
-
-        FILENAME = ProjectManager + "PM_" + userName + "_log.txt";
+        String OS = System.getProperty("os.name").toLowerCase();
+        
+        if (OS.startsWith("mac")) {
+            String ProjectManager = "/Users/" + System.getProperty("user.name") + "/Library/Application Support/ProjectManager/";
+            File dir = new File(ProjectManager);
+            dir.mkdir();
+            FILENAME = ProjectManager + "PM_" + userName + "_log.txt";
+            
+        } else {
+            // For windows
+            String ProjectManager = "\\Users\\" + System.getProperty("user.name") + "\\Documents\\ProjectManager\\";
+            File dir = new File(ProjectManager);
+            dir.mkdir();
+            FILENAME = ProjectManager + "PM_" + userName + "_log.txt";
+        }
 
         this.setTitle("Log Window");
         ImageIcon imag = new ImageIcon(
