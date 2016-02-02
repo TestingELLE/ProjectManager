@@ -7,20 +7,14 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.database.DBConnection;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.ImageIO;
 
 public class LoginWindow extends JFrame {
 
