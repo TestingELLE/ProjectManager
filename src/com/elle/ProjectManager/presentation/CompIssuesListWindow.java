@@ -499,6 +499,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         int records = map.get(COL_APP).size(); // had to hard code - used app
         for(int i = 0; i < records; i++){
             
+            String id = "";
             String app = "";
             String title= "";
             String rk= "";
@@ -507,7 +508,12 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             String closed= "";
             String version= "";
             String description= "";
+            final String HYPHENS = "--------------------------------------------------------"
+                                 + "--------------------------------------------------------"
+                                 + "------------------";
             
+            if(map.get(COL_ID).get(i) != null)
+                id = COL_ID + ": " + map.get(COL_ID).get(i).toString() + " ";
             if(map.get(COL_APP).get(i) != null)
                 app = COL_APP + ": " + map.get(COL_APP).get(i).toString() + " ";
             if(map.get(COL_TITLE).get(i) != null)
@@ -528,12 +534,18 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             /**
              * print to text area
              * FORMAT
-             * rk app title programmer opened closed version
-             * ----------------------------------------------
-             * descriptions
+             *
+             * ID app programmer rank dateOpened dateClosed
+             * title
+             *
+             * Description
+             * 
+             * ---------------------------------------------
              */
-            textArea.append(rk + app + title + programmer + "\n");
-            textArea.append("--------------------------------------------------------\n");
+            textArea.append("\n");
+            textArea.append(id + app + programmer + rk + opened + closed + "\n");
+            textArea.append(title + "\n");
+            textArea.append("\n");
 
             // 90 is the number of max characters per line
             ArrayList<String> lines = formatLineBreaks(description, 90);
@@ -544,6 +556,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             // Just appending and let word wrap handle length.
             // length of the textArea is the length of the issue window text area.
             textArea.append("\n"); // a line break between records
+            textArea.append(HYPHENS + "\n");
         }
         return true;
     }
