@@ -35,6 +35,10 @@ public class CompIssuesItem extends JTextArea{
         this.setLineWrap(true);
         this.setWrapStyleWord(true);
     }
+    
+    public CompIssuesItem(String id) {
+        this(id,null,null,null,null,null,null,null,null);
+    }
 
     public String getId() {
         return id;
