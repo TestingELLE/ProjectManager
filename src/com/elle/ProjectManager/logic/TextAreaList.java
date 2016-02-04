@@ -10,7 +10,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 /**
- *
+ * Custom JList that takes JTextArea Objects
  * @author Carlos Igreja
  * @since  2-3-2016
  */
