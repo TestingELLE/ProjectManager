@@ -3,7 +3,13 @@ package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.SQL_Commands;
+import com.elle.ProjectManager.logic.CompIssuesItem;
 import com.elle.ProjectManager.logic.ReadWriteFiles;
+import com.elle.ProjectManager.logic.TextAreaList;
+import java.awt.BorderLayout;
+import java.awt.ScrollPane;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -48,11 +54,16 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     private final String DATES_STILL_OPENED = "Still Open";   // dates combo box selection
     
     private final String DATE_FORMAT = "yyyy-MM-dd";  // format of date
+    private final String HYPHENS = "--------------------------------------------------------"
+                                 + "--------------------------------------------------------"
+                                 + "----------------";
     
     private SQL_Commands sql;
     private ReadWriteFiles rwFiles;
     private JFileChooser fc;
     private HashMap<String,ArrayList<Object>> map;
+    private TextAreaList textAreaList;
+    private ArrayList<CompIssuesItem> compIssueItems;
     
     /**
      * Creates new form CompIssuesWireFrame
@@ -70,7 +81,19 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         // initialize all combo boxes
         initComboBoxes();
 
-        textAreaCompiledOutputPane.setLineWrap(true);
+        textAreaList = new TextAreaList();
+        setTextAreaListListener(textAreaList);
+        
+        // text area item array
+        compIssueItems = new ArrayList<>();
+        
+        // add textAreaList to a scrollpane
+        ScrollPane scroll = new ScrollPane();
+        scroll.add(textAreaList);
+        scroll.setPreferredSize(panelOutputDisplay.getPreferredSize());
+        
+        panelOutputDisplay.setLayout(new BorderLayout());
+        panelOutputDisplay.add(scroll, BorderLayout.CENTER);
         
         // JFileChooser for choosing a file or directory
         fc = new JFileChooser();
@@ -93,9 +116,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        textAreaCompiledOutputPane = new javax.swing.JTextArea();
-        jPanel1 = new javax.swing.JPanel();
+        panelControls = new javax.swing.JPanel();
         labelProgrammer = new javax.swing.JLabel();
         btnCompile = new javax.swing.JButton();
         labelApp = new javax.swing.JLabel();
@@ -108,16 +129,10 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         datePickerFrom = new org.jdesktop.swingx.JXDatePicker();
         datePickerTo = new org.jdesktop.swingx.JXDatePicker();
         btnReadFromTextFile = new javax.swing.JButton();
+        labelDisplay = new javax.swing.JLabel();
+        panelOutputDisplay = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(530, 723));
-
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(163, 76));
-        jScrollPane1.setRequestFocusEnabled(false);
-
-        textAreaCompiledOutputPane.setColumns(20);
-        textAreaCompiledOutputPane.setRows(5);
-        jScrollPane1.setViewportView(textAreaCompiledOutputPane);
 
         labelProgrammer.setText("Programmer:");
 
@@ -164,84 +179,101 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelControlsLayout = new javax.swing.GroupLayout(panelControls);
+        panelControls.setLayout(panelControlsLayout);
+        panelControlsLayout.setHorizontalGroup(
+            panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelControlsLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelFromDB)
-                            .addComponent(labelToDB))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboxOpenCloseDB, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(datePickerFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(datePickerTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(btnReadFromTextFile, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(btnCompile, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(labelProgrammer)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboxProgrammer, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(labelApp)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboxApp, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnWriteToTextFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(50, 50, 50))
+                .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelControlsLayout.createSequentialGroup()
+                        .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelControlsLayout.createSequentialGroup()
+                                .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(labelFromDB)
+                                    .addComponent(labelToDB))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cboxOpenCloseDB, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(datePickerFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(datePickerTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(btnReadFromTextFile, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(30, 30, 30)
+                        .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(btnCompile, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(panelControlsLayout.createSequentialGroup()
+                                .addComponent(labelProgrammer)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboxProgrammer, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(panelControlsLayout.createSequentialGroup()
+                                .addComponent(labelApp)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboxApp, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnWriteToTextFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(50, 50, 50))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelControlsLayout.createSequentialGroup()
+                        .addComponent(labelDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(190, 190, 190))))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
+        panelControlsLayout.setVerticalGroup(
+            panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelControlsLayout.createSequentialGroup()
+                .addComponent(labelDisplay, javax.swing.GroupLayout.DEFAULT_SIZE, 12, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelControlsLayout.createSequentialGroup()
                             .addComponent(cboxOpenCloseDB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelFromDB)
                                 .addComponent(datePickerFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(panelControlsLayout.createSequentialGroup()
                             .addGap(61, 61, 61)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelToDB)
                                 .addComponent(datePickerTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelControlsLayout.createSequentialGroup()
+                        .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(labelProgrammer)
                             .addComponent(cboxProgrammer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(labelApp)
                             .addComponent(cboxApp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCompile)))
                 .addGap(25, 25, 25)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelControlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnWriteToTextFile)
                     .addComponent(btnReadFromTextFile))
                 .addGap(12, 12, 12))
+        );
+
+        javax.swing.GroupLayout panelOutputDisplayLayout = new javax.swing.GroupLayout(panelOutputDisplay);
+        panelOutputDisplay.setLayout(panelOutputDisplayLayout);
+        panelOutputDisplayLayout.setHorizontalGroup(
+            panelOutputDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panelOutputDisplayLayout.setVerticalGroup(
+            panelOutputDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 455, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelControls, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelOutputDisplay, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
-                .addGap(12, 12, 12)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(panelOutputDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(panelControls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -259,8 +291,8 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         // file must be selected or null pointer is thrown
         try{
             path = fc.getSelectedFile().getAbsolutePath();
-            if(writeFromTextAreaToTextFile(textAreaCompiledOutputPane, path))
-                messageBox("written successfully!");
+//            if(writeFromTextAreaToTextFile(textAreaList, path))
+//                messageBox("written successfully!");
         }
         catch(NullPointerException e){
             messageBox("Please select a file.");
@@ -287,10 +319,10 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         try{
             path = fc.getSelectedFile().getAbsolutePath(); // check first for null pointer
             BufferedReader reader = rwFiles.getReader(path);
-            textAreaCompiledOutputPane.setText("");
+            //textAreaCompiledOutputPane.setText("");
             String line = reader.readLine();
             while(line != null){
-                textAreaCompiledOutputPane.append(line + "\n");
+                //textAreaCompiledOutputPane.append(line + "\n");
                 line = reader.readLine();
             }
         }catch(NullPointerException e){
@@ -303,7 +335,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
 
     private void btnCompileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompileActionPerformed
         map = getTableData();
-        writeToTextArea(textAreaCompiledOutputPane, map);
+        writeToTextArea(textAreaList, map);
     }//GEN-LAST:event_btnCompileActionPerformed
 
     /**
@@ -333,6 +365,12 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -351,13 +389,13 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cboxProgrammer;
     private org.jdesktop.swingx.JXDatePicker datePickerFrom;
     private org.jdesktop.swingx.JXDatePicker datePickerTo;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelApp;
+    private javax.swing.JLabel labelDisplay;
     private javax.swing.JLabel labelFromDB;
     private javax.swing.JLabel labelProgrammer;
     private javax.swing.JLabel labelToDB;
-    private javax.swing.JTextArea textAreaCompiledOutputPane;
+    private javax.swing.JPanel panelControls;
+    private javax.swing.JPanel panelOutputDisplay;
     // End of variables declaration//GEN-END:variables
 
     private void initComboBoxes() {
@@ -491,9 +529,10 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     }
     
     // writes the text area content to file
-    public boolean writeToTextArea(JTextArea textArea, HashMap<String, ArrayList<Object>> map) {
+    public boolean writeToTextArea(TextAreaList textAreaList, HashMap<String, ArrayList<Object>> map) {
         
-        textArea.setText("");
+        textAreaList.removeAll();
+        CompIssuesItem item;
         
         // get data for each record
         int records = map.get(COL_APP).size(); // had to hard code - used app
@@ -508,9 +547,6 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             String closed= "";
             String version= "";
             String description= "";
-            final String HYPHENS = "--------------------------------------------------------"
-                                 + "--------------------------------------------------------"
-                                 + "------------------";
             
             if(map.get(COL_ID).get(i) != null)
                 id = COL_ID + ": " + map.get(COL_ID).get(i).toString() + " ";
@@ -531,6 +567,9 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             if(map.get(COL_DESCRIPTION).get(i) != null)
                 description = COL_DESCRIPTION + ": " + map.get(COL_DESCRIPTION).get(i).toString() + " ";
             
+            // store information for the item
+            item = new CompIssuesItem(id, app, title, description, programmer, opened, rk, version, closed);
+            
             /**
              * print to text area
              * FORMAT
@@ -542,22 +581,19 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
              * 
              * ---------------------------------------------
              */
-            textArea.append("\n");
-            textArea.append(id + app + programmer + rk + opened + closed + "\n");
-            textArea.append(title + "\n");
-            textArea.append("\n");
-
-            // 90 is the number of max characters per line
-            ArrayList<String> lines = formatLineBreaks(description, 90);
-            for(int index = 0; index < lines.size(); index++){
-                textArea.append(lines.get(index) + "\n");
-            }
-
+            item.append("\n");
+            item.append(id + app + programmer + rk + opened + closed + "\n");
+            item.append(title + "\n");
+            item.append("\n");
+            item.append(description + "\n");
+            
             // Just appending and let word wrap handle length.
             // length of the textArea is the length of the issue window text area.
-            textArea.append("\n"); // a line break between records
-            textArea.append(HYPHENS + "\n");
+            item.append("\n"); // a line break between records
+            item.append(HYPHENS + "\n");
+            compIssueItems.add(item);
         }
+        textAreaList.setListData(compIssueItems.toArray());
         return true;
     }
     
@@ -647,5 +683,30 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         }
         lines.add(line);
         return lines;
+    }
+    
+    private void setTextAreaListListener(TextAreaList list) {
+        
+        // add mouseListener to the list
+        list.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e)
+            {
+                // get the text area item index
+               int index = list.locationToIndex(e.getPoint());
+
+               // index cannot be null
+               if (index != -1) {
+                   
+                   // get the text area item at this index
+                  CompIssuesItem item = (CompIssuesItem)
+                              list.getModel().getElementAt(index);
+                  
+                  labelDisplay.setText(item.getId());
+
+                  list.repaint(); // redraw graphics
+
+               }
+            }
+        });
     }
 }
