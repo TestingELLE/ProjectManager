@@ -1399,6 +1399,22 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             if (table.getColumnName(col).equalsIgnoreCase(colName)) {
                 ArrayList<Object> dropDownList = (ArrayList<Object>) comboBoxForSearchValue.get(col);
                 for (Object item : dropDownList) {
+                        List<Object> sortlist = dropDownList.subList(1, dropDownList.size());
+                    if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed")||colName.equalsIgnoreCase("version")) {
+                        Collections.sort(sortlist, new Comparator<Object>() {
+                            public int compare(Object o1, Object o2) {
+                                return o2.toString().compareTo(o1.toString());
+                            }
+
+                        });
+                    }else{
+                        Collections.sort(sortlist, new Comparator<Object>() {
+                            public int compare(Object o1, Object o2) {
+                                return o1.toString().compareTo(o2.toString());
+                            }
+
+                        });
+                    }
                     comboBoxSearchModel.addElement(item);
                 }
             }
