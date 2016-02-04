@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 
 /**
  *
@@ -56,7 +55,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     private final String DATE_FORMAT = "yyyy-MM-dd";  // format of date
     private final String HYPHENS = "--------------------------------------------------------"
                                  + "--------------------------------------------------------"
-                                 + "----------------";
+                                 + "--------------";
     
     private SQL_Commands sql;
     private ReadWriteFiles rwFiles;
