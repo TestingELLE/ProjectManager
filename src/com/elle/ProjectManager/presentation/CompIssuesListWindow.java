@@ -599,8 +599,8 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             compIssueItems.add(item);
             
             // only show 10 items
-            if(compIssueItems.size() == 10)
-                break;
+//            if(compIssueItems.size() == 10)
+//                break;
         }
         textAreaList.setListData(compIssueItems.toArray());
         return true;
