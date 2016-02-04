@@ -173,6 +173,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         });
 
         btnReadFromTextFile.setText("Read from Text File");
+        btnReadFromTextFile.setEnabled(false);
         btnReadFromTextFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReadFromTextFileActionPerformed(evt);
@@ -284,15 +285,14 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_cboxProgrammerActionPerformed
 
     private void btnWriteToTextFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWriteToTextFileActionPerformed
-
         
         fc.showOpenDialog(this); 
         
         // file must be selected or null pointer is thrown
         try{
             path = fc.getSelectedFile().getAbsolutePath();
-//            if(writeFromTextAreaToTextFile(textAreaList, path))
-//                messageBox("written successfully!");
+            if(writeFromTextAreaToTextFile(textAreaList, path))
+                messageBox("written successfully!");
         }
         catch(NullPointerException e){
             messageBox("Please select a file.");
@@ -606,14 +606,18 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         return true;
     }
     
-    public boolean writeFromTextAreaToTextFile(JTextArea textArea, String path ){
+    public boolean writeFromTextAreaToTextFile(TextAreaList textAreaList, String path ){
         
         PrintWriter writer = rwFiles.getWriter(path); // writer to write to file
-        String[] lines = textArea.getText().split("\n");
-        for(int i =0; i < lines.length; i++){
-            writer.println(lines[i]);
+        
+        // for each text area list item
+        for(CompIssuesItem item: compIssueItems){
+            String[] lines = item.getText().split("\n");
+            for(int i =0; i < lines.length; i++){
+                writer.println(lines[i]);
+            }
+            writer.flush();
         }
-        writer.flush();
         writer.close();
         return true;
     }
