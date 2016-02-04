@@ -532,6 +532,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     public boolean writeToTextArea(TextAreaList textAreaList, HashMap<String, ArrayList<Object>> map) {
         
         textAreaList.removeAll();
+        compIssueItems.clear();
         CompIssuesItem item;
         
         // get data for each record
@@ -568,7 +569,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
                 description = COL_DESCRIPTION + ": " + map.get(COL_DESCRIPTION).get(i).toString() + " ";
             
             // store information for the item
-            item = new CompIssuesItem(id, app, title, description, programmer, opened, rk, version, closed);
+            item = new CompIssuesItem(id);
             
             /**
              * print to text area
@@ -592,6 +593,10 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             item.append("\n"); // a line break between records
             item.append(HYPHENS + "\n");
             compIssueItems.add(item);
+            
+            // only show 10 items
+            if(compIssueItems.size() == 10)
+                break;
         }
         textAreaList.setListData(compIssueItems.toArray());
         return true;
