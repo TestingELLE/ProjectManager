@@ -568,6 +568,10 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             if(map.get(COL_DESCRIPTION).get(i) != null)
                 description = COL_DESCRIPTION + ": " + map.get(COL_DESCRIPTION).get(i).toString() + " ";
             
+            // only show if rk exists
+            if(rk.equals(""))
+                continue;
+            
             // store information for the item
             item = new CompIssuesItem(id);
             
