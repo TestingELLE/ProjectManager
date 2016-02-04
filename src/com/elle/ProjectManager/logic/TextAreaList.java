@@ -43,8 +43,8 @@ public class TextAreaList extends JList{
          JTextArea textArea = (JTextArea) value;
          textArea.setBackground(isSelected ?
                  getSelectionBackground() : getBackground());
-         textArea.setForeground(isSelected ?
-                 getSelectionForeground() : getForeground());
+//         textArea.setForeground(isSelected ?
+//                 getSelectionForeground() : getForeground());
          textArea.setEnabled(isEnabled());
          textArea.setFont(getFont());
          textArea.setBorder(isSelected ?
