@@ -328,8 +328,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         this.pack();
         
-        // Authorize init - get user level from DB
-        Authorization.getInfoFromDB();
+        // authorize user for this component
         Authorization.authorize(this);
     }
 

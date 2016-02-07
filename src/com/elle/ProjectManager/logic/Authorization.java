@@ -50,7 +50,7 @@ public class Authorization {
      * This information will be stored and retrieved from the database.
      * This method will get the required information from the database.
      */
-    public static void getInfoFromDB(){
+    public static boolean getInfoFromDB(){
         userLogin = DBConnection.getUserName();
         // use sql query to get the accesslevel from DB
         SQL_Commands sql_commands 
@@ -59,7 +59,13 @@ public class Authorization {
                       " WHERE " + DB_COLUMN_1 + " = '" + userLogin +"';";
         HashMap<String,ArrayList<Object>> map;
         map = sql_commands.getTableData(sql_commands.executeQuery(query));
-        accessLevel = map.get(DB_COLUMN_2).get(0).toString();
+        if(!map.get(DB_COLUMN_2).isEmpty()){
+            accessLevel = map.get(DB_COLUMN_2).get(0).toString();
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     
     /**
