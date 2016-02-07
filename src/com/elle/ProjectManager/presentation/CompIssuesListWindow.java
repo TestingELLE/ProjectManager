@@ -172,7 +172,6 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         });
 
         btnReadFromTextFile.setText("Read from Text File");
-        btnReadFromTextFile.setEnabled(false);
         btnReadFromTextFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReadFromTextFileActionPerformed(evt);
@@ -362,6 +361,14 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(CompIssuesListWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
