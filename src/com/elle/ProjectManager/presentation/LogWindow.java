@@ -54,7 +54,7 @@ public class LogWindow extends JFrame {
             
         } else {
             // For windows
-            String ProjectManager = "\\Users\\" + System.getProperty("user.name") + "\\Documents\\ProjectManager\\";
+            String ProjectManager = "C:\\Users\\" + System.getProperty("user.name") + "\\Documents\\ProjectManager\\";
             File dir = new File(ProjectManager);
             dir.mkdir();
             FILENAME = ProjectManager + "PM_" + userName + "_log.txt";
