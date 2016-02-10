@@ -116,10 +116,10 @@ public class AddIssueWindow extends JFrame {
 
         // create a new empty tableSelected
         createTable();
-        
+
         // create a new empty edit form
         createEmptyForm();
-        
+
         //
         addIssueMode(addIssueMode);
 
@@ -229,8 +229,7 @@ public class AddIssueWindow extends JFrame {
 
         this.pack();
     }
-    
-    
+
     private void defaultSetting() {
 
         int idNum = (int) selectedTable.getValueAt(selectedTable.getRowCount() - 1, 0) + 1;
@@ -809,7 +808,7 @@ public class AddIssueWindow extends JFrame {
 
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
         System.out.println(selectedTable.getValueAt(0, 0));
-        
+
         projectManager.makeTableEditable(false, getIssueActiveTabName());
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
         projectManager.deleteNumOfAddIssueWindowOpened();
@@ -862,11 +861,9 @@ public class AddIssueWindow extends JFrame {
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
 
 //        System.out.println("at " + table.getName() + " " + selectedTable.getColumnCount());
-
 //        for (int row = 0; row < selectedTable.getRowCount(); row++) {
 //            System.out.println(selectedTable.getValueAt(row, 0) + " " + selectedTable.getValueAt(row, 2));
 //        }
-
         for (int col = 0; col < formValues.length; col++) {
 //            System.out.println(col);
             if (formValues[col] != null) {
@@ -1026,10 +1023,13 @@ public class AddIssueWindow extends JFrame {
             value = value + " " + today;
             dateArea.setText(value);
         } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
-
+            
             String userName = projectManager.getUserName();
-            value = value + "-- by " + userName + " on " + today + "-- \n";
+            value = value +"\n -- by " + userName + " on " + today + "--  ";
             dateArea.setText(value);
+            System.out.println(dateArea.getCaretPosition());
+            dateArea.setCaretPosition(value.length() - 26 - userName.length());
+            
         }
     }//GEN-LAST:event_descriptionTextKeyReleased
 
@@ -1314,7 +1314,7 @@ public class AddIssueWindow extends JFrame {
                         }
                         ip = textAreasInForm.get(columnNames[i]).getInputMap();
                         ShortCut.undoAndRedoShortCut(textAreasInForm.get(columnNames[i]));
-                        
+
                         formValues[i] = null;
                         break;
                     }
