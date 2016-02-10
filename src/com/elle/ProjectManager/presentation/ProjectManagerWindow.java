@@ -1398,13 +1398,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 ArrayList<Object> dropDownList = (ArrayList<Object>) comboBoxForSearchValue.get(col);
                 for (Object item : dropDownList) {
                         List<Object> sortlist = dropDownList.subList(1, dropDownList.size());
-                    if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed")||colName.equalsIgnoreCase("version")) {
+                    if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed")) {
                         Collections.sort(sortlist, new Comparator<Object>() {
                             public int compare(Object o1, Object o2) {
                                 return o2.toString().compareTo(o1.toString());
                             }
-
+                      
                         });
+                     System.out.println(1);
                     }else{
                         Collections.sort(sortlist, new Comparator<Object>() {
                             public int compare(Object o1, Object o2) {
@@ -2593,6 +2594,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 } // end if right mouse clicks
 
             }// end mouseClicked
+            
 
             private void selectAllText(MouseEvent e) {// Select all text inside jTextField
 
@@ -2631,6 +2633,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         }
         );
+        
 
         table.addMouseMotionListener(new MouseAdapter() {
             @Override
