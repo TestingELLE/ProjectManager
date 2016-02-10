@@ -63,6 +63,7 @@ public class AddIssueWindow extends JFrame {
     private ShortCutSetting ShortCut;
     private DefaultTableModel model;
     private int rowInView;
+    private int issueId;
     private String columnFocused;
     private JTable selectedTable;
 
@@ -116,10 +117,10 @@ public class AddIssueWindow extends JFrame {
 
         // create a new empty tableSelected
         createTable();
-        
+
         // create a new empty edit form
         createEmptyForm();
-        
+
         //
         addIssueMode(addIssueMode);
 
@@ -140,6 +141,7 @@ public class AddIssueWindow extends JFrame {
         CellsNotEmpty = new ArrayList<>();
         notEmpty = false;
         addIssueMode = false;
+        // to detect 
         contentChanged = false;
 
         projectManager = ProjectManagerWindow.getInstance();
@@ -148,12 +150,14 @@ public class AddIssueWindow extends JFrame {
         statement = projectManager.getStatement();
 
         selectedTable = projectManager.getSelectedTable();
-        System.out.println(selectedTable.getValueAt(0, 0) + " and " + selectedTable.getValueAt(row, 0));
+        System.out.println("the first row number in current table is: " + selectedTable.
+                getValueAt(0, 0) + " and the row num in view is: " + selectedTable.getValueAt(row, 0));
 
         projectManager.setAddRecordsWindowShow(true);
 
         formValues = cellsValue;
         rowInView = row;
+        issueId = id;
         columnFocused = columnName;
 
         table = new JTable();
@@ -229,8 +233,7 @@ public class AddIssueWindow extends JFrame {
 
         this.pack();
     }
-    
-    
+
     private void defaultSetting() {
 
         int idNum = (int) selectedTable.getValueAt(selectedTable.getRowCount() - 1, 0) + 1;
@@ -472,9 +475,7 @@ public class AddIssueWindow extends JFrame {
         title = new javax.swing.JLabel();
         id = new javax.swing.JLabel();
         programmer = new javax.swing.JLabel();
-        programmerText = new javax.swing.JTextField();
         rk = new javax.swing.JLabel();
-        rkText = new javax.swing.JTextField();
         dateOpened = new javax.swing.JLabel();
         dateOpenedText = new javax.swing.JTextField();
         jScrollPane7 = new javax.swing.JScrollPane();
@@ -489,12 +490,14 @@ public class AddIssueWindow extends JFrame {
         versionText = new javax.swing.JTextField();
         btnCloseIssue = new javax.swing.JButton();
         titleText = new javax.swing.JTextField();
-        appText = new javax.swing.JTextField();
         description = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         idText = new javax.swing.JLabel();
         BtnNext = new javax.swing.JButton();
         BtnPrevious = new javax.swing.JButton();
+        appText = new javax.swing.JTextField();
+        programmerText = new javax.swing.JTextField();
+        rkText = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -516,23 +519,7 @@ public class AddIssueWindow extends JFrame {
 
         programmer.setText(" programmer");
 
-        programmerText.setText("jTextField1");
-        programmerText.setName("programmer"); // NOI18N
-        programmerText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                programmerTextActionPerformed(evt);
-            }
-        });
-
         rk.setText(" rk");
-
-        rkText.setText("jTextField1");
-        rkText.setName("rk"); // NOI18N
-        rkText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rkTextActionPerformed(evt);
-            }
-        });
 
         dateOpened.setText(" dateOpened");
 
@@ -660,9 +647,6 @@ public class AddIssueWindow extends JFrame {
             }
         });
 
-        appText.setText("jTextField1");
-        appText.setName("app"); // NOI18N
-
         description.setText(" description");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -692,6 +676,14 @@ public class AddIssueWindow extends JFrame {
             }
         });
 
+        appText.setText("jTextField1");
+        appText.setName("app"); // NOI18N
+
+        programmerText.setName("programmer"); // NOI18N
+
+        rkText.setText("jTextField2");
+        rkText.setName("rk"); // NOI18N
+
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
         formPane.setLayout(formPaneLayout);
         formPaneLayout.setHorizontalGroup(
@@ -699,51 +691,47 @@ public class AddIssueWindow extends JFrame {
             .addGroup(formPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(formPaneLayout.createSequentialGroup()
-                        .addComponent(titleText)
-                        .addContainerGap())
-                    .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(id)
-                                    .addComponent(idText))
-                                .addGap(15, 15, 15)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(dateOpened))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 223, Short.MAX_VALUE)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(formPaneLayout.createSequentialGroup()
-                                        .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(formPaneLayout.createSequentialGroup()
-                                        .addComponent(programmer)
-                                        .addGap(60, 60, 60)
-                                        .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(13, Short.MAX_VALUE))
-                    .addGroup(formPaneLayout.createSequentialGroup()
+                    .addComponent(titleText)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addComponent(app)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(33, 33, 33)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                        .addGap(6, 6, 6))
+                            .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(id)
+                            .addComponent(idText))
+                        .addGap(15, 15, 15)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dateOpened))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(programmer)
+                            .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(40, 40, 40)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(13, 13, 13))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12))
                     .addGroup(formPaneLayout.createSequentialGroup()
                         .addComponent(description)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(BtnPrevious)
                         .addGap(18, 18, 18)
-                        .addComponent(BtnNext)
-                        .addContainerGap())))
+                        .addComponent(BtnNext)))
+                .addContainerGap())
+            .addGroup(formPaneLayout.createSequentialGroup()
+                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addComponent(app)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(99, 99, 99)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(6, 6, 6))
         );
         formPaneLayout.setVerticalGroup(
             formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -755,15 +743,14 @@ public class AddIssueWindow extends JFrame {
                         .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(programmer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, 0)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(idText)
                     .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idText))
-                .addGap(0, 0, 0)
+                    .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(2, 2, 2)
                 .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addGap(4, 4, 4)
                 .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -776,7 +763,7 @@ public class AddIssueWindow extends JFrame {
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(formPaneLayout.createSequentialGroup()
                         .addComponent(app)
-                        .addGap(0, 0, 0)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -809,7 +796,7 @@ public class AddIssueWindow extends JFrame {
 
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
         System.out.println(selectedTable.getValueAt(0, 0));
-        
+
         projectManager.makeTableEditable(false, getIssueActiveTabName());
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
         projectManager.deleteNumOfAddIssueWindowOpened();
@@ -860,29 +847,27 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_dateOpenedTextKeyReleased
 
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
+        int row = checkConsistencyOfIdAndRowNum();
+        System.out.println("real row is: " + row);
+        if (row != -1) {
+            for (int col = 0; col < formValues.length; col++) {
+                System.out.println(col + ": " + formValues[col]);
+                System.out.println("row 's id is: " + selectedTable.getValueAt(rowInView, 0));
+                if (formValues[col] != null) {
 
-//        System.out.println("at " + table.getName() + " " + selectedTable.getColumnCount());
-
-//        for (int row = 0; row < selectedTable.getRowCount(); row++) {
-//            System.out.println(selectedTable.getValueAt(row, 0) + " " + selectedTable.getValueAt(row, 2));
-//        }
-
-        for (int col = 0; col < formValues.length; col++) {
-//            System.out.println(col);
-            if (formValues[col] != null) {
-
-                selectedTable.setValueAt(formValues[col], rowInView, col + 1);
+                    selectedTable.setValueAt(formValues[col], rowInView, col + 1);
+                }
             }
+
+            projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
+            projectManager.deleteNumOfAddIssueWindowOpened();
+            this.dispose();
+            String selectedTableName = selectedTable.getName();
+
+            projectManager.uploadChanges(selectedTableName);
+
+            projectManager.makeTableEditable(false, selectedTableName);
         }
-
-        projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
-        projectManager.deleteNumOfAddIssueWindowOpened();
-        this.dispose();
-        String selectedTableName = selectedTable.getName();
-
-        projectManager.uploadChanges(selectedTableName);
-
-        projectManager.makeTableEditable(false, selectedTableName);
 
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
@@ -1314,7 +1299,7 @@ public class AddIssueWindow extends JFrame {
                         }
                         ip = textAreasInForm.get(columnNames[i]).getInputMap();
                         ShortCut.undoAndRedoShortCut(textAreasInForm.get(columnNames[i]));
-                        
+
                         formValues[i] = null;
                         break;
                     }
@@ -1459,545 +1444,18 @@ public class AddIssueWindow extends JFrame {
 
         return cellValue.toString().replaceAll("'", "''");
     }
-//    // find the sepecfic textArea in Form
-//    private JTextArea findColumnInForm(String columnName) {
-//        for (int i = 0; i < columnNames.length; i++) {
-//            if(columnName.equals("description")){
-//                return descriptionText;
-//            }
-//            if (columnNames[i].contains(columnName)) {
-//
-//                return textAreasInForm.get(columnNames[i]);
-//            }
-//        }
-//        return null;
-//    }
 
-//    private void setCopyAndPasteKeyEvent() {
-//        InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
-//        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
-//        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
-//        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
-//    }
-//    private void setFormListener() {
-//        header.addMouseListener(new MouseAdapter() {
-//    }
-//    private void copyPasteAndCut() {
-//        InputMap imap = this.getIn
-//    }
-//    private void addKeyListener() {
-//        KeyListener textKeyListener = new KeyListener() {
-//
-//            @Override
-//            public void keyTyped(KeyEvent event) {
-//                System.out.println("key typed");
-//            }
-//
-//            @Override
-//            public void keyReleased(KeyEvent event) {
-//                System.out.println("key released");
-//            }
-//
-//            @Override
-//            public void keyPressed(KeyEvent event) {
-//                System.out.println("key pressed");
-//            }
-//        };
-//        for (int i = 0; i < columnNames.length; i++) {
-//            System.out.println(columnNames[i]);
-//            textAreasInForm.get(columnNames[i]).setA
-//            Document doc = textAreasInForm.get(columnNames[i]).getDocument();
-//            doc.addKeyListener(textKeyListener);
-//            doc.putProperty("id", columnNames[i]);
-//            System.out.println("add!");
-//        }
-//
-//    }
-//    private void addMouseListener() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-    //
-//        // add listeners
-//        addTableListeners(this);
-//
-//        // submit button does not start enabled because the tableSelected is empty
-//        btnSubmit.setEnabled(false);
-//
-//        // set the label header
-//        this.setTitle("Add Records to " + table.getName());
-//
-//        Dimension scrollPanelDimension = scrollpane.getPreferredSize();
-//
-//        // set the size for AddRecord window
-//        this.setPreferredSize(new Dimension((int) scrollPanelDimension.getWidth(),
-//                (int) (scrollPanelDimension.getHeight() + 80)));
-//        this.setMinimumSize(new Dimension((int) scrollPanelDimension.getWidth(), 120));
-//
-////        if (!tableCellPopupWindow.isPopupWindowShow(isEditing)) {
-////            tableCellPopupWindow.setTableListener(table, this);
-////        }
-//        // set this window to appear in the middle of Project Manager
-//        this.setLocationRelativeTo(projectManager);
-//
-//        this.addWindowListener(new java.awt.event.WindowAdapter() {
-//            @Override
-//            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-//                projectManager.setAddRecordsWindowShow(false);
-//
-//                projectManager.setDisableProjecetManagerFunction(true);
-//
-//            }
-//        });
-////        this.pack();
-//        System.out.println("add record window create!");
-//    }
-//
-//    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {
-//
-//        projectManager.setDisableProjecetManagerFunction(true);
-//        submit();
-//    }
-//
-//    /**
-//     * submit This is used when the submit button is pressed or if the enter key
-//     * is pressed when the tableSelected is finished editing to submit the data
-//     * to the database.
-//     */
-//    private void submit() {
-//
-//        Object cellValue = null;                 // store cell value
-//        int col = 0;                             // column index
-//        int row = 0;                             // row index
-//
-//        // check if data is valid
-//        if (validateData()) {
-//
-//            // once data checked, execute sql statement
-//            // first get the insert statement for the tableSelected
-//            String insertInto = "INSERT INTO " + table.getName() + " (";
-//
-//            // this tableSelected should already not include the primary key
-//            for (col = 0; col < table.getColumnCount(); col++) {
-//                if (col != table.getColumnCount() - 1) {
-//                    insertInto += table.getColumnName(col) + ", ";
-//                } else {
-//                    insertInto += table.getColumnName(col) + ") ";
-//                }
-//            }
-//
-//            numRowsAdded = 0; // reset numRowsAdded counter
-//
-//            // Now get the values to add to the database
-//            String values = "";
-//            for (row = 0; row < table.getRowCount(); row++) {
-//                values = "VALUES (";  // start the values statement
-//                System.out.println(table.getColumnCount() + "table column number");
-//                for (col = 0; col < table.getColumnCount(); col++) {
-//
-//                    // get cell value
-//                    cellValue = table.getValueAt(row, col);
-//
-//                    // format the cell value for sql
-//                    if (cellValue != null) {
-//
-//                        // if cell is empty it must be null
-//                        if (cellValue.toString().equals("")) {
-//                            cellValue = null;
-//                        } // if the cell is not empty it must have single quotes
-//                        else {
-//                            cellValue = "'" + cellValue + "'";
-//                        }
-//                    }
-//                    System.out.println("add record submit" + cellValue + "at " + row + " " + col);
-//
-//                    // skip empty rows
-//                    // this must be after the format cell value so the "" => null
-//                    if (col == 0 && cellValue == null) {
-//                        break;
-//                    }
-//
-//                    // add each value for each column to the values statement
-//                    if (col != table.getColumnCount() - 1) {
-//                        values += cellValue + ", ";
-//                    } else {
-//                        values += cellValue + ");";
-//                    }
-//                }
-//                System.out.println(values);
-//
-//                try {
-//                    // execute the sql statement
-//                    if (!values.equals("VALUES (")) {      //skip if nothing was added
-//                        // open connection because might time out
-//                        DBConnection.open();
-//                        statement = DBConnection.getStatement();
-//                        statement.executeUpdate(insertInto + values);
-//                        numRowsAdded++;   // increment the number of rows added
-//                    }
-//                } catch (SQLException sqlException) {
-//                    try {
-//                        JOptionPane.showMessageDialog(null, "Upload failed!");
-//
-//                        if (statement.getWarnings().getMessage() != null) {
-//
-//                            String levelMessage = "2:" + statement.getWarnings().getMessage();
-//                            logWindow.addMessageWithDate(levelMessage);
-////                            logWindow.
-//                            System.out.println(statement.getWarnings().getMessage());
-//
-//                            System.out.println(levelMessage);//delete
-//
-//                            statement.clearWarnings();
-//                        }
-//                        logWindow.addMessageWithDate("2:add record submit failed!");
-//                    } // end try-catch
-//                    catch (SQLException ex) {
-//                        // this should never be called
-//                        ex.printStackTrace();
-//                    }
-//                }
-//            }
-//
-//            System.out.println("numRowsAdded" + numRowsAdded);
-//
-//            if (numRowsAdded > 0) {
-//                // update tableSelected and records label
-//                String tabName = projectManager.getSelectedTabName();              // tab name
-//                Tab tab = tabs.get(tabName);                                  // selected tab
-//
-//                JTable table = tab.getTable();
-//                projectManager.loadTable(table);                              // load tableSelected data from database
-//
-//                // reload new table data for modifiedTableData
-//                ModifiedTableData data = tab.getTableData();
-//                data.reloadData();
-//
-//                TableFilter filter = tab.getFilter();                         // tableSelected filter
-//                filter.applyFilter();                                         // apply filter
-//                filter.applyColorHeaders();                                   // apply color headers
-//
-//                ColumnPopupMenu ColumnPopupMenu = tab.getColumnPopupMenu();   // column popup menu 
-//                ColumnPopupMenu.loadAllCheckBoxItems();                       // refresh the data for the column pop up
-//
-//                tab.addToTotalRowCount(numRowsAdded);                         // add the number of records added to the total records count
-//                JLabel recordsLabel = projectManager.getRecordsLabel();
-//                String recordsLabelText = tab.getRecordsLabel();              // store the records label string
-//                recordsLabel.setText(recordsLabelText);                       // update the records label text
-//
-//                projectManager.setLastUpdateTime();                                // set the last update time from database
-//
-//                JOptionPane.showMessageDialog(this,
-//                        numRowsAdded + " Add successfully!");                 // show dialog box that upload was successful
-//                createEmptyTable();                                           // create a new empty tableSelected with default 10 rows
-//            }
-//        }
-//    }
-//
-//    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
-//
-//        projectManager.setAddRecordsWindowShow(false);
-//        projectManager.setDisableProjecetManagerFunction(true);
-//        tableCellPopupWindow.windowClose();
-//        this.dispose();
-//    }
-//
-//    // add an empty row to the tableSelected
-////        model.addRow(new Object[]{});
-    /**
-     * setKeyboardFocusManager Sets the Keyboard Focus Manager
-     */
-//    private void setKeyboardFocusManager(JFrame frame) {
-//
-//        /*
-//         No Tab key-pressed or key-released events are received by the key event listener. This is because the focus subsystem 
-//         consumes focus traversal keys, such as Tab and Shift Tab. To solve this, apply the following to the component that is 
-//         firing the key events 
-//         */
-//        table.setFocusTraversalKeysEnabled(false);
-//        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {// Allow to TAB-
-////
-//            @Override
-//            public boolean dispatchKeyEvent(KeyEvent e) {
-//
-//                if (e.getComponent() instanceof JTextArea) {
-//                    if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
-//                        JTextArea dateArea = new JTextArea();
-//                        for (int i = 0; i < columnNames.length; i++) {
-//                            if (columnNames[i].contains("date")) {
-//                                dateArea = textAreasInForm.get(columnNames[i]);
-//                                makeContentDate(dateArea);
-//                            }
-//                        }
-//
-//                    }
-//                }
-//                return false;
-//            }
-//
-//            private void makeContentDate(JTextArea dateArea) {
-//
-//                dateArea.requestFocusInWindow();
-//                dateArea.selectAll();
-//                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//                Date date = new Date();
-//                String today = dateFormat.format(date);
-//                dateArea.setText(today);
-//            }
-//
-//        });
-//    }
-//                    if (e.getKeyCode() == KeyEvent.VK_TAB && e.isControlDown()) {
-//                        System.out.println(activeTextArea.getText());
-//                    }
-//                }
-//                return false;
-//
-//            }
-//        });
-//    }
-//
-//                if (e.getComponent() instanceof JTable) {
-//
-//                    // this is called to either clear data or submit data
-//                    if (e.getKeyCode() == KeyEvent.VK_ENTER && !table.isEditing()) {
-//
-//                        // clear the row(s)
-//                        if (e.getID() == KeyEvent.KEY_PRESSED) {
-//                            if (table.getSelectionBackground() == Color.RED) {
-//                                int[] rows = table.getSelectedRows();
-//
-//                                if (rows != null) {
-//                                    for (int row : rows) {
-//                                        for (int col = 0; col < table.getColumnCount(); col++) {
-//                                            table.getModel().setValueAt("", row, col);
-//                                        }
-//                                    }
-//                                }
-//                                table.setSelectionBackground(defaultSelectedBG);
-//
-//                                // check for empty rows/table
-//                                checkForEmptyRows();
-//                                if (rowsNotEmpty.isEmpty()) {
-//                                    btnSubmit.setEnabled(false);
-//                                } else {
-//                                    btnSubmit.setEnabled(true);
-//                                }
-//                            } // submit the data
-//                            else if (table.getSelectionBackground() != Color.RED) {
-//                                submit();
-//                            }
-//                        }
-//                    } // this toggles the red bg for clearing row data
-//                    else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-//
-//                        if (e.getID() == KeyEvent.KEY_RELEASED) {
-//                            if (table.isEditing()) {
-//                                table.getCellEditor().stopCellEditing();
-//                            }
-//
-//                            if (table.getSelectionBackground() == defaultSelectedBG) {
-//                                table.setSelectionBackground(Color.RED);
-//                            } else {
-//                                table.setSelectionBackground(defaultSelectedBG);
-//                            }
-//                        }
-//                    } // this is to tab and move to cells with arrow keys
-//                    else if (e.getKeyCode() == KeyEvent.VK_TAB || e.getKeyCode() == KeyEvent.VK_LEFT
-//                            || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_UP
-//                            || e.getKeyCode() == KeyEvent.VK_DOWN) {
-//
-//                        JTable tableSelected = (JTable) e.getComponent();
-//
-//                        if (e.getID() == KeyEvent.KEY_RELEASED) {
-//                            System.out.println("add records tabs!");
-//                            //if table get selected location is not the same as last selection
-//                            if (tableSelected.getSelectedRow() != lastSelectedRow
-//                                    || tableSelected.getSelectedColumn() != lastSelectedColumn) {
-//
-//                                if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
-//                                    lastSelectedRow = tableSelected.getSelectedRow();
-//                                    lastSelectedColumn = tableSelected.getSelectedColumn();
-//                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
-//                                } else {
-//                                    tableCellPopupWindow.windowClose();
-//                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
-//                                    lastSelectedRow = tableSelected.getSelectedRow();
-//                                    lastSelectedColumn = tableSelected.getSelectedColumn();
-//                                }// last popup window dispose and new popup window show at the selected cell
-//                            }
-////                        } else if (e.getID() == KeyEvent.KEY_PRESSED) {
-////                            if (selectedCol == tableSelected.getColumnCount() - 1) {
-////
-////                                DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-////
-////                                tableModel.addRow(new Object[]{});
-////                            }
-//
-//                        } else {
-//
-//                        }
-//                    }
-//
-//                } // end table component condition
-//                // ctrl + D fills in the current date
-//                else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown()) {
-//                    JTable table = (JTable) e.getComponent().getParent();
-//                    int column = table.getSelectedColumn();
-//                    if (table.getColumnName(column).toLowerCase().contains("date")) {
-//                        if (e.getID() != 401) {
-//                            return false;
-//                        } else {
-//                            JTextField selectCom = (JTextField) e.getComponent();
-//                            selectCom.requestFocusInWindow();
-//                            selectCom.selectAll();
-//                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//                            Date date = new Date();
-//                            String today = dateFormat.format(date);
-//                            selectCom.setText(today);
-//                        }// default date input with today's date}
-//                    }
-//                }
-//
-//                return false;
-//            }
-//        });
-//    }
-//
-//
-//    /**
-//     * addTableListeners This is called to add the listeners to the
-//     * tableSelected The listeners added are the TableModel listener the
-//     * MouseListener and the KeyListener
-//     */
-//    public void addTableListeners(JFrame frame) {
-//
-//        // add tableModelListener
-//        table.getModel().addTableModelListener(new TableModelListener() {
-//
-//            @Override
-//            public void tableChanged(TableModelEvent e) {
-//
-//                // isEditing is a class boolean triggered true on double click
-//                if (!isEditing) {
-//                    // if clearing row then do not validate
-//                    if (table.getSelectionBackground() != Color.RED) {
-//
-//                        // check the cell for valid entry
-//                        int row = e.getLastRow();            // row index
-//                        int col = e.getColumn();             // column index
-//
-//                        System.out.println("tableChanged at: " + row + " " + col);
-//                        validateCell(row, col);
-//                    }
-//
-//                    // get value of cell
-//                    int row = e.getFirstRow();
-//                    int col = e.getColumn();
-//                    Object value = table.getValueAt(row, col);
-//
-//                    // if cell value is empty
-//                    if (value == null || value.equals("")) {
-//                        // check to see if it was a deletion
-//                        if (!rowsNotEmpty.isEmpty() && rowsNotEmpty.contains(row)) {
-//                            checkForEmptyRows();
-//                        }
-//                    } // else add the row to the list as not empty
-//                    else {
-//                        rowsNotEmpty.add(row);
-//                    }
-//
-//                    // if list is empty then the tableSelected is empty
-//                    if (!rowsNotEmpty.isEmpty() && !isEditing) {
-//                        btnSubmit.setEnabled(true);
-//                    }
-//                }
-//
-//                // reset isEditing boolean
-//                isEditing = false;
-//            }
-//
-//        });
-//
-//        // add mouseListener
-//        table.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//
-//                if (e.getClickCount() == 1) {
-//                    // if we click away the red delete should go away
-//                    if (table.getSelectionBackground() == Color.RED && !e.isControlDown()) {
-//                        table.setSelectionBackground(defaultSelectedBG);
-//                    }
-//                } // this enters edit mode
-//                else if (e.getClickCount() == 2) {
-//                    btnSubmit.setEnabled(false);
-//                    isEditing = true;
-//                    selectAllText(e);
-//                }
-//            }
-//
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//
-//                // if left mouse clicks
-//                if (SwingUtilities.isLeftMouseButton(e)) {
-//                    if (e.getClickCount() == 1) {
-//
-//                        //if table get selected location is not the same as last selection
-//                        if (table.getSelectedRow() != lastSelectedRow
-//                                || table.getSelectedColumn() != lastSelectedColumn) {
-//
-//                            if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
-//                                lastSelectedRow = table.getSelectedRow();
-//                                lastSelectedColumn = table.getSelectedColumn();
-//                                tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
-//                            } else {
-//                                tableCellPopupWindow.windowClose();
-//                                tableCellPopupWindow = new PopupWindowInTableCell(frame, table);
-//                                lastSelectedRow = table.getSelectedRow();
-//                                lastSelectedColumn = table.getSelectedColumn();
-//                            }// last popup window dispose and new popup window show at the selected cell
-//                        } else {
-//                            //if current selection equals last selection nothing happens
-//                        }
-//                    }
-//                } // end if left mouse clicks
-//            }
-//        });
-//    }
-//
-//    /**
-//     * selectAllText Select all text inside jTextField or a cell
-//     *
-//     * @param e
-//     */
-//    private void selectAllText(MouseEvent e) {
-//
-//        JTable table = (JTable) e.getComponent();
-//        int row = table.getSelectedRow();
-//        int column = table.getSelectedColumn();
-//        if (column != -1) {
-//            table.getComponentAt(row, column).requestFocus();
-//            table.editCellAt(row, column);
-//            JTextField selectCom = (JTextField) table.getEditorComponent();
-//            if (selectCom != null) {
-//                selectCom.requestFocusInWindow();
-//                selectCom.selectAll();
-//            }
-//        }
-//    }
-//
-    //    private void createForm() {
-//        createEmptyForm();
-//        for (int col = 0; col < formValues.length; col++) {
-//            System.out.println(col + " " + formValues[col] + " !");
-//            Object tableValue = formValues[col];
-//            if (tableValue != null) {
-//                textAreasInForm.get(columnNames[col]).setText(tableValue.toString());
-//            } else {
-//                textAreasInForm.get(columnNames[col]).setText(null);
-//            }
-//            idText.setEditable(false);
-//        }
-//    }
+    private int checkConsistencyOfIdAndRowNum() {
+        if (issueId == (int) selectedTable.getValueAt(rowInView, 0)) {
+            return rowInView;
+        } else {
+            for (int rowIndex = 0; rowIndex < selectedTable.getRowCount(); rowInView++) {
+                if ((int) selectedTable.getValueAt(rowIndex, 0) == issueId) {
+                    return rowIndex;
+                }
+            }
+        }
+        return -1;
+    }
+
 }
