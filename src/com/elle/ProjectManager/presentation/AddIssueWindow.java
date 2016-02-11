@@ -1383,6 +1383,7 @@ public class AddIssueWindow extends JFrame {
             if (columnNames[i].equals("description")) {
                 doc = descriptionText.getDocument();
             } else {
+                System.out.println(columnNames[i]);
                 doc = textAreasInForm.get(columnNames[i]).getDocument();
             }
             doc.addDocumentListener(textDocumentLis);

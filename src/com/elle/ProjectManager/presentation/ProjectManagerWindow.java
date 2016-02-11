@@ -50,10 +50,7 @@ import javax.imageio.ImageIO;
  */
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
-    // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2016-02-07";
-    private final String VERSION = "1.1.1";
-
+    
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
@@ -788,7 +785,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "a", "dateClosed"
+                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
             }
         ) {
             Class[] types = new Class [] {
@@ -1085,7 +1082,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 187, Short.MAX_VALUE))
+                .addGap(0, 96, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)

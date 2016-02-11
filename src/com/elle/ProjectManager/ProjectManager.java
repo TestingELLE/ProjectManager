@@ -7,6 +7,9 @@ package com.elle.ProjectManager;
 
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import com.elle.ProjectManager.presentation.LoginWindow;
+import com.elle.ProjectManager.logic.ITableConstants;
+import static com.elle.ProjectManager.logic.ITableConstants.CREATION_DATE;
+import static com.elle.ProjectManager.logic.ITableConstants.VERSION;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -99,7 +102,7 @@ public class ProjectManager {
             loadingGraphics.setFont(font);
             g.setFont(font);
             
-            String information = "Version: 1.0.7b        CreationDate: 01/25/2016";
+            String information = "Version:" +  VERSION +  "        CreationDate: " + CREATION_DATE;
             loadingGraphics.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
             g.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
             
