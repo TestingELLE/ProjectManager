@@ -1012,9 +1012,16 @@ public class AddIssueWindow extends JFrame {
             dateArea.setText(value);
         } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
 
+               
+            int pos = dateArea.getCaretPosition();
             String userName = projectManager.getUserName();
-            value = value + "-- by " + userName + " on " + today + "-- \n";
-            dateArea.setText(value);
+            String message = " \n" + "-- by " + userName + " on " + today + "--";
+            String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
+            dateArea.setText(value1);
+
+          //  System.out.println(dateArea.getCaretPosition());
+            dateArea.setCaretPosition(pos);
+
         }
     }//GEN-LAST:event_descriptionTextKeyReleased
 
