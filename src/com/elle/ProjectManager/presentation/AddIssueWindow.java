@@ -1023,14 +1023,18 @@ public class AddIssueWindow extends JFrame {
             value = value + " " + today;
             dateArea.setText(value);
         } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
-            
+            //          dateArea.addCaretListener();
+            int pos = dateArea.getCaretPosition();
             String userName = projectManager.getUserName();
-            value = value +"\n -- by " + userName + " on " + today + "--  ";
-            dateArea.setText(value);
+            String message = " \n" + "-- by " + userName + " on " + today + "--";
+            String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
+            dateArea.setText(value1);
+
             System.out.println(dateArea.getCaretPosition());
-            dateArea.setCaretPosition(value.length() - 26 - userName.length());
-            
+            dateArea.setCaretPosition(pos);
         }
+
+
     }//GEN-LAST:event_descriptionTextKeyReleased
 
     /**
