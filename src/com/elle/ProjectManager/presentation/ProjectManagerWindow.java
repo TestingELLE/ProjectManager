@@ -1,6 +1,5 @@
 package com.elle.ProjectManager.presentation;
 
-import com.elle.ProjectManager.database.BackupDBTables;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
@@ -50,7 +49,10 @@ import javax.imageio.ImageIO;
  */
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
-    
+    // Edit the version and date it was created for new archives and jars
+    private final String CREATION_DATE = "2016-02-11";
+    private final String VERSION = "1.1.2";
+
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
@@ -2263,12 +2265,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemCompIssuesActionPerformed
 
     private void menuItemBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemBackupActionPerformed
+        
         // open new connection
         DBConnection.close(); // connection might be timed out on server
-        DBConnection.open();  // open a new connection
-
-        String tableName = "issues"; // table name to backup
-        BackupDBTables backupDBTables = new BackupDBTables(DBConnection.getConnection(), tableName, this);
+        if(DBConnection.open()){  // open a new connection
+            String tableName = "issues"; // table name to backup
+            BackupDBTablesDialog backupDBTables = new BackupDBTablesDialog(DBConnection.getConnection(), tableName, this);
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Could not connect to Database");
+        }
     }//GEN-LAST:event_menuItemBackupActionPerformed
 
     public void comboBoxForSearchMouseClicked(MouseEvent e) {

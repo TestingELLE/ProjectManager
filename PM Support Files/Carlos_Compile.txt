@@ -1,0 +1,129 @@
+
+ID: 213 app: Analyster programmer: Carlos rk: 1 dateOpened: 2015-12-14 
+title: backup 
+
+description: Add under Tools menu
+command back up tables
+(which creates a back up of all tables on the server).
+
+
+-- by Carlos on 2015-12-17-- 
+This is actually a procedure that duplicates a table in the database. The table will just be assignments for analyster. That is all this feature will do.
+
+
+-- by Carlos on 2015-12-21-- 
+I implemented a BackupDBTables class. This feature should now be complete. I will create the jar and update the master.
+ 
+--- Issue reopened by Professor on 2016-02-02 (version 0.9.0) 
+1. Even if one is on the Reports tab, it wants to back up the Assignments table - SS A 213_1;
+2. The backup dialog box opens minuscule - SS A 213_2
+3. It creates multiple instances of the dialog boxes which stay open SS A 213_3 
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+ID: 267 app: Analyster programmer: Carlos rk: 1 dateOpened: 2016-01-04 
+title: Timing Out & Max User Errors 
+
+description: Error message
+"User xxxx already has more than 'max_user_connections' active connections.
+
+You may have looked at this before.
+
+When you do fix it, explain what this is and how you fixed it.
+
+
+See /Analyster/Screenshots/Screen Shot 2016-01-04 at 3.55.54 PM.jpg
+
+-- by Carlos on 2016-01-21-- 
+I think I already fixed this issue. This was probably caused when I was trying to fix the session timing
+out issues. I have since changed this fix. I think the method I tried before would cause this error,
+however the method I use now should now be working.
+I previously tried to reopen a connection when it was closed. This method does not work and
+you can see why the max user issue may occur.  I now close the connection and reopen it. 
+This should fix the timing out issue and the max user issue.
+ 
+--- Issue reopened by Professor on 2016-01-26 (version 1.0) 
+Still happening
+
+-- by Carlos on 2016-01-26-- 
+Timing out.
+- fixed all places I could find where DBConnection was being opened.
+
+by Professor on 2016-01-26
+Also, implement this:
+- a progress message should appear in the messages and in the log.
+- At the end, edit mode should be off
+
+
+
+--- Issue reopened by Professor on 2016-02-02 (version 1.0.1) 
+The wait time is extremely long for an update. The following code is suspicious
+..
+try {
+
+                if ("".equals(value)) {
+                    value = null;
+                    sqlChange = "UPDATE " + tableName + " SET " + columnName
+                            + " = " + value + " WHERE ID = " + id + ";";
+                } else {
+                    sqlChange = "UPDATE " + tableName + " SET " + columnName
+                            + " = '" + value + "' WHERE ID = " + id + ";";
+                }
+                System.out.println(sqlChange);
+
+                DBConnection.close();
+                DBConnection.open();
+                statement = DBConnection.getStatement();
+                statement.executeUpdate(sqlChange);
+..
+AnalysterWindow.java lines 2246+ part of updateTable
+The connection is closed and opened for every record. There is no need for that. The connection should be opened just once and then the entire series of update statements should be executed.
+
+(Also, this tip from an oline effort could be useful:
+Use a query terminator string and set this in the options of your SQL client application. I use GO as the query terminator.
+
+Your SQL would look like this;
+
+UPDATE table SET ID = 111111259 WHERE ID = 2555 GO
+UPDATE table SET ID = 111111261 WHERE ID = 2724 GO
+UPDATE table SET ID = 111111263 WHERE ID = 2021 GO
+UPDATE table SET ID = 111111264 WHERE ID = 2017 GO
+This will allow you to do a Ctrl + A and run all the lines at once.
+
+The string terminator tells the SQL client that the update statement is finished and to go to the next line and process the next statement.)
+
+
+
+
+
+ 
+
+ 
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+ID: 334 app: Analyster programmer: Carlos rk: 1 dateOpened: 2016-01-26 
+title: Log messages 
+
+description: Increase the number of log items and display messages that appear at the bottom of the screen:
+- Log messages lines are helpful to track the correct functioning of the program.
+- messages at the bootm of the screen provide useful feedback to the user to reassure them that something is taking place at it should.
+
+Many of these items are the same: they appear at the bottom of the screen AND they are recorded in the log file. However the log file should be more complete and provide additional details.
+
+These features are already working to some extent in Analyster.
+To do:
+
+1. Make it more robust (refactoring);
+2. Provide easy instructions for each programmer to add thees display/log messages to their code.
+
+3. When working properly, duplicate this task and implement in PM 
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+ID: 218 app: Analyster programmer: Carlos rk: 5 dateOpened: 2015-12-17 
+title: table data validation class 
+
+description: It appears that data can be entered into the tables that may not be valid entries that may cause issues when uploading to the database. I propose working on a class that validates the data according to the table and information from the database. 
+
+--------------------------------------------------------------------------------------------------------------------------------
