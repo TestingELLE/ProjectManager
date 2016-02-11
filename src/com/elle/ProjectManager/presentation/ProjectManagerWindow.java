@@ -1,6 +1,5 @@
 package com.elle.ProjectManager.presentation;
 
-import com.elle.ProjectManager.database.BackupDBTables;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
@@ -2266,12 +2265,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemCompIssuesActionPerformed
 
     private void menuItemBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemBackupActionPerformed
+        
         // open new connection
         DBConnection.close(); // connection might be timed out on server
-        DBConnection.open();  // open a new connection
-
-        String tableName = "issues"; // table name to backup
-        BackupDBTables backupDBTables = new BackupDBTables(DBConnection.getConnection(), tableName, this);
+        if(DBConnection.open()){  // open a new connection
+            String tableName = "issues"; // table name to backup
+            BackupDBTablesDialog backupDBTables = new BackupDBTablesDialog(DBConnection.getConnection(), tableName, this);
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Could not connect to Database");
+        }
     }//GEN-LAST:event_menuItemBackupActionPerformed
 
     public void comboBoxForSearchMouseClicked(MouseEvent e) {
