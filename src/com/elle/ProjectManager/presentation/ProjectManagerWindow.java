@@ -1,6 +1,5 @@
 package com.elle.ProjectManager.presentation;
 
-import com.elle.ProjectManager.database.BackupDBTables;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
@@ -51,8 +50,8 @@ import javax.imageio.ImageIO;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2016-02-07";
-    private final String VERSION = "1.1.1";
+    private final String CREATION_DATE = "2016-02-11";
+    private final String VERSION = "1.1.2";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
@@ -789,7 +788,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "a", "dateClosed"
+                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
             }
         ) {
             Class[] types = new Class [] {
@@ -1086,7 +1085,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 187, Short.MAX_VALUE))
+                .addGap(0, 96, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2337,12 +2336,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemCompIssuesActionPerformed
 
     private void menuItemBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemBackupActionPerformed
+        
         // open new connection
         DBConnection.close(); // connection might be timed out on server
-        DBConnection.open();  // open a new connection
-
-        String tableName = "issues"; // table name to backup
-        BackupDBTables backupDBTables = new BackupDBTables(DBConnection.getConnection(), tableName, this);
+        if(DBConnection.open()){  // open a new connection
+            String tableName = "issues"; // table name to backup
+            BackupDBTablesDialog backupDBTables = new BackupDBTablesDialog(DBConnection.getConnection(), tableName, this);
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Could not connect to Database");
+        }
     }//GEN-LAST:event_menuItemBackupActionPerformed
 
     public void comboBoxForSearchMouseClicked(MouseEvent e) {
