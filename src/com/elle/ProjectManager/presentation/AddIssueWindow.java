@@ -1015,12 +1015,12 @@ public class AddIssueWindow extends JFrame {
                
             int pos = dateArea.getCaretPosition();
             String userName = projectManager.getUserName();
-            String message = " \n" + "-- by " + userName + " on " + today + "--";
+            String message = "-- by " + userName + " on " + today + "-- \n";
             String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
             dateArea.setText(value1);
 
           //  System.out.println(dateArea.getCaretPosition());
-            dateArea.setCaretPosition(pos);
+            dateArea.setCaretPosition(pos + 30);
 
         }
     }//GEN-LAST:event_descriptionTextKeyReleased
