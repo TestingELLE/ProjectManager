@@ -1,6 +1,5 @@
 package com.elle.ProjectManager.presentation;
 
-import com.elle.ProjectManager.database.BackupDBTables;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
@@ -50,7 +49,10 @@ import javax.imageio.ImageIO;
  */
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
-    
+    // Edit the version and date it was created for new archives and jars
+    private final String CREATION_DATE = "2016-02-11";
+    private final String VERSION = "1.1.2";
+
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
@@ -214,7 +216,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         } else {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
-        
+
         textComponentShortCutSetting();
 
         // show and hide components
@@ -311,6 +313,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String searchContent = comboBoxSearch.getSelectedItem().toString();
         this.updateComboList(searchContent, tabName);
 
+        this.comboBoxForSearch.setSelectedItem("Enter programmer here");
         this.comboBoxForSearch.getEditor().getEditorComponent().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 comboBoxForSearchMouseClicked(e);
@@ -324,7 +327,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.setMinimumSize(new Dimension(1000, 550));
 
         this.pack();
-        
+
         // authorize user for this component
         Authorization.authorize(this);
     }
@@ -1346,10 +1349,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         for (int col = 0; col < table.getColumnCount(); col++) {
             String colName = colNames[col];
             ArrayList valueList = new ArrayList<Object>();
-            if (colName.equalsIgnoreCase("title") || colName.equalsIgnoreCase("description")) {
+
+            if (colName.equalsIgnoreCase("title") || colName.equalsIgnoreCase("description") || colName.equalsIgnoreCase("version")) {
                 valueList.add("");
             } else {
-                valueList.add("Enter " + colName + " here");
+                //   valueList.add("Enter " + colName + " here");
+
                 Object cellValue = table.getValueAt(0, col);
                 Object newValue;
                 if (cellValue != null) {
@@ -1357,7 +1362,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
                 for (int row = 0; row < table.getRowCount(); row++) {
                     newValue = table.getValueAt(row, col);
-                    
+
                     //get distinct value 
                     if (newValue != null) {
                         if (cellValue == null) {
@@ -1394,15 +1399,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             if (table.getColumnName(col).equalsIgnoreCase(colName)) {
                 ArrayList<Object> dropDownList = (ArrayList<Object>) comboBoxForSearchValue.get(col);
                 for (Object item : dropDownList) {
-                        List<Object> sortlist = dropDownList.subList(1, dropDownList.size());
-                    if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed")||colName.equalsIgnoreCase("version")) {
+                    List<Object> sortlist = dropDownList.subList(1, dropDownList.size());
+                    if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed")) {
                         Collections.sort(sortlist, new Comparator<Object>() {
                             public int compare(Object o1, Object o2) {
                                 return o2.toString().compareTo(o1.toString());
                             }
 
                         });
-                    }else{
+                    } else {
                         Collections.sort(sortlist, new Comparator<Object>() {
                             public int compare(Object o1, Object o2) {
                                 return o1.toString().compareTo(o2.toString());
@@ -1792,7 +1797,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         } else {
             btnAddIssue.setText("Add " + getSelectedTabName());
         }
-        
+
         // Authorization
         Authorization.authorize(this);
     }
@@ -1924,17 +1929,57 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void btnClearAllFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearAllFilterActionPerformed
 
         // clear all filters
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        TableFilter filter = tab.getFilter();
-        filter.clearAllFilters();
-        filter.applyFilter();
-        filter.applyColorHeaders();
+        //      String tabName = getSelectedTabName();
+        System.out.println(getTabs());
+        Tab tab1 = tabs.get("PM");
+        TableFilter filter1 = tab1.getFilter();
+        filter1.clearAllFilters();
+        filter1.applyFilter();
+        filter1.applyColorHeaders();
 
         // set label record information
-        String recordsLabel = tab.getRecordsLabel();
-        labelRecords.setText(recordsLabel);
+        String recordsLabel1 = tab1.getRecordsLabel();
 
+        Tab tab2 = tabs.get("ELLEGUI");
+        TableFilter filter2 = tab2.getFilter();
+        filter2.clearAllFilters();
+        filter2.applyFilter();
+        filter2.applyColorHeaders();
+
+        // set label record information
+        String recordsLabel2 = tab2.getRecordsLabel();
+
+        Tab tab3 = tabs.get("Analyster");
+        TableFilter filter3 = tab3.getFilter();
+        filter3.clearAllFilters();
+        filter3.applyFilter();
+        filter3.applyColorHeaders();
+
+        // set label record information
+        String recordsLabel3 = tab3.getRecordsLabel();
+
+        Tab tab4 = tabs.get("Other");
+        TableFilter filter4 = tab4.getFilter();
+        filter4.clearAllFilters();
+        filter4.applyFilter();
+        filter4.applyColorHeaders();
+
+        // set label record information
+        String recordsLabel4 = tab4.getRecordsLabel();
+
+        Tab tab5 = tabs.get("issue_files");
+        TableFilter filter5 = tab5.getFilter();
+        filter5.clearAllFilters();
+        filter5.applyFilter();
+        filter5.applyColorHeaders();
+
+        // set label record information
+        String recordsLabel5 = tab5.getRecordsLabel();
+
+        String recordsLabel = recordsLabel1 + " \n"+ recordsLabel2 + " \n"+ recordsLabel3 + " \n"+ recordsLabel4 + " \n"+ recordsLabel5;
+
+        labelRecords.setText(recordsLabel);
+        System.out.println(recordsLabel);
     }//GEN-LAST:event_btnClearAllFilterActionPerformed
 
     /**
@@ -2201,6 +2246,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String searchColName = comboBoxSearch.getSelectedItem().toString();
         String tabName = getSelectedTabName();
         updateComboList(searchColName, tabName);
+        comboBoxForSearch.setSelectedItem("Enter " + searchColName + " here");
+        setFiltersclean();
+       
     }//GEN-LAST:event_comboBoxSearchActionPerformed
 
     private void menuItemTurnEditModeOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTurnEditModeOffActionPerformed
@@ -2216,15 +2264,23 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void tabbedPanelStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPanelStateChanged
 
         changeTabbedPanelState();
+        System.out.println(1);
 
         // this changes the search fields for the comboBox for each tabName
         // this event is fired from initCompnents hence the null condition
         String tabName = getSelectedTabName();
+        
         Tab tab = tabs.get(tabName);
         String[] searchFields = tab.getSearchFields();
-        if (searchFields != null) {
-            comboBoxSearch.setModel(new DefaultComboBoxModel(searchFields));
-        }
+        System.out.println(searchFields);
+//        if (searchFields != null) {
+//            comboBoxSearch.setModel(new DefaultComboBoxModel(searchFields));
+//        }
+//        if (tabName.equalsIgnoreCase("issue_files")) {
+//            comboBoxForSearch.setSelectedItem("Enter submitter here");
+//        } else {
+//            comboBoxForSearch.setSelectedItem("Enter programmer here");
+//        }
     }//GEN-LAST:event_tabbedPanelStateChanged
 
     private void menuItemMoveSeletedRowsToEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemMoveSeletedRowsToEndActionPerformed
@@ -2238,6 +2294,23 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void comboBoxForSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxForSearchActionPerformed
         // TODO add your handling code here:
+        if (comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("programmer") || comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("dateOpened") || comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("dateClosed") || comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("rk")) {
+            if (comboBoxForSearch.getSelectedItem().toString().startsWith("Enter") && comboBoxForSearch.getSelectedItem().toString().endsWith("here")) {
+                // since the default message is "Enter blablabla here", we dont want to search this, so a cleanfilter is made here
+                setFiltersclean();
+
+            } else {
+                // directly use this method to search by filter
+                filterBySearch();
+
+            }
+
+        } else {
+            // Same reason as above
+            setFiltersclean();
+//           
+        }
+
     }//GEN-LAST:event_comboBoxForSearchActionPerformed
 
     private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
@@ -2263,12 +2336,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemCompIssuesActionPerformed
 
     private void menuItemBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemBackupActionPerformed
+        
         // open new connection
         DBConnection.close(); // connection might be timed out on server
-        DBConnection.open();  // open a new connection
-
-        String tableName = "issues"; // table name to backup
-        BackupDBTables backupDBTables = new BackupDBTables(DBConnection.getConnection(), tableName, this);
+        if(DBConnection.open()){  // open a new connection
+            String tableName = "issues"; // table name to backup
+            BackupDBTablesDialog backupDBTables = new BackupDBTablesDialog(DBConnection.getConnection(), tableName, this);
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Could not connect to Database");
+        }
     }//GEN-LAST:event_menuItemBackupActionPerformed
 
     public void comboBoxForSearchMouseClicked(MouseEvent e) {
@@ -2442,6 +2519,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                        }
 //                    }
                 }
+
                 /**
                  * Popup menus are triggered differently on different platforms
                  * Therefore, isPopupTrigger should be checked in both
@@ -3330,6 +3408,51 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.informationLabel.setText(inf);
         startCountDownFromNow(second);
     }
+    
+     public void setFiltersclean() {
+         Tab tab1 = tabs.get("PM");
+        TableFilter filter1 = tab1.getFilter();
+        filter1.clearAllFilters();
+        filter1.applyFilter();
+        filter1.applyColorHeaders();
+
+        // set label record information
+        String recordsLabel1 = tab1.getRecordsLabel();
+
+        Tab tab2 = tabs.get("ELLEGUI");
+        TableFilter filter2 = tab2.getFilter();
+        filter2.clearAllFilters();
+        filter2.applyFilter();
+        filter2.applyColorHeaders();
+
+        // set label record information
+        String recordsLabel2 = tab2.getRecordsLabel();
+
+        Tab tab3 = tabs.get("Analyster");
+        TableFilter filter3 = tab3.getFilter();
+        filter3.clearAllFilters();
+        filter3.applyFilter();
+        filter3.applyColorHeaders();
+
+        // set label record information
+        String recordsLabel3 = tab3.getRecordsLabel();
+
+        Tab tab4 = tabs.get("Other");
+        TableFilter filter4 = tab4.getFilter();
+        filter4.clearAllFilters();
+        filter4.applyFilter();
+        filter4.applyColorHeaders();
+
+        // set label record information
+        String recordsLabel4 = tab4.getRecordsLabel();
+
+        Tab tab5 = tabs.get("issue_files");
+        TableFilter filter5 = tab5.getFilter();
+        filter5.clearAllFilters();
+        filter5.applyFilter();
+        filter5.applyColorHeaders();
+    }
+    
 
     public String getUserName() {
         return this.userName;
@@ -3447,6 +3570,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 setInformationLabel("Column Name(s) is(are) different from what in database", 5);
             }
         }
+
         setLastUpdateTime();
         return tabs;
     }
@@ -3485,7 +3609,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // connection might time out
         DBConnection.close();
         DBConnection.open();
-        
+
         statement = DBConnection.getStatement();
         String sql;
         if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
@@ -4261,8 +4385,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public JTabbedPane getTabbedPanel() {
         return tabbedPanel;
     }
-    
-    
+
     private void textComponentShortCutSetting() {
         //changing the text field copy and paste short cut to default control key
         //(depend on system) + c/v
@@ -4271,9 +4394,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //        InputMap ip2 = (InputMap) UIManager.get("TextArea.focusInputMap");
         ShortCut.copyAndPasteShortCut(ip);
         ShortCut.copyAndPasteShortCut(ip2);
-        
+
         // add redo and undo short cut to text component
-        
     }
 
     /**
