@@ -29,32 +29,10 @@ public class LoginWindow extends JFrame {
     private ProjectManagerWindow projectManager;
     private EditDatabaseWindow editDatabaseList;
     private LogWindow logWindow;
-
-//    Image backgroundImg;backgroundImg;
-//    class ImagePanel extends JComponent {
-//
-//        private Image image;
-//
-//        public ImagePanel(Image image) {
-//            this.image = image;
-//        }
-//
-//        @Override
-//        protected void paintComponent(Graphics g) {
-//            super.paintComponent(g);
-//            g.drawImage(image, 0, 0, this);
-//        }
-//    }
+    
     public LoginWindow() {
-//        BufferedImage myImage = ImageIO.load(new File("/Users/fuxiaoqian/Desktop"
-//                    + "/ProjectManagerFromMaster/src/com/elle/ProjectManager/image.png"));
-//        this.setContentPane(new ImagePanel(myImage))
-
-//        try {
+        //set content pane
         this.setContentPane(new JLabel(new ImageIcon(getClass().getResource("image.png"))));
-//        } catch (IOException e) {
-//            System.out.println("image does not exist!");
-//        }
 
         // initialize
         initComponents();
@@ -84,13 +62,13 @@ public class LoginWindow extends JFrame {
         jTextPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jInputPanel = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
+        server = new javax.swing.JLabel();
         comboBoxServer = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        username = new javax.swing.JLabel();
+        password = new javax.swing.JLabel();
         passwordFieldPW = new javax.swing.JPasswordField();
         textFieldUsername = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
+        database = new javax.swing.JLabel();
         comboBoxDatabase = new javax.swing.JComboBox();
         jButtonPanel = new javax.swing.JPanel();
         btnCancel = new javax.swing.JButton();
@@ -122,7 +100,7 @@ public class LoginWindow extends JFrame {
 
         jInputPanel.setOpaque(false);
 
-        jLabel4.setText("Server");
+        server.setText("Server");
 
         comboBoxServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "pupone", "Local", "AWS" }));
         comboBoxServer.addActionListener(new java.awt.event.ActionListener() {
@@ -131,9 +109,9 @@ public class LoginWindow extends JFrame {
             }
         });
 
-        jLabel2.setText("Username");
+        username.setText("Username");
 
-        jLabel3.setText("Password");
+        password.setText("Password");
 
         passwordFieldPW.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         passwordFieldPW.addActionListener(new java.awt.event.ActionListener() {
@@ -153,7 +131,7 @@ public class LoginWindow extends JFrame {
             }
         });
 
-        jLabel5.setText("Database");
+        database.setText("Database");
 
         comboBoxDatabase.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "dummy", "Elle2015", "pupone_dummy", "pupone_Analyster" }));
         comboBoxDatabase.addActionListener(new java.awt.event.ActionListener() {
@@ -215,16 +193,16 @@ public class LoginWindow extends JFrame {
                 .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jInputPanelLayout.createSequentialGroup()
                         .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
+                            .addComponent(username)
+                            .addComponent(password))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(passwordFieldPW)
                             .addComponent(textFieldUsername)))
                     .addGroup(jInputPanelLayout.createSequentialGroup()
                         .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(database)
+                            .addComponent(server, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(comboBoxServer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -240,19 +218,19 @@ public class LoginWindow extends JFrame {
                 .addContainerGap()
                 .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(comboBoxServer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(server))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
+                    .addComponent(database)
                     .addComponent(comboBoxDatabase, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnEditDB))
                 .addGap(18, 18, 18)
                 .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(textFieldUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(username))
                 .addGap(11, 11, 11)
                 .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(password, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(passwordFieldPW, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(38, 38, 38)
                 .addComponent(jButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -446,16 +424,16 @@ public class LoginWindow extends JFrame {
     private javax.swing.JButton btnLogin;
     private javax.swing.JComboBox comboBoxDatabase;
     private javax.swing.JComboBox comboBoxServer;
+    private javax.swing.JLabel database;
     private javax.swing.JPanel jButtonPanel;
     private javax.swing.JPanel jInputPanel;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jTextPanel;
+    private javax.swing.JLabel password;
     private javax.swing.JPasswordField passwordFieldPW;
+    private javax.swing.JLabel server;
     private javax.swing.JTextField textFieldUsername;
+    private javax.swing.JLabel username;
     // End of variables declaration//GEN-END:variables
 
 }
