@@ -170,7 +170,10 @@ public class ProjectManager {
         try {
             if (!fileName.equals(" ")) {
                 fileName += "splashImage.png";
-                ImageIO.write(image, "png", new File(fileName));
+                File file = new File(fileName);
+                if(file.exists()){
+                    ImageIO.write(image, "png", file);
+                }
             }
         } catch (IOException ex) {
             System.out.println("image save failed!" + " Due to: " + ex.getMessage());
