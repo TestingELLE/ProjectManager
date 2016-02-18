@@ -297,7 +297,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      * highlights
      */
     public void clearAllFilters() {
-        System.out.println("here");
+        
 
         removeAllFilterItems();      // load all rows
         removeAllColorHeaders();     // remove all header highlighted Colors

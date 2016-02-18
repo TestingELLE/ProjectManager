@@ -35,8 +35,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 
@@ -83,6 +85,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // Misc 
     private boolean addIssueWindowShow;
     private boolean isBatchEditWindowShow;
+    private boolean comboBoxStartToSearch;
 
 //    private int addRecordLevel = 2;
 //    private int deleteRecordLevel = 2;
@@ -95,6 +98,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private JLabel databaseLabel;
     private String currentTabName;
     private String userName;
+    private String searchValue = "";
     private ArrayList<Integer> idNumOfOpenningIssues;
 
     private ArrayList<String> programmersActiveForSearching;
@@ -255,7 +259,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKFILES_TABLE_NAME).getFilter()));
 //        tabs.get(TASKNOTES_TABLE_NAME)
 //                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKNOTES_TABLE_NAME).getFilter()));
-        // load data from database to tables
+        boolean comboBoxStartToSearch = false;
+// load data from database to tables
         loadTables(tabs);
 
         // set initial record counts of now full tables
@@ -311,12 +316,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String tabName = getSelectedTabName();
 
         String searchContent = comboBoxSearch.getSelectedItem().toString();
+
         this.updateComboList(searchContent, tabName);
 
-        this.comboBoxForSearch.setSelectedItem("Enter programmer here");
+        this.comboBoxForSearch.setSelectedItem("Enter search value here");
         this.comboBoxForSearch.getEditor().getEditorComponent().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                comboBoxForSearchMouseClicked(e);
+                comboBoxForSearchEditorMouseClicked(e);
             }
         });
         // set title of window to Project Manager
@@ -1066,6 +1072,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
 
         comboBoxForSearch.setEditable(true);
+        comboBoxForSearch.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         comboBoxForSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxForSearchActionPerformed(evt);
@@ -1343,41 +1350,61 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 + "Version: " + VERSION);
     }//GEN-LAST:event_menuItemVersionActionPerformed
 
-    private Map loadingDropdownListToTable(JTable table, String[] colNames) {
-        //create empty value List to store drop down list value
+    private Map loadingDropdownListToTable() {
+        Tab tabEx = tabs.get("PM");
+        JTable tableEx = tabEx.getTable();
+        String[] colNames = tabEx.getTableColNames();
+
+        int columnCount = tableEx.getColumnCount();
+
         Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
-        for (int col = 0; col < table.getColumnCount(); col++) {
-            String colName = colNames[col];
+        for (int col = 0; col < columnCount; col++) {
             ArrayList valueList = new ArrayList<Object>();
+            for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+                Tab tab = tabs.get(entry.getKey());
+                if (tab != tabs.get("issue_files")) {
+                    JTable table = tab.getTable();
 
-            if (colName.equalsIgnoreCase("title") || colName.equalsIgnoreCase("description") || colName.equalsIgnoreCase("version")) {
-                valueList.add("");
-            } else {
-                //   valueList.add("Enter " + colName + " here");
+                    String colName = colNames[col];
 
-                Object cellValue = table.getValueAt(0, col);
-                Object newValue;
-                if (cellValue != null) {
-                    valueList.add(cellValue);
-                }
-                for (int row = 0; row < table.getRowCount(); row++) {
-                    newValue = table.getValueAt(row, col);
+                    if (colName.equalsIgnoreCase("title")
+                            || colName.equalsIgnoreCase("description")
+                            || colName.equalsIgnoreCase("version")) {
+                        valueList.add("");
+                    } else {
 
-                    //get distinct value 
-                    if (newValue != null) {
-                        if (cellValue == null) {
-                            valueList.add(" ");
-                            cellValue = newValue;
-                        } else {
-                            if (!cellValue.equals(newValue) && !valueList.contains(newValue)) {
-                                cellValue = newValue;
-                                valueList.add(cellValue);
+                        Object cellValue = table.getValueAt(0, col);
+                        Object newValue;
+                        if (cellValue != null) {
+                            valueList.add(cellValue);
+                        }
+                        for (int row = 0; row < table.getRowCount(); row++) {
+                            newValue = table.getValueAt(row, col);
+
+                            //get distinct value 
+                            if (newValue != null) {
+                                if (cellValue == null) {
+                                    valueList.add(" ");
+                                    cellValue = newValue;
+                                } else {
+
+                                    if (!cellValue.equals(newValue) && !valueList.contains(newValue)) {
+                                        cellValue = newValue;
+                                        valueList.add(cellValue);
+
+                                    }
+
+                                }
                             }
                         }
                     }
                 }
             }
-            valueListMap.put(col, valueList);
+            Set<Object> uniqueValue = new HashSet<Object>(valueList);
+            ArrayList uniqueList = new ArrayList<Object>(uniqueValue);
+
+            valueListMap.put(col, uniqueList);
+
         }
 //        DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
 //        comboBoxForSearch.setModel(comboBoxSearchModel);
@@ -1391,34 +1418,44 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void updateComboList(String colName, String tableName) {
         DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
         comboBoxForSearch.setModel(comboBoxSearchModel);
-
-        Map comboBoxForSearchValue = this.comboBoxForSearchDropDown.get(tableName);
+        Map comboBoxForSearchValue = this.loadingDropdownListToTable();
+        //Map comboBoxForSearchValue = this.comboBoxForSearchDropDown.get(tableName);
 
         JTable table = tabs.get(tableName).getTable();
+
         for (int col = 0; col < table.getColumnCount(); col++) {
+
             if (table.getColumnName(col).equalsIgnoreCase(colName)) {
                 ArrayList<Object> dropDownList = (ArrayList<Object>) comboBoxForSearchValue.get(col);
-                for (Object item : dropDownList) {
-                    List<Object> sortlist = dropDownList.subList(1, dropDownList.size());
-                    if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed")) {
-                        Collections.sort(sortlist, new Comparator<Object>() {
-                            public int compare(Object o1, Object o2) {
-                                return o2.toString().compareTo(o1.toString());
-                            }
 
-                        });
-                    } else {
-                        Collections.sort(sortlist, new Comparator<Object>() {
-                            public int compare(Object o1, Object o2) {
-                                return o1.toString().compareTo(o2.toString());
-                            }
+                if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed")) {
+                    Collections.sort(dropDownList, new Comparator<Object>() {
+                        public int compare(Object o1, Object o2) {
+                            return o2.toString().compareTo(o1.toString());
+                        }
 
-                        });
-                    }
-                    comboBoxSearchModel.addElement(item);
+                    });
+
+                } else {
+                    Collections.sort(dropDownList, new Comparator<Object>() {
+                        public int compare(Object o1, Object o2) {
+                            return o1.toString().compareTo(o2.toString());
+                        }
+
+                    });
+
                 }
+                comboBoxStartToSearch = false;
+                for (Object item : dropDownList) {
+
+                    comboBoxSearchModel.addElement(item);
+
+                }
+
             }
         }
+        //  comboBoxForSearch.setSelectedItem("Enter " + colName + " here");
+        comboBoxStartToSearch = true;
     }
 
     /**
@@ -1927,56 +1964,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param evt
      */
     private void btnClearAllFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearAllFilterActionPerformed
-
+        String recordsLabel = "";
         // clear all filters
         //      String tabName = getSelectedTabName();
-        System.out.println(getTabs());
-        Tab tab1 = tabs.get("PM");
-        TableFilter filter1 = tab1.getFilter();
-        filter1.clearAllFilters();
-        filter1.applyFilter();
-        filter1.applyColorHeaders();
+        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+            Tab tab = tabs.get(entry.getKey());
+            TableFilter filter = tab.getFilter();
+            filter.clearAllFilters();
+            filter.applyFilter();
+            filter.applyColorHeaders();
+            recordsLabel = recordsLabel + tab.getRecordsLabel() + " \n";
 
-        // set label record information
-        String recordsLabel1 = tab1.getRecordsLabel();
-
-        Tab tab2 = tabs.get("ELLEGUI");
-        TableFilter filter2 = tab2.getFilter();
-        filter2.clearAllFilters();
-        filter2.applyFilter();
-        filter2.applyColorHeaders();
-
-        // set label record information
-        String recordsLabel2 = tab2.getRecordsLabel();
-
-        Tab tab3 = tabs.get("Analyster");
-        TableFilter filter3 = tab3.getFilter();
-        filter3.clearAllFilters();
-        filter3.applyFilter();
-        filter3.applyColorHeaders();
-
-        // set label record information
-        String recordsLabel3 = tab3.getRecordsLabel();
-
-        Tab tab4 = tabs.get("Other");
-        TableFilter filter4 = tab4.getFilter();
-        filter4.clearAllFilters();
-        filter4.applyFilter();
-        filter4.applyColorHeaders();
-
-        // set label record information
-        String recordsLabel4 = tab4.getRecordsLabel();
-
-        Tab tab5 = tabs.get("issue_files");
-        TableFilter filter5 = tab5.getFilter();
-        filter5.clearAllFilters();
-        filter5.applyFilter();
-        filter5.applyColorHeaders();
-
-        // set label record information
-        String recordsLabel5 = tab5.getRecordsLabel();
-
-        String recordsLabel = recordsLabel1 + " \n"+ recordsLabel2 + " \n"+ recordsLabel3 + " \n"+ recordsLabel4 + " \n"+ recordsLabel5;
+        }
 
         labelRecords.setText(recordsLabel);
         System.out.println(recordsLabel);
@@ -2242,13 +2241,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuitemViewOneIssueActionPerformed
 
     private void comboBoxSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxSearchActionPerformed
-
+        comboBoxStartToSearch = false;
         String searchColName = comboBoxSearch.getSelectedItem().toString();
+        searchValue = comboBoxForSearch.getSelectedItem().toString();
         String tabName = getSelectedTabName();
         updateComboList(searchColName, tabName);
-        comboBoxForSearch.setSelectedItem("Enter " + searchColName + " here");
-        setFiltersclean();
-       
+//         if (comboBoxForSearch.getSelectedItem().toString().startsWith("Enter")
+//                        && comboBoxForSearch.getSelectedItem().toString().endsWith("here")) {
+        comboBoxForSearch.setSelectedItem(searchValue);
+//         }
+        // setFiltersclean();
+
+        System.out.println(2);
+
     }//GEN-LAST:event_comboBoxSearchActionPerformed
 
     private void menuItemTurnEditModeOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTurnEditModeOffActionPerformed
@@ -2264,12 +2269,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void tabbedPanelStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPanelStateChanged
 
         changeTabbedPanelState();
-        System.out.println(1);
 
         // this changes the search fields for the comboBox for each tabName
         // this event is fired from initCompnents hence the null condition
         String tabName = getSelectedTabName();
-        
+
         Tab tab = tabs.get(tabName);
         String[] searchFields = tab.getSearchFields();
         System.out.println(searchFields);
@@ -2293,24 +2297,33 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemMoveSeletedRowsToEndActionPerformed
 
     private void comboBoxForSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxForSearchActionPerformed
-        // TODO add your handling code here:
-        if (comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("programmer") || comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("dateOpened") || comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("dateClosed") || comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("rk")) {
-            if (comboBoxForSearch.getSelectedItem().toString().startsWith("Enter") && comboBoxForSearch.getSelectedItem().toString().endsWith("here")) {
-                // since the default message is "Enter blablabla here", we dont want to search this, so a cleanfilter is made here
-                setFiltersclean();
+        if (!comboBoxForSearch.getSelectedItem().toString().equals(searchValue)) {
+            if (comboBoxStartToSearch) {
+                if (comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("programmer")
+                        || comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("dateOpened")
+                        || comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("dateClosed")
+                        || comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("rk")) {
+                    if (!comboBoxForSearch.getSelectedItem().toString().startsWith("Enter")
+                            || !comboBoxForSearch.getSelectedItem().toString().endsWith("here")) {
+//                // since the default message is "Enter blablabla here", we dont want to search this, so a cleanfilter is made here
+//                setFiltersclean();
+//
+//            } else {
+//                // directly use this method to search by filter
 
-            } else {
-                // directly use this method to search by filter
-                filterBySearch();
+                        filterBySearch();
+//
+                    }
+//
+//        } else {
+//            // Same reason as above
+//            setFiltersclean();
+////           
+                }
 
             }
-
-        } else {
-            // Same reason as above
-            setFiltersclean();
-//           
         }
-
+        System.out.println(1);
     }//GEN-LAST:event_comboBoxForSearchActionPerformed
 
     private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
@@ -2337,19 +2350,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemCompIssuesActionPerformed
 
     private void menuItemBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemBackupActionPerformed
-        
+
         // open new connection
         DBConnection.close(); // connection might be timed out on server
-        if(DBConnection.open()){  // open a new connection
+        if (DBConnection.open()) {  // open a new connection
             String tableName = "issues"; // table name to backup
             BackupDBTablesDialog backupDBTables = new BackupDBTablesDialog(DBConnection.getConnection(), tableName, this);
-        }
-        else{
+        } else {
             JOptionPane.showMessageDialog(this, "Could not connect to Database");
         }
     }//GEN-LAST:event_menuItemBackupActionPerformed
 
-    public void comboBoxForSearchMouseClicked(MouseEvent e) {
+    public void comboBoxForSearchEditorMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
             comboBoxForSearch.getEditor().selectAll();
         } else if (e.isControlDown()) {
@@ -3409,51 +3421,58 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.informationLabel.setText(inf);
         startCountDownFromNow(second);
     }
-    
-     public void setFiltersclean() {
-         Tab tab1 = tabs.get("PM");
-        TableFilter filter1 = tab1.getFilter();
-        filter1.clearAllFilters();
-        filter1.applyFilter();
-        filter1.applyColorHeaders();
 
-        // set label record information
-        String recordsLabel1 = tab1.getRecordsLabel();
+    public void setFiltersclean() {
+        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+            Tab tab = tabs.get(entry.getKey());
+            TableFilter filter = tab.getFilter();
+            filter.clearAllFilters();
+            filter.applyFilter();
+            filter.applyColorHeaders();
 
-        Tab tab2 = tabs.get("ELLEGUI");
-        TableFilter filter2 = tab2.getFilter();
-        filter2.clearAllFilters();
-        filter2.applyFilter();
-        filter2.applyColorHeaders();
-
-        // set label record information
-        String recordsLabel2 = tab2.getRecordsLabel();
-
-        Tab tab3 = tabs.get("Analyster");
-        TableFilter filter3 = tab3.getFilter();
-        filter3.clearAllFilters();
-        filter3.applyFilter();
-        filter3.applyColorHeaders();
-
-        // set label record information
-        String recordsLabel3 = tab3.getRecordsLabel();
-
-        Tab tab4 = tabs.get("Other");
-        TableFilter filter4 = tab4.getFilter();
-        filter4.clearAllFilters();
-        filter4.applyFilter();
-        filter4.applyColorHeaders();
-
-        // set label record information
-        String recordsLabel4 = tab4.getRecordsLabel();
-
-        Tab tab5 = tabs.get("issue_files");
-        TableFilter filter5 = tab5.getFilter();
-        filter5.clearAllFilters();
-        filter5.applyFilter();
-        filter5.applyColorHeaders();
+        }
+//        Tab tab1 = tabs.get("PM");
+//        TableFilter filter1 = tab1.getFilter();
+//        filter1.clearAllFilters();
+//        filter1.applyFilter();
+//        filter1.applyColorHeaders();
+//
+//        // set label record information
+//        String recordsLabel1 = tab1.getRecordsLabel();
+//
+//        Tab tab2 = tabs.get("ELLEGUI");
+//        TableFilter filter2 = tab2.getFilter();
+//        filter2.clearAllFilters();
+//        filter2.applyFilter();
+//        filter2.applyColorHeaders();
+//
+//        // set label record information
+//        String recordsLabel2 = tab2.getRecordsLabel();
+//
+//        Tab tab3 = tabs.get("Analyster");
+//        TableFilter filter3 = tab3.getFilter();
+//        filter3.clearAllFilters();
+//        filter3.applyFilter();
+//        filter3.applyColorHeaders();
+//
+//        // set label record information
+//        String recordsLabel3 = tab3.getRecordsLabel();
+//
+//        Tab tab4 = tabs.get("Other");
+//        TableFilter filter4 = tab4.getFilter();
+//        filter4.clearAllFilters();
+//        filter4.applyFilter();
+//        filter4.applyColorHeaders();
+//
+//        // set label record information
+//        String recordsLabel4 = tab4.getRecordsLabel();
+//
+//        Tab tab5 = tabs.get("issue_files");
+//        TableFilter filter5 = tab5.getFilter();
+//        filter5.clearAllFilters();
+//        filter5.applyFilter();
+//        filter5.applyColorHeaders();
     }
-    
 
     public String getUserName() {
         return this.userName;
@@ -3554,14 +3573,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
+
             loadTable(table);
             informationLabel.setText("Table loaded succesfully");
             startCountDownFromNow(10);
             setTableListeners(table, this);
 
             String[] colNames = tab.getTableColNames();
-            Map tableComboBoxForSearchDropDownList = this.loadingDropdownListToTable(table, colNames);
-            this.comboBoxForSearchDropDown.put(entry.getKey(), tableComboBoxForSearchDropDownList);
+//            Map tableComboBoxForSearchDropDownList = this.loadingDropdownListToTable();
+//            this.comboBoxForSearchDropDown.put(entry.getKey(), tableComboBoxForSearchDropDownList);
 
             boolean isColumnNameTheSame = ColumnNameConsistency.IsTableColumnNameTheSame(tab, table);
             if (!isColumnNameTheSame) {
