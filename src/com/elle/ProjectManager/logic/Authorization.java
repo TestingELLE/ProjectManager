@@ -23,6 +23,7 @@ public class Authorization {
     private static final String DB_COLUMN_2 = "accessLevel";
     private static final String LEVEL_1 = "administrator";
     private static final String LEVEL_2 = "developer";
+    private static final String LEVEL_3 = "user";
     
     // class variables
     private static String userLogin;
@@ -64,6 +65,7 @@ public class Authorization {
             return true;
         }
         else{
+            accessLevel = LEVEL_3;
             return false;
         }
     }
@@ -83,6 +85,8 @@ public class Authorization {
                     break;
                 case LEVEL_2:
                     developerPermissions(c);
+                    break;
+                case LEVEL_3:
                     break;
                 default:
                     break;
