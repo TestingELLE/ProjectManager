@@ -5,6 +5,7 @@
  */
 package com.elle.ProjectManager;
 
+import com.elle.ProjectManager.logic.FilePathFormat;
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import com.elle.ProjectManager.presentation.LoginWindow;
 import com.elle.ProjectManager.logic.ITableConstants;
@@ -64,7 +65,7 @@ public class ProjectManager {
     public static Graphics2D loadingGraphics;
     public static BufferedImage image;
     public static Graphics2D g;
-    
+
     public static void loadingMethod() {
         loadingScreen = SplashScreen.getSplashScreen();
         if (loadingScreen != null) {
@@ -76,7 +77,7 @@ public class ProjectManager {
             loadingProgressArea = new Rectangle2D.Double(20, height * 0.8, width * 0.9, 5);
 
             loadingGraphics = loadingScreen.createGraphics();
-            
+
             image = new BufferedImage(loadingScreen.getSize().width,
                     loadingScreen.getSize().height, BufferedImage.TYPE_INT_ARGB);
 
@@ -101,15 +102,15 @@ public class ProjectManager {
             Font font = new Font("Courier", Font.BOLD, 16);
             loadingGraphics.setFont(font);
             g.setFont(font);
-            
-            String information = "Version:" +  VERSION +  "        CreationDate: " + CREATION_DATE;
+
+            String information = "Version:" + VERSION + "        CreationDate: " + CREATION_DATE;
             loadingGraphics.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
             g.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
-            
+
             loadingGraphics.drawString(string, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY() + 20);
             g.drawString(string, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY() + 20);
             loadingScreen.update();
-            
+
         }
     }
 
@@ -132,10 +133,10 @@ public class ProjectManager {
 
             loadingGraphics.setPaint(Color.GRAY);
             g.setPaint(Color.GRAY);
-            
+
             loadingGraphics.fillRect(x, y, doneProg, ht);
             g.fillRect(x, y, doneProg, ht);
-            
+
             loadingScreen.update();
         }
     }
@@ -165,12 +166,16 @@ public class ProjectManager {
     }
 
     private static void saveImage() {
-
+        String fileName = FilePathFormat.supportFilePath();
         try {
-            ImageIO.write(image, "png", new File("splashImage.png"));
+            if (!fileName.equals(" ")) {
+                fileName += "splashImage.png";
+                ImageIO.write(image, "png", new File(fileName));
+            }
         } catch (IOException ex) {
             System.out.println("image save failed!" + " Due to: " + ex.getMessage());
         }
+
     }
 }
 //public class ProjectManager {
