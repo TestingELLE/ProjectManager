@@ -2252,7 +2252,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //         }
         // setFiltersclean();
 
-        System.out.println(2);
+        
 
     }//GEN-LAST:event_comboBoxSearchActionPerformed
 
@@ -2276,7 +2276,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         Tab tab = tabs.get(tabName);
         String[] searchFields = tab.getSearchFields();
-        System.out.println(searchFields);
+        System.out.println(searchFields + "11111111");
 //        if (searchFields != null) {
 //            comboBoxSearch.setModel(new DefaultComboBoxModel(searchFields));
 //        }
@@ -2323,7 +2323,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             }
         }
-        System.out.println(1);
+       
     }//GEN-LAST:event_comboBoxForSearchActionPerformed
 
     private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
