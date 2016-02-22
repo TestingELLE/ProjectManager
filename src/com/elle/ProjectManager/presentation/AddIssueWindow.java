@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 //import java.util;
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
@@ -38,6 +40,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
@@ -252,10 +255,6 @@ public class AddIssueWindow extends JFrame {
      */
     private void createTable(String appDefaultValue) {
         columnNames = projectManager.getTabs().get(table.getName()).getTableColNames();
-//        for (String name : columnNames) {
-//
-//            System.out.println(name);
-//        }
         // get tableSelected column width format
         columnWidths = tabs.get(table.getName()).getColWidthPercent();
         // we don't want the ID column 
@@ -268,15 +267,10 @@ public class AddIssueWindow extends JFrame {
         table.setModel(model);
 
         columnWidths = Arrays.copyOfRange(columnWidths, 1, columnWidths.length);
-
-//        System.out.println(columnWidths.length + "widths");
-//
-//        System.out.println(table.getColumnCount());
         projectManager.setColumnFormat(columnWidths, table);
 
         if (formValues == null) {
             formValues = new Object[columnNames.length];
-//            System.out.println("here");
         }
         formValues[0] = appDefaultValue;
 
@@ -284,7 +278,7 @@ public class AddIssueWindow extends JFrame {
             for (int col = 0; col < table.getColumnCount(); col++) {
                 if (formValues[col] != null) {
                     table.getModel().setValueAt(formValues[col], row, col);
-//                    System.out.println("print out column Names here: " + columnNames[col] + " " + formValues[col]);
+
                 }
             }
         }
@@ -1016,8 +1010,8 @@ public class AddIssueWindow extends JFrame {
             int pos = dateArea.getCaretPosition();
             String userName = projectManager.getUserName();
             String message = "-- by " + userName + " on " + today + "-- \n";
-            String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
-            dateArea.setText(value1);
+//            String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
+            dateArea.insert(message, pos);
 
           //  System.out.println(dateArea.getCaretPosition());
             dateArea.setCaretPosition(pos + 30);
@@ -1326,6 +1320,14 @@ public class AddIssueWindow extends JFrame {
             @Override
             public void insertUpdate(DocumentEvent e) {
 
+                try {
+                    System.out.println("insert: " + e.getDocument().getText
+                                            (0,e.getDocument().getLength()));
+
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(AddIssueWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
                 String columnName = (String) e.getDocument().getProperty("id");
                 String value = "";
                 if (!columnName.equals("description")) {
@@ -1347,6 +1349,14 @@ public class AddIssueWindow extends JFrame {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
+                try {
+                    System.out.println("removed: " + e.getDocument().getText
+                                            (0,e.getDocument().getLength()));
+
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(AddIssueWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
                 String columnName = (String) e.getDocument().getProperty("id");
                 String value = "";
                 if (!columnName.equals("description")) {
@@ -1367,14 +1377,14 @@ public class AddIssueWindow extends JFrame {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-//                try {
-//                    System.out.println("changed: " + e.getDocument().getText(0,
-//                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
-//
-//                } catch (BadLocationException ex) {
-//                    Logger.getLogger(AddIssueWindow.class
-//                            .getName()).log(Level.SEVERE, null, ex);
-//                }
+                try {
+                    System.out.println("changed: " + e.getDocument().getText(0,
+                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
+
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(AddIssueWindow.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
         };

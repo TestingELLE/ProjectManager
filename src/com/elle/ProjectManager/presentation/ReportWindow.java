@@ -324,6 +324,7 @@ public class ReportWindow extends JDialog {
     public void connection(String sql) {
 
         Vector columnNames = new Vector();
+        Vector columnClass = new Vector();
         Vector data = new Vector();
         int columns = 0;
 
@@ -342,6 +343,7 @@ public class ReportWindow extends JDialog {
         try {
             columns = metaData.getColumnCount();
             for (int i = 1; i <= columns; i++) {
+                columnClass.addElement(metaData.getColumnClassName(i));
                 columnNames.addElement(metaData.getColumnName(i));
             }
 
@@ -363,7 +365,7 @@ public class ReportWindow extends JDialog {
             logWindow.addMessageWithDate("2:"+ex.getMessage());
         }
 
-        table.setModel(new EditableTableModel(data, columnNames));   
+        table.setModel(new EditableTableModel(data, columnNames, columnClass));   
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
