@@ -373,36 +373,34 @@ public class LoginWindow extends JFrame {
         if(DBConnection.connect(selectedServer, selectedDB, userName, userPassword)){
             logWindow.addMessageWithDate("Connect successfully!");
             
-            if(Authorization.getInfoFromDB()){
-                userName = userName.substring(7);
-                System.out.println("userName: " + userName);
-
-                // create an projectManager object
-                projectManager = new ProjectManagerWindow(userName);
-
-        //        projectManager.setUserName(userName.substring(7));
-                // pass the log window to projectManager
-                projectManager.setLogWindow(logWindow);
-
-                // pass the selectedDB to projectManager
-                // it is used in sql statements
-                projectManager.setDatabase(selectedDB);
-
-                // show the database name in menubar
-                projectManager.showDatabase();
-
-                // show projectManager
-                projectManager.setLocationRelativeTo(this);
-                projectManager.setVisible(true);
-
-                // terminate this object
-                this.dispose();// returns used resources
-            }
-            else{
+            if(!Authorization.getInfoFromDB()){
                 logWindow.addMessageWithDate("This user has not been authorized!"
                                           + "\n Access denied!");
-                JOptionPane.showMessageDialog(this, "You have not been authorized.");
+                JOptionPane.showMessageDialog(this, "You have not been authorized. Default as user.");
             }
+            userName = userName.substring(7);
+            System.out.println("userName: " + userName);
+
+            // create an projectManager object
+            projectManager = new ProjectManagerWindow(userName);
+
+    //        projectManager.setUserName(userName.substring(7));
+            // pass the log window to projectManager
+            projectManager.setLogWindow(logWindow);
+
+            // pass the selectedDB to projectManager
+            // it is used in sql statements
+            projectManager.setDatabase(selectedDB);
+
+            // show the database name in menubar
+            projectManager.showDatabase();
+
+            // show projectManager
+            projectManager.setLocationRelativeTo(this);
+            projectManager.setVisible(true);
+
+            // terminate this object
+            this.dispose();// returns used resources
             
         } else {
 
