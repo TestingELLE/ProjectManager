@@ -3663,6 +3663,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         Vector data = new Vector();
         Vector columnNames = new Vector();
+        Vector columnClass = new Vector();
         int columns;
 
         ResultSet rs = null;
@@ -3677,6 +3678,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         try {
             columns = metaData.getColumnCount();
             for (int i = 1; i <= columns; i++) {
+                columnClass.addElement(metaData.getColumnClassName(i));
                 columnNames.addElement(metaData.getColumnName(i));
             }
             while (rs.next()) {
@@ -3693,7 +3695,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             ex.printStackTrace();
         }
 
-        EditableTableModel model = new EditableTableModel(data, columnNames);
+        EditableTableModel model = new EditableTableModel(data, columnNames,columnClass);
 
         // this has to be set here or else I get errors
         // I tried passing the model to the filter and setting it there
