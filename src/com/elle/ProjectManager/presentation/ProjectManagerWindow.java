@@ -3743,7 +3743,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      *
      * @param waitSeconds
      */
-    public void startCountDownFromNow(int waitSeconds) {
+    public static void startCountDownFromNow(int waitSeconds) {
         Timer timer = new Timer(waitSeconds * 1000, new ActionListener() {
 
             @Override
@@ -4055,7 +4055,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenu menuTools;
     private javax.swing.JMenu menuView;
     private javax.swing.JMenuItem menuitemViewOneIssue;
-    private javax.swing.JLabel searchInformationLabel;
+    public static javax.swing.JLabel searchInformationLabel;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JTabbedPane tabbedPanel;
     // End of variables declaration//GEN-END:variables
