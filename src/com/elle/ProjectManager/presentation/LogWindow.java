@@ -183,13 +183,6 @@ public class LogWindow extends JFrame {
 
         this.pack();
         this.setVisible(false);
-
-        // write to log file
-        Date date = new Date();
-        addMessage(HYPHENS + dateFormat.format(date) + HYPHENS);
-
-        // read log messages from the log file
-        readMessages();
     }
 
     public static void readCurrentMessages(String str) {
@@ -228,6 +221,9 @@ public class LogWindow extends JFrame {
      */
     public static void addMessage(String str) {
 
+        if(fileName == null){
+            System.out.println("file name is null");
+        }
         File file = new File(fileName);
         try {
             if (!file.exists()) {
