@@ -241,6 +241,7 @@ public class LogWindow extends JFrame {
             bufferedWriter.write(str);
             bufferedWriter.newLine();
             bufferedWriter.close();
+            readCurrentMessages(str);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(parent,
                     "Error: Fail to write the log file");
@@ -267,7 +268,6 @@ public class LogWindow extends JFrame {
         }
         System.out.println(dateStr + " and " + storeStr);
         addMessage(dateStr + ": " + storeStr);
-        readCurrentMessages(dateFormat.format(date) + ": " + storeStr);
     }
 
     private void levelOneActionPerformed(ActionEvent e) {
