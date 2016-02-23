@@ -52,8 +52,8 @@ import javax.imageio.ImageIO;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2016-02-17";
-    private final String VERSION = "1.1.2b";
+    private final String CREATION_DATE = "2016-02-23";
+    private final String VERSION = "1.1.2d";
 
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
