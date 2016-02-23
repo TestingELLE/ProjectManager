@@ -1092,7 +1092,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 96, Short.MAX_VALUE))
+                .addGap(0, 166, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -4006,7 +4006,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JButton btnUploadChanges;
     private javax.swing.JComboBox comboBoxForSearch;
     private javax.swing.JComboBox comboBoxSearch;
-    private javax.swing.JLabel informationLabel;
+    public static javax.swing.JLabel informationLabel;
     private javax.swing.JTable issue_filesTable;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JPanel jPanel1;
