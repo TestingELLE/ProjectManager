@@ -22,31 +22,32 @@ import org.jdesktop.swingx.util.OS;
  */
 public class LogWindow extends JFrame {
 
-    // constants
-    private String FILENAME;
-    private static final String HYPHENS = "-------------------------"; // delimiter
+    // variables
+    public static final String HYPHENS = "-------------------------"; // delimiter
+    public final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
+    private static String fileName;
+    private ArrayList<LogMessage> logMessages = new ArrayList<>();
+    
+    // components
+    private static Component parent;
+    private static JTextArea logText;
     private JScrollPane scrollPane;
-    private JTextArea logText;
-
-    private final ArrayList<LogMessage> logMessages = new ArrayList<>();
-    private final JPanel panelLogWindowButtons;
-    private final JPanel panelLogWindowButtonsUp;
-    private final JButton btnClearAllButToday;
-    private final JButton btnDeleteAllButToday;
-    private final JButton btnLevelOne;
-    private final JButton btnLevelTwo;
-    private final JButton btnLevelThree;
-    //private final JCheckBox jCheckBoxOrder;  // check box for order of dates
+    private JPanel panelLogWindowButtons;
+    private JPanel panelLogWindowButtonsUp;
+    private JButton btnLevelOne;
+    private JButton btnLevelTwo;
+    private JButton btnLevelThree;
+    private JButton btnClearAllButToday;
+    private JButton btnDeleteAllButToday;
     private JButton showAll;
+    //private final JCheckBox jCheckBoxOrder;  // check box for order of dates
     //private final JLabel jLabelOrder; // label for checkbox order
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
+
+    
 
     // constructor
-   
-    
-    public LogWindow(String userName) {
-        FILENAME = FilePathFormat.supportFilePath()+ "PM_" + userName + "_log.txt";
-
+    public LogWindow() {
+        
         this.setTitle("Log Window");
         ImageIcon imag = new ImageIcon(
                 "Images/elle gui image.jpg");
@@ -191,7 +192,7 @@ public class LogWindow extends JFrame {
         readMessages();
     }
 
-    public void readCurrentMessages(String str) {
+    public static void readCurrentMessages(String str) {
         logText.append("\n");
         logText.append(str);
     }
@@ -199,7 +200,7 @@ public class LogWindow extends JFrame {
     public void readMessages() {
         String line = "";
         try {
-            FileReader fileReader = new FileReader(FILENAME);
+            FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             line = bufferedReader.readLine();
             while (line != null) {
@@ -225,14 +226,14 @@ public class LogWindow extends JFrame {
      *
      * @param str
      */
-    public void addMessage(String str) {
+    public static void addMessage(String str) {
 
-        File file = new File(FILENAME);
+        File file = new File(fileName);
         try {
             if (!file.exists()) {
                 file.createNewFile();
             }
-            FileWriter fileWriter = new FileWriter(FILENAME, true);
+            FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             if (str.startsWith(HYPHENS)) {
                 bufferedWriter.newLine();
@@ -240,11 +241,12 @@ public class LogWindow extends JFrame {
             bufferedWriter.write(str);
             bufferedWriter.newLine();
             bufferedWriter.close();
+            readCurrentMessages(str);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(parent,
                     "Error: Fail to write the log file");
         } catch (Exception ex) {
-            JOptionPane.showConfirmDialog(this, "Unknow error");
+            JOptionPane.showConfirmDialog(parent, "Unknow error");
         }
     }
 
@@ -253,7 +255,7 @@ public class LogWindow extends JFrame {
      *
      * @param str
      */
-    public void addMessageWithDate(String str) {
+    public static void addMessageWithDate(String str) {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "yyyy-MM-dd hh:mm:ss a");
@@ -266,7 +268,6 @@ public class LogWindow extends JFrame {
         }
         System.out.println(dateStr + " and " + storeStr);
         addMessage(dateStr + ": " + storeStr);
-        readCurrentMessages(dateFormat.format(date) + ": " + storeStr);
     }
 
     private void levelOneActionPerformed(ActionEvent e) {
@@ -534,7 +535,7 @@ public class LogWindow extends JFrame {
      */
     private void storeLogMessages() {
 
-        File file = new File(FILENAME);
+        File file = new File(fileName);
         logMessages.clear(); // clear array of any elements
         Date date = new Date();
         String message = "";
@@ -545,7 +546,7 @@ public class LogWindow extends JFrame {
 
                 BufferedReader in
                         = new BufferedReader(
-                                new FileReader(FILENAME));
+                                new FileReader(fileName));
 
                 // read all log messages stored in the log file
                 // and store them into the array list
@@ -590,11 +591,19 @@ public class LogWindow extends JFrame {
 
         // clear the log.text file
         try {
-            PrintWriter pw = new PrintWriter(FILENAME);
+            PrintWriter pw = new PrintWriter(fileName);
             pw.close();
         } catch (FileNotFoundException ex) {
             addMessageWithDate(ex.getMessage());
             ex.printStackTrace();
         }
+    }
+    
+    public void setUserLogFileDir(String userName) {
+        fileName = FilePathFormat.supportFilePath()+ "PM_" + userName + "_log.txt";
+    }
+    
+    public static void setParent(Component c){
+        parent = c;
     }
 }
