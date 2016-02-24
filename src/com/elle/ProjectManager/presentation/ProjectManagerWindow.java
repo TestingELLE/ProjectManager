@@ -58,6 +58,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
+    private Map<Integer, ArrayList<Object>> valueListMap;
     private static Statement statement;
     private String database;
 
@@ -316,7 +317,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String tabName = getSelectedTabName();
 
         String searchContent = comboBoxSearch.getSelectedItem().toString();
-
+        
+         valueListMap = new HashMap();
+         valueListMap = this.loadingDropdownListToTable();
+        
         this.updateComboList(searchContent, tabName);
 
         this.comboBoxForSearch.setSelectedItem("Enter search value here");
@@ -1357,7 +1361,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         int columnCount = tableEx.getColumnCount();
 
-        Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
+        
         for (int col = 0; col < columnCount; col++) {
             ArrayList valueList = new ArrayList<Object>();
             for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
@@ -1374,6 +1378,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     } else {
 
                         Object cellValue = table.getValueAt(0, col);
+                        
+                        
                         Object newValue;
                         if (cellValue != null) {
                             valueList.add(cellValue);
@@ -1388,13 +1394,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     cellValue = newValue;
                                 } else {
 
-                                    if (!cellValue.equals(newValue) && !valueList.contains(newValue)) {
-                                        cellValue = newValue;
-                                        valueList.add(cellValue);
-
-                                    }
+                                    cellValue = newValue;
+                                    valueList.add(cellValue);
 
                                 }
+
                             }
                         }
                     }
@@ -1402,7 +1406,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
             Set<Object> uniqueValue = new HashSet<Object>(valueList);
             ArrayList uniqueList = new ArrayList<Object>(uniqueValue);
-
+           
             valueListMap.put(col, uniqueList);
 
         }
@@ -1418,9 +1422,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void updateComboList(String colName, String tableName) {
         DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
         comboBoxForSearch.setModel(comboBoxSearchModel);
-        Map comboBoxForSearchValue = this.loadingDropdownListToTable();
+       // Map comboBoxForSearchValue = this.loadingDropdownListToTable();
         //Map comboBoxForSearchValue = this.comboBoxForSearchDropDown.get(tableName);
-
+        Map comboBoxForSearchValue =  this.valueListMap;
         JTable table = tabs.get(tableName).getTable();
 
         for (int col = 0; col < table.getColumnCount(); col++) {
@@ -2252,7 +2256,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //         }
         // setFiltersclean();
 
-        
 
     }//GEN-LAST:event_comboBoxSearchActionPerformed
 
@@ -2323,7 +2326,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             }
         }
-       
+
     }//GEN-LAST:event_comboBoxForSearchActionPerformed
 
     private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
@@ -3695,7 +3698,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             ex.printStackTrace();
         }
 
-        EditableTableModel model = new EditableTableModel(data, columnNames,columnClass);
+        EditableTableModel model = new EditableTableModel(data, columnNames, columnClass);
 
         // this has to be set here or else I get errors
         // I tried passing the model to the filter and setting it there
