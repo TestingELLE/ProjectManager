@@ -1013,8 +1013,8 @@ public class AddIssueWindow extends JFrame {
            //String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
             dateArea.insert(message, pos);
 
-           //  System.out.println(dateArea.getCaretPosition());
-            dateArea.setCaretPosition(pos + 30);
+      
+            dateArea.setCaretPosition(pos + 31);
 
         }
     }//GEN-LAST:event_descriptionTextKeyReleased
@@ -1407,6 +1407,7 @@ public class AddIssueWindow extends JFrame {
                 formValues[column] = value;
             }
         }
+    
     }
 
     private void addIssueMode(boolean b) {
