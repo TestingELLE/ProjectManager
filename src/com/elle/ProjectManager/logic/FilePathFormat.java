@@ -12,7 +12,7 @@ import java.io.File;
  */
 public class FilePathFormat {
     
-    private static final String OS_WINDOWS = "windows";
+    private static final String OS_WINDOWS = "win";
     
     /**
      * Converts a file path format to either windows or non-windows format.
@@ -59,9 +59,8 @@ public class FilePathFormat {
      */
     public static String supportFilePath(){
         String supportFilePath = "";
-        boolean isWindowsSystem = FilePathFormat.isWindows();
 
-        if (isWindowsSystem) {
+        if (isWindows()) {
             supportFilePath = "C:\\Users\\" + System.getProperty("user.name") + 
                     "\\Documents\\ProjectManager\\";
         } else {
@@ -78,7 +77,11 @@ public class FilePathFormat {
      * @return boolean true if windows and false if not
      */
     public static boolean isWindows(){
-//        System.out.println(System.getProperty("os.name").equals(OS_WINDOWS));
-        return System.getProperty("os.name").equals(OS_WINDOWS);
+        // All os have the os.name property value.
+        // Not all os have the sun.desktop property value
+        // and it may return null for some os.
+        // Hence os.name is used and checks for "windows" with the startsWith().
+        String osName = System.getProperty("os.name").toLowerCase().trim();
+        return osName.startsWith(OS_WINDOWS);
     }
 }
