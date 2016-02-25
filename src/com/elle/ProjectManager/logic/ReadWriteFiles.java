@@ -45,8 +45,7 @@ public class ReadWriteFiles {
             writer = new PrintWriter(new BufferedWriter(new FileWriter(file)), true);
             return writer;
         } catch (IOException ex) {
-            Logger.getLogger(ReadWriteFiles.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
+            LoggingAspect.afterThrown(ex);
             return null;
         }
     }
@@ -57,8 +56,7 @@ public class ReadWriteFiles {
             reader = new BufferedReader(new FileReader(file));
             return reader;
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ReadWriteFiles.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
+            LoggingAspect.afterThrown(ex);
             return null;
         }
     }
@@ -99,8 +97,7 @@ public class ReadWriteFiles {
             return path;
             
         } catch (URISyntaxException ex) {
-            Logger.getLogger(ReadWriteFiles.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
+            LoggingAspect.afterThrown(ex);
             return null;
         }
     }

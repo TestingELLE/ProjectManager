@@ -1638,9 +1638,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             try {
                 statement.executeUpdate(command);
             } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
+                LoggingAspect.afterThrown(e);
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
+                LoggingAspect.afterThrown(e);
             }
         }
     }//GEN-LAST:event_btnEnterSQLActionPerformed
@@ -2038,7 +2038,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                try {
 //                    statement.executeUpdate(sqlDelete);
 //                } catch (SQLException e) {
-//                    e.printStackTrace();
+//                    LoggingAspect.afterThrown(ex);
 //                }
 //            }
 //        } else {
@@ -2066,7 +2066,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                    statement.executeUpdate(sqlInsert);
 ////                    logwind.addMessageWithDate(sqlInsert);
 //                } catch (SQLException e) {
-//                    e.printStackTrace();
+//                    LoggingAspect.afterThrown(ex);
 //                }
 //            }
 //            loadTable(issuesTable);
@@ -2110,8 +2110,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                    statement.executeUpdate(sqlInsert);
 ////                    ana.getLogWindow().addMessageWithDate(sqlInsert);
 //                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                    System.out.println(e.toString());
+//                    LoggingAspect.afterThrown(ex);
 //                }
 //            }
 //
@@ -2336,9 +2335,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             splashScreenImage.pack();
             splashScreenImage.setLocationRelativeTo(this);
             splashScreenImage.setVisible(true);
-            logWindow.addMessageWithDate("3:" + "splash screen image show.");
+            LoggingAspect.addLogMsgWthDate("3:" + "splash screen image show.");
         } catch (IOException ex) {
-            logWindow.addMessageWithDate("3:" + ex.getMessage());
+            LoggingAspect.addLogMsgWthDate("3:" + ex.getMessage());
+            LoggingAspect.afterThrown(ex);
         }
     }//GEN-LAST:event_menuItemViewSplashScreenActionPerformed
 
@@ -2394,8 +2394,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //
 //        } catch (SQLException ex) {
 //            // for debugging
-//            ex.printStackTrace();
-//            logWindow.addMessageWithDate(ex.getMessage());
+//            LoggingAspect.afterThrown(ex);
 //
 //            // notify the user that there was an issue
 //            JOptionPane.showMessageDialog(this, "connection failed");
@@ -3087,11 +3086,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 statement.executeUpdate(sqlChange);
 
             } catch (SQLException e) {
-                logWindow.addMessageWithDate("3:" + e.getMessage());
-                logWindow.addMessageWithDate("3:" + e.getSQLState() + "\n");
-                informationLabel.setText(("Upload failed! " + e.getMessage()));
+                LoggingAspect.addLogMsgWthDate("3:" + e.getMessage());
+                LoggingAspect.addLogMsgWthDate("3:" + e.getSQLState() + "\n");
+                LoggingAspect.addLogMsgWthDate(("Upload failed! " + e.getMessage()));
+                LoggingAspect.afterThrown(e);
                 updateSuccessful = false;
-
             }
         }
         if (updateSuccessful) {
@@ -3672,8 +3671,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             rs = statement.executeQuery(sql);
             metaData = rs.getMetaData();
         } catch (Exception ex) {
-            System.out.println("SQL Error:");
-            ex.printStackTrace();
+            LoggingAspect.afterThrown(ex);
         }
         try {
             columns = metaData.getColumnCount();
@@ -3691,8 +3689,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             rs.close();
 
         } catch (SQLException ex) {
-            System.out.println("SQL Error:");
-            ex.printStackTrace();
+            LoggingAspect.afterThrown(ex);
         }
 
         EditableTableModel model = new EditableTableModel(data, columnNames,columnClass);
@@ -3817,13 +3814,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 labelRecords.setText(recordsLabel); // update label
 
             } catch (SQLException e) {
-                System.out.println("SQL Error:");
-                e.printStackTrace();
-
-                // output pop up dialog that there was an error 
-                JOptionPane.showMessageDialog(this, "There was an SQL Error.");
-                informationLabel.setText("There was an SQL Error.");
-                startCountDownFromNow(10);
+                LoggingAspect.afterThrown(e);
             }
 
         }

@@ -1090,27 +1090,10 @@ public class AddIssueWindow extends JFrame {
                     statement.executeUpdate(insertInto + values);
                     numRowsAdded++;   // increment the number of rows added
                 }
-            } catch (SQLException sqlException) {
-                try {
-                    JOptionPane.showMessageDialog(null, "Upload failed!");
-
-                    if (statement.getWarnings().getMessage() != null) {
-
-                        String levelMessage = "2:" + statement.getWarnings().getMessage();
-                        logWindow.addMessageWithDate(levelMessage);
-
-                        projectManager.getInformationLabel().setText(levelMessage);
-                        projectManager.startCountDownFromNow(5);
-//                            logWindow.
-                        statement.clearWarnings();
-                    }
-                    logWindow.addMessageWithDate("2:add record submit failed!");
-
-                } // end try-catch
-                catch (SQLException ex) {
-                    // this should never be called
-                    ex.printStackTrace();
-                }
+            } catch (SQLException e) {
+                LoggingAspect.addLogMsgWthDate("2: " + e.getMessage());
+                LoggingAspect.addLogMsgWthDate("2:add record submit failed!");
+                LoggingAspect.afterThrown(e);
             }
 
             projectManager.deleteNumOfAddIssueWindowOpened();
@@ -1325,8 +1308,7 @@ public class AddIssueWindow extends JFrame {
                                             (0,e.getDocument().getLength()));
 
                 } catch (BadLocationException ex) {
-                    Logger.getLogger(AddIssueWindow.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                    LoggingAspect.afterThrown(ex);
                 }
                 String columnName = (String) e.getDocument().getProperty("id");
                 String value = "";
@@ -1354,8 +1336,7 @@ public class AddIssueWindow extends JFrame {
                                             (0,e.getDocument().getLength()));
 
                 } catch (BadLocationException ex) {
-                    Logger.getLogger(AddIssueWindow.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                    LoggingAspect.afterThrown(ex);
                 }
                 String columnName = (String) e.getDocument().getProperty("id");
                 String value = "";
@@ -1382,8 +1363,7 @@ public class AddIssueWindow extends JFrame {
                             e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
 
                 } catch (BadLocationException ex) {
-                    Logger.getLogger(AddIssueWindow.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                    LoggingAspect.afterThrown(ex);
                 }
             }
 

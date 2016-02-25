@@ -3,6 +3,7 @@ package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.logic.EditableTableModel;
+import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
@@ -269,12 +270,9 @@ public class ReportWindow extends JDialog {
             note_text.setEditable(false);
 
         } catch (SQLException ex) {
-	    //logwind.sendMessages(ex.getMessage());
-            //logwind.sendMessages(ex.getSQLState() + "\n");
-            System.out.println("sql Error: " + ex);
+            LoggingAspect.afterThrown(ex);
         } catch (Exception ex) {
-            System.out.println("Error: " + ex);
-            //logwind.sendMessages(ex.getMessage());
+            LoggingAspect.afterThrown(ex);
         }
 
     }//GEN-LAST:event_submitActionPerformed
@@ -308,12 +306,9 @@ public class ReportWindow extends JDialog {
             rs.close();
 
         } catch (SQLException ex) {
-	    			//logwind.sendMessages(ex.getMessage());
-            //logwind.sendMessages(ex.getSQLState() + "\n");
-            System.out.println("Error: " + ex);
+	    LoggingAspect.afterThrown(ex);
         } catch (Exception ex) {
-            System.out.println("Error: " + ex);
-            //logwind.sendMessages(ex.getMessage());
+            LoggingAspect.afterThrown(ex);
         }
     }//GEN-LAST:event_tableMouseClicked
     
@@ -337,7 +332,7 @@ public class ReportWindow extends JDialog {
             metaData = rs.getMetaData();
             
         } catch (Exception ex) {
-            System.out.println("Error: " + ex);
+            LoggingAspect.afterThrown(ex);
         }
 
         try {
@@ -358,11 +353,11 @@ public class ReportWindow extends JDialog {
             rs.close();
             
         } catch (SQLException ex) {
-	    System.out.println("Error: " + ex);
-            logWindow.addMessageWithDate("2:"+ex.getMessage());
+            LoggingAspect.addLogMsgWthDate("2:"+ex.getMessage());
+            LoggingAspect.afterThrown(ex);
         } catch (Exception ex) {
-            System.out.println("Error: " + ex);
-            logWindow.addMessageWithDate("2:"+ex.getMessage());
+            LoggingAspect.addLogMsgWthDate("2:"+ex.getMessage());
+            LoggingAspect.afterThrown(ex);
         }
 
         table.setModel(new EditableTableModel(data, columnNames, columnClass));   

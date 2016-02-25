@@ -1,6 +1,7 @@
 
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.logic.LoggingAspect;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
@@ -199,7 +200,7 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
                 }
                 
             } catch(Exception e) {
-                // To do
+                LoggingAspect.afterThrown(e);
             }
         }
         
@@ -254,15 +255,14 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
                             output.close();
                             
                         } catch (FileNotFoundException ex) {
-                            JOptionPane.showMessageDialog(null, "File could not be found!");
-                            // insert code to run when exception occurs
+                            LoggingAspect.afterThrown(ex);
                         }
                     }
                 } catch (IOException e) {
-                    // To do
+                    LoggingAspect.afterThrown(e);
                 }
             } catch (FileNotFoundException ex) {
-                // To do
+                LoggingAspect.afterThrown(ex);
             }
         
         // Create a new file
@@ -272,7 +272,7 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
 //                JOptionPane.showMessageDialog(null, "2");
                 dbFile.createNewFile();
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, "Fail to create a file");
+                LoggingAspect.afterThrown(ex);
             }
             
             // Output to the new file
@@ -285,8 +285,7 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
 //                printWriter.println ("-1");     // Last line
                 printWriter.close();
             } catch (FileNotFoundException ex) {
-                JOptionPane.showMessageDialog(null, "File could not be found!");
-                // insert code to run when exception occurs
+                LoggingAspect.afterThrown(ex);
             }
         }
 //        dbFile.getParentFile().mkdirs();

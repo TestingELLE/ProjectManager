@@ -2,6 +2,7 @@ package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.logic.FilePathFormat;
 import com.elle.ProjectManager.logic.LogMessage;
+import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -207,10 +208,9 @@ public class LogWindow extends JFrame {
             }
             bufferedReader.close();
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Error: Fail to read the log file");
+            LoggingAspect.afterThrown(ex);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Unknown error");
+            LoggingAspect.afterThrown(ex);
         }
     }
 
@@ -239,10 +239,9 @@ public class LogWindow extends JFrame {
             bufferedWriter.close();
             readCurrentMessages(str);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(parent,
-                    "Error: Fail to write the log file");
+            LoggingAspect.afterThrown(ex);
         } catch (Exception ex) {
-            JOptionPane.showConfirmDialog(parent, "Unknow error");
+            LoggingAspect.afterThrown(ex);
         }
     }
 
@@ -571,11 +570,9 @@ public class LogWindow extends JFrame {
 
                 in.close(); // close the input stream
             } catch (IOException e) {
-                addMessageWithDate(e.getMessage());
-                e.printStackTrace();
+                LoggingAspect.afterThrown(e);
             } catch (ParseException ex) {
-                addMessageWithDate(ex.getMessage());
-                ex.printStackTrace();
+                LoggingAspect.afterThrown(ex);
             }
         }
     }
@@ -590,8 +587,7 @@ public class LogWindow extends JFrame {
             PrintWriter pw = new PrintWriter(fileName);
             pw.close();
         } catch (FileNotFoundException ex) {
-            addMessageWithDate(ex.getMessage());
-            ex.printStackTrace();
+            LoggingAspect.afterThrown(ex);
         }
     }
     

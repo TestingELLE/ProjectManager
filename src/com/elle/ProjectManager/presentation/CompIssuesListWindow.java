@@ -4,6 +4,7 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.SQL_Commands;
 import com.elle.ProjectManager.logic.CompIssuesItem;
+import com.elle.ProjectManager.logic.LoggingAspect;
 import com.elle.ProjectManager.logic.ReadWriteFiles;
 import com.elle.ProjectManager.logic.TextAreaList;
 import java.awt.BorderLayout;
@@ -326,7 +327,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
         }catch(NullPointerException e){
             messageBox("Please select a file.");
         } catch (IOException ex) {
-            messageBox(ex.getMessage());
+            LoggingAspect.afterThrown(ex);
         }
         
     }//GEN-LAST:event_btnReadFromTextFileActionPerformed
@@ -353,13 +354,13 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CompIssuesListWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            LoggingAspect.afterThrown(ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CompIssuesListWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            LoggingAspect.afterThrown(ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CompIssuesListWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            LoggingAspect.afterThrown(ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CompIssuesListWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            LoggingAspect.afterThrown(ex);
         }
         //</editor-fold>
         //</editor-fold>
