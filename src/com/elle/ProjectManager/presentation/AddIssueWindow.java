@@ -1427,6 +1427,7 @@ public class AddIssueWindow extends JFrame {
                 formValues[column] = value;
             }
         }
+    
     }
 
     private void addIssueMode(boolean b) {
