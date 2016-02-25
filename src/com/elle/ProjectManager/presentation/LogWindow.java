@@ -221,14 +221,8 @@ public class LogWindow extends JFrame {
      */
     public static void addMessage(String str) {
 
-        if(fileName == null){
-            System.out.println("file name is null");
-        }
         File file = new File(fileName);
         try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
             FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             if (str.startsWith(HYPHENS)) {
