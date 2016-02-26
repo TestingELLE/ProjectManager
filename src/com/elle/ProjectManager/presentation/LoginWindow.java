@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -318,45 +319,39 @@ public class LoginWindow extends JFrame {
      * combobox with the new values in LoginWindow.
      */
     public void loadDBList() {
-        String temp = null;
-        List<String> dbList = new ArrayList<String>();
+
         String dbFile = "database.txt";
-        boolean hasContent = false; // has a local text file and the file has contents
+        if ((new File(dbFile)).exists()) {
+            String temp = null;
+            List<String> dbList = new ArrayList<String>();
+            boolean hasContent = false; // has a local text file and the file has contents
 
-        // Read text file of databases' names
-        BufferedReader buf = null;
-        try {
-            buf = new BufferedReader(new FileReader(dbFile));
-            // buf = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            while ((temp = buf.readLine()) != null) {
-//                if (temp.equals(server)) {
-//                    while ((temp = buf.readLine()) != null && !temp.equals("-1")) {
-                if (!temp.equals("")) {   // remove extra lines
-                    dbList.add(temp);
-                    hasContent = true;
+            // Read text file of databases' names
+            BufferedReader buf = null;
+            try {
+                buf = new BufferedReader(new FileReader(dbFile));
+                while ((temp = buf.readLine()) != null) {
+                    if (!temp.equals("")) {   // remove extra lines
+                        dbList.add(temp);
+                        hasContent = true;
+                    }
                 }
-//                    }
-//                    break;
-//                }
-            }
-            if (!hasContent) {
-
-            } else {
-                String[] arr = dbList.toArray(new String[dbList.size()]);
-                comboBoxDatabase.setModel(new DefaultComboBoxModel(arr));
-            }
-        } catch (Exception e) {
-            LoggingAspect.afterThrown(e);
-        } finally {
-            if (buf != null) {
-                try {
-                    buf.close();
-                } catch (IOException e) {
-                    LoggingAspect.afterThrown(e);
+                if (hasContent) {
+                    String[] arr = dbList.toArray(new String[dbList.size()]);
+                    comboBoxDatabase.setModel(new DefaultComboBoxModel(arr));
+                }
+            } catch (Exception e) {
+                LoggingAspect.afterThrown(e);
+            } finally {
+                if (buf != null) {
+                    try {
+                        buf.close();
+                    } catch (IOException e) {
+                        LoggingAspect.afterThrown(e);
+                    }
                 }
             }
         }
-
     }
 
     /**
