@@ -11,6 +11,7 @@ import com.elle.ProjectManager.presentation.LoginWindow;
 import com.elle.ProjectManager.logic.ITableConstants;
 import static com.elle.ProjectManager.logic.ITableConstants.CREATION_DATE;
 import static com.elle.ProjectManager.logic.ITableConstants.VERSION;
+import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -50,7 +51,7 @@ public class ProjectManager {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ProjectManagerWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            LoggingAspect.afterThrown(ex);
         }
 
         loadingMethod();
@@ -86,6 +87,7 @@ public class ProjectManager {
             try {
                 img = ImageIO.read(loadingScreen.getImageURL());
             } catch (IOException e) {
+                LoggingAspect.afterThrown(e);
             }
             g.drawImage(img, 0, 0, null);
 
@@ -151,6 +153,7 @@ public class ProjectManager {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
+                LoggingAspect.afterThrown(e);
             }
         }
 
@@ -176,32 +179,9 @@ public class ProjectManager {
                 }
             }
         } catch (IOException ex) {
-            System.out.println("image save failed!" + " Due to: " + ex.getMessage());
+            LoggingAspect.addLogMsgWthDate("image save failed!" + " Due to: " + ex.getMessage());
+            LoggingAspect.afterThrown(ex);
         }
 
     }
 }
-//public class ProjectManager {
-//    
-//    public static void main(String[] args){
-//        
-//        // set the look and feel
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(ProjectManagerWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//
-//        // this is the first window that is shown to log in to the database.
-//        // Once the database connection is made, then an instance
-//        // of ProjectManager is created.
-//        LoginWindow loginWindow = new LoginWindow();
-//        loginWindow.setLocationRelativeTo(null);
-//        loginWindow.setVisible(true);
-//    }
-//}
