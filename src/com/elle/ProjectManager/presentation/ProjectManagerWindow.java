@@ -2276,7 +2276,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         Tab tab = tabs.get(tabName);
         String[] searchFields = tab.getSearchFields();
-        System.out.println(searchFields + "11111111");
 //        if (searchFields != null) {
 //            comboBoxSearch.setModel(new DefaultComboBoxModel(searchFields));
 //        }
@@ -3130,7 +3129,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * setKeyboardFocusManager sets the keyboard focus manager
      */
     private void setKeyboardFocusManager(JFrame frame) {
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().
+                addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_TAB) {
