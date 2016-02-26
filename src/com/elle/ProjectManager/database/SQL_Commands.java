@@ -1,5 +1,6 @@
 package com.elle.ProjectManager.database;
 
+import com.elle.ProjectManager.logic.LoggingAspect;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -121,9 +122,7 @@ public class SQL_Commands {
             // set connection
             connection = DriverManager.getConnection(server, username, password);
         } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
+            LoggingAspect.afterThrown(ex);
             return false;
         }
         
@@ -141,9 +140,7 @@ public class SQL_Commands {
         try {
             statement = connection.createStatement();
         } catch (SQLException ex) {
-            Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
             return false;
         }
         return true;
@@ -166,9 +163,7 @@ public class SQL_Commands {
             statement.executeUpdate(sqlCreateTable);
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
             return false;
         }
     }
@@ -190,9 +185,7 @@ public class SQL_Commands {
             statement.executeUpdate(sqlBackupData);
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
             return false;
         }
     }
@@ -213,9 +206,7 @@ public class SQL_Commands {
             statement.executeUpdate(sqlCreateTable);
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
             return false;
         }
     }
@@ -306,9 +297,7 @@ public class SQL_Commands {
             statement.close();
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
             return false;
         }
     }
@@ -388,9 +377,7 @@ public class SQL_Commands {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
         }
         
         return map;
@@ -400,9 +387,7 @@ public class SQL_Commands {
         try {
             return statement.executeQuery(query);
         } catch (SQLException ex) {
-            Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
             return null;
         }
     }
@@ -412,9 +397,7 @@ public class SQL_Commands {
             statement.executeUpdate(query);
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(SQL_Commands.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
             return false;
         }
     }

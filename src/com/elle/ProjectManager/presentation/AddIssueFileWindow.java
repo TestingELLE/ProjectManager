@@ -6,6 +6,7 @@ import com.elle.ProjectManager.logic.ColumnPopupMenu;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
 //import static com.elle.ProjectManager.logic.ITableConstants.TASKNOTES_TABLE_NAME;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
+import com.elle.ProjectManager.logic.LoggingAspect;
 import com.elle.ProjectManager.logic.Tab;
 import com.elle.ProjectManager.logic.TableFilter;
 import com.elle.ProjectManager.logic.Validator;
@@ -303,27 +304,10 @@ public class AddIssueFileWindow extends JFrame {
                         statement.executeUpdate(insertInto + values);
                         numRowsAdded++;   // increment the number of rows added
                     }
-                } catch (SQLException sqlException) {
-                    try {
-                        JOptionPane.showMessageDialog(null, "Upload failed!");
-
-                        if (statement.getWarnings().getMessage() != null) {
-
-                            String levelMessage = "2:" + statement.getWarnings().getMessage();
-                            logWindow.addMessageWithDate(levelMessage);
-//                            logWindow.
-                            System.out.println(statement.getWarnings().getMessage());
-
-                            System.out.println(levelMessage);//delete
-
-                            statement.clearWarnings();
-                        }
-                        logWindow.addMessageWithDate("2:add record submit failed!");
-                    } // end try-catch
-                    catch (SQLException ex) {
-                        // this should never be called
-                        ex.printStackTrace();
-                    }
+                } catch (SQLException e) {
+                    LoggingAspect.addLogMsgWthDate("2: " + e.getMessage());
+                    LoggingAspect.addLogMsgWthDate("2:add record submit failed!");
+                    LoggingAspect.afterThrown(e);
                 }
             }
 
