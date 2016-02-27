@@ -54,7 +54,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // Edit the version and date it was created for new archives and jars
     //private final String CREATION_DATE = "2016-02-25";
     //private final String VERSION = "1.2.0";
-
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
@@ -318,7 +317,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         String searchContent = comboBoxSearch.getSelectedItem().toString();
 
- //       valueListMap = new HashMap();
+        //       valueListMap = new HashMap();
         //       valueListMap = this.loadingDropdownListToTable();
         this.updateComboList(searchContent, tabName);
 
@@ -620,6 +619,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemViewSplashScreen = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
         menuItemReloadData = new javax.swing.JMenuItem();
+        menuItemReloadAllData = new javax.swing.JMenuItem();
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
         menuItemMoveSeletedRowsToEnd = new javax.swing.JMenuItem();
         menuItemCompIssues = new javax.swing.JMenuItem();
@@ -1267,13 +1267,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         menuTools.setText("Tools");
 
-        menuItemReloadData.setText("Reload data");
+        menuItemReloadData.setText("Reload Tab data");
         menuItemReloadData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemReloadDataActionPerformed(evt);
             }
         });
         menuTools.add(menuItemReloadData);
+
+        menuItemReloadAllData.setText("Reload ALL data");
+        menuItemReloadAllData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemReloadAllDataActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemReloadAllData);
 
         menuItemTurnEditModeOff.setText("Turn Edit Mode OFF");
         menuItemTurnEditModeOff.addActionListener(new java.awt.event.ActionListener() {
@@ -1616,7 +1624,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             // no changes to upload or revert
             setEnabledEditingButtons(true, false, false);
-            
+
         }
 
         System.out.println("upload");
@@ -2000,13 +2008,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         reloadData();
         String searchColName = comboBoxSearch.getSelectedItem().toString();
-      
+
         String tabName = getSelectedTabName();
         updateComboList(searchColName, tabName);
-        
+
     }//GEN-LAST:event_menuItemReloadDataActionPerformed
 
-    //reload the data in table
+    //reload the current tab data in table
     private void reloadData() {
         String tabName = getSelectedTabName();
         Tab tab = tabs.get(tabName);
@@ -2027,6 +2035,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String recordsLabel = tab.getRecordsLabel();
         labelRecords.setText(recordsLabel);
     }
+
+    private void reloadAllData() {
+
+        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+            Tab tab = tabs.get(entry.getKey());
+            JTableCellRenderer cellRenderer = tab.getCellRenderer();
+            ModifiedTableData data = tab.getTableData();
+
+            // reload tableSelected from database
+            JTable table = tab.getTable();
+            loadTable(table);
+
+            // clear cellrenderer
+            cellRenderer.clearCellRender();
+
+            // reload modified tableSelected data with current tableSelected model
+            data.reloadData();
+
+            // set label record information
+            String recordsLabel = tab.getRecordsLabel();
+            labelRecords.setText(recordsLabel);
+        }
+
+    }
+
 ////    /**
 ////     * jArchiveRecordActionPerformed
 ////     *
@@ -2310,8 +2343,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemMoveSeletedRowsToEndActionPerformed
 
     private void comboBoxForSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxForSearchActionPerformed
-       
-        
+
         if (!comboBoxForSearch.getSelectedItem().toString().equals(searchValue)) {
             if (comboBoxStartToSearch) {
                 if (comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("programmer")
@@ -2381,6 +2413,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void menuItemDummyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemDummyActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_menuItemDummyActionPerformed
+
+    private void menuItemReloadAllDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadAllDataActionPerformed
+        reloadAllData();
+        String searchColName = comboBoxSearch.getSelectedItem().toString();
+
+        String tabName = getSelectedTabName();
+        updateComboList(searchColName, tabName);
+    }//GEN-LAST:event_menuItemReloadAllDataActionPerformed
 
     public void comboBoxForSearchEditorMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -4054,6 +4094,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemMoveSeletedRowsToEnd;
     private javax.swing.JMenuItem menuItemPrintDisplay;
     private javax.swing.JMenuItem menuItemPrintGUI;
+    private javax.swing.JMenuItem menuItemReloadAllData;
     private javax.swing.JMenuItem menuItemReloadData;
     private javax.swing.JMenuItem menuItemRepBugSugg;
     private javax.swing.JCheckBoxMenuItem menuItemSQLCmdChkBx;

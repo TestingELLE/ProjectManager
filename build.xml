@@ -13,7 +13,7 @@
      manifest files -->
 <target name="-pre-init">
         <property name="project.name" value="ProjectManager"/>
-        <property name="version.num" value="1.4.1"/>
+        <property name="version.num" value="1.2.0"/>
         <tstamp>
             <format pattern="yyyy-MM-dd HH:mm:ss z" property="NOW"></format>
         </tstamp>
