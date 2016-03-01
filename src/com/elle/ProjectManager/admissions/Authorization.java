@@ -69,12 +69,18 @@ public class Authorization {
                     setPermissions(c, new Administrator());
                     break;
                 case DEVELOPER:
+                    setPermissions(c, new Administrator());
                     setPermissions(c, new Developer());
                     break;
                 case USER:
+                    setPermissions(c, new Administrator());
+                    setPermissions(c, new Developer());
                     setPermissions(c, new User());
                     break;
                 case VIEWER:
+                    setPermissions(c, new Administrator());
+                    setPermissions(c, new Developer());
+                    setPermissions(c, new User());
                     setPermissions(c, new Viewer());
                     break;
                 default:
