@@ -49,6 +49,7 @@ public class Administrator implements IAdminComponent{
 
     @Override
     public void setComponent(ProjectManagerWindow window) {
+        window.getMenuReports().setEnabled(false);
     }
 
     @Override

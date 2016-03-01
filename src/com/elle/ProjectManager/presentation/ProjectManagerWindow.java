@@ -624,7 +624,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
         menuItemMoveSeletedRowsToEnd = new javax.swing.JMenuItem();
         menuItemCompIssues = new javax.swing.JMenuItem();
-        menuItemDummy = new javax.swing.JMenuItem();
         menuItemBackup = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemRepBugSugg = new javax.swing.JMenuItem();
@@ -1096,7 +1095,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 96, Short.MAX_VALUE))
+                .addGap(0, 166, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1226,6 +1225,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuBar.add(menuFind);
 
         menuReports.setText("Reports");
+        menuReports.setEnabled(false);
         menuBar.add(menuReports);
 
         menuView.setText("View");
@@ -1307,14 +1307,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemCompIssues);
-
-        menuItemDummy.setText("dummy");
-        menuItemDummy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemDummyActionPerformed(evt);
-            }
-        });
-        menuTools.add(menuItemDummy);
 
         menuItemBackup.setText("Backup");
         menuItemBackup.addActionListener(new java.awt.event.ActionListener() {
@@ -2410,10 +2402,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             JOptionPane.showMessageDialog(this, "Could not connect to Database");
         }
     }//GEN-LAST:event_menuItemBackupActionPerformed
-
-    private void menuItemDummyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemDummyActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_menuItemDummyActionPerformed
 
     private void menuItemReloadAllDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadAllDataActionPerformed
         reloadAllData();
@@ -4088,7 +4076,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemBackup;
     private javax.swing.JMenuItem menuItemCompIssues;
     private javax.swing.JMenuItem menuItemDeleteRecord;
-    private javax.swing.JMenuItem menuItemDummy;
     private javax.swing.JCheckBoxMenuItem menuItemLogChkBx;
     private javax.swing.JMenuItem menuItemLogOff;
     private javax.swing.JMenuItem menuItemManageDBs;
@@ -4375,10 +4362,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return menuItemDeleteRecord;
     }
 
-    public JMenuItem getMenuItemDummy() {
-        return menuItemDummy;
-    }
-
     public JCheckBoxMenuItem getMenuItemLogChkBx() {
         return menuItemLogChkBx;
     }
@@ -4461,6 +4444,58 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public JTabbedPane getTabbedPanel() {
         return tabbedPanel;
+    }
+
+    public ShortCutSetting getShortCut() {
+        return ShortCut;
+    }
+
+    public void setShortCut(ShortCutSetting ShortCut) {
+        this.ShortCut = ShortCut;
+    }
+
+    public ConsistencyOfTableColumnName getColumnNameConsistency() {
+        return ColumnNameConsistency;
+    }
+
+    public void setColumnNameConsistency(ConsistencyOfTableColumnName ColumnNameConsistency) {
+        this.ColumnNameConsistency = ColumnNameConsistency;
+    }
+
+    public boolean isComboBoxStartToSearch() {
+        return comboBoxStartToSearch;
+    }
+
+    public void setComboBoxStartToSearch(boolean comboBoxStartToSearch) {
+        this.comboBoxStartToSearch = comboBoxStartToSearch;
+    }
+
+    public String getSearchValue() {
+        return searchValue;
+    }
+
+    public void setSearchValue(String searchValue) {
+        this.searchValue = searchValue;
+    }
+
+    public void setMenuBar(JMenuBar menuBar) {
+        this.menuBar = menuBar;
+    }
+
+    public JMenuItem getMenuItemBackup() {
+        return menuItemBackup;
+    }
+
+    public void setMenuItemBackup(JMenuItem menuItemBackup) {
+        this.menuItemBackup = menuItemBackup;
+    }
+
+    public JMenuItem getMenuItemReloadAllData() {
+        return menuItemReloadAllData;
+    }
+
+    public void setMenuItemReloadAllData(JMenuItem menuItemReloadAllData) {
+        this.menuItemReloadAllData = menuItemReloadAllData;
     }
 
     private void textComponentShortCutSetting() {
