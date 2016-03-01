@@ -1,5 +1,6 @@
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;

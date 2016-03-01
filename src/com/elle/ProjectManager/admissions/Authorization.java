@@ -1,8 +1,8 @@
-package com.elle.ProjectManager.logic;
+package com.elle.ProjectManager.admissions;
 
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.SQL_Commands;
-import com.elle.ProjectManager.presentation.ProjectManagerWindow;
+import com.elle.ProjectManager.presentation.*;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,33 +17,20 @@ import java.util.HashMap;
  */
 public class Authorization {
     
-    // constants
+    // database constants
     private static final String DB_TABLE_NAME = "PM_accessLevel_tbl";
     private static final String DB_COLUMN_1 = "user";
     private static final String DB_COLUMN_2 = "accessLevel";
-    private static final String LEVEL_1 = "administrator";
-    private static final String LEVEL_2 = "developer";
-    private static final String LEVEL_3 = "user";
+    
+    // constants
+    private static final String ADMINISTRATOR = "administrator";
+    private static final String DEVELOPER = "developer";
+    private static final String USER = "user";
+    private static final String VIEWER = "viewer";
     
     // class variables
     private static String userLogin;
     private static String accessLevel;
-    
-    /**
-     * users table
-     * username accesslevel -> Auth table id, nameType-admin, dev
-     * column names userLogin, userLevel
-     */
-
-    /**
-     * we might want to cascade permissions / restrictions
-     * For example. Level 1, 2, 3 (highest to lowest)
-     * Example: Level 2 disable menu items 1,2 
-     *          and Level 3 disable menu items 1,2,3
-     * Level 3 will have all of Level 2 restrictions plus additional 
-     * restrictions. If this is the case, then the restrictions for 
-     * level 2 may be applied and then level 3. 
-     */
     
     /**
      * When the user logs in, we will need to know the access level and 
@@ -65,45 +52,70 @@ public class Authorization {
             return true;
         }
         else{
-            accessLevel = LEVEL_3;
+            accessLevel = USER; // defaults to user
             return false;
         }
     }
     
     /**
      * This takes any component and overrides any behavior for that component.
-     * Example c instanceOf JFrame then is PM, issue window etc. and regulate
-     * the behavior as needed. If full access no checks required, exit promptly.
-     * Default is full access and restrictions may apply per user type.
      * @param c 
      */
     public static void authorize( Component c){
         
         if(accessLevel != null) // changed tab state is called from initComponents
             switch(accessLevel){
-                case LEVEL_1:
+                case ADMINISTRATOR:
+                    setPermissions(c, new Administrator());
                     break;
-                case LEVEL_2:
-                    developerPermissions(c);
+                case DEVELOPER:
+                    setPermissions(c, new Developer());
                     break;
-                case LEVEL_3:
+                case USER:
+                    setPermissions(c, new User());
+                    break;
+                case VIEWER:
+                    setPermissions(c, new Viewer());
                     break;
                 default:
                     break;
             }
     }
+    
+    private static void setPermissions(Component c, IAdminComponent admin){
 
-    /**
-     * Developer Restrictions
-     * @param c The component to be authorized (restrict features or behavior)
-     */
-    private static void developerPermissions(Component c) {
-        
-        // ProjectManagerWindow
-        if(c instanceof ProjectManagerWindow){
-            ProjectManagerWindow pm = (ProjectManagerWindow)c;
-            // menu item components
-            pm.getMenuItemDummy().setEnabled(false);
+        if(c instanceof AddIssueFileWindow){
+            admin.setComponent((AddIssueFileWindow)c);
+        }
+        else if(c instanceof AddIssueWindow){
+            admin.setComponent((AddIssueWindow)c);
+        }
+        else if(c instanceof BackupDBTablesDialog){
+            admin.setComponent((BackupDBTablesDialog)c);
+        }
+        else if(c instanceof BatchEditWindow){
+            admin.setComponent((BatchEditWindow)c);
+        }
+        else if(c instanceof CompIssuesListWindow){
+            admin.setComponent((CompIssuesListWindow)c);
+        }
+        else if(c instanceof EditDatabaseWindow){
+            admin.setComponent((EditDatabaseWindow)c);
+        }
+        else if(c instanceof LogWindow){
+            admin.setComponent((LogWindow)c);
+        }
+        else if(c instanceof LoginWindow){
+            admin.setComponent((LoginWindow)c);
+        }
+        else if(c instanceof PopupWindowInTableCell){
+            admin.setComponent((PopupWindowInTableCell)c);
+        }
+        else if(c instanceof ProjectManagerWindow){
+            admin.setComponent((ProjectManagerWindow)c);
+        }
+        else if(c instanceof ReportWindow){
+            admin.setComponent((ReportWindow)c);
         }
     }
 }
