@@ -1410,7 +1410,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
             Set<Object> uniqueValue = new HashSet<Object>(valueList);
             ArrayList uniqueList = new ArrayList<Object>(uniqueValue);
-
+            System.out.println(uniqueList);
             valueListMap.put(col, uniqueList);
 
         }
@@ -1444,26 +1444,35 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                     });
 
-                } 
-                else if (colName.equalsIgnoreCase("rk")){
-//                    ArrayList<Integer> dropDownList1 = (ArrayList<Integer>) comboBoxForSearchValue.get(col);
-//                 
-//                    System.out.println(dropDownList1 +"1");
-                } 
-                else {
-                   
-                    
-                    
+                } else if (colName.equalsIgnoreCase("rk")) {
+           
+                } else if (colName.equalsIgnoreCase("programmer")){
+                    Object nullValue = dropDownList.get(0);
+                     
                     Collections.sort(dropDownList, new Comparator<Object>() {
                         public int compare(Object o1, Object o2) {
-                            
+                            if (o1 == nullValue && o2 == nullValue) {
+                                return 0;
+                            }
+
+                            if (o1 == nullValue) {
+                                 System.out.println(" c");
+                                return 1;
+                            }
+
+                            if (o2 == nullValue) {
+                                   System.out.println(" d");
+                                return -1;
+                            }
+                             
                             return o1.toString().toLowerCase().compareTo(o2.toString().toLowerCase());
                         }
 
                     });
+                     System.out.println(dropDownList + " b");
 
                 }
-              //  System.out.println(dropDownList);
+                //  System.out.println(dropDownList);
                 comboBoxStartToSearch = false;
                 for (Object item : dropDownList) {
 
@@ -2009,7 +2018,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      *
      * @param evt
      */
-    
+
     private void menuItemReloadDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadDataActionPerformed
 
         reloadData();
@@ -2017,11 +2026,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         String tabName = getSelectedTabName();
         updateComboList(searchColName, tabName);
-        
-        LoggingAspect.afterReturn(tabName +" is reloading");
-        
+
+        LoggingAspect.afterReturn(tabName + " is reloading");
+
 //        setInformationLabel(tabName +" is reloaded", 10);
-        
 
     }//GEN-LAST:event_menuItemReloadDataActionPerformed
 
@@ -2045,7 +2053,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // set label record information
         String recordsLabel = tab.getRecordsLabel();
         labelRecords.setText(recordsLabel);
-       
+
     }
 
     private void reloadAllData() {
@@ -2068,7 +2076,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // set label record information
             String recordsLabel = tab.getRecordsLabel();
             labelRecords.setText(recordsLabel);
-            LoggingAspect.afterReturn(tab.getTableName() +" is reloading");
+            LoggingAspect.afterReturn(tab.getTableName() + " is reloading");
         }
 
     }
@@ -2429,7 +2437,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         String tabName = getSelectedTabName();
         updateComboList(searchColName, tabName);
-      
+
     }//GEN-LAST:event_menuItemReloadAllDataActionPerformed
 
     public void comboBoxForSearchEditorMouseClicked(MouseEvent e) {
