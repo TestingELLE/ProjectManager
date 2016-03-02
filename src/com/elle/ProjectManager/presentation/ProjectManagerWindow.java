@@ -1,5 +1,6 @@
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
@@ -52,9 +53,9 @@ import javax.imageio.ImageIO;
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // Edit the version and date it was created for new archives and jars
-    private final String CREATION_DATE = "2016-02-23";
-    private final String VERSION = "1.1.2d";
-
+    // this looks like it was moved to ITableConstants
+    //private final String CREATION_DATE = "2016-02-25";
+    //private final String VERSION = "1.2.0";
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
@@ -318,7 +319,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         String searchContent = comboBoxSearch.getSelectedItem().toString();
 
- //       valueListMap = new HashMap();
+        //       valueListMap = new HashMap();
         //       valueListMap = this.loadingDropdownListToTable();
         this.updateComboList(searchContent, tabName);
 
@@ -620,10 +621,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemViewSplashScreen = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
         menuItemReloadData = new javax.swing.JMenuItem();
+        menuItemReloadAllData = new javax.swing.JMenuItem();
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
         menuItemMoveSeletedRowsToEnd = new javax.swing.JMenuItem();
         menuItemCompIssues = new javax.swing.JMenuItem();
-        menuItemDummy = new javax.swing.JMenuItem();
         menuItemBackup = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemRepBugSugg = new javax.swing.JMenuItem();
@@ -1095,7 +1096,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxForSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 96, Short.MAX_VALUE))
+                .addGap(0, 166, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1225,6 +1226,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuBar.add(menuFind);
 
         menuReports.setText("Reports");
+        menuReports.setEnabled(false);
         menuBar.add(menuReports);
 
         menuView.setText("View");
@@ -1267,13 +1269,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         menuTools.setText("Tools");
 
-        menuItemReloadData.setText("Reload data");
+        menuItemReloadData.setText("Reload Tab data");
         menuItemReloadData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemReloadDataActionPerformed(evt);
             }
         });
         menuTools.add(menuItemReloadData);
+
+        menuItemReloadAllData.setText("Reload ALL data");
+        menuItemReloadAllData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemReloadAllDataActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemReloadAllData);
 
         menuItemTurnEditModeOff.setText("Turn Edit Mode OFF");
         menuItemTurnEditModeOff.addActionListener(new java.awt.event.ActionListener() {
@@ -1298,14 +1308,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemCompIssues);
-
-        menuItemDummy.setText("dummy");
-        menuItemDummy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemDummyActionPerformed(evt);
-            }
-        });
-        menuTools.add(menuItemDummy);
 
         menuItemBackup.setText("Backup");
         menuItemBackup.addActionListener(new java.awt.event.ActionListener() {
@@ -1616,7 +1618,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             // no changes to upload or revert
             setEnabledEditingButtons(true, false, false);
-            
+
         }
     }
 
@@ -1646,9 +1648,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             try {
                 statement.executeUpdate(command);
             } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
+                LoggingAspect.afterThrown(e);
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
+                LoggingAspect.afterThrown(e);
             }
         }
     }//GEN-LAST:event_btnEnterSQLActionPerformed
@@ -1997,13 +1999,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         reloadData();
         String searchColName = comboBoxSearch.getSelectedItem().toString();
-      
+
         String tabName = getSelectedTabName();
         updateComboList(searchColName, tabName);
-        
+
     }//GEN-LAST:event_menuItemReloadDataActionPerformed
 
-    //reload the data in table
+    //reload the current tab data in table
     private void reloadData() {
         String tabName = getSelectedTabName();
         Tab tab = tabs.get(tabName);
@@ -2024,6 +2026,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String recordsLabel = tab.getRecordsLabel();
         labelRecords.setText(recordsLabel);
     }
+
+    private void reloadAllData() {
+
+        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+            Tab tab = tabs.get(entry.getKey());
+            JTableCellRenderer cellRenderer = tab.getCellRenderer();
+            ModifiedTableData data = tab.getTableData();
+
+            // reload tableSelected from database
+            JTable table = tab.getTable();
+            loadTable(table);
+
+            // clear cellrenderer
+            cellRenderer.clearCellRender();
+
+            // reload modified tableSelected data with current tableSelected model
+            data.reloadData();
+
+            // set label record information
+            String recordsLabel = tab.getRecordsLabel();
+            labelRecords.setText(recordsLabel);
+        }
+
+    }
+
 ////    /**
 ////     * jArchiveRecordActionPerformed
 ////     *
@@ -2050,7 +2077,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                try {
 //                    statement.executeUpdate(sqlDelete);
 //                } catch (SQLException e) {
-//                    e.printStackTrace();
+//                    LoggingAspect.afterThrown(ex);
 //                }
 //            }
 //        } else {
@@ -2078,7 +2105,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                    statement.executeUpdate(sqlInsert);
 ////                    logwind.addMessageWithDate(sqlInsert);
 //                } catch (SQLException e) {
-//                    e.printStackTrace();
+//                    LoggingAspect.afterThrown(ex);
 //                }
 //            }
 //            loadTable(issuesTable);
@@ -2122,8 +2149,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                    statement.executeUpdate(sqlInsert);
 ////                    ana.getLogWindow().addMessageWithDate(sqlInsert);
 //                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                    System.out.println(e.toString());
+//                    LoggingAspect.afterThrown(ex);
 //                }
 //            }
 //
@@ -2307,8 +2333,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemMoveSeletedRowsToEndActionPerformed
 
     private void comboBoxForSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxForSearchActionPerformed
-       
-        
+
         if (!comboBoxForSearch.getSelectedItem().toString().equals(searchValue)) {
             if (comboBoxStartToSearch) {
                 if (comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("programmer")
@@ -2349,9 +2374,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             splashScreenImage.pack();
             splashScreenImage.setLocationRelativeTo(this);
             splashScreenImage.setVisible(true);
-            logWindow.addMessageWithDate("3:" + "splash screen image show.");
+            LoggingAspect.addLogMsgWthDate("3:" + "splash screen image show.");
         } catch (IOException ex) {
-            logWindow.addMessageWithDate("3:" + ex.getMessage());
+            LoggingAspect.addLogMsgWthDate("3:" + ex.getMessage());
+            LoggingAspect.afterThrown(ex);
         }
     }//GEN-LAST:event_menuItemViewSplashScreenActionPerformed
 
@@ -2374,9 +2400,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }//GEN-LAST:event_menuItemBackupActionPerformed
 
-    private void menuItemDummyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemDummyActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_menuItemDummyActionPerformed
+    private void menuItemReloadAllDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadAllDataActionPerformed
+        reloadAllData();
+        String searchColName = comboBoxSearch.getSelectedItem().toString();
+
+        String tabName = getSelectedTabName();
+        updateComboList(searchColName, tabName);
+    }//GEN-LAST:event_menuItemReloadAllDataActionPerformed
 
     public void comboBoxForSearchEditorMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -2411,8 +2441,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //
 //        } catch (SQLException ex) {
 //            // for debugging
-//            ex.printStackTrace();
-//            logWindow.addMessageWithDate(ex.getMessage());
+//            LoggingAspect.afterThrown(ex);
 //
 //            // notify the user that there was an issue
 //            JOptionPane.showMessageDialog(this, "connection failed");
@@ -3104,11 +3133,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 statement.executeUpdate(sqlChange);
 
             } catch (SQLException e) {
-                logWindow.addMessageWithDate("3:" + e.getMessage());
-                logWindow.addMessageWithDate("3:" + e.getSQLState() + "\n");
-                informationLabel.setText(("Upload failed! " + e.getMessage()));
+                LoggingAspect.addLogMsgWthDate("3:" + e.getMessage());
+                LoggingAspect.addLogMsgWthDate("3:" + e.getSQLState() + "\n");
+                LoggingAspect.addLogMsgWthDate(("Upload failed! " + e.getMessage()));
+                LoggingAspect.afterThrown(e);
                 updateSuccessful = false;
-
             }
         }
         if (updateSuccessful) {
@@ -3690,8 +3719,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             rs = statement.executeQuery(sql);
             metaData = rs.getMetaData();
         } catch (Exception ex) {
-            System.out.println("SQL Error:");
-            ex.printStackTrace();
+            LoggingAspect.afterThrown(ex);
         }
         try {
             columns = metaData.getColumnCount();
@@ -3709,8 +3737,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             rs.close();
 
         } catch (SQLException ex) {
-            System.out.println("SQL Error:");
-            ex.printStackTrace();
+            LoggingAspect.afterThrown(ex);
         }
 
         EditableTableModel model = new EditableTableModel(data, columnNames, columnClass);
@@ -3835,13 +3862,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 labelRecords.setText(recordsLabel); // update label
 
             } catch (SQLException e) {
-                System.out.println("SQL Error:");
-                e.printStackTrace();
-
-                // output pop up dialog that there was an error 
-                JOptionPane.showMessageDialog(this, "There was an SQL Error.");
-                informationLabel.setText("There was an SQL Error.");
-                startCountDownFromNow(10);
+                LoggingAspect.afterThrown(e);
             }
 
         }
@@ -4053,13 +4074,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemBackup;
     private javax.swing.JMenuItem menuItemCompIssues;
     private javax.swing.JMenuItem menuItemDeleteRecord;
-    private javax.swing.JMenuItem menuItemDummy;
     private javax.swing.JCheckBoxMenuItem menuItemLogChkBx;
     private javax.swing.JMenuItem menuItemLogOff;
     private javax.swing.JMenuItem menuItemManageDBs;
     private javax.swing.JMenuItem menuItemMoveSeletedRowsToEnd;
     private javax.swing.JMenuItem menuItemPrintDisplay;
     private javax.swing.JMenuItem menuItemPrintGUI;
+    private javax.swing.JMenuItem menuItemReloadAllData;
     private javax.swing.JMenuItem menuItemReloadData;
     private javax.swing.JMenuItem menuItemRepBugSugg;
     private javax.swing.JCheckBoxMenuItem menuItemSQLCmdChkBx;
@@ -4339,10 +4360,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return menuItemDeleteRecord;
     }
 
-    public JMenuItem getMenuItemDummy() {
-        return menuItemDummy;
-    }
-
     public JCheckBoxMenuItem getMenuItemLogChkBx() {
         return menuItemLogChkBx;
     }
@@ -4425,6 +4442,58 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public JTabbedPane getTabbedPanel() {
         return tabbedPanel;
+    }
+
+    public ShortCutSetting getShortCut() {
+        return ShortCut;
+    }
+
+    public void setShortCut(ShortCutSetting ShortCut) {
+        this.ShortCut = ShortCut;
+    }
+
+    public ConsistencyOfTableColumnName getColumnNameConsistency() {
+        return ColumnNameConsistency;
+    }
+
+    public void setColumnNameConsistency(ConsistencyOfTableColumnName ColumnNameConsistency) {
+        this.ColumnNameConsistency = ColumnNameConsistency;
+    }
+
+    public boolean isComboBoxStartToSearch() {
+        return comboBoxStartToSearch;
+    }
+
+    public void setComboBoxStartToSearch(boolean comboBoxStartToSearch) {
+        this.comboBoxStartToSearch = comboBoxStartToSearch;
+    }
+
+    public String getSearchValue() {
+        return searchValue;
+    }
+
+    public void setSearchValue(String searchValue) {
+        this.searchValue = searchValue;
+    }
+
+    public void setMenuBar(JMenuBar menuBar) {
+        this.menuBar = menuBar;
+    }
+
+    public JMenuItem getMenuItemBackup() {
+        return menuItemBackup;
+    }
+
+    public void setMenuItemBackup(JMenuItem menuItemBackup) {
+        this.menuItemBackup = menuItemBackup;
+    }
+
+    public JMenuItem getMenuItemReloadAllData() {
+        return menuItemReloadAllData;
+    }
+
+    public void setMenuItemReloadAllData(JMenuItem menuItemReloadAllData) {
+        this.menuItemReloadAllData = menuItemReloadAllData;
     }
 
     private void textComponentShortCutSetting() {

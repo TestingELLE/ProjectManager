@@ -1,6 +1,7 @@
 
 package com.elle.ProjectManager.database;
 
+import com.elle.ProjectManager.logic.LoggingAspect;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,12 +73,10 @@ public class DBConnection {
             // connect to server
             connection = DriverManager.getConnection(url, userName, userPassword);
             statement = connection.createStatement();
-            System.out.println("Connection successfully");
+            LoggingAspect.afterReturn("Connection successful");
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
             return false;
         }
              
@@ -107,9 +106,7 @@ public class DBConnection {
             connection.close();
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
             return false;
         }
     }
@@ -123,8 +120,7 @@ public class DBConnection {
                 return false;
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
-            handleSQLexWithMessageBox(ex);
+            LoggingAspect.afterThrown(ex);
             return true;
         }
     }
@@ -271,8 +267,9 @@ public class DBConnection {
                 }
                 reader.next();
             }
+            LoggingAspect.afterReturn("read servers file successful");
         }catch(XMLStreamException e){
-            System.out.println(e);
+            LoggingAspect.afterThrown(e);
         }
         return servers;
     }
@@ -307,8 +304,9 @@ public class DBConnection {
             writer.writeEndElement();
             writer.flush();
             writer.close();
+            LoggingAspect.afterReturn("write servers file successful");
         }catch(IOException | XMLStreamException e){
-            System.out.println(e);
+            LoggingAspect.afterThrown(e);
         }
     }
 

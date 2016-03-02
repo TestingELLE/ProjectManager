@@ -29,6 +29,7 @@ public class Validator {
                 return false;
             }
         } catch (ParseException ex) {
+            LoggingAspect.afterThrown(ex);
             return false;
         }
         return true;
