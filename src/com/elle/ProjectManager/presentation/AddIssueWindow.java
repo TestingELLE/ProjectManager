@@ -122,7 +122,7 @@ public class AddIssueWindow extends JFrame {
         createTable();
 
         // create a new empty edit form
-        createEmptyForm();
+        createForm();
 
         //
         addIssueMode(addIssueMode);
@@ -177,7 +177,7 @@ public class AddIssueWindow extends JFrame {
         // create a new table with tableSelected values
         createTable();
 
-        createEmptyForm();
+        createForm();
 
         //setCopyAndPasteKeyEvent();
         idText.setText(Integer.toString(id));
@@ -518,6 +518,8 @@ public class AddIssueWindow extends JFrame {
         dateOpened.setText(" dateOpened");
 
         dateOpenedText.setText("jTextField1");
+        dateOpenedText.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        dateOpenedText.setMargin(new java.awt.Insets(-1, -1, -1, -1));
         dateOpenedText.setName("dateOpened"); // NOI18N
         dateOpenedText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1260,7 +1262,7 @@ public class AddIssueWindow extends JFrame {
     private javax.swing.JTextField versionText;
     // End of variables declaration//GEN-END:variables
 
-    private void createEmptyForm() {
+    private void createForm() {
 //        labelsInForm = new HashMap<String, JLabel>();
         textAreasInForm = new HashMap<String, JTextField>();
 

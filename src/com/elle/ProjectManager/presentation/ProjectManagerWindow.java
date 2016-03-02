@@ -1451,7 +1451,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     });
 
                 }
-                System.out.println(dropDownList);
+//                System.out.println(dropDownList);
                 comboBoxStartToSearch = false;
                 for (Object item : dropDownList) {
 
@@ -1618,8 +1618,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             setEnabledEditingButtons(true, false, false);
             
         }
-
-        System.out.println("upload");
     }
 
     private int[] getSelectedRowsId(JTable table) {
@@ -1988,7 +1986,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         labelRecords.setText(recordsLabel);
-        System.out.println(recordsLabel);
     }//GEN-LAST:event_btnClearAllFilterActionPerformed
 
     /**
