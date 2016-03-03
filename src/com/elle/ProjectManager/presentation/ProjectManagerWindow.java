@@ -3136,46 +3136,52 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         //String uploadQuery = uploadRecord(tableSelected, modifiedDataList);
         String sqlChange = null;
 
-        for (ModifiedData modifiedData : modifiedDataList) {
+        DBConnection.close();
+        if (DBConnection.open()) {
+            statement = DBConnection.getStatement();
+            for (ModifiedData modifiedData : modifiedDataList) {
 
-            String tableName = modifiedData.getTableName();
-            String columnName = modifiedData.getColumnName();
-            Object value = modifiedData.getValue();
-            int id = modifiedData.getId();
+                String tableName = modifiedData.getTableName();
+                String columnName = modifiedData.getColumnName();
+                Object value = modifiedData.getValue();
+                int id = modifiedData.getId();
 
-            value = processCellValue(value);
-            if (!tableName.equals(TASKFILES_TABLE_NAME)) {
-                tableName = TASKS_TABLE_NAME;
-            }
-
-            try {
-
-                if ("".equals(value)) {
-                    value = null;
-                    sqlChange = "UPDATE " + tableName + " SET " + columnName
-                            + " = " + value + " WHERE ID = " + id + ";";
-                } else {
-                    sqlChange = "UPDATE " + tableName + " SET " + columnName
-                            + " = '" + value + "' WHERE ID = " + id + ";";
+                value = processCellValue(value);
+                if (!tableName.equals(TASKFILES_TABLE_NAME)) {
+                    tableName = TASKS_TABLE_NAME;
                 }
 
-                DBConnection.close();
-                DBConnection.open();
-                statement = DBConnection.getStatement();
-                statement.executeUpdate(sqlChange);
+                try {
 
-            } catch (SQLException e) {
-                LoggingAspect.addLogMsgWthDate("3:" + e.getMessage());
-                LoggingAspect.addLogMsgWthDate("3:" + e.getSQLState() + "\n");
-                LoggingAspect.addLogMsgWthDate(("Upload failed! " + e.getMessage()));
-                LoggingAspect.afterThrown(e);
-                updateSuccessful = false;
+                    if (value.equals("")) {
+                        value = null;
+                        sqlChange = "UPDATE " + tableName + " SET " + columnName
+                                + " = " + value + " WHERE ID = " + id + ";";
+                    } else {
+                        sqlChange = "UPDATE " + tableName + " SET " + columnName
+                                + " = '" + value + "' WHERE ID = " + id + ";";
+                    }
+
+                    statement.executeUpdate(sqlChange);
+                    LoggingAspect.afterReturn(sqlChange);
+
+                } catch (SQLException e) {
+                    LoggingAspect.addLogMsgWthDate("3:" + e.getMessage());
+                    LoggingAspect.addLogMsgWthDate("3:" + e.getSQLState() + "\n");
+                    LoggingAspect.addLogMsgWthDate(("Upload failed! " + e.getMessage()));
+                    LoggingAspect.afterThrown(e);
+                    updateSuccessful = false;
+                }
             }
+            if (updateSuccessful) {
+                LoggingAspect.afterReturn(("Edits uploaded successfully!"));
+            }
+        } else {
+            // connection failed
+            LoggingAspect.afterReturn("Failed to connect");
         }
-        if (updateSuccessful) {
-            informationLabel.setText(("Edits uploaded successfully!"));
-            startCountDownFromNow(5);
-        }
+        // finally close connection
+        DBConnection.close();
         return updateSuccessful;
     }
 
