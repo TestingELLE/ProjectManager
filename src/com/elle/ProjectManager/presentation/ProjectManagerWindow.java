@@ -100,7 +100,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private JLabel databaseLabel;
     private String currentTabName;
     private String userName;
-    private String searchValue = "";
+    private String searchValue = null;
     private ArrayList<Integer> idNumOfOpenningIssues;
 
     private ArrayList<String> programmersActiveForSearching;
@@ -1388,37 +1388,48 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         if (cellValue != null) {
                             valueList.add(cellValue);
                         }
+
                         for (int row = 0; row < tableModel.getRowCount(); row++) {
                             newValue = tableModel.getValueAt(row, col);
-
+                            if (col == 8) {
+                          
+                            }
                             //get distinct value 
                             if (newValue != null) {
                                 if (cellValue == null) {
-                                    valueList.add(" ");
-                                    cellValue = newValue;
-                                } else {
+//                                    valueList.add("");
+//                                    cellValue = newValue;
+                                   
 
+                                } else {
+                                 
                                     cellValue = newValue;
                                     valueList.add(cellValue);
 
                                 }
 
+                            }else{
+                                if(colName.equalsIgnoreCase("rk")){
+                                valueList.add(" ");
+                            }else{
+                                valueList.add("");
+                                }
                             }
+                           
                         }
+
                     }
+                   
                 }
             }
+            //  System.out.println(valueList);
             Set<Object> uniqueValue = new HashSet<Object>(valueList);
             ArrayList uniqueList = new ArrayList<Object>(uniqueValue);
-            System.out.println(uniqueList);
+
             valueListMap.put(col, uniqueList);
 
         }
-//        DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
-//        comboBoxForSearch.setModel(comboBoxSearchModel);
-//        for (Object item : valueList) {
-//            comboBoxSearchModel.addElement(item);
-//        }
+
         return valueListMap;
 
     }
@@ -1445,10 +1456,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     });
 
                 } else if (colName.equalsIgnoreCase("rk")) {
-           
-                } else if (colName.equalsIgnoreCase("programmer")){
-                    Object nullValue = dropDownList.get(0);
-                     
+
+                } else if (colName.equalsIgnoreCase("programmer")) {
+                    Object nullValue = ""; //dropDownList.get(0);
+                  
                     Collections.sort(dropDownList, new Comparator<Object>() {
                         public int compare(Object o1, Object o2) {
                             if (o1 == nullValue && o2 == nullValue) {
@@ -1456,30 +1467,28 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             }
 
                             if (o1 == nullValue) {
-                                 System.out.println(" c");
+
                                 return 1;
                             }
 
                             if (o2 == nullValue) {
-                                   System.out.println(" d");
+
                                 return -1;
                             }
-                             
+
                             return o1.toString().toLowerCase().compareTo(o2.toString().toLowerCase());
                         }
 
                     });
-                     System.out.println(dropDownList + " b");
 
                 }
-                //  System.out.println(dropDownList);
+
                 comboBoxStartToSearch = false;
                 for (Object item : dropDownList) {
 
                     comboBoxSearchModel.addElement(item);
 
                 }
-                System.out.println(dropDownList);
 
             }
         }
@@ -1551,8 +1560,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         }
         if (!text.equals("")) {
-            searchInformationLabel.setText(text);
-            startCountDownFromNow(10);
+            LoggingAspect.afterReturn(text);
+
         }
     }
 
@@ -2029,7 +2038,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         LoggingAspect.afterReturn(tabName + " is reloading");
 
-//        setInformationLabel(tabName +" is reloaded", 10);
 
     }//GEN-LAST:event_menuItemReloadDataActionPerformed
 
@@ -2314,11 +2322,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         searchValue = comboBoxForSearch.getSelectedItem().toString();
         String tabName = getSelectedTabName();
         updateComboList(searchColName, tabName);
-//         if (comboBoxForSearch.getSelectedItem().toString().startsWith("Enter")
-//                        && comboBoxForSearch.getSelectedItem().toString().endsWith("here")) {
+
         comboBoxForSearch.setSelectedItem(searchValue);
-//         }
-        // setFiltersclean();
 
 
     }//GEN-LAST:event_comboBoxSearchActionPerformed
@@ -2343,7 +2348,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         Tab tab = tabs.get(tabName);
         String[] searchFields = tab.getSearchFields();
-        System.out.println(searchFields + "11111111");
+       
 //        if (searchFields != null) {
 //            comboBoxSearch.setModel(new DefaultComboBoxModel(searchFields));
 //        }
@@ -2373,20 +2378,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         || comboBoxSearch.getSelectedItem().toString().equalsIgnoreCase("rk")) {
                     if (!comboBoxForSearch.getSelectedItem().toString().startsWith("Enter")
                             || !comboBoxForSearch.getSelectedItem().toString().endsWith("here")) {
-//                // since the default message is "Enter blablabla here", we dont want to search this, so a cleanfilter is made here
-//                setFiltersclean();
-//
-//            } else {
-//                // directly use this method to search by filter
 
                         filterBySearch();
-//
+
                     }
-//
-//        } else {
-//            // Same reason as above
-//            setFiltersclean();
-////           
+
                 }
 
             }
@@ -2437,6 +2433,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         String tabName = getSelectedTabName();
         updateComboList(searchColName, tabName);
+        LoggingAspect.afterReturn("All tabs reload complete");
 
     }//GEN-LAST:event_menuItemReloadAllDataActionPerformed
 
@@ -2957,9 +2954,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             sql = "SELECT * FROM " + str + "0 END, taskId ASC";
         }
         loadTable(sql, table);
-
-        informationLabel.setText("Selected Rows Move to the End...");
-        startCountDownFromNow(10);
+        LoggingAspect.afterReturn("Selected Rows Move to the End...");
+//        informationLabel.setText("Selected Rows Move to the End...");
+//        startCountDownFromNow(10);
 
         ListSelectionModel model = table.getSelectionModel();
         model.clearSelection();
@@ -3173,8 +3170,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         }
         if (updateSuccessful) {
-            informationLabel.setText(("Edits uploaded successfully!"));
-            startCountDownFromNow(5);
+            LoggingAspect.afterReturn("Edits uploaded successfully!");
+//            informationLabel.setText(("Edits uploaded successfully!"));
+//            startCountDownFromNow(5);
         }
         return updateSuccessful;
     }
@@ -3653,8 +3651,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             JTable table = tab.getTable();
 
             loadTable(table);
-            informationLabel.setText("Table loaded succesfully");
-            startCountDownFromNow(10);
+            LoggingAspect.afterReturn("Table loaded succesfully");
+//            informationLabel.setText("Table loaded succesfully");
+//            startCountDownFromNow(10);
             setTableListeners(table, this);
 
             String[] colNames = tab.getTableColNames();
@@ -3666,7 +3665,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 System.out.println(ColumnNameConsistency.getErrorMessage());
 //                logWindow.addMessage(a);
 //                logWindow.addMessageWithDate("3:" + a);
-                setInformationLabel("Column Name(s) is(are) different from what in database", 5);
+                LoggingAspect.afterReturn("Column Name(s) is(are) different from what in database");
             }
         }
 
@@ -3883,8 +3882,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 // output pop up dialog that a record was deleted 
 //                JOptionPane.showMessageDialog(this, rowCount + " Record(s) Deleted");
-                informationLabel.setText(rowCount + " Record(s) Deleted");
-                startCountDownFromNow(10);
+                LoggingAspect.afterReturn(rowCount + " Record(s) Deleted");
+//                informationLabel.setText(rowCount + " Record(s) Deleted");
+//                startCountDownFromNow(10);
                 // set label record information
                 String tabName = getSelectedTabName();
                 Tab tab = tabs.get(tabName);
@@ -4011,8 +4011,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         modifiedTableData.getNewData().clear();  // clear any stored changes (new data)
         loadTable(table); // reverts the model back
 
-        informationLabel.setText("Nothing has been Changed!");
-        startCountDownFromNow(5);
+        LoggingAspect.afterReturn("Nothing has been Changed!");
+//        informationLabel.setText("Nothing has been Changed!");
+//        startCountDownFromNow(5);
 
         modifiedTableData.reloadData();  // reloads data of new table (old data) to compare with new changes (new data)
 
