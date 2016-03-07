@@ -122,7 +122,7 @@ public class AddIssueWindow extends JFrame {
         createTable();
 
         // create a new empty edit form
-        createEmptyForm();
+        createForm();
 
         //
         addIssueMode(addIssueMode);
@@ -153,8 +153,8 @@ public class AddIssueWindow extends JFrame {
         statement = projectManager.getStatement();
 
         selectedTable = projectManager.getSelectedTable();
-        System.out.println("the first row number in current table is: " + selectedTable.
-                getValueAt(0, 0) + " and the row num in view is: " + selectedTable.getValueAt(row, 0));
+//        System.out.println("the first row number in current table is: " + selectedTable.
+//                getValueAt(0, 0) + " and the row num in view is: " + selectedTable.getValueAt(row, 0));
 
         projectManager.setAddRecordsWindowShow(true);
 
@@ -177,7 +177,7 @@ public class AddIssueWindow extends JFrame {
         // create a new table with tableSelected values
         createTable();
 
-        createEmptyForm();
+        createForm();
 
         //setCopyAndPasteKeyEvent();
         idText.setText(Integer.toString(id));
@@ -520,6 +520,8 @@ public class AddIssueWindow extends JFrame {
         dateOpened.setText(" dateOpened");
 
         dateOpenedText.setText("jTextField1");
+        dateOpenedText.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        dateOpenedText.setMargin(new java.awt.Insets(-1, -1, -1, -1));
         dateOpenedText.setName("dateOpened"); // NOI18N
         dateOpenedText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -807,7 +809,7 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_buttonSubmitActionPerformed
 
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        System.out.println(selectedTable.getValueAt(0, 0));
+//        System.out.println(selectedTable.getValueAt(0, 0));
 
         projectManager.makeTableEditable(false, getIssueActiveTabName());
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
@@ -860,11 +862,11 @@ public class AddIssueWindow extends JFrame {
 
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
         int row = checkConsistencyOfIdAndRowNum();
-        System.out.println("real row is: " + row);
+//        System.out.println("real row is: " + row);
         if (row != -1) {
             for (int col = 0; col < formValues.length; col++) {
-                System.out.println(col + ": " + formValues[col]);
-                System.out.println("row 's id is: " + selectedTable.getValueAt(rowInView, 0));
+//                System.out.println(col + ": " + formValues[col]);
+//                System.out.println("row 's id is: " + selectedTable.getValueAt(rowInView, 0));
                 if (formValues[col] != null) {
 
                     selectedTable.setValueAt(formValues[col], rowInView, col + 1);
@@ -1263,7 +1265,7 @@ public class AddIssueWindow extends JFrame {
     private javax.swing.JTextField versionText;
     // End of variables declaration//GEN-END:variables
 
-    private void createEmptyForm() {
+    private void createForm() {
 //        labelsInForm = new HashMap<String, JLabel>();
         textAreasInForm = new HashMap<String, JTextField>();
 
@@ -1323,13 +1325,14 @@ public class AddIssueWindow extends JFrame {
             @Override
             public void insertUpdate(DocumentEvent e) {
 
-                try {
-                    System.out.println("insert: " + e.getDocument().getText
-                                            (0,e.getDocument().getLength()));
-
-                } catch (BadLocationException ex) {
-                    LoggingAspect.afterThrown(ex);
-                }
+//                try {
+//                    System.out.println("insert: " + e.getDocument().getText
+//                                            (0,e.getDocument().getLength()));
+//
+//                } catch (BadLocationException ex) {
+//                    Logger.getLogger(AddIssueWindow.class
+//                            .getName()).log(Level.SEVERE, null, ex);
+//                }
                 String columnName = (String) e.getDocument().getProperty("id");
                 String value = "";
                 if (!columnName.equals("description")) {
@@ -1351,13 +1354,14 @@ public class AddIssueWindow extends JFrame {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                try {
-                    System.out.println("removed: " + e.getDocument().getText
-                                            (0,e.getDocument().getLength()));
-
-                } catch (BadLocationException ex) {
-                    LoggingAspect.afterThrown(ex);
-                }
+//                try {
+//                    System.out.println("removed: " + e.getDocument().getText
+//                                            (0,e.getDocument().getLength()));
+//
+//                } catch (BadLocationException ex) {
+//                    Logger.getLogger(AddIssueWindow.class
+//                            .getName()).log(Level.SEVERE, null, ex);
+//                }
                 String columnName = (String) e.getDocument().getProperty("id");
                 String value = "";
                 if (!columnName.equals("description")) {
@@ -1378,13 +1382,14 @@ public class AddIssueWindow extends JFrame {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                try {
-                    System.out.println("changed: " + e.getDocument().getText(0,
-                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
-
-                } catch (BadLocationException ex) {
-                    LoggingAspect.afterThrown(ex);
-                }
+//                try {
+//                    System.out.println("changed: " + e.getDocument().getText(0,
+//                            e.getDocument().getLength()) + "in " + e.getDocument().getProperty("id"));
+//
+//                } catch (BadLocationException ex) {
+//                    Logger.getLogger(AddIssueWindow.class
+//                            .getName()).log(Level.SEVERE, null, ex);
+//                }
             }
 
         };
@@ -1393,7 +1398,7 @@ public class AddIssueWindow extends JFrame {
             if (columnNames[i].equals("description")) {
                 doc = descriptionText.getDocument();
             } else {
-                System.out.println(columnNames[i]);
+//                System.out.println(columnNames[i]);
                 doc = textAreasInForm.get(columnNames[i]).getDocument();
             }
             doc.addDocumentListener(textDocumentLis);
