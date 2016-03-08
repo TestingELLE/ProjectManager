@@ -77,7 +77,7 @@
                                               </Group>
                                           </Group>
                                       </Group>
-                                      <EmptySpace pref="119" max="32767" attributes="0"/>
+                                      <EmptySpace max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="dateOpened" min="-2" max="-2" attributes="0"/>
                                           <Component id="dateOpenedText" min="-2" pref="111" max="-2" attributes="0"/>
@@ -104,7 +104,7 @@
                                               <Component id="BtnNext" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" attributes="0">
-                                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                              <EmptySpace min="0" pref="6" max="32767" attributes="0"/>
                                               <Component id="jScrollPane7" min="-2" pref="580" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -114,78 +114,64 @@
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="app" min="-2" max="-2" attributes="0"/>
-                                  <Component id="appText" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="93" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jPanel1" max="32767" attributes="0"/>
-                              </Group>
+                              <EmptySpace min="-2" pref="177" max="-2" attributes="0"/>
+                              <Component id="jPanel2" max="32767" attributes="0"/>
                               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                              <Component id="programmer" linkSize="8" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="dateOpened" linkSize="8" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="idText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="id" alignment="3" min="-2" pref="21" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                                      <Component id="programmer" linkSize="8" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="dateOpened" linkSize="8" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="idText" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="id" alignment="3" min="-2" pref="21" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="rk" linkSize="8" alignment="1" min="-2" pref="27" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="dateOpenedText" linkSize="7" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="programmerText" linkSize="7" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="rkText" linkSize="7" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="checkbox1" linkSize="7" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lock" linkSize="7" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                              <Component id="title" min="-2" pref="19" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                              <Component id="titleText" min="-2" pref="26" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="BtnNext" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="BtnPrevious" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                              <Component id="jScrollPane7" min="-2" pref="505" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="rk" linkSize="8" alignment="1" min="-2" pref="27" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="dateOpenedText" linkSize="7" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="programmerText" linkSize="7" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="rkText" linkSize="7" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="116" pref="116" max="-2" attributes="0"/>
+                              <Component id="description" min="-2" pref="20" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="checkbox1" linkSize="7" min="-2" max="-2" attributes="0"/>
-                          <Component id="lock" linkSize="7" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                      <Component id="title" min="-2" pref="19" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                      <Component id="titleText" min="-2" pref="26" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="BtnNext" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="BtnPrevious" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="jScrollPane7" min="-2" pref="505" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="app" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="appText" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="116" pref="116" max="-2" attributes="0"/>
-                      <Component id="description" min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="app">
-              <Properties>
-                <Property name="text" type="java.lang.String" value=" app"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="title">
               <Properties>
                 <Property name="text" type="java.lang.String" value=" title"/>
@@ -263,6 +249,11 @@
                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="appText" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="app" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
                           <EmptySpace max="32767" attributes="0"/>
                           <Component id="btnCloseIssue" min="-2" pref="126" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -283,14 +274,16 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="app" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="dateClosed" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="version" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="dateClosedText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="versionText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnCloseIssue" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="appText" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnCloseIssue" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="dateClosedText" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="versionText" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="12" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -361,6 +354,20 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCloseIssueActionPerformed"/>
                   </Events>
                 </Component>
+                <Component class="javax.swing.JLabel" name="app">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value=" app"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="appText">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="jTextField1"/>
+                    <Property name="name" type="java.lang.String" value="app" noResource="true"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="appText.setPreferredSize(new Dimension(84,28));"/>
+                  </AuxValues>
+                </Component>
               </SubComponents>
             </Container>
             <Component class="javax.swing.JTextField" name="titleText">
@@ -412,12 +419,6 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnPreviousActionPerformed"/>
               </Events>
-            </Component>
-            <Component class="javax.swing.JTextField" name="appText">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="jTextField1"/>
-                <Property name="name" type="java.lang.String" value="app" noResource="true"/>
-              </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="programmerText">
               <Properties>
