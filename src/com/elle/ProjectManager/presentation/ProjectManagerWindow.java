@@ -1425,8 +1425,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
         comboBoxValue.setModel(comboBoxSearchModel);
         Map comboBoxForSearchValue = loadingDropdownList();
-        //Map comboBoxForSearchValue = this.comboBoxForSearchDropDown.get(tableName);
-        //       Map comboBoxForSearchValue = valueListMap;
+       
         JTable table = tabs.get(tableName).getTable();
 
         for (int col = 0; col < table.getColumnCount(); col++) {
@@ -1445,7 +1444,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 } else if (colName.equalsIgnoreCase("rk")) {
                     if (dropDownList.get(0) == "") {
                         ArrayList<Object> list = new ArrayList<Object>();
-                        // list.add("");
+                        
                         for (int i = 1; i < dropDownList.size(); i++) {
                             list.add(dropDownList.get(i));
                         }
@@ -1454,7 +1453,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         dropDownList = list;
                     }
                 } else if (colName.equalsIgnoreCase("programmer")) {
-                    Object nullValue = ""; //dropDownList.get(0);
+                    Object nullValue = ""; 
 
                     Collections.sort(dropDownList, new Comparator<Object>() {
                         public int compare(Object o1, Object o2) {
@@ -2371,7 +2370,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             switch (fieldToSearch) {
                 case "programmer":
                 case "dateopened":
-                case "dateClosed":
+                case "dateclosed":
                 case "rk":
                     filterBySearch();
                     break;
