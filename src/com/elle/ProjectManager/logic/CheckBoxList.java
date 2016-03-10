@@ -33,7 +33,7 @@ public class CheckBoxList extends JList
       setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
    }
 
-   /**
+  /**
     * CellRenderer
     * This is the ListCellRenderer used for the CheckBoxList JList.
     */
@@ -43,6 +43,7 @@ public class CheckBoxList extends JList
                     JList list, Object value, int index,
                     boolean isSelected, boolean cellHasFocus)
       {
+          if(value instanceof JCheckBox){
          JCheckBox checkbox = (JCheckBox) value;
          checkbox.setBackground(isSelected ?
                  getSelectionBackground() : getBackground());
@@ -56,6 +57,13 @@ public class CheckBoxList extends JList
           UIManager.getBorder(
            "List.focusCellHighlightBorder") : noFocusBorder);
          return checkbox;
+          }
+          else if(value instanceof JLabel){
+              return (JLabel)value;
+          }
+          else{
+              return (Component)value;
+          }
       }
    }
 }
