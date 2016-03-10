@@ -81,20 +81,22 @@ public class EditableTableModel extends DefaultTableModel {
 
         int indexOfDotInClassName = columnClassName.indexOf(".", 5)+1;
 
-        if (columnClassName.substring(indexOfDotInClassName).equalsIgnoreCase("string")) {
-            return String.class;
-        } else if (columnClassName.substring(indexOfDotInClassName).equalsIgnoreCase("integer") 
-                || columnClassName.substring(indexOfDotInClassName).equalsIgnoreCase("int")
-                || columnClassName.substring(indexOfDotInClassName).equalsIgnoreCase("long")) {
-            return Integer.class;
-        } else if (columnClassName.substring(indexOfDotInClassName).equalsIgnoreCase("date")) {
-            return Date.class;
-        }else if (columnClassName.substring(indexOfDotInClassName).toLowerCase().contains("decimal")) {
-            return BigDecimal.class;
-        }else if (columnClassName.substring(indexOfDotInClassName).toLowerCase().contains("timestamp")) {
-            return Timestamp.class;
-        }else {
-            return Object.class;
+        columnClassName = columnClassName.substring(indexOfDotInClassName).toLowerCase();
+        
+        switch(columnClassName){
+            case "string":
+                return String.class;
+            case "integer": case "int": case "long":
+                return Integer.class;
+            case "date":
+                return Date.class;
+            case "decimal":
+                return BigDecimal.class;
+            case "timestamp":
+                return Timestamp.class;
+            default:
+                return Object.class;
+                
         }
 
     }
