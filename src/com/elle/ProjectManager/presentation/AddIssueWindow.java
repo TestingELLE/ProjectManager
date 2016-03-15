@@ -194,7 +194,7 @@ public class AddIssueWindow extends JFrame {
 
         this.setTitle("view issue in " + table.getName());
 
-        this.setPreferredSize(new Dimension(595, 760));
+        this.setPreferredSize(new Dimension(595, 765));
 
         addIssueMode(addIssueMode);
 
@@ -477,10 +477,10 @@ public class AddIssueWindow extends JFrame {
         formPane = new javax.swing.JPanel();
         title = new javax.swing.JLabel();
         id = new javax.swing.JLabel();
-        programmer = new javax.swing.JLabel();
         rk = new javax.swing.JLabel();
-        dateOpened = new javax.swing.JLabel();
         dateOpenedText = new javax.swing.JTextField();
+        programmer = new javax.swing.JLabel();
+        dateOpened = new javax.swing.JLabel();
         jScrollPane7 = new javax.swing.JScrollPane();
         descriptionText = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
@@ -504,8 +504,8 @@ public class AddIssueWindow extends JFrame {
         rkText = new javax.swing.JTextField();
         lock = new javax.swing.JLabel();
         checkbox1 = new java.awt.Checkbox();
-        submitter = new javax.swing.JLabel();
         submitterText = new javax.swing.JTextField();
+        submitter = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -523,11 +523,7 @@ public class AddIssueWindow extends JFrame {
 
         id.setText(" id");
 
-        programmer.setText(" programmer");
-
         rk.setText(" rk");
-
-        dateOpened.setText(" dateOpened");
 
         dateOpenedText.setText("jTextField1");
         dateOpenedText.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -543,6 +539,11 @@ public class AddIssueWindow extends JFrame {
                 dateOpenedTextKeyReleased(evt);
             }
         });
+
+        programmer.setText(" programmer");
+
+        dateOpened.setText(" dateOpened");
+        dateOpened.setPreferredSize(new java.awt.Dimension(79, 12));
 
         descriptionText.setColumns(20);
         descriptionText.setLineWrap(true);
@@ -622,7 +623,6 @@ public class AddIssueWindow extends JFrame {
                 .addComponent(buttonCancel)
                 .addGap(4, 4, 4))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(app))
@@ -714,27 +714,22 @@ public class AddIssueWindow extends JFrame {
                 .addContainerGap()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
+                        .addGap(7, 7, 7)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addGap(7, 7, 7)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lock)
-                                    .addComponent(id))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(idText)
-                                    .addComponent(checkbox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(85, 85, 85)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(submitter)))
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)
+                            .addComponent(lock)
+                            .addComponent(id))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(checkbox1, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(idText))
+                        .addGap(100, 100, 100)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dateOpened))
+                            .addComponent(dateOpened, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -755,47 +750,60 @@ public class AddIssueWindow extends JFrame {
                             .addGroup(formPaneLayout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(formPaneLayout.createSequentialGroup()
                                         .addComponent(description)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(BtnPrevious)
                                         .addGap(0, 0, 0)
-                                        .addComponent(BtnNext))
-                                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(18, 18, 18))))
+                                        .addComponent(BtnNext)))))
+                        .addGap(18, 18, 18))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         formPaneLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {dateOpenedText, submitterText});
 
-        formPaneLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {dateOpened, submitter});
-
         formPaneLayout.setVerticalGroup(
             formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(formPaneLayout.createSequentialGroup()
-                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(programmer)
-                    .addComponent(dateOpened)
-                    .addComponent(idText)
-                    .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(submitter))
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(checkbox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lock))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addGap(0, 13, Short.MAX_VALUE)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(idText)
+                                .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(dateOpened, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(programmer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 0, 0)
+                        .addComponent(lock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(22, 22, 22)
+                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(checkbox1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(39, 39, 39)))
                 .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
-                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BtnNext)
-                    .addComponent(BtnPrevious)
-                    .addComponent(description, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(BtnNext)
+                            .addComponent(BtnPrevious)))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(description, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, 0)
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
@@ -804,9 +812,7 @@ public class AddIssueWindow extends JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        formPaneLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {checkbox1, dateOpenedText, lock, programmerText, rkText, submitterText});
-
-        formPaneLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {dateOpened, programmer, rk, submitter});
+        formPaneLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {dateOpenedText, programmerText, rkText, submitterText});
 
         scrollPane.setViewportView(formPane);
 
@@ -820,7 +826,7 @@ public class AddIssueWindow extends JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 736, Short.MAX_VALUE))
+                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 746, Short.MAX_VALUE))
         );
 
         pack();
@@ -1017,8 +1023,8 @@ public class AddIssueWindow extends JFrame {
             String message = "\n" + "-- by " + userName + " on " + today + "-- \n";
             //String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
             dateArea.insert(message, pos);
-
-            dateArea.setCaretPosition(pos + 31);
+           
+            dateArea.setCaretPosition(pos + userName.length() +  25);
 
         }
     }//GEN-LAST:event_descriptionTextKeyReleased
