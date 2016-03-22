@@ -26,7 +26,7 @@ public class LogWindow extends JFrame {
     // variables
     public static final String HYPHENS = "-------------------------"; // delimiter
     public final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
-    private static String fileName;
+    public static String fileName;
     private ArrayList<LogMessage> logMessages = new ArrayList<>();
     
     // components
