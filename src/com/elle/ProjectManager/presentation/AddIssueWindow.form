@@ -60,7 +60,6 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="lock" min="-2" max="-2" attributes="0"/>
                                   <Component id="id" min="-2" max="-2" attributes="0"/>
@@ -450,7 +449,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="lock">
               <Properties>
-                <Property name="text" type="java.lang.String" value="lock"/>
+                <Property name="text" type="java.lang.String" value=" lock"/>
               </Properties>
             </Component>
             <Component class="java.awt.Checkbox" name="checkbox1">

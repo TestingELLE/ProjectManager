@@ -16,6 +16,8 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 //import java.awt.geom.Rectangle2D;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -244,7 +246,15 @@ public class AddIssueWindow extends JFrame {
         int y = pmWindowLocation.y - 120;
         this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
 
+       
+        
         this.pack();
+         String ID = idText.getText();
+         String submitter = getSubmitter(ID);
+         submitterText.setText(submitter);
+      
+         
+       
     }
 
     private void defaultSetting() {
@@ -256,6 +266,7 @@ public class AddIssueWindow extends JFrame {
 
         //set dateOpen to today's date
         makeContentDate(dateOpenedText);
+        makeContentSubmitter(submitterText);
         buttonSubmit.setEnabled(false);
 
     }
@@ -702,7 +713,7 @@ public class AddIssueWindow extends JFrame {
         rkText.setText("jTextField2");
         rkText.setName("rk"); // NOI18N
 
-        lock.setText("lock");
+        lock.setText(" lock");
 
         submitter.setText(" submitter");
 
@@ -714,7 +725,7 @@ public class AddIssueWindow extends JFrame {
                 .addContainerGap()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
-                        .addGap(7, 7, 7)
+                        .addGap(0, 0, 0)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lock)
                             .addComponent(id))
@@ -1089,7 +1100,7 @@ public class AddIssueWindow extends JFrame {
                 if (col != table.getColumnCount() - 1) {
                     insertInto += table.getColumnName(col) + ", ";
                 } else {
-                    insertInto += table.getColumnName(col) + ") ";
+                    insertInto += table.getColumnName(col) + ", submitter) ";
                 }
             }
 
@@ -1116,14 +1127,20 @@ public class AddIssueWindow extends JFrame {
                         cellValue = "'" + cellValue + "'";
                     }
                 }
+                String submitter = submitterText.getText();
 
                 // add each value for each column to the values statement
                 if (col != table.getColumnCount() - 1) {
                     values += cellValue + ", ";
                 } else {
-                    values += cellValue + ");";
+                    values += cellValue + ", '" + submitter + "');";
                 }
             }
+            System.out.println(insertInto + values);
+           
+            
+           
+          
 
             try {
                 // execute the sql statement
@@ -1133,6 +1150,11 @@ public class AddIssueWindow extends JFrame {
                     DBConnection.open();
                     statement = DBConnection.getStatement();
                     statement.executeUpdate(insertInto + values);
+                    
+
+                   
+                   
+                  
                     numRowsAdded++;   // increment the number of rows added
                 }
             } catch (SQLException e) {
@@ -1233,6 +1255,40 @@ public class AddIssueWindow extends JFrame {
         String today = dateFormat.format(date);
         dateArea.setText(today);
     }
+    
+    private void makeContentSubmitter(JTextField submitterArea){
+        submitterArea.requestFocusInWindow();
+        submitterArea.selectAll();
+        String submitter = projectManager.getUserName();
+        submitterArea.setText(submitter);
+       
+    }
+    
+    public String  getSubmitter(String ID){
+        String name = "";
+        String sql = "select submitter from issues where ID = '" + ID + "';";
+        ResultSet rs = null;
+        DBConnection.close();
+        DBConnection.open();
+
+        statement = DBConnection.getStatement();
+          try {
+             rs = statement.executeQuery(sql);
+                
+            while (rs.next()) {
+       name = rs.getString("submitter");
+        
+        System.out.println(name);
+        
+}
+        
+            
+        } catch (Exception ex) {
+            LoggingAspect.afterThrown(ex);
+        }
+          return name;
+    }
+    
 
     public void setFormValue(Object[] CellValue) {
         formValues = CellValue;
@@ -1305,6 +1361,7 @@ public class AddIssueWindow extends JFrame {
         textAreaArray[4] = (rkText);
         textAreaArray[5] = (dateClosedText);
         textAreaArray[6] = (versionText);
+        
         String areaName = "";
 
         InputMap ip = null;
