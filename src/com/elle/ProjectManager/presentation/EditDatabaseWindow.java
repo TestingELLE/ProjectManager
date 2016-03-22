@@ -1,7 +1,14 @@
 
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.database.DBConnection;
+import com.elle.ProjectManager.database.Database;
+import com.elle.ProjectManager.database.Server;
 import com.elle.ProjectManager.logic.LoggingAspect;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
@@ -9,7 +16,12 @@ import java.io.IOException;
 import java.io.*;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
-import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.Vector;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTable;
+import javax.swing.Timer;
+import javax.swing.table.DefaultTableModel;
 
 
 /**
@@ -21,25 +33,33 @@ import javax.swing.JOptionPane;
  */
 public class EditDatabaseWindow extends javax.swing.JFrame {
     
-    LoginWindow L ;
+    LoginWindow loginWindow ;
     boolean flag = false;   // true if call this class from log in window
+    private ArrayList<Server> servers;
     
     /**
      * Creates new form EditDatabaseList
      */
     public EditDatabaseWindow() {
-        initComponents();
-        this.setLocationRelativeTo(null);
-        loadList();
+        this(null);
     }
     
     // Call this class from log in window
-    public EditDatabaseWindow(LoginWindow l) {
+    public EditDatabaseWindow(LoginWindow loginWindow) {
         initComponents();
-        L = l;
-        flag = true;
-        this.setLocationRelativeTo(L);
-        loadList();
+        this.loginWindow = loginWindow;
+
+        labelServersInfo.setText("");
+        labelDatabasesInfo.setText("");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        
+        // set the servers, cb, databases
+        servers = DBConnection.readServers();
+        setServersTableListener();
+        setDatabasesTableListener();
+        fillServersTable(tableServers);
+        cbServer.setModel(getServerNamesCBModel());
+        fillDatabasesTable(tableDatabases, servers.get(0).getName());
     }
 
     /**
@@ -51,26 +71,214 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel3 = new javax.swing.JPanel();
+        btnSaveServers = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tableServers = new javax.swing.JTable();
+        btnCancelServers = new javax.swing.JButton();
+        btnAddServers = new javax.swing.JButton();
+        btnDeleteServers = new javax.swing.JButton();
+        labelServersInfo = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jServer = new javax.swing.JComboBox();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jDBList = new javax.swing.JTextArea();
-        jPanel2 = new javax.swing.JPanel();
-        jConfirm = new javax.swing.JButton();
-        jCancel = new javax.swing.JButton();
+        cbServer = new javax.swing.JComboBox();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tableDatabases = new javax.swing.JTable();
+        btnSaveDatabases = new javax.swing.JButton();
+        btnCancelDatabases = new javax.swing.JButton();
+        btnAddDatabases = new javax.swing.JButton();
+        btnDeleteDatabases = new javax.swing.JButton();
+        labelDatabasesInfo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AWS", "Local" }));
-        jServer.addActionListener(new java.awt.event.ActionListener() {
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        btnSaveServers.setText("Save");
+        btnSaveServers.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jServerActionPerformed(evt);
+                btnSaveServersActionPerformed(evt);
             }
         });
 
-        jDBList.setColumns(20);
-        jDBList.setRows(5);
-        jScrollPane1.setViewportView(jDBList);
+        tableServers.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Default", "Server Name", "Server URL"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tableServers.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        jScrollPane2.setViewportView(tableServers);
+        if (tableServers.getColumnModel().getColumnCount() > 0) {
+            tableServers.getColumnModel().getColumn(0).setMinWidth(50);
+            tableServers.getColumnModel().getColumn(0).setPreferredWidth(50);
+            tableServers.getColumnModel().getColumn(0).setMaxWidth(50);
+            tableServers.getColumnModel().getColumn(1).setMinWidth(200);
+            tableServers.getColumnModel().getColumn(1).setPreferredWidth(200);
+            tableServers.getColumnModel().getColumn(1).setMaxWidth(200);
+            tableServers.getColumnModel().getColumn(2).setResizable(false);
+            tableServers.getColumnModel().getColumn(2).setPreferredWidth(300);
+        }
+
+        btnCancelServers.setText("Cancel");
+        btnCancelServers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelServersActionPerformed(evt);
+            }
+        });
+
+        btnAddServers.setText("Add");
+        btnAddServers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddServersActionPerformed(evt);
+            }
+        });
+
+        btnDeleteServers.setText("Delete");
+        btnDeleteServers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteServersActionPerformed(evt);
+            }
+        });
+
+        labelServersInfo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelServersInfo.setText("jLabel1");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(110, 110, 110)
+                        .addComponent(labelServersInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(130, 130, 130))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(btnAddServers, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDeleteServers, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSaveServers, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancelServers, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSaveServers)
+                    .addComponent(btnCancelServers)
+                    .addComponent(btnAddServers)
+                    .addComponent(btnDeleteServers))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(labelServersInfo)
+                .addGap(0, 0, 0))
+        );
+
+        jTabbedPane1.addTab("Servers", jPanel3);
+
+        cbServer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AWS", "Local" }));
+        cbServer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbServerActionPerformed(evt);
+            }
+        });
+
+        tableDatabases.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Default", "Database Name"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Boolean.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(tableDatabases);
+        if (tableDatabases.getColumnModel().getColumnCount() > 0) {
+            tableDatabases.getColumnModel().getColumn(0).setMinWidth(50);
+            tableDatabases.getColumnModel().getColumn(0).setPreferredWidth(50);
+            tableDatabases.getColumnModel().getColumn(0).setMaxWidth(50);
+        }
+
+        btnSaveDatabases.setText("Save");
+        btnSaveDatabases.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveDatabasesActionPerformed(evt);
+            }
+        });
+
+        btnCancelDatabases.setText("Cancel");
+        btnCancelDatabases.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelDatabasesActionPerformed(evt);
+            }
+        });
+
+        btnAddDatabases.setText("Add");
+        btnAddDatabases.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddDatabasesActionPerformed(evt);
+            }
+        });
+
+        btnDeleteDatabases.setText("Delete");
+        btnDeleteDatabases.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteDatabasesActionPerformed(evt);
+            }
+        });
+
+        labelDatabasesInfo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelDatabasesInfo.setText("jLabel2");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -79,231 +287,267 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jServer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
+                    .addComponent(cbServer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(104, 104, 104)
+                                .addComponent(labelDatabasesInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(btnAddDatabases, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnDeleteDatabases, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnSaveDatabases, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(5, 5, 5)))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancelDatabases, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(8, 8, 8)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jServer)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
+                .addComponent(cbServer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSaveDatabases)
+                    .addComponent(btnCancelDatabases)
+                    .addComponent(btnAddDatabases)
+                    .addComponent(btnDeleteDatabases))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(labelDatabasesInfo)
                 .addContainerGap())
         );
 
-        jConfirm.setText("Confirm");
-        jConfirm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jConfirmActionPerformed(evt);
-            }
-        });
-
-        jCancel.setText("Cancel");
-        jCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCancelActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(jConfirm, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(jCancel, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-                .addGap(35, 35, 35))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jConfirm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(20, 20, 20))
-        );
+        jTabbedPane1.addTab("Databases", jPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jTabbedPane1)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCancelActionPerformed
-        dispose();
-    }//GEN-LAST:event_jCancelActionPerformed
+    private void cbServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbServerActionPerformed
+        String selectedServer = cbServer.getSelectedItem().toString();
+        fillDatabasesTable(tableDatabases, selectedServer);
+    }//GEN-LAST:event_cbServerActionPerformed
 
-    private void jConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jConfirmActionPerformed
-        saveRecords();
-    }//GEN-LAST:event_jConfirmActionPerformed
+    private void btnSaveServersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveServersActionPerformed
+        int rowCount = tableServers.getModel().getRowCount(); // these might be null
 
-    private void jServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jServerActionPerformed
-        loadList();
-    }//GEN-LAST:event_jServerActionPerformed
-    
-    /**
-     *  This looks like the same method in LoginWindow class
-     */
-    private void loadList() {
-        File dbFile = new File("database.txt");
-//        String server = jServer.getSelectedItem().toString();
-        String ln = System.getProperty("line.separator");
-        String list = "";
+        // update the servers
+        for(int row = 0; row < rowCount; row++){
+            boolean setDefault = (boolean) tableServers.getModel().getValueAt(row, 0);
+            String serverName = (String) tableServers.getModel().getValueAt(row, 1);
+            String serverURL = (String) tableServers.getModel().getValueAt(row, 2);
+            servers.get(row).setDefaultSelection(setDefault);
+            servers.get(row).setName(serverName);
+            servers.get(row).setUrl(serverURL);
+        }
         
-        if (!dbFile.exists()) {
-//            if (server.equals("AWS"))
-                jDBList.setText("dummy\nElle2015");
-//            else if (server.equals("Local"))
-//                jDBList.setText("text");
+        DBConnection.writeServers(servers); // save to file
+        cbServer.setModel(getServerNamesCBModel()); // update server dropdown
+        fillDatabasesTable(tableDatabases, cbServer.getSelectedItem().toString());
+        labelServersInfo.setText("Servers saved!");
+        startCountDownFromNow();
         
-        } else {    // this file exists
-            BufferedReader buf = null;
-            try{
-                buf = new BufferedReader(new FileReader(dbFile));
-                // buf = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-                String temp = null ;
-                while ((temp = buf.readLine()) != null ){
-//                    if (temp.equals(server)) {
-//                        while (!(temp = buf.readLine()).equals("-1") && temp != null) {
-//                                && !temp.equals(ln))
-                            if (!temp.equals(""))       // remove extra lines
-                                list += temp + "\n";    
-//                        }
-//                        break;
-//                    }
-                }
-                if (list.equals("")) {
-                    // To do
-                } else {
-                    jDBList.setText(list);
-                }
-                
-            } catch(Exception e) {
-                LoggingAspect.afterThrown(e);
+        //update loginwindow
+        if(loginWindow != null){
+            loginWindow.loadServers();
+        }
+    }//GEN-LAST:event_btnSaveServersActionPerformed
+
+    private void btnSaveDatabasesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveDatabasesActionPerformed
+        int dbCount = tableDatabases.getModel().getRowCount(); // these might be null
+        int server = cbServer.getSelectedIndex();
+
+        // update the servers
+        for(int db = 0; db < dbCount; db++){
+            boolean setDefault = (boolean) tableDatabases.getModel().getValueAt(db, 0);
+            String dbName = (String) tableDatabases.getModel().getValueAt(db, 1);
+            servers.get(server).getDatabases().get(db).setDefaultSelection(setDefault);
+            servers.get(server).getDatabases().get(db).setName(dbName);
+        }
+        DBConnection.writeServers(servers);
+        labelDatabasesInfo.setText("Databases saved!");
+        startCountDownFromNow();
+        
+        //update loginwindow
+        if(loginWindow != null){
+            loginWindow.loadServers();
+        }
+    }//GEN-LAST:event_btnSaveDatabasesActionPerformed
+
+    private void btnCancelServersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelServersActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelServersActionPerformed
+
+    private void btnAddServersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddServersActionPerformed
+        DefaultTableModel model = (DefaultTableModel)tableServers.getModel();
+        model.addRow(new Object[]{false,"",""});
+        servers.add(new Server());
+    }//GEN-LAST:event_btnAddServersActionPerformed
+
+    private void btnDeleteServersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteServersActionPerformed
+        int selectedRow = tableServers.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel)tableServers.getModel();
+        if(selectedRow != -1){
+            model.removeRow(selectedRow);
+            servers.remove(selectedRow);
+        }
+    }//GEN-LAST:event_btnDeleteServersActionPerformed
+
+    private void btnAddDatabasesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDatabasesActionPerformed
+        DefaultTableModel model = (DefaultTableModel)tableDatabases.getModel();
+        model.addRow(new Object[]{false,""});
+        int server = cbServer.getSelectedIndex();
+        servers.get(server).getDatabases().add(new Database());
+    }//GEN-LAST:event_btnAddDatabasesActionPerformed
+
+    private void btnDeleteDatabasesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteDatabasesActionPerformed
+        int server = cbServer.getSelectedIndex();
+        int database = tableDatabases.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel)tableDatabases.getModel();
+        if(database != -1){
+            model.removeRow(database);
+            servers.get(server).getDatabases().remove(database);
+        }
+    }//GEN-LAST:event_btnDeleteDatabasesActionPerformed
+
+    private void btnCancelDatabasesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelDatabasesActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelDatabasesActionPerformed
+
+
+    private void fillServersTable(JTable table){
+
+        // reset table
+        DefaultTableModel model = (DefaultTableModel)table.getModel();
+        model.setRowCount(0);
+        
+        // fill table with servers
+        for(int row = 0; row < servers.size(); row++){
+            Server server = servers.get(row);
+            Vector rowData = new Vector(3);
+            rowData.addElement(server.isDefaultSelection());
+            rowData.addElement(server.getName());
+            rowData.addElement(server.getUrl());
+            model.addRow(rowData);
+        }
+    }
+
+    private void fillDatabasesTable(JTable table, String serverName){
+        
+        // reset table
+        DefaultTableModel model = (DefaultTableModel)table.getModel();
+        model.setRowCount(0);
+        
+        // get the databases for the selected server
+        ArrayList<Database> databases = new ArrayList<>();
+        for(Server server: servers){
+            if(server.getName().equals(serverName)){
+                databases = server.getDatabases();
             }
         }
         
-        
+        // fill table with the databases
+        for(Database database: databases){
+            Vector rowData = new Vector(2);
+            rowData.addElement(database.isDefaultSelection());
+            rowData.addElement(database.getName());
+            model.addRow(rowData);
+        }
     }
     
-    public void saveRecords() {
-//        String server = jServer.getSelectedItem().toString();
-        String line, input = "";
-        String ln = System.getProperty("line.separator");
-        String dbList = jDBList.getText().replaceAll("\n", ln);
-        boolean recordExist = false;
-        
-        File dbFile = new File ("database.txt");
-        
-
-        // Rewrite the existing file
-        if (dbFile.exists()) {
-//            JOptionPane.showMessageDialog(null, dbFile.getName());
-            
-            // Check whether old records exist
-            try {
-                BufferedReader file = new BufferedReader(new FileReader("database.txt"));
-                try {
-                    while ((line = file.readLine()) != null) {
-//                        if (line.equals("AWS")) {
-//                            input += line + '\n';
-//                            while ((line = file.readLine()) != null && !line.equals("-1"))
-                                input += line + '\n';   // content that needed to be update
-                            recordExist = true;
-//                        } else {
-//                            other += line + '\n';   // unchanged content
-//                        }
-                    }
-                    
-                    if (recordExist) {  // records exist
-//                        input = server + "\n" + dbList + "\n-1\n";
-                        input = dbList;
-                        input = input.replaceAll("\n", ln);
-//                        other = other.replaceAll("\n", ln);
-                        FileOutputStream File = new FileOutputStream("database.txt");
-//                        File.write((input + other).getBytes());
-                        File.write(input.getBytes());
-                        
-                    } else {            // no relevent records
-                        try {
-                            JOptionPane.showMessageDialog(null, dbList);
-                            BufferedWriter output = new BufferedWriter(new FileWriter(dbFile, true));
-//                            output.append(server + "\n");
-                            output.append(dbList);
-//                            output.append("-1");
-                            output.close();
-                            
-                        } catch (FileNotFoundException ex) {
-                            LoggingAspect.afterThrown(ex);
-                        }
-                    }
-                } catch (IOException e) {
-                    LoggingAspect.afterThrown(e);
-                }
-            } catch (FileNotFoundException ex) {
-                LoggingAspect.afterThrown(ex);
-            }
-        
-        // Create a new file
-        } else {
-
-            try {
-//                JOptionPane.showMessageDialog(null, "2");
-                dbFile.createNewFile();
-            } catch (IOException ex) {
-                LoggingAspect.afterThrown(ex);
-            }
-            
-            // Output to the new file
-            try
-            {
-                JOptionPane.showMessageDialog(null, dbList);
-                PrintWriter printWriter = new PrintWriter(dbFile);
-//                printWriter.println (server);   // First line
-                printWriter.println (dbList);
-//                printWriter.println ("-1");     // Last line
-                printWriter.close();
-            } catch (FileNotFoundException ex) {
-                LoggingAspect.afterThrown(ex);
-            }
+    private DefaultComboBoxModel getServerNamesCBModel(){
+        Vector serverNames = new Vector();
+        for(Server server: servers){
+            serverNames.addElement(server.getName());
         }
-//        dbFile.getParentFile().mkdirs();
-        
-        // this is if the actual database list is edited in EditDatabaseWindow 
-        // then it updates the combobox with the new values in LoginWindow.
-        if (flag == true)   // go back to log in window
-            L.loadDBList();   
-        dispose();
+        return new DefaultComboBoxModel(serverNames);
+    }
+    
+    //set the timer for information Label show
+    public void startCountDownFromNow() {
+        Timer timer = new Timer(5 * 1000, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                labelServersInfo.setText("");
+                labelDatabasesInfo.setText("");
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
+    }
+    
+    private void setServersTableListener() {
+        tableServers.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int rows = tableServers.getRowCount();
+                int selectedRow = tableServers.rowAtPoint(e.getPoint());
+                int selectedCol = tableServers.columnAtPoint(e.getPoint());
+                boolean selectedDefault;
+                if(selectedCol == 0){ // this is the default checkbox column
+                    for(int row = 0; row < rows; row++){
+                        selectedDefault = (row == selectedRow)?true:false;
+                        tableServers.setValueAt(selectedDefault, row, 0);
+                    }
+                }
+            }
+        });
+    }
+
+    private void setDatabasesTableListener() {
+    tableDatabases.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int rows = tableDatabases.getRowCount();
+                int selectedRow = tableDatabases.rowAtPoint(e.getPoint());
+                int selectedCol = tableDatabases.columnAtPoint(e.getPoint());
+                boolean selectedDefault;
+                if(selectedCol == 0){ // this is the default checkbox column
+                    for(int row = 0; row < rows; row++){
+                        selectedDefault = (row == selectedRow)?true:false;
+                        tableDatabases.setValueAt(selectedDefault, row, 0);
+                    }
+                }
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jCancel;
-    private javax.swing.JButton jConfirm;
-    private javax.swing.JTextArea jDBList;
+    private javax.swing.JButton btnAddDatabases;
+    private javax.swing.JButton btnAddServers;
+    private javax.swing.JButton btnCancelDatabases;
+    private javax.swing.JButton btnCancelServers;
+    private javax.swing.JButton btnDeleteDatabases;
+    private javax.swing.JButton btnDeleteServers;
+    private javax.swing.JButton btnSaveDatabases;
+    private javax.swing.JButton btnSaveServers;
+    private javax.swing.JComboBox cbServer;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JComboBox jServer;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JLabel labelDatabasesInfo;
+    private javax.swing.JLabel labelServersInfo;
+    private javax.swing.JTable tableDatabases;
+    private javax.swing.JTable tableServers;
     // End of variables declaration//GEN-END:variables
+
 }

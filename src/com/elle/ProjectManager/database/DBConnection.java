@@ -1,7 +1,12 @@
 
 package com.elle.ProjectManager.database;
 
+import com.elle.ProjectManager.logic.FilePathFormat;
 import com.elle.ProjectManager.logic.LoggingAspect;
+import java.awt.Component;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +44,7 @@ public class DBConnection {
     private static Connection connection;
     private static Statement statement;
     private static final String SERVERS_FILENAME = "servers.xml";
+    private static Component parentComponent;
     
     /**
      * connect
@@ -57,7 +63,6 @@ public class DBConnection {
             DBConnection.database = selectedDB;
             DBConnection.userName = userName;
             DBConnection.userPassword = userPassword;
-            
             
             String url = "";
             ArrayList<Server> servers = readServers();
@@ -104,6 +109,7 @@ public class DBConnection {
         try {
             statement.close();
             connection.close();
+            LoggingAspect.afterReturn("Connection closed successful");
             return true;
         } catch (SQLException ex) {
             LoggingAspect.afterThrown(ex);
@@ -113,6 +119,7 @@ public class DBConnection {
     
     public static boolean isClosed(){
         try {
+            
             if(connection.isClosed()){
                 return true;
             }
@@ -234,30 +241,56 @@ public class DBConnection {
         // create an XMLInputFactory object
         XMLInputFactory inputFactory = XMLInputFactory.newFactory();
         try{
-            InputStream inputStream = DBConnection.class.getResourceAsStream(SERVERS_FILENAME);
-            InputStreamReader fileReader = new InputStreamReader(inputStream);
-            XMLStreamReader reader = inputFactory.createXMLStreamReader(fileReader);
+            // Reader
+            InputStream inputStream;
+            String file = FilePathFormat.supportFilePath() + SERVERS_FILENAME;
+            InputStreamReader inStrReader;
+            XMLStreamReader xmlStrReader;
+            if((new File(file)).exists()){
+                FileReader fileReader = new FileReader(file);
+                xmlStrReader = inputFactory.createXMLStreamReader(fileReader);
+            }
+            else{
+                inputStream = DBConnection.class.getResourceAsStream(SERVERS_FILENAME);
+                inStrReader = new InputStreamReader(inputStream);
+                xmlStrReader = inputFactory.createXMLStreamReader(inStrReader);
+            }
+            
+            // Database variables
+            String dbName = "";
+            boolean dbDefault = false;
             
             //Read XML here
-            while(reader.hasNext()){
-                int eventType = reader.getEventType();
+            while(xmlStrReader.hasNext()){
+                int eventType = xmlStrReader.getEventType();
                 switch(eventType){
                     case XMLStreamConstants.START_ELEMENT:
-                        String elementName = reader.getLocalName();
+                        String elementName = xmlStrReader.getLocalName();
                         if(elementName.equals("server")){
                             server = new Server();
                         }
-                        else if(elementName.equals("name")){
-                            String name = reader.getElementText();
+                        else if(elementName.equals("server-name")){
+                            String name = xmlStrReader.getElementText();
                             server.setName(name);
                         }
-                        else if(elementName.equals("url")){
-                            String url = reader.getElementText();
+                        else if(elementName.equals("server-url")){
+                            String url = xmlStrReader.getElementText();
                             server.setUrl(url);
+                        }
+                        else if(elementName.equals("server-default")){
+                            boolean serverDefault = (xmlStrReader.getElementText().equals("true"))?true:false;
+                            server.setDefaultSelection(serverDefault);
+                        }
+                        else if(elementName.equals("db-name")){
+                            dbName = xmlStrReader.getElementText();
+                        }
+                        else if(elementName.equals("db-default")){
+                            dbDefault = (xmlStrReader.getElementText().equals("true"))?true:false;
+                            server.getDatabases().add(new Database(dbName,dbDefault));
                         }
                         break;
                     case XMLStreamConstants.END_ELEMENT:
-                        elementName = reader.getLocalName();
+                        elementName = xmlStrReader.getLocalName();
                         if(elementName.equals("server")){
                             servers.add(server);
                         }
@@ -265,11 +298,13 @@ public class DBConnection {
                     default:
                         break;
                 }
-                reader.next();
+                xmlStrReader.next();
             }
-            LoggingAspect.afterReturn("read servers file successful");
+            LoggingAspect.afterReturn("read servers file successfully");
         }catch(XMLStreamException e){
             LoggingAspect.afterThrown(e);
+        } catch (FileNotFoundException ex) {
+            LoggingAspect.afterThrown(ex);
         }
         return servers;
     }
@@ -285,7 +320,8 @@ public class DBConnection {
         XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
         try{
             //create XMLStreamWriter object
-            FileWriter fileWriter = new FileWriter(SERVERS_FILENAME);
+            String file = FilePathFormat.supportFilePath() + SERVERS_FILENAME;
+            FileWriter fileWriter = new FileWriter(file);
             XMLStreamWriter writer = outputFactory.createXMLStreamWriter(fileWriter);
             
             // write the servers to the file
@@ -293,18 +329,31 @@ public class DBConnection {
             writer.writeStartElement("servers");
             for (Server server : servers){
                 writer.writeStartElement("server");
-                writer.writeStartElement("name");
+                writer.writeStartElement("server-name");
                 writer.writeCharacters(server.getName());
                 writer.writeEndElement();
-                writer.writeStartElement("url");
+                writer.writeStartElement("server-url");
                 writer.writeCharacters(server.getUrl());
                 writer.writeEndElement();
+                writer.writeStartElement("server-default");
+                writer.writeCharacters(Boolean.toString(server.isDefaultSelection()));
+                writer.writeEndElement();
+                for(Database database: server.getDatabases()){
+                    writer.writeStartElement("database");
+                    writer.writeStartElement("db-name");
+                    writer.writeCharacters(database.getName());
+                    writer.writeEndElement();
+                    writer.writeStartElement("db-default");
+                    writer.writeCharacters(Boolean.toString(database.isDefaultSelection()));
+                    writer.writeEndElement();
+                    writer.writeEndElement();
+                }
                 writer.writeEndElement();
             }
             writer.writeEndElement();
             writer.flush();
             writer.close();
-            LoggingAspect.afterReturn("write servers file successful");
+            LoggingAspect.afterReturn("write to servers successful");
         }catch(IOException | XMLStreamException e){
             LoggingAspect.afterThrown(e);
         }
@@ -319,4 +368,14 @@ public class DBConnection {
         int messageType = JOptionPane.ERROR_MESSAGE;
         JOptionPane.showMessageDialog( null, message, title, messageType);
     }
+
+    /**
+     * Set the parent component to show message boxes relative to.
+     * @param parentComponent 
+     */
+    public static void setParentComponent(Component parentComponent) {
+        DBConnection.parentComponent = parentComponent;
+    }
+    
+    
 }

@@ -8,6 +8,8 @@ package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.database.DBConnection;
+import com.elle.ProjectManager.database.Database;
+import com.elle.ProjectManager.database.Server;
 import com.elle.ProjectManager.logic.LoggingAspect;
 import static com.elle.ProjectManager.presentation.LogWindow.HYPHENS;
 import javax.swing.*;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 public class LoginWindow extends JFrame {
 
@@ -33,24 +36,15 @@ public class LoginWindow extends JFrame {
     private ProjectManagerWindow projectManager;
     private EditDatabaseWindow editDatabaseList;
     private LogWindow logWindow;
+    private ArrayList<Server> servers;
     
     public LoginWindow() {
         //set content pane
         this.setContentPane(new JLabel(new ImageIcon(getClass().getResource("image.png"))));
 
-        // initialize
         initComponents();
-
-        // load selectedDB selections from the text file for the combobox
-        loadDBList();
-        comboBoxDatabase.setSelectedIndex(2);
-        comboBoxServer.setSelectedIndex(0);
-
-//        comboBoxDatabase.setSelectedIndex(3);
-        // show window
         this.setTitle("Log in");
-        this.pack();
-        //   logWindow = new LogWindow(this.getUserName()); // this is for reporting99
+        loadServers();
     }
 
     /**
@@ -284,11 +278,16 @@ public class LoginWindow extends JFrame {
 
     private void comboBoxDatabaseActionPerformed(ActionEvent evt) {//GEN-FIRST:event_comboBoxDatabaseActionPerformed
 
-
     }//GEN-LAST:event_comboBoxDatabaseActionPerformed
 
     private void comboBoxServerActionPerformed(ActionEvent evt) {//GEN-FIRST:event_comboBoxServerActionPerformed
 
+        String selectedServer;
+        selectedServer = comboBoxServer.getSelectedItem().toString();
+        comboBoxDatabase.setModel(getDatabasesCBModel(selectedServer));
+        int server = comboBoxServer.getSelectedIndex();
+        comboBoxDatabase.setSelectedIndex(getDefaultDatabase(server));
+        
     }//GEN-LAST:event_comboBoxServerActionPerformed
 
     private void btnEditDBActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnEditDBActionPerformed
@@ -310,47 +309,6 @@ public class LoginWindow extends JFrame {
     public String getUserName() {
         String userNameToPM = userName.substring(7);
         return userNameToPM;
-    }
-
-    /**
-     * Loads the names of the databases from a text file this is if the actual
-     * selectedDB list is edited in EditDatabaseWindow then it updates the
-     * combobox with the new values in LoginWindow.
-     */
-    public void loadDBList() {
-
-        String dbFile = "database.txt";
-        if ((new File(dbFile)).exists()) {
-            String temp = null;
-            List<String> dbList = new ArrayList<String>();
-            boolean hasContent = false; // has a local text file and the file has contents
-
-            // Read text file of databases' names
-            BufferedReader buf = null;
-            try {
-                buf = new BufferedReader(new FileReader(dbFile));
-                while ((temp = buf.readLine()) != null) {
-                    if (!temp.equals("")) {   // remove extra lines
-                        dbList.add(temp);
-                        hasContent = true;
-                    }
-                }
-                if (hasContent) {
-                    String[] arr = dbList.toArray(new String[dbList.size()]);
-                    comboBoxDatabase.setModel(new DefaultComboBoxModel(arr));
-                }
-            } catch (Exception e) {
-                LoggingAspect.afterThrown(e);
-            } finally {
-                if (buf != null) {
-                    try {
-                        buf.close();
-                    } catch (IOException e) {
-                        LoggingAspect.afterThrown(e);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -420,6 +378,64 @@ public class LoginWindow extends JFrame {
 
     }
 
+    private DefaultComboBoxModel getServersCBModel() {
+        Vector serverNames = new Vector();
+        for(Server server: servers){
+            serverNames.addElement(server.getName());
+        }
+        if(serverNames.isEmpty()){
+            serverNames.addElement("");
+        }
+        return new DefaultComboBoxModel(serverNames);
+    }
+
+    private DefaultComboBoxModel getDatabasesCBModel(String serverName) {
+        Vector databases = new Vector();
+        for(Server server: servers){
+            if(server.getName().equals(serverName)){
+                for(Database db: server.getDatabases()){
+                    databases.addElement(db.getName());
+                }
+            }
+        }
+        if(databases.isEmpty()){
+            databases.addElement("");
+        }
+        return new DefaultComboBoxModel(databases);
+    }
+    
+    public void loadServers() {
+        servers = DBConnection.readServers();
+        // set comboboxes for servers and databases
+        comboBoxServer.setModel(getServersCBModel());
+        comboBoxDatabase.setModel(getDatabasesCBModel(servers.get(0).getName()));
+        comboBoxServer.setSelectedIndex(getDefaultServer());
+        int server = comboBoxServer.getSelectedIndex();
+        comboBoxDatabase.setSelectedIndex(getDefaultDatabase(server));
+    }
+    
+    private int getDefaultServer() {
+        int server = 0;
+        for(int i = 0; i < servers.size(); i++){
+            if(servers.get(i).isDefaultSelection()){
+                server = i;
+                break;
+            }
+        }
+        return server;
+    }
+
+    private int getDefaultDatabase(int server) {
+        int database = 0;
+        ArrayList<Database> databases = servers.get(server).getDatabases();
+        for(int i = 0; i < databases.size(); i++){
+            if(databases.get(i).isDefaultSelection()){
+                database = i;
+                break;
+            }
+        }
+        return database;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;

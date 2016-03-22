@@ -14,11 +14,13 @@ import com.elle.ProjectManager.presentation.LogWindow;
 public class LoggingAspect {
     
     public static void addLogMsg(String msg){
-        LogWindow.addMessage(msg);
+        if(LogWindow.fileName != null)
+            LogWindow.addMessage(msg);
     }
     
     public static void addLogMsgWthDate(String msg){
-        LogWindow.addMessageWithDate(msg);
+        if(LogWindow.fileName != null)
+            LogWindow.addMessageWithDate(msg);
     }
     
     public static void timerCntDwn(int time){
@@ -35,7 +37,8 @@ public class LoggingAspect {
         }
 
         // add message to log
-        addLogMsgWthDate(msg);
+        if(LogWindow.fileName != null)
+            addLogMsgWthDate(msg);
     }
     
     public static void afterThrown(Exception e){
@@ -55,19 +58,23 @@ public class LoggingAspect {
         }
         
         // add error message to log
-        addLogMsgWthDate("An exception was thrown: ");
+        if(LogWindow.fileName != null)
+            addLogMsgWthDate("An exception was thrown: ");
         
         // log exception 
-        addLogMsg("Error message: " + e.getMessage());
+        if(LogWindow.fileName != null)
+            addLogMsg("Error message: " + e.getMessage());
         
         // get first element that package starts with com.elle.
-        StackTraceElement[] elements = e.getStackTrace();
-        for(StackTraceElement element:elements){
-            if(element.getClassName().startsWith("com.elle.")){
-                addLogMsg("Package.Class: " + element.getClassName());
-                addLogMsg("Method: " + element.getMethodName());
-                addLogMsg("Line: " + element.getLineNumber());
-                break;
+        if(LogWindow.fileName != null){
+            StackTraceElement[] elements = e.getStackTrace();
+            for(StackTraceElement element:elements){
+                if(element.getClassName().startsWith("com.elle.")){
+                    addLogMsg("Package.Class: " + element.getClassName());
+                    addLogMsg("Method: " + element.getMethodName());
+                    addLogMsg("Line: " + element.getLineNumber());
+                    break;
+                }
             }
         }
     }
