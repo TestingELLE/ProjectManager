@@ -1380,11 +1380,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
                     if (!entry.getKey().equalsIgnoreCase("issue_files")) {
                         tab = tabs.get(entry.getKey());
+                        
                         String[] columnNames = tab.getTableColNames();
                         JTable table = tab.getTable();
                         TableModel tableModel = table.getModel();
                         String colName;
                         colName = columnNames[col].toLowerCase();
+                        
+                        System.out.println(tableModel.getColumnCount());
 
                         switch (colName) {
                             case "title":
@@ -3752,14 +3755,24 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         try {
             rs = statement.executeQuery(sql);
             metaData = rs.getMetaData();
+  
+            
         } catch (Exception ex) {
             LoggingAspect.afterThrown(ex);
         }
         try {
-            columns = metaData.getColumnCount();
+            // Do not show "submitter" in "PM", "ELLEGUI", "Analyster" and "other" table
+            if(!table.getName().equals("issue_files")){
+            columns = metaData.getColumnCount()-1;
+            }else{
+                columns = metaData.getColumnCount();
+                
+            }
             for (int i = 1; i <= columns; i++) {
                 columnClass.addElement(metaData.getColumnClassName(i));
+  //              System.out.println(metaData.getColumnClassName(i) + " 1");
                 columnNames.addElement(metaData.getColumnName(i));
+ //               System.out.println(metaData.getColumnName(i) + " 2");
             }
             while (rs.next()) {
                 Vector row = new Vector(columns);
