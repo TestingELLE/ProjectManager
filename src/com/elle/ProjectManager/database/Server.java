@@ -1,6 +1,8 @@
 
 package com.elle.ProjectManager.database;
 
+import java.util.ArrayList;
+
 /**
  * Server
  * This class is to create a server object.
@@ -12,10 +14,14 @@ public class Server {
     
     private String name;
     private String url;
+    private boolean defaultSelection;
+    private ArrayList<Database> databases;
 
     public Server() {
         name = "";
         url = "";
+        defaultSelection = false;
+        databases = new ArrayList<>();
     }
 
     public String getName() {
@@ -32,5 +38,21 @@ public class Server {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public boolean isDefaultSelection() {
+        return defaultSelection;
+    }
+
+    public void setDefaultSelection(boolean defaultSelection) {
+        this.defaultSelection = defaultSelection;
+    }
+
+    public ArrayList<Database> getDatabases() {
+        return databases;
+    }
+
+    public void setDatabases(ArrayList<Database> databases) {
+        this.databases = databases;
     }
 }
