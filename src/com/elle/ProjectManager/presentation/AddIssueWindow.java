@@ -16,6 +16,8 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -235,6 +237,17 @@ public class AddIssueWindow extends JFrame {
 //        System.out.println("current screen size: " + xp + " " + yp);
 //        
 //        this.setLocation(x + numWindow *30, y+ numWindow * 15);
+        lockCheckbox.addItemListener(new ItemListener() {
+            //set listener to lockCheckbox, so when we click it, it can be detected and confirm button should set at enabled
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                contentChanged = true;
+                buttonConfirm.setEnabled(true);
+
+            }
+        });
+        makeContentLocked();
+
         Point pmWindowLocation = projectManager.getLocationOnScreen(); //get the project manager window in screen
 
         int x = pmWindowLocation.x - 200;
@@ -242,15 +255,6 @@ public class AddIssueWindow extends JFrame {
         this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
 
         this.pack();
-        String ID = idText.getText();
-        String submitter = getSubmitter(ID);
-        submitterText.setText(submitter);
-        String lock = getLock(ID);
-        if (lock.equalsIgnoreCase("y")) {
-            lockCheckbox.setState(true);
-        } else {
-            lockCheckbox.setState(false);
-        }
 
     }
 
@@ -978,7 +982,7 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_dateClosedTextActionPerformed
 
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
-updateIflock();
+        updateLocked();
         int row = checkConsistencyOfIdAndRowNum();
         //        System.out.println("real row is: " + row);
         if (row != -1) {
@@ -1000,7 +1004,7 @@ updateIflock();
 
             projectManager.makeTableEditable(false, selectedTableName);
         }
-        
+
 
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
@@ -1257,6 +1261,8 @@ updateIflock();
     }
 
     private void makeContentSubmitter(JTextField submitterArea) {
+
+        //set the default value of submitter as current username
         submitterArea.requestFocusInWindow();
         submitterArea.selectAll();
         String submitter = projectManager.getUserName();
@@ -1264,14 +1270,32 @@ updateIflock();
 
     }
 
-    private void updateIflock() {
+    private void makeContentLocked() {
+        String ID = idText.getText();
+        String submitter = getSubmitter(ID);
+        submitterText.setText(submitter);
+
+        if (getLock(ID) == null) {
+            lockCheckbox.setState(false);
+        } else if (getLock(ID).equalsIgnoreCase("y")) {
+
+            lockCheckbox.setState(true);
+
+        } else {
+            lockCheckbox.setState(false);
+        }
+    }
+
+    private void updateLocked() {
+
+        //update the locked value back to database
         String ID = idText.getText();
         String sql = "";
         if (lockCheckbox.getState() == true) {
-            sql = "UPDATE issues SET iflock ='Y' WHERE ID ='" + ID + "';";
+            sql = "UPDATE issues SET locked ='Y' WHERE ID ='" + ID + "';";
 
         } else {
-            sql = "UPDATE issues SET iflock ='N' WHERE ID ='" + ID + "';";
+            sql = "UPDATE issues SET locked = NULL WHERE ID ='" + ID + "';";
         }
         DBConnection.close();
         DBConnection.open();
@@ -1283,7 +1307,7 @@ updateIflock();
         } catch (Exception ex) {
             LoggingAspect.afterThrown(ex);
         }
-        
+
     }
 
     public String getSubmitter(String ID) {
@@ -1309,8 +1333,8 @@ updateIflock();
     }
 
     public String getLock(String ID) {
-        String iflock = "";
-        String sql = "select iflock from issues where ID = '" + ID + "';";
+        String locked = "";
+        String sql = "select locked from issues where ID = '" + ID + "';";
         ResultSet rs = null;
         DBConnection.close();
         DBConnection.open();
@@ -1320,14 +1344,15 @@ updateIflock();
             rs = statement.executeQuery(sql);
 
             while (rs.next()) {
-                iflock = rs.getString("iflock");
+                locked = rs.getString("locked");
 
             }
 
         } catch (Exception ex) {
             LoggingAspect.afterThrown(ex);
         }
-        return iflock;
+        System.out.println(sql + "..." + locked);
+        return locked;
     }
 
     public void setFormValue(Object[] CellValue) {
@@ -1444,6 +1469,7 @@ updateIflock();
     }
 
     private void setDocumentListener() {
+
         DocumentListener textDocumentLis = new DocumentListener() {
 
             @Override
@@ -1465,7 +1491,6 @@ updateIflock();
                     value = descriptionText.getText();
                 }
                 updateValueToTableAt(value, columnName);
-                
 
                 if (addIssueMode) {
                     buttonSubmit.setEnabled(true);
@@ -1495,7 +1520,7 @@ updateIflock();
                     value = descriptionText.getText();
                 }
                 updateValueToTableAt(value, columnName);
-               
+
                 if (addIssueMode) {
                     buttonSubmit.setEnabled(true);
                     btnCloseIssue.setEnabled(false);
