@@ -1387,7 +1387,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         String colName;
                         colName = columnNames[col].toLowerCase();
                         
-                        System.out.println(tableModel.getColumnCount());
+                       
 
                         switch (colName) {
                             case "title":
@@ -3763,7 +3763,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         try {
             // Do not show "submitter" in "PM", "ELLEGUI", "Analyster" and "other" table
             if(!table.getName().equals("issue_files")){
-            columns = metaData.getColumnCount()-1;
+            columns = metaData.getColumnCount()-2;
             }else{
                 columns = metaData.getColumnCount();
                 
