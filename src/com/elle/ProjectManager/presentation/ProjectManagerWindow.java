@@ -295,8 +295,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             tabs.get(tableNames[tableName]).setEditing(false);
 
         }
-
-        detectOpenIssues(tabs);
+        
 //        tabs.get(TASKNOTES_TABLE_NAME).setEditing(false);
 
 //        // Call the initTableCellPopup method to initiate the Table Cell Popup window
@@ -1586,10 +1585,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // not sure what this is
     private void menuItemAWSAssignActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAWSAssignActionPerformed
 
+        Tab PMTable = tabs.get(tableNames[0]);
+        Tab issue_filesTable = tabs.get(tableNames[4]);
         loadTable(PMTable);
         loadTable(issue_filesTable);
-
-
     }//GEN-LAST:event_menuItemAWSAssignActionPerformed
     /**
      * This method is performed when we click the upload changes button. it
@@ -1624,7 +1623,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //            int[] rowsId = getSelectedRowsId(table);
             int[] rows = table.getSelectedRows();
 
-            loadTable(table); // refresh tableSelected
+            loadTable(tab); // refresh tableSelected
 
             ListSelectionModel model = table.getSelectionModel();
             model.clearSelection();
@@ -2045,7 +2044,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // reload tableSelected from database
         JTable table = tab.getTable();
-        loadTable(table);
+        loadTable(tab);
 
         // clear cellrenderer
         cellRenderer.clearCellRender();
@@ -2068,7 +2067,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             // reload tableSelected from database
             JTable table = tab.getTable();
-            loadTable(table);
+            loadTable(tab);
 
             // clear cellrenderer
             cellRenderer.clearCellRender();
@@ -2141,8 +2140,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                    LoggingAspect.afterThrown(ex);
 //                }
 //            }
-//            loadTable(issuesTable);
-//            loadTable(issue_notesTable);
+//            loadTableData(issuesTable);
+//            loadTableData(issue_notesTable);
 //            issuesTable.setRowSelectionInterval(rowsSelected[0], rowsSelected[rowSelected - 1]);
 //            JOptionPane.showMessageDialog(null, rowSelected + " Record(s) Archived!");
 //
@@ -2187,8 +2186,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //            }
 //
 //            issue_notesTable.setRowSelectionInterval(rowsSelected[0], rowsSelected[0]);
-//            loadTable(issue_notesTable);
-//            loadTable(issuesTable);
+//            loadTableData(issue_notesTable);
+//            loadTableData(issuesTable);
 //
 //            JOptionPane.showMessageDialog(null, rowSelected + " Record(s) Activated!");
 //
@@ -2459,7 +2458,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //            String sql = "SELECT * FROM " + table.getName() + str + " ORDER BY "
 //                    + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, taskID ASC";
 //            System.out.println(sql);
-//            loadTable(sql, table);
+//            loadTableData(sql, table);
 //
 //        } catch (SQLException ex) {
 //            // for debugging
@@ -3594,36 +3593,50 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         return tabs;
     }
-
-    private void detectOpenIssues(Map<String, Tab> tabs) {
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-            Tab tab = tabs.get(entry.getKey());
-            JTable table = tab.getTable();
-            boolean openIssue = false;
-            for (int row = 0; row < table.getRowCount(); row++) {
-                String tableCellValue = "";
-                if (table.getValueAt(row, 4) != null) {
-                    tableCellValue = table.getValueAt(row, 4).toString();
-                }
-                if (userName.equals(tableCellValue)) {
-                    if (table.getValueAt(row, 8) == null || table.getValueAt(row, 8).toString().equals("")) {
-
-                        openIssue = true;
-                    }
-                }
+    
+    /**
+     * Should only be called from loadTable(tab) to update orange dot
+     * @param tab 
+     */
+    private void detectOpenIssues(Tab tab) {
+        JTable table = tab.getTable();
+        boolean openIssue = false;
+        for (int row = 0; row < table.getRowCount(); row++) {
+            String tableCellValue = "";
+            if (table.getValueAt(row, 4) != null) {
+                tableCellValue = table.getValueAt(row, 4).toString();
             }
-            if (openIssue) {
-                for (int i = 0; i < tabbedPanel.getTabCount(); i++) {
-                    if (tabbedPanel.getTitleAt(i).equals(table.getName())) {
-                        String title = tabbedPanel.getTitleAt(i);
-                        tabbedPanel.setTabComponentAt(i, this.getLabel(title));
-                    }
+            if (userName.equals(tableCellValue)) {
+                if (table.getValueAt(row, 8) == null || table.getValueAt(row, 8).toString().equals("")) {
+
+                    openIssue = true;
                 }
             }
         }
+        
+        String title = table.getName();
+        JLabel titleLabel = new JLabel(title);
+        int tabIndex = -1;
+        for(int i = 0; i < tableNames.length; i++){
+            if(tableNames[i].equals(title) ){
+                tabIndex = i;
+                break;
+            }
+        }
+            
+        if (openIssue) {
+            titleLabel = this.getTabLabelWithOrangeDot(title);
+        }
+        
+        tabbedPanel.setTabComponentAt(tabIndex, titleLabel);
     }
 
-    protected JLabel getLabel(String title) {
+    /**
+     * This returns a JLabel with the title and an orange dot
+     * @param title
+     * @return 
+     */
+    protected JLabel getTabLabelWithOrangeDot(String title) {
         ImageIcon imcon = new ImageIcon(getClass().getResource("orange-dot.png"));
 
 //        ImageIcon icon = new ImageIcon(getClass().getResource("splashImage.png"));
@@ -3638,8 +3651,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
 
     /**
-     * loadTables This method takes a tabs Map and loads all the tabs/tables
-     *
+     * Loads all tab tables and updates the orange dots.
+     * It also checks for table consistency
      * @param tabs
      * @return
      */
@@ -3649,7 +3662,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
 
-            loadTable(table);
+            loadTable(tab);
+            
             LoggingAspect.afterReturn("Table loaded succesfully");
 //            informationLabel.setText("Table loaded succesfully");
 //            startCountDownFromNow(10);
@@ -3677,13 +3691,23 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
 
     /**
-     * loadTable This method takes a tableSelected and loads it Does not need to
-     * pass the tableSelected back since it is passed by reference However, it
-     * can make the code clearer and it's good practice to return
-     *
+     * This loads table data and updates orange dot. 
+     * @param tab
+     * @return 
+     */
+    public JTable loadTable(Tab tab){
+        JTable table = tab.getTable();
+        table = loadTableData(table);
+        detectOpenIssues(tab); // this puts an orange dot in tab title
+        return table;
+    }
+    
+    /**
+     * This loads table data but does not update orange dot. 
+     * Use loadTable(Tab tab) to load table and update orange dot.
      * @param table
      */
-    public JTable loadTable(JTable table) {
+    public JTable loadTableData(JTable table) {
         String str = table.getName();
 
         int[] rows = table.getSelectedRows();
@@ -3743,6 +3767,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     }
 
+    /**
+     * Loads table using an sql command
+     * @param sql
+     * @param table
+     * @return 
+     */
     public JTable loadTable(String sql, JTable table) {
 
         Vector data = new Vector();
@@ -3894,9 +3924,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlDelete);
 
-                // refresh tableSelected and retain filters
-                loadTable(table);
-
                 // output pop up dialog that a record was deleted 
 //                JOptionPane.showMessageDialog(this, rowCount + " Record(s) Deleted");
                 LoggingAspect.afterReturn(rowCount + " Record(s) Deleted");
@@ -3905,6 +3932,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 // set label record information
                 String tabName = getSelectedTabName();
                 Tab tab = tabs.get(tabName);
+                // refresh tableSelected and retain filters
+                loadTable(tab);
                 tab.subtractFromTotalRowCount(rowCount); // update total rowIndex count
                 String recordsLabel = tab.getRecordsLabel();
                 labelRecords.setText(recordsLabel); // update label
@@ -4027,7 +4056,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         JTable table = tab.getTable();
         ModifiedTableData modifiedTableData = tab.getTableData();
         modifiedTableData.getNewData().clear();  // clear any stored changes (new data)
-        loadTable(table); // reverts the model back
+        loadTable(tab); // reverts the model back
 
         LoggingAspect.afterReturn("Nothing has been Changed!");
 //        informationLabel.setText("Nothing has been Changed!");
