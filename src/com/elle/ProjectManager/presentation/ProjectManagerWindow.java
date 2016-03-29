@@ -1586,10 +1586,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // not sure what this is
     private void menuItemAWSAssignActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAWSAssignActionPerformed
 
+        Tab PMTable = tabs.get(tableNames[0]);
+        Tab issue_filesTable = tabs.get(tableNames[4]);
         loadTable(PMTable);
         loadTable(issue_filesTable);
-
-
     }//GEN-LAST:event_menuItemAWSAssignActionPerformed
     /**
      * This method is performed when we click the upload changes button. it
@@ -1624,7 +1624,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //            int[] rowsId = getSelectedRowsId(table);
             int[] rows = table.getSelectedRows();
 
-            loadTable(table); // refresh tableSelected
+            loadTable(tab); // refresh tableSelected
 
             ListSelectionModel model = table.getSelectionModel();
             model.clearSelection();
@@ -2045,7 +2045,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // reload tableSelected from database
         JTable table = tab.getTable();
-        loadTable(table);
+        loadTable(tab);
 
         // clear cellrenderer
         cellRenderer.clearCellRender();
@@ -2068,7 +2068,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             // reload tableSelected from database
             JTable table = tab.getTable();
-            loadTable(table);
+            loadTable(tab);
 
             // clear cellrenderer
             cellRenderer.clearCellRender();
@@ -3906,9 +3906,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 statement = DBConnection.getStatement();
                 statement.executeUpdate(sqlDelete);
 
-                // refresh tableSelected and retain filters
-                loadTable(table);
-
                 // output pop up dialog that a record was deleted 
 //                JOptionPane.showMessageDialog(this, rowCount + " Record(s) Deleted");
                 LoggingAspect.afterReturn(rowCount + " Record(s) Deleted");
@@ -3917,6 +3914,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 // set label record information
                 String tabName = getSelectedTabName();
                 Tab tab = tabs.get(tabName);
+                // refresh tableSelected and retain filters
+                loadTable(tab);
                 tab.subtractFromTotalRowCount(rowCount); // update total rowIndex count
                 String recordsLabel = tab.getRecordsLabel();
                 labelRecords.setText(recordsLabel); // update label
@@ -4039,7 +4038,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         JTable table = tab.getTable();
         ModifiedTableData modifiedTableData = tab.getTableData();
         modifiedTableData.getNewData().clear();  // clear any stored changes (new data)
-        loadTable(table); // reverts the model back
+        loadTable(tab); // reverts the model back
 
         LoggingAspect.afterReturn("Nothing has been Changed!");
 //        informationLabel.setText("Nothing has been Changed!");
