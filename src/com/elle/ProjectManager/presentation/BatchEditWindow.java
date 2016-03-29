@@ -270,7 +270,7 @@ public class BatchEditWindow extends JFrame {
         projectManagerWindow.getBatchEditWindow().dispose();
         projectManagerWindow.setIsBatchEditWindowShow(false);
 
-//        projectManagerWindow.loadTable(table);
+//        projectManagerWindow.loadTableData(table);
 //        if(!btnConfirmClicked){
 //        projectManagerWindow.makeTableEditable(false);
 //        }
