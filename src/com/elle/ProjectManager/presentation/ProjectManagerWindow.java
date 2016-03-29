@@ -3598,7 +3598,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void detectOpenIssues(Map<String, Tab> tabs) {
         for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
-            JTable table = tab.getTable();
+            detectOpenIssues(tab);
+        }
+    }
+    
+    private void detectOpenIssues(Tab tab) {
+        JTable table = tab.getTable();
             boolean openIssue = false;
             for (int row = 0; row < table.getRowCount(); row++) {
                 String tableCellValue = "";
@@ -3620,11 +3625,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     }
                 }
             }
-        }
-    }
-    
-    private void detectOpenIssues(Tab tab) {
-        
     }
 
     protected JLabel getLabel(String title) {
