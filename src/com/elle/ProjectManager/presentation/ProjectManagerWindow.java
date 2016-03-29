@@ -3622,6 +3622,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         }
     }
+    
+    private void detectOpenIssues(Tab tab) {
+        
+    }
 
     protected JLabel getLabel(String title) {
         ImageIcon imcon = new ImageIcon(getClass().getResource("orange-dot.png"));
@@ -3649,7 +3653,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
 
-            loadTable(table);
+            loadTable(tab);
+            
             LoggingAspect.afterReturn("Table loaded succesfully");
 //            informationLabel.setText("Table loaded succesfully");
 //            startCountDownFromNow(10);
@@ -3676,6 +3681,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     }
 
+    public JTable loadTable(Tab tab){
+        JTable table = tab.getTable();
+        table = loadTable(table);
+        detectOpenIssues(tab);
+        return table;
+    }
+    
     /**
      * loadTable This method takes a tableSelected and loads it Does not need to
      * pass the tableSelected back since it is passed by reference However, it
