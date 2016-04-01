@@ -196,7 +196,7 @@ public class PopupWindowInTableCell extends JFrame {
     private void editButtonTableCellPopupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonTableCellPopupActionPerformed
 
         inEditMode = true;
-        projectManager.makeTableEditable(true, selectedTable.getName());
+        projectManager.makeTableEditable(true);
         setEnableEdit();
         textAreatableCellPopup.selectAll();
         System.out.println("set edit " + textAreatableCellPopup.isEditable());

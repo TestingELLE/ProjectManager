@@ -845,7 +845,7 @@ public class AddIssueWindow extends JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 
-        projectManager.makeTableEditable(false, getIssueActiveTabName());
+        projectManager.makeTableEditable(false);
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
         projectManager.deleteNumOfAddIssueWindowOpened();
         this.dispose();
@@ -909,7 +909,7 @@ public class AddIssueWindow extends JFrame {
             rowInView = rowInView + 1;
             projectManager.viewNextIssue(rowInView, columnFocused, selectedTable);
             updateForm();
-            projectManager.makeTableEditable(false, getIssueActiveTabName());
+            projectManager.makeTableEditable(false);
             selectedTable.setRowSelectionInterval(rowInView, rowInView);
         }
     }//GEN-LAST:event_BtnNextActionPerformed
@@ -995,7 +995,7 @@ public class AddIssueWindow extends JFrame {
 
             projectManager.uploadChanges(selectedTableName);
 
-            projectManager.makeTableEditable(false, selectedTableName);
+            projectManager.makeTableEditable(false);
         }
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
@@ -1007,7 +1007,7 @@ public class AddIssueWindow extends JFrame {
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
         //        System.out.println(selectedTable.getValueAt(0, 0));
 
-        projectManager.makeTableEditable(false, getIssueActiveTabName());
+        projectManager.makeTableEditable(false);
         projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
         projectManager.deleteNumOfAddIssueWindowOpened();
         this.dispose();
@@ -1206,7 +1206,7 @@ public class AddIssueWindow extends JFrame {
                 projectManager.startCountDownFromNow(5);
             }
 
-            projectManager.makeTableEditable(false, getIssueActiveTabName());
+            projectManager.makeTableEditable(false);
 
         }
     }
