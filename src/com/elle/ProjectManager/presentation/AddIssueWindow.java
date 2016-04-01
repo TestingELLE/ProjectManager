@@ -8,6 +8,7 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.logic.*;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -15,6 +16,8 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -143,12 +146,6 @@ public class AddIssueWindow extends JFrame {
         // set this window to appear in the middle of Project Manager
         this.setLocationRelativeTo(projectManager);
 
-      
-     
-        
-        
-   
-
         this.pack();
     }
 
@@ -240,21 +237,25 @@ public class AddIssueWindow extends JFrame {
 //        System.out.println("current screen size: " + xp + " " + yp);
 //        
 //        this.setLocation(x + numWindow *30, y+ numWindow * 15);
+        lockCheckbox.addItemListener(new ItemListener() {
+            //set listener to lockCheckbox, so when we click it, it can be detected and confirm button should set at enabled
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                contentChanged = true;
+                buttonConfirm.setEnabled(true);
+
+            }
+        });
+        makeContentLocked();
+
         Point pmWindowLocation = projectManager.getLocationOnScreen(); //get the project manager window in screen
 
         int x = pmWindowLocation.x - 200;
         int y = pmWindowLocation.y - 120;
         this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
 
-       
-        
         this.pack();
-         String ID = idText.getText();
-         String submitter = getSubmitter(ID);
-         submitterText.setText(submitter);
-      
-         
-       
+
     }
 
     private void defaultSetting() {
@@ -514,7 +515,7 @@ public class AddIssueWindow extends JFrame {
         programmerText = new javax.swing.JTextField();
         rkText = new javax.swing.JTextField();
         lock = new javax.swing.JLabel();
-        checkbox1 = new java.awt.Checkbox();
+        lockCheckbox = new java.awt.Checkbox();
         submitterText = new javax.swing.JTextField();
         submitter = new javax.swing.JLabel();
 
@@ -715,6 +716,12 @@ public class AddIssueWindow extends JFrame {
 
         lock.setText(" lock");
 
+        submitterText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                submitterTextActionPerformed(evt);
+            }
+        });
+
         submitter.setText(" submitter");
 
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
@@ -725,13 +732,12 @@ public class AddIssueWindow extends JFrame {
                 .addContainerGap()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
-                        .addGap(0, 0, 0)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lock)
                             .addComponent(id))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(checkbox1, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lockCheckbox, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(idText))
                         .addGap(100, 100, 100)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -803,7 +809,7 @@ public class AddIssueWindow extends JFrame {
                                 .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(checkbox1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lockCheckbox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(39, 39, 39)))
                 .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -932,37 +938,37 @@ public class AddIssueWindow extends JFrame {
             versionText.setText(temperaryVersion);
             btnCloseIssue.setText("Reopen Issue");
             value = value + "\n--- Issue Closed by "
-            + userName + " on " + today + "\n";
+                    + userName + " on " + today + "\n";
         } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
             value = value + "\n \n--- Issue reopened by "
-            + userName + " on " + today + " (version " + versionText.getText() + ") \n";
+                    + userName + " on " + today + " (version " + versionText.getText() + ") \n";
             versionText.setText("");
             dateClosedText.setText("");
             btnCloseIssue.setText("Close Issue");
         }
         descriptionText.setText(value);
         //        if (projectManager.getSelectedTabName().equalsIgnoreCase("pm")) {
-            //            String version = projectManager.getVersion();
-            //
-            //            int length = version.length();
-            //            int digit = -1;
-            //            if (version.substring(4, 5).equals("9")) {
-                //                if (version.substring(2, 3).equals("9")) {
-                    //                    digit = Integer.parseInt(version.substring(0, 1));
-                    //                    digit++;
-                    //                    version = digit + ".0.0";
-                    //                } else {
-                    //                    digit = Integer.parseInt(version.substring(2, 3));
-                    //                    digit++;
-                    //                    version = version.substring(0, 2) + digit + ".0";
-                    //                }
-                //            } else {
-                //                digit = Integer.parseInt(version.substring(length - 1, length));
-                //                digit++;
-                //                version = version.substring(0, 4) + digit;
-                //            }
-            //            versionText.setText(version);
-            //        }
+        //            String version = projectManager.getVersion();
+        //
+        //            int length = version.length();
+        //            int digit = -1;
+        //            if (version.substring(4, 5).equals("9")) {
+        //                if (version.substring(2, 3).equals("9")) {
+        //                    digit = Integer.parseInt(version.substring(0, 1));
+        //                    digit++;
+        //                    version = digit + ".0.0";
+        //                } else {
+        //                    digit = Integer.parseInt(version.substring(2, 3));
+        //                    digit++;
+        //                    version = version.substring(0, 2) + digit + ".0";
+        //                }
+        //            } else {
+        //                digit = Integer.parseInt(version.substring(length - 1, length));
+        //                digit++;
+        //                version = version.substring(0, 4) + digit;
+        //            }
+        //            versionText.setText(version);
+        //        }
     }//GEN-LAST:event_btnCloseIssueActionPerformed
 
     private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
@@ -976,6 +982,7 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_dateClosedTextActionPerformed
 
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
+        updateLocked();
         int row = checkConsistencyOfIdAndRowNum();
         //        System.out.println("real row is: " + row);
         if (row != -1) {
@@ -997,6 +1004,8 @@ public class AddIssueWindow extends JFrame {
 
             projectManager.makeTableEditable(false);
         }
+
+
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
     private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
@@ -1034,8 +1043,8 @@ public class AddIssueWindow extends JFrame {
             String message = "\n" + "-- by " + userName + " on " + today + "-- \n";
             //String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
             dateArea.insert(message, pos);
-           
-            dateArea.setCaretPosition(pos + userName.length() +  25);
+
+            dateArea.setCaretPosition(pos + userName.length() + 25);
 
         }
     }//GEN-LAST:event_descriptionTextKeyReleased
@@ -1049,6 +1058,10 @@ public class AddIssueWindow extends JFrame {
     private void dateOpenedTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateOpenedTextActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_dateOpenedTextActionPerformed
+
+    private void submitterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitterTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_submitterTextActionPerformed
 
     public void updateForm() {
         for (int i = 0; i < columnNames.length; i++) {
@@ -1136,11 +1149,6 @@ public class AddIssueWindow extends JFrame {
                     values += cellValue + ", '" + submitter + "');";
                 }
             }
-            System.out.println(insertInto + values);
-           
-            
-           
-          
 
             try {
                 // execute the sql statement
@@ -1150,11 +1158,7 @@ public class AddIssueWindow extends JFrame {
                     DBConnection.open();
                     statement = DBConnection.getStatement();
                     statement.executeUpdate(insertInto + values);
-                    
 
-                   
-                   
-                  
                     numRowsAdded++;   // increment the number of rows added
                 }
             } catch (SQLException e) {
@@ -1178,7 +1182,7 @@ public class AddIssueWindow extends JFrame {
                 Tab tab = tabs.get(tabName);                                  // selected tab
 
                 JTable table = tab.getTable();
-                projectManager.loadTable(table);                              // load tableSelected data from database
+                projectManager.loadTable(tab);                              // load tableSelected data from database
 
                 // reload new table data for modifiedTableData
                 ModifiedTableData data = tab.getTableData();
@@ -1255,40 +1259,101 @@ public class AddIssueWindow extends JFrame {
         String today = dateFormat.format(date);
         dateArea.setText(today);
     }
-    
-    private void makeContentSubmitter(JTextField submitterArea){
+
+    private void makeContentSubmitter(JTextField submitterArea) {
+
+        //set the default value of submitter as current username
         submitterArea.requestFocusInWindow();
         submitterArea.selectAll();
         String submitter = projectManager.getUserName();
         submitterArea.setText(submitter);
-       
+
     }
-    
-    public String  getSubmitter(String ID){
-        String name = "";
+
+    private void makeContentLocked() {
+        String ID = idText.getText();
+        String submitter = getSubmitter(ID);
+        submitterText.setText(submitter);
+
+        if (getLock(ID) == null) {
+            lockCheckbox.setState(false);
+        } else if (getLock(ID).equalsIgnoreCase("y")) {
+
+            lockCheckbox.setState(true);
+
+        } else {
+            lockCheckbox.setState(false);
+        }
+    }
+
+    private void updateLocked() {
+
+        //update the locked value back to database
+        String ID = idText.getText();
+        String sql = "";
+        if (lockCheckbox.getState() == true) {
+            sql = "UPDATE issues SET locked ='Y' WHERE ID ='" + ID + "';";
+
+        } else {
+            sql = "UPDATE issues SET locked = NULL WHERE ID ='" + ID + "';";
+        }
+        DBConnection.close();
+        DBConnection.open();
+
+        statement = DBConnection.getStatement();
+        try {
+            statement.executeUpdate(sql);
+
+        } catch (Exception ex) {
+            LoggingAspect.afterThrown(ex);
+        }
+
+    }
+
+    public String getSubmitter(String ID) {
+        String submitter = "";
         String sql = "select submitter from issues where ID = '" + ID + "';";
         ResultSet rs = null;
         DBConnection.close();
         DBConnection.open();
 
         statement = DBConnection.getStatement();
-          try {
-             rs = statement.executeQuery(sql);
-                
+        try {
+            rs = statement.executeQuery(sql);
+
             while (rs.next()) {
-       name = rs.getString("submitter");
-        
-        System.out.println(name);
-        
-}
-        
-            
+                submitter = rs.getString("submitter");
+
+            }
+
         } catch (Exception ex) {
             LoggingAspect.afterThrown(ex);
         }
-          return name;
+        return submitter;
     }
-    
+
+    public String getLock(String ID) {
+        String locked = "";
+        String sql = "select locked from issues where ID = '" + ID + "';";
+        ResultSet rs = null;
+        DBConnection.close();
+        DBConnection.open();
+
+        statement = DBConnection.getStatement();
+        try {
+            rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
+                locked = rs.getString("locked");
+
+            }
+
+        } catch (Exception ex) {
+            LoggingAspect.afterThrown(ex);
+        }
+        System.out.println(sql + "..." + locked);
+        return locked;
+    }
 
     public void setFormValue(Object[] CellValue) {
         formValues = CellValue;
@@ -1321,7 +1386,6 @@ public class AddIssueWindow extends JFrame {
     private javax.swing.JButton buttonCancel;
     private javax.swing.JButton buttonConfirm;
     private javax.swing.JButton buttonSubmit;
-    private java.awt.Checkbox checkbox1;
     private javax.swing.JLabel dateClosed;
     private javax.swing.JTextField dateClosedText;
     private javax.swing.JLabel dateOpened;
@@ -1335,6 +1399,7 @@ public class AddIssueWindow extends JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JLabel lock;
+    private java.awt.Checkbox lockCheckbox;
     private javax.swing.JLabel programmer;
     private javax.swing.JTextField programmerText;
     private javax.swing.JLabel rk;
@@ -1361,7 +1426,7 @@ public class AddIssueWindow extends JFrame {
         textAreaArray[4] = (rkText);
         textAreaArray[5] = (dateClosedText);
         textAreaArray[6] = (versionText);
-        
+
         String areaName = "";
 
         InputMap ip = null;
@@ -1404,6 +1469,7 @@ public class AddIssueWindow extends JFrame {
     }
 
     private void setDocumentListener() {
+
         DocumentListener textDocumentLis = new DocumentListener() {
 
             @Override
@@ -1454,6 +1520,7 @@ public class AddIssueWindow extends JFrame {
                     value = descriptionText.getText();
                 }
                 updateValueToTableAt(value, columnName);
+
                 if (addIssueMode) {
                     buttonSubmit.setEnabled(true);
                     btnCloseIssue.setEnabled(false);

@@ -319,7 +319,7 @@ public class AddIssueFileWindow extends JFrame {
                 Tab tab = tabs.get(tabName);                                  // selected tab
 
                 JTable table = tab.getTable();
-                projectManager.loadTable(table);                              // load tableSelected data from database
+                projectManager.loadTable(tab);                              // load tableSelected data from database
 
                 // reload new table data for modifiedTableData
                 ModifiedTableData data = tab.getTableData();
