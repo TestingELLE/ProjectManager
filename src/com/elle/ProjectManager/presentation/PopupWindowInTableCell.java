@@ -293,7 +293,7 @@ public class PopupWindowInTableCell extends JFrame {
             String newTableCellValue = textAreatableCellPopup.getText();
 
             selectedTable.setValueAt(newTableCellValue, row, column);
-            projectManager.uploadChanges(selectedTable.getName());
+            projectManager.uploadChanges();
 
         }
         selectedTable.changeSelection(selectedRow, selectedColumn + 1, false, false);

@@ -5,10 +5,14 @@
  */
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.dao.IssueWindowDAO;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
-import com.elle.ProjectManager.logic.EditableData;
-import com.elle.ProjectManager.logic.IssueInView;
+import com.elle.ProjectManager.database.DBConnection;
+import com.elle.ProjectManager.database.ModifiedData;
+import com.elle.ProjectManager.database.ModifiedTableData;
+import com.elle.ProjectManager.logic.Issue;
+import com.elle.ProjectManager.logic.LoggingAspect;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
@@ -16,7 +20,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,6 +38,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
@@ -43,13 +52,15 @@ public class ViewIssueWindow extends JFrame {
 
     // components
     private ProjectManagerWindow projectManager;
-    private IssueInView issueInView;
+    private Issue issue;
 
-    private Map<String, JTextComponent> textComponentsList;
-    private String[] inViewIssueColumnNames;
-    private JTable Table;
-    private Tab Tab;
-    private int rowNumInModel;
+    private Map<String, Component> ComponentsList;
+    private JTable table;
+    private int rowNum;
+    private int colNum;
+    private IssueWindowDAO dao;
+    private boolean addIssueMode;
+    private Statement statement;
 
     //feature
     private ShortCutSetting ShortCutSetting;
@@ -60,27 +71,39 @@ public class ViewIssueWindow extends JFrame {
     /**
      * Creates new form ViewIssueWindow
      */
-    public ViewIssueWindow(IssueInView IssueInTable) {
-        projectManager = ProjectManagerWindow.getInstance();
+    public ViewIssueWindow(int row, int col, JTable table) {
+        this.projectManager = ProjectManagerWindow.getInstance();
+        this.statement = projectManager.getStatement();
+        this.table = table;
+        this.rowNum = row;
+        this.colNum = col;
+        this.dao = new IssueWindowDAO();
+        this.issue = new Issue(row, dao);
+        this.issue.setIssueValues(table);
+        this.ComponentsList = new HashMap<String, Component>();
+        this.contentChanged = false; // if we do nothing about the text components' content, it stays false
+
+        if (rowNum == -1) {
+            this.addIssueMode = true;
+        } else {
+            this.addIssueMode = false;
+        }
 
         initComponents();
 
-        issueInView = IssueInTable;
-
-        //initial parameters table, row number...
-        initVariables();
-
+        idText.setText(issue.getID()); // set idLabel content
         //initial issueWindow text components' content and listener
         initIssueWindow();
+        setIssueWindowMode();
 
-        this.setTitle("view issue in " + Table.getName());
+        this.setTitle("Issue in " + table.getName());
 
         this.setPreferredSize(new Dimension(600, 750));
 
         // set view issue window location in screen
         Point pmWindowLocation = projectManager.getLocationOnScreen(); //get the project manager window in screen
         int numWindow = projectManager.getOpenningIssuesList().size();
-        System.out.println("now number of opened window is: " + numWindow);
+//        System.out.println("now number of opened window is: " + numWindow);
         int x = pmWindowLocation.x - 150;
         int y = pmWindowLocation.y - 120;
         this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
@@ -88,14 +111,26 @@ public class ViewIssueWindow extends JFrame {
         this.pack();
     }
 
-    private void initVariables() {
-        idLabel.setText(Integer.toString(issueInView.getID())); // set idLabel content
-        // if we do nothing about the text components' content, it stays false
-        contentChanged = false;
-        Table = issueInView.getSelectedTable();
-        Tab = projectManager.getSelectedTab();
-        inViewIssueColumnNames = issueInView.getSelectedIssueColumnNames();
-        rowNumInModel = getIssueRowInTableModel();
+    private void setIssueWindowMode() {
+        dateClosedText.setEnabled(!addIssueMode);
+        dateClosedText.setVisible(!addIssueMode);
+        dateClosed.setVisible(!addIssueMode);
+
+        versionText.setEnabled(!addIssueMode);
+        versionText.setVisible(!addIssueMode);
+        version.setVisible(!addIssueMode);
+
+        buttonConfirm.setEnabled(false);
+        buttonConfirm.setVisible(!addIssueMode);
+
+        btnCloseIssue.setEnabled(!addIssueMode);
+        btnCloseIssue.setVisible(!addIssueMode);
+
+        BtnNext.setVisible(!addIssueMode);
+        BtnPrevious.setVisible(!addIssueMode);
+
+        buttonSubmit.setEnabled(false);
+        buttonSubmit.setVisible(addIssueMode);
     }
 
     /**
@@ -109,33 +144,37 @@ public class ViewIssueWindow extends JFrame {
 
         scrollPane = new javax.swing.JScrollPane();
         formPane = new javax.swing.JPanel();
-        app = new javax.swing.JLabel();
         title = new javax.swing.JLabel();
         id = new javax.swing.JLabel();
-        programmer = new javax.swing.JLabel();
         rk = new javax.swing.JLabel();
-        dateOpened = new javax.swing.JLabel();
         dateOpenedText = new javax.swing.JTextField();
+        programmer = new javax.swing.JLabel();
+        dateOpened = new javax.swing.JLabel();
         jScrollPane7 = new javax.swing.JScrollPane();
         descriptionText = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         buttonCancel = new javax.swing.JButton();
+        buttonSubmit = new javax.swing.JButton();
         dateClosed = new javax.swing.JLabel();
         version = new javax.swing.JLabel();
         buttonConfirm = new javax.swing.JButton();
         dateClosedText = new javax.swing.JTextField();
         versionText = new javax.swing.JTextField();
         btnCloseIssue = new javax.swing.JButton();
+        app = new javax.swing.JLabel();
+        appText = new javax.swing.JTextField();
         titleText = new javax.swing.JTextField();
         description = new javax.swing.JLabel();
-        idLabel = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        idText = new javax.swing.JLabel();
         BtnNext = new javax.swing.JButton();
         BtnPrevious = new javax.swing.JButton();
-        appText = new javax.swing.JTextField();
         programmerText = new javax.swing.JTextField();
         rkText = new javax.swing.JTextField();
         lock = new javax.swing.JLabel();
-        checkbox1 = new java.awt.Checkbox();
+        lockCheckbox = new java.awt.Checkbox();
+        submitterText = new javax.swing.JTextField();
+        submitter = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -148,31 +187,26 @@ public class ViewIssueWindow extends JFrame {
         scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        app.setText(" app");
-
         title.setText(" title");
 
         id.setText(" id");
 
-        programmer.setText(" programmer");
-
         rk.setText(" rk");
 
-        dateOpened.setText(" dateOpened");
-
+        dateOpenedText.setText("jTextField1");
         dateOpenedText.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         dateOpenedText.setMargin(new java.awt.Insets(-1, -1, -1, -1));
         dateOpenedText.setName("dateOpened"); // NOI18N
-        dateOpenedText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dateOpenedTextActionPerformed(evt);
-            }
-        });
         dateOpenedText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 dateOpenedTextKeyReleased(evt);
             }
         });
+
+        programmer.setText(" programmer");
+
+        dateOpened.setText(" dateOpened");
+        dateOpened.setPreferredSize(new java.awt.Dimension(79, 12));
 
         descriptionText.setColumns(20);
         descriptionText.setLineWrap(true);
@@ -193,6 +227,13 @@ public class ViewIssueWindow extends JFrame {
             }
         });
 
+        buttonSubmit.setText("Submit");
+        buttonSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSubmitActionPerformed(evt);
+            }
+        });
+
         dateClosed.setText(" dateClosed");
 
         version.setText(" version");
@@ -204,6 +245,7 @@ public class ViewIssueWindow extends JFrame {
             }
         });
 
+        dateClosedText.setText("jTextField2");
         dateClosedText.setName("dateClosed"); // NOI18N
         dateClosedText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -216,6 +258,7 @@ public class ViewIssueWindow extends JFrame {
             }
         });
 
+        versionText.setText("jTextField1");
         versionText.setName("version"); // NOI18N
 
         btnCloseIssue.setText("Close Issue");
@@ -225,6 +268,11 @@ public class ViewIssueWindow extends JFrame {
             }
         });
 
+        app.setText(" app");
+
+        appText.setText("jTextField1");
+        appText.setName("app"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -233,10 +281,15 @@ public class ViewIssueWindow extends JFrame {
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(buttonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(buttonCancel)
                 .addGap(4, 4, 4))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(158, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(app))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnCloseIssue, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,19 +305,25 @@ public class ViewIssueWindow extends JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(app)
                     .addComponent(dateClosed)
                     .addComponent(version))
                 .addGap(0, 0, 0)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(appText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCloseIssue, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(dateClosedText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(versionText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dateClosedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCloseIssue))
-                .addGap(0, 12, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(buttonSubmit)
                     .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonConfirm)))
         );
 
+        appText.setPreferredSize(new Dimension(84,28));
+
+        titleText.setText("jTextField1");
         titleText.setName("title"); // NOI18N
         titleText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -274,7 +333,18 @@ public class ViewIssueWindow extends JFrame {
 
         description.setText(" description");
 
-        idLabel.setText("jLabel1");
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 38, Short.MAX_VALUE)
+        );
+
+        idText.setText("jLabel1");
 
         BtnNext.setText(">");
         BtnNext.addActionListener(new java.awt.event.ActionListener() {
@@ -290,20 +360,20 @@ public class ViewIssueWindow extends JFrame {
             }
         });
 
-        appText.setName("app"); // NOI18N
-
         programmerText.setName("programmer"); // NOI18N
 
+        rkText.setText("jTextField2");
         rkText.setName("rk"); // NOI18N
-        rkText.addActionListener(new java.awt.event.ActionListener() {
+
+        lock.setText(" lock");
+
+        submitterText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rkTextActionPerformed(evt);
+                submitterTextActionPerformed(evt);
             }
         });
 
-        lock.setText("lock");
-
-        checkbox1.setLabel("checkbox1");
+        submitter.setText(" submitter");
 
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
         formPane.setLayout(formPaneLayout);
@@ -312,92 +382,101 @@ public class ViewIssueWindow extends JFrame {
             .addGroup(formPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(formPaneLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(titleText)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(formPaneLayout.createSequentialGroup()
-                                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(id)
-                                            .addComponent(lock))
-                                        .addGap(19, 19, 19)
-                                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(checkbox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(idLabel))))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(dateOpened)
-                                    .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(28, 28, 28)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(programmer)
-                                    .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(40, 40, 40)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(13, 13, 13))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
-                                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(12, 12, 12))
+                            .addComponent(lock)
+                            .addComponent(id))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lockCheckbox, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(idText))
+                        .addGap(100, 100, 100)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(formPaneLayout.createSequentialGroup()
-                                .addComponent(description)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(BtnPrevious)
-                                .addGap(18, 18, 18)
-                                .addComponent(BtnNext)))
-                        .addContainerGap())
-                    .addGroup(formPaneLayout.createSequentialGroup()
+                                .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(submitterText))
+                        .addGap(18, 18, 18)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(app)
-                            .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(37, 37, 37)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(6, 6, 6))))
+                            .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dateOpened, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(programmer))
+                        .addGap(18, 18, 18)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(19, 19, 19))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addGap(177, 177, 177)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(6, 6, 6))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(titleText)
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addGap(0, 2, Short.MAX_VALUE)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addComponent(description)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(BtnPrevious)
+                                        .addGap(0, 0, 0)
+                                        .addComponent(BtnNext)))))
+                        .addGap(18, 18, 18))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         formPaneLayout.setVerticalGroup(
             formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(formPaneLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(idLabel))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(programmer, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
-                        .addComponent(dateOpened, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
-                    .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(formPaneLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(0, 13, Short.MAX_VALUE)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(checkbox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lock))))
-                .addGap(2, 2, 2)
-                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
+                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(idText)
+                                .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(dateOpened, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(programmer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 0, 0)
+                        .addComponent(lock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(22, 22, 22)
+                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lockCheckbox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(39, 39, 39)))
                 .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
-                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(description, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BtnNext)
-                    .addComponent(BtnPrevious))
+                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(BtnNext)
+                            .addComponent(BtnPrevious)))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(description, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, 0)
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(formPaneLayout.createSequentialGroup()
-                        .addComponent(app)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 44, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         scrollPane.setViewportView(formPane);
@@ -406,7 +485,7 @@ public class ViewIssueWindow extends JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+            .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -418,16 +497,6 @@ public class ViewIssueWindow extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void dateOpenedTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateOpenedTextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_dateOpenedTextActionPerformed
-
-    private void dateOpenedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateOpenedTextKeyReleased
-        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
-            FillItWithDate((JTextField) evt.getComponent());
-        }
-    }//GEN-LAST:event_dateOpenedTextKeyReleased
-
     private void FillItWithDate(JTextField dateArea) {
 
         dateArea.requestFocusInWindow();
@@ -437,6 +506,107 @@ public class ViewIssueWindow extends JFrame {
         String today = dateFormat.format(date);
         dateArea.setText(today);
     }
+
+    private void confirm() {
+//        System.out.println("confirm!");
+
+        dao.updateChanges(issue);
+        projectManager.loadData(); // refresh tableSelected
+        projectManager.makeTableEditable(false);
+    }
+
+    private void showNextIssue(int newRow) {
+        projectManager.getOpenningIssuesList().remove(issue.getID(), this);
+        projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getID());
+
+        String newID = table.getValueAt(newRow, 0).toString();
+
+        if (!projectManager.getOpenningIssuesList().containsKey(newID)) {
+            issue = new Issue(newRow, dao);
+            issue.setIssueValues(table);
+            this.contentChanged = false;
+            //reinitial issueWindow text components' content and listener
+            updateIssueWindow();
+
+            this.contentChanged = false;
+            buttonConfirm.setEnabled(false);
+
+            projectManager.getOpenningIssuesList().put(issue.getID(), this);
+            projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getID());
+
+        } else {
+            projectManager.getViewIssueWindowOf(newID).toFront();
+            this.dispose();
+        }
+
+        table.setRowSelectionInterval(newRow, newRow);
+    }
+
+    private void updateIssueWindow() {
+        for (int i = 0; i < issue.getFieldsNumber(); i++) {
+            String columnName = issue.getFieldName(i);
+            String cellValue = issue.getIssueValueAt(i);
+            switch (columnName) {
+                case "ID":
+                    idText.setText(cellValue);
+                case "app":
+//                    System.out.println(issue.getIssueValueAt(i));
+                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
+                    break;
+                case "title":
+                    titleText.setText(cellValue);
+                    break;
+                case "description":
+                    descriptionText.setText(cellValue);
+                    break;
+                case "programmer":
+                    programmerText.setText(cellValue);
+                    break;
+                case "dateOpened":
+                    dateOpenedText.setText(cellValue);
+                    break;
+                case "rk":
+                    rkText.setText(cellValue);
+                    break;
+                case "version":
+                    versionText.setText(cellValue);
+                    break;
+                case "dateClosed":
+                    dateClosedText.setText(cellValue);
+                    break;
+                case "submitter":
+                    submitterText.setText(cellValue);
+                    break;
+                case "locked":
+                    if (cellValue.equals("Y")) {
+                        lockCheckbox.setState(true);
+                    } else {
+                        lockCheckbox.setState(false);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            issue.getIssueData(columnName).setChanged(false);
+        }
+        //set close issue btn property
+        if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
+            btnCloseIssue.setText("Close Issue");
+        } else {
+            btnCloseIssue.setText("Reopen Issue");
+        }
+    }
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        formWindowClosing();
+//        System.out.println("window closing!");
+    }//GEN-LAST:event_formWindowClosing
+
+    private void dateOpenedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateOpenedTextKeyReleased
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
+            this.FillItWithDate((JTextField) evt.getComponent());
+        }
+    }//GEN-LAST:event_dateOpenedTextKeyReleased
 
     private void descriptionTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionTextKeyReleased
         JTextArea dateArea = (JTextArea) evt.getComponent();
@@ -463,35 +633,97 @@ public class ViewIssueWindow extends JFrame {
     }//GEN-LAST:event_descriptionTextKeyReleased
 
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        
-        projectManager.getOpenningIssuesList().remove((Integer) issueInView.getID(), this);
+        //        System.out.println(selectedTable.getValueAt(0, 0));
+
+//        projectManager.getOpenningIssuesList().remove(issue.getID(), this);
         formWindowClosing();
     }//GEN-LAST:event_buttonCancelActionPerformed
 
-    private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
+    private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
+        submit();
+        
+        this.formWindowClosing();
+    }//GEN-LAST:event_buttonSubmitActionPerformed
 
-        if (contentChanged) {
-            confirm();
-        }
-        formWindowClosing();
-    }//GEN-LAST:event_buttonConfirmActionPerformed
-
-    private void confirm() {
-
-        ModifiedTableData data = Tab.getTableData();
-        for (int col = 0; col < inViewIssueColumnNames.length; col++) {
-//            System.out.println(issueInView.getIssueValueDataAt(col).isValueChanged());
-            if (issueInView.getIssueValueDataAt(col).isValueChanged()) {
-                data.getNewData().add(new ModifiedData(Table.getName(),
-                        Table.getColumnName(col), issueInView.getIssueValueAt(col),
-                        (int) issueInView.getID()));
-            }
-        }
-//        Table.setValueAt();
-        projectManager.uploadChanges(Table.getName());
-
+    private void submit() {
+//        System.out.println("submit!");
+        dao.submitNewIssue(issue);
+        projectManager.loadData();
         projectManager.makeTableEditable(false);
     }
+    private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
+//        updateLocked();
+        confirm();
+        formWindowClosing();
+
+    }//GEN-LAST:event_buttonConfirmActionPerformed
+
+//    private void updateLocked() {
+//
+//        //update the locked value back to database
+//        String ID = idText.getText();
+//        String sql = "";
+//        if (lockCheckbox.getState() == true) {
+//            sql = "UPDATE issues SET locked ='Y' WHERE ID ='" + ID + "';";
+//
+//        } else {
+//            sql = "UPDATE issues SET locked = NULL WHERE ID ='" + ID + "';";
+//        }
+//        DBConnection.close();
+//        DBConnection.open();
+//
+//        statement = DBConnection.getStatement();
+//        try {
+//            statement.executeUpdate(sql);
+//
+//        } catch (Exception ex) {
+//            LoggingAspect.afterThrown(ex);
+//        }
+//
+//    }
+//    public String getSubmitter(String ID) {
+//        String submitter = "";
+//        String sql = "select submitter from issues where ID = '" + ID + "';";
+//        ResultSet rs = null;
+//        DBConnection.close();
+//        DBConnection.open();
+//
+//        statement = DBConnection.getStatement();
+//        try {
+//            rs = statement.executeQuery(sql);
+//
+//            while (rs.next()) {
+//                submitter = rs.getString("submitter");
+//
+//            }
+//
+//        } catch (Exception ex) {
+//            LoggingAspect.afterThrown(ex);
+//        }
+//        return submitter;
+//    }
+//    public String getLock(String ID) {
+//        String locked = "";
+//        String sql = "select locked from issues where ID = '" + ID + "';";
+//        ResultSet rs = null;
+//        DBConnection.close();
+//        DBConnection.open();
+//
+//        statement = DBConnection.getStatement();
+//        try {
+//            rs = statement.executeQuery(sql);
+//
+//            while (rs.next()) {
+//                locked = rs.getString("locked");
+//
+//            }
+//
+//        } catch (Exception ex) {
+//            LoggingAspect.afterThrown(ex);
+//        }
+//        System.out.println(sql + "..." + locked);
+//        return locked;
+//    }
 
     private void dateClosedTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateClosedTextActionPerformed
 
@@ -533,165 +765,50 @@ public class ViewIssueWindow extends JFrame {
     }//GEN-LAST:event_titleTextActionPerformed
 
     private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
-        
-        if (issueInView.getSelectedRowInTable() == Table.getRowCount()-1) {
+        for (int i = 0; i < table.getRowCount(); i++) {
+            if (table.getValueAt(i, 0).toString().equals(issue.getID())) {
+                rowNum = i;
+            }
+        }
+        issue.setRowNum(rowNum);
+        if (rowNum == table.getRowCount() - 1) {
             JOptionPane.showMessageDialog(this, "This is the last row!");
         } else {
-//            if (contentChanged) {
-//                confirm();
-//            }
-
-            int newRow = issueInView.getSelectedRowInTable() + 1;
-            showNextIssue(newRow);
+            rowNum = rowNum + 1;
+            showNextIssue(rowNum);
 
         }
     }//GEN-LAST:event_BtnNextActionPerformed
 
     private void BtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPreviousActionPerformed
-
-        if (issueInView.getSelectedRowInTable() == 0) {
+        for (int i = 0; i < table.getRowCount(); i++) {
+            if (table.getValueAt(i, 0).toString().equals(issue.getID())) {
+                rowNum = i;
+            }
+        }
+        issue.setRowNum(rowNum);
+        if (rowNum == 0) {
             JOptionPane.showMessageDialog(this, "This is the first row!");
         } else {
-            if (contentChanged) {
-                confirm();
-            }
-
-            int newRow = issueInView.getSelectedRowInTable() - 1;
-            showNextIssue(newRow);
+            rowNum = rowNum - 1;
+            showNextIssue(rowNum);
 
         }
-//        if (rowInView == 0) {
-//            JOptionPane.showMessageDialog(this, "This is the first row!");
-//        } else {
-//            if (contentChanged) {
-//                for (int col = 0; col < formValues.length; col++) {
-//                    if (formValues[col] != null) {
-//
-//                        selectedTable.setValueAt(formValues[col], rowInView, col + 1);
-//                    }
-//                }
-//                projectManager.uploadChanges(getIssueActiveTabName());
-//            }
-//            //            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView-1, 2));
-//
-//            projectManager.deleteNumOfAddIssueWindowOpened();
-//            //            this.dispose();
-//            projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
-//            rowInView = rowInView - 1;
-//            projectManager.viewNextIssue(rowInView, columnFocused, selectedTable);
-//            updateForm();
-//            selectedTable.setRowSelectionInterval(rowInView, rowInView);
-//        }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
-    private void showNextIssue(int newRow) {
-
-        projectManager.getOpenningIssuesList().remove(issueInView.getID(), this);
-
-        int newCol = issueInView.getSelectedColumnInTable();
-        Tab newTab = projectManager.getTabs().get(issueInView.getTabName());
-        String newTabName = issueInView.getTabName();
-
-        issueInView = new IssueInView(newRow, newCol, newTab, newTabName);
-
-//        System.out.println("new issue is: " + newRow + " " + newCol + " "
-//                + newTabName + " " + issueInView.getID());
-
-        //reinitial parameters table, row number...
-        initVariables();
-        //reinitial issueWindow text components' content and listener
-        updateIssueWindow();
-
-        projectManager.getOpenningIssuesList().put(issueInView.getID(), this);
-
-        issueInView.getSelectedTable().setRowSelectionInterval(newRow, newRow);
-    }
-
-    private void updateIssueWindow() {
-        for (int i = 1; i < inViewIssueColumnNames.length; i++) {
-            switch (inViewIssueColumnNames[i].toLowerCase()) {
-                case "app":
-                    System.out.println(issueInView.getIssueValueAt(i));
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        appText.setText(issueInView.getIssueValueAt(i).toString());
-                    }else{
-                        appText.setText("");
-                    }// set app textfield with the content in app column in view issue
-                    break;
-                case "title":
-                    System.out.println(issueInView.getIssueValueAt(i));
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        titleText.setText(issueInView.getIssueValueAt(i).toString());
-                    }else{
-                        titleText.setText("");
-                    }
-                    break;
-                case "description":
-                    System.out.println(issueInView.getIssueValueAt(i));
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        descriptionText.setText(issueInView.getIssueValueAt(i).toString());
-                    }else{
-                        descriptionText.setText("");
-                    }
-                    break;
-                case "programmer":
-                    System.out.println(issueInView.getIssueValueAt(i));
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        programmerText.setText(issueInView.getIssueValueAt(i).toString());
-                    }else{
-                        programmerText.setText("");
-                    }
-                    break;
-                case "dateOpened":
-                    System.out.println(issueInView.getIssueValueAt(i));
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        dateOpenedText.setText(issueInView.getIssueValueAt(i).toString());
-                    }else{
-                        dateOpenedText.setText("");
-                    }
-                case "rk":
-                    System.out.println(issueInView.getIssueValueAt(i));
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        rkText.setText(issueInView.getIssueValueAt(i).toString());
-                    }else{
-                        rkText.setText("");
-                    }
-                    break;
-
-                case "version":
-                    System.out.println(issueInView.getIssueValueAt(i));
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        versionText.setText(issueInView.getIssueValueAt(i).toString());
-                    }else{
-                        versionText.setText("");
-                    }
-                case "dateClosed":
-                    System.out.println(issueInView.getIssueValueAt(i));
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        dateClosedText.setText(issueInView.getIssueValueAt(i).toString());
-                    }else{
-                        dateClosedText.setText("");
-                    }
-                    break;
-                default:
-                    break;
-            }
-            issueInView.getIssueValueDataAt(inViewIssueColumnNames[i]).setIsValueChanged(false);
-        }
-        this.contentChanged = false;
-    }
-
-    private void rkTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rkTextActionPerformed
+    private void submitterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitterTextActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_rkTextActionPerformed
-
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        formWindowClosing();
-        System.out.println("window closing!");
-    }//GEN-LAST:event_formWindowClosing
+    }//GEN-LAST:event_submitterTextActionPerformed
 
     private void formWindowClosing() {
-        projectManager.getOpenningIssuesList().remove((Integer) issueInView.getID(), this);
+        if (addIssueMode) {
+            projectManager.setAddRecordsWindowShow(false);
+        } else {
+//            System.out.println(addIssueMode);
+            projectManager.getOpenningIssuesList().remove(issue.getID(), this);
+            projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getID());
+            projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
+        }
         this.dispose();
     }
 
@@ -703,7 +820,7 @@ public class ViewIssueWindow extends JFrame {
     private javax.swing.JButton btnCloseIssue;
     private javax.swing.JButton buttonCancel;
     private javax.swing.JButton buttonConfirm;
-    private java.awt.Checkbox checkbox1;
+    private javax.swing.JButton buttonSubmit;
     private javax.swing.JLabel dateClosed;
     private javax.swing.JTextField dateClosedText;
     private javax.swing.JLabel dateOpened;
@@ -712,15 +829,19 @@ public class ViewIssueWindow extends JFrame {
     private javax.swing.JTextArea descriptionText;
     private javax.swing.JPanel formPane;
     private javax.swing.JLabel id;
-    private javax.swing.JLabel idLabel;
+    private javax.swing.JLabel idText;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JLabel lock;
+    private java.awt.Checkbox lockCheckbox;
     private javax.swing.JLabel programmer;
     private javax.swing.JTextField programmerText;
     private javax.swing.JLabel rk;
     private javax.swing.JTextField rkText;
     private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JLabel submitter;
+    private javax.swing.JTextField submitterText;
     private javax.swing.JLabel title;
     private javax.swing.JTextField titleText;
     private javax.swing.JLabel version;
@@ -728,87 +849,85 @@ public class ViewIssueWindow extends JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void initIssueWindow() {
-        textComponentsList = new HashMap<String, JTextComponent>();
-        inViewIssueColumnNames = this.issueInView.getSelectedIssueColumnNames();
-
-        InputMap ip = null;
-        for (int i = 1; i < inViewIssueColumnNames.length; i++) {
-            switch (inViewIssueColumnNames[i]) {
+        for (int i = 1; i < issue.getFieldsNumber(); i++) {
+            String columnName = issue.getFieldName(i);
+            String cellValue = issue.getIssueValueAt(i);
+//            System.out.println(columnName);
+            switch (columnName) {
                 case "app":
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        appText.setText(issueInView.getIssueValueAt(i).toString());
-                    }// set app textfield with the content in app column in view issue
-                    textComponentsList.put(inViewIssueColumnNames[i], appText); // add app text field to textcomponentlist
-                    ip = appText.getInputMap(); //add undo and copy and paste feature
-                    ShortCutSetting.undoAndRedoShortCut(appText);
+                    if (addIssueMode) {
+                        cellValue = projectManager.getSelectedTabName();
+                        issue.setIssueValueAt(columnName, cellValue);
+                        issue.getIssueData(i).setChanged(true);
+                    }
+                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
+                    ComponentsList.put(columnName, appText); // add app text field to textcomponentlist
                     break;
                 case "title":
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        titleText.setText(issueInView.getIssueValueAt(i).toString());
-                    }
-                    textComponentsList.put(inViewIssueColumnNames[i], titleText);
-                    ip = titleText.getInputMap();
-                    ShortCutSetting.undoAndRedoShortCut(titleText);
+                    titleText.setText(cellValue);
+                    ComponentsList.put(columnName, titleText);
                     break;
                 case "description":
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        descriptionText.setText(issueInView.getIssueValueAt(i).toString());
-                    }
-                    textComponentsList.put(inViewIssueColumnNames[i], descriptionText);
-                    ip = descriptionText.getInputMap();
-                    ShortCutSetting.undoAndRedoShortCut(descriptionText);
+                    descriptionText.setText(cellValue);
+                    ComponentsList.put(columnName, descriptionText);
                     break;
                 case "programmer":
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        programmerText.setText(issueInView.getIssueValueAt(i).toString());
-                    }
-                    textComponentsList.put(inViewIssueColumnNames[i], programmerText);
-                    ip = programmerText.getInputMap();
-                    ShortCutSetting.undoAndRedoShortCut(programmerText);
+                    programmerText.setText(cellValue);
+                    ComponentsList.put(columnName, programmerText);
                     break;
                 case "dateOpened":
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        dateOpenedText.setText(issueInView.getIssueValueAt(i).toString());
+                    if (addIssueMode) {
+                        this.FillItWithDate(dateOpenedText);
+                        issue.setIssueValueAt(columnName, dateOpenedText.getText());
+                        issue.getIssueData(i).setChanged(true);
+                    } else {
+                        dateOpenedText.setText(cellValue);
                     }
-                    textComponentsList.put(inViewIssueColumnNames[i], dateOpenedText);
-                    ip = dateOpenedText.getInputMap();
-                    ShortCutSetting.undoAndRedoShortCut(dateOpenedText);
+                    ComponentsList.put(columnName, dateOpenedText);
                     break;
                 case "rk":
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        rkText.setText(issueInView.getIssueValueAt(i).toString());
-                    }
-                    textComponentsList.put(inViewIssueColumnNames[i], rkText);
-                    ip = rkText.getInputMap();
-                    ShortCutSetting.undoAndRedoShortCut(rkText);
+                    rkText.setText(cellValue);
+                    ComponentsList.put(columnName, rkText);
                     break;
                 case "version":
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        versionText.setText(issueInView.getIssueValueAt(i).toString());
-                    }
-                    textComponentsList.put(inViewIssueColumnNames[i], versionText);
-                    ip = versionText.getInputMap();
-                    ShortCutSetting.undoAndRedoShortCut(versionText);
+                    versionText.setText(cellValue);
+                    ComponentsList.put(columnName, versionText);
                     break;
                 case "dateClosed":
-                    if (issueInView.getIssueValueAt(i) != null) {
-                        dateClosedText.setText(issueInView.getIssueValueAt(i).toString());
+//                    System.out.println("dateClosed " + cellValue);
+                    dateClosedText.setText(cellValue);
+                    ComponentsList.put(columnName, dateClosedText);
+                    break;
+                case "submitter":
+//                    System.out.println("submitter " + cellValue);
+                    if (addIssueMode) {
+                        cellValue = projectManager.getUserName();
+                        issue.setIssueValueAt(columnName, cellValue);
+                        issue.getIssueData(i).setChanged(true);
                     }
-                    textComponentsList.put(inViewIssueColumnNames[i], dateClosedText);
-                    ip = dateClosedText.getInputMap();
-                    ShortCutSetting.undoAndRedoShortCut(dateClosedText);
+                    submitterText.setText(cellValue);
+                    ComponentsList.put(columnName, submitterText);
+                    break;
+                case "locked":
+//                    System.out.println("locked " + cellValue);
+                    if (cellValue.equalsIgnoreCase("y")) {
+                        lockCheckbox.setState(true);
+                    } else {
+                        lockCheckbox.setState(false);
+                    }
+                    ComponentsList.put(columnName, lockCheckbox);
                     break;
                 default:
                     break;
             }
-
-            ShortCutSetting.copyAndPasteShortCut(ip);
         }
         //add document listener to all text components in this window
-        setDocumentListener();
+        setTextComponentListener();
         //add action listener to all text components and using tab to transfer 
         // all text area except description
         setTabKeyTransferFocusBtwTextArea();
+
+        setCheckBoxListener();
 
         //set close issue btn property
         if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
@@ -818,28 +937,64 @@ public class ViewIssueWindow extends JFrame {
         }
     }
 
-    private void setDocumentListener() {
+    private void setCheckBoxListener() {
+        lockCheckbox.addItemListener(new ItemListener() {
+            //set listener to lockCheckbox, so when we click it, it can be detected and confirm button should set at enabled
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                contentChanged = true;
+                if (addIssueMode) {
+                    buttonSubmit.setEnabled(true);
+                } else {
+                    buttonConfirm.setEnabled(true);
+                }
+                issue.getIssueData("locked").setChanged(true);
+                if (e.getStateChange() == 1) {
+                    issue.setIssueValueAt("locked", "Y");
+                }
+//                else
+//                    issue.setIssueValueAt("locked", null);
+
+            }
+        });
+    }
+
+    private void setTextComponentListener() {
         DocumentListener textDocumentLis = new DocumentListener() {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
                 contentChanged = true;
+                if (addIssueMode) {
+                    buttonSubmit.setEnabled(true);
+                } else {
+                    buttonConfirm.setEnabled(true);
+                }
                 Document doc = e.getDocument();
                 String columnName = (String) doc.getProperty("id");
-                Object newValue = textComponentsList.get(columnName).getText();
+                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
 
 //                System.out.println("here " + doc.getProperty("id") + " " + newValue);
-                issueInView.getIssueValueDataAt(columnName).setValue(newValue);
+                issue.setIssueValueAt(columnName, newValue);
+                issue.getIssueData(columnName).setChanged(true);
 
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 contentChanged = true;
+                if (addIssueMode) {
+                    buttonSubmit.setEnabled(true);
+                } else {
+                    buttonConfirm.setEnabled(true);
+                }
                 Document doc = e.getDocument();
                 String columnName = (String) doc.getProperty("id");
-                Object newValue = textComponentsList.get(columnName).getText();
-                issueInView.getIssueValueDataAt(columnName).setValue(newValue);
+                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
+
+//                System.out.println("here " + doc.getProperty("id") + " " + newValue);
+                issue.setIssueValueAt(columnName, newValue);
+                issue.getIssueData(columnName).setChanged(true);
 //                System.out.println(doc.getProperty("id") + " " + newValue);
             }
 
@@ -848,11 +1003,19 @@ public class ViewIssueWindow extends JFrame {
             }
 
         };
-        for (int i = 1; i < inViewIssueColumnNames.length; i++) {
-            String columnName = inViewIssueColumnNames[i];
-            Document doc = textComponentsList.get(columnName).getDocument();
-            doc.addDocumentListener(textDocumentLis);
-            doc.putProperty("id", columnName);
+        InputMap ip = null;
+        for (int i = 1; i < issue.getFieldsNumber(); i++) {
+            String columnName = issue.getFieldName(i);
+            Component comp = ComponentsList.get(columnName);
+            if (comp instanceof JTextComponent) {
+                Document doc = ((JTextComponent) comp).getDocument();
+                doc.addDocumentListener(textDocumentLis);
+                doc.putProperty("id", columnName);
+
+                ip = ((JTextComponent) comp).getInputMap();
+                ShortCutSetting.copyAndPasteShortCut(ip);
+                ShortCutSetting.undoAndRedoShortCut(((JTextComponent) comp));
+            }
         }
     }
 
@@ -864,20 +1027,23 @@ public class ViewIssueWindow extends JFrame {
                 ((Component) e.getSource()).transferFocus();
             }
         };
-
-        for (int i = 1; i < inViewIssueColumnNames.length; i++) {
-            if (!inViewIssueColumnNames[i].equals("description")) {
-                textComponentsList.get(inViewIssueColumnNames[i]).getInputMap().
-                        put(KeyStroke.getKeyStroke("TAB"), "transferFocus");
-                textComponentsList.get(inViewIssueColumnNames[i]).getActionMap().
-                        put("transferFocus", transferFocus);
+        for (int i = 1; i < issue.getFieldsNumber(); i++) {
+            String columnName = issue.getFieldName(i);
+            Component comp = this.ComponentsList.get(i);
+            if (comp instanceof JTextComponent) {
+                if (!columnName.equals("description")) {
+                    ((JTextComponent) comp).getInputMap().
+                            put(KeyStroke.getKeyStroke("TAB"), "transferFocus");
+                    ((JTextComponent) comp).getActionMap().
+                            put("transferFocus", transferFocus);
+                }
             }
         }
     }
 
     private int getIssueRowInTableModel() {
-        for (int i = 0; i < Table.getModel().getRowCount(); i++) {
-            if ((int) Table.getModel().getValueAt(i, 0) == issueInView.getID()) {
+        for (int i = 0; i < table.getModel().getRowCount(); i++) {
+            if (table.getModel().getValueAt(i, 0).equals(issue.getID())) {
                 return i;
             }
         }

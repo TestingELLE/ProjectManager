@@ -36,7 +36,8 @@ public class Tab implements ITableConstants {
     private boolean batchEditBtnVisible;           // sets the batch edit button visible
     private boolean batchEditBtnEnabled;           // sets the batch edit button enabled
     private boolean AddRecordsBtnEnabled;          // sets the Add Records button enabled
-
+    private CustomIDList customIdList;
+    
     // each tab can either be editing or not
     private boolean Editing;
 
@@ -105,7 +106,14 @@ public class Tab implements ITableConstants {
     public void setFilter(TableFilter filter) {
         this.filter = filter;
     }
+    
+    public CustomIDList getCustomIdList(){
+        return this.customIdList;
+    }
 
+    public void setCustomIdList(CustomIDList cIdList){
+        this.customIdList = cIdList;
+    }
     public float[] getColWidthPercent() {
         return colWidthPercent;
     }
