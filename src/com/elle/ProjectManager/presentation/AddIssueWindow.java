@@ -851,10 +851,10 @@ public class AddIssueWindow extends JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 
-        projectManager.makeTableEditable(false, getIssueActiveTabName());
-        projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
-        projectManager.deleteNumOfAddIssueWindowOpened();
-        this.dispose();
+//        projectManager.makeTableEditable(false);
+//        projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
+//        projectManager.deleteNumOfAddIssueWindowOpened();
+//        this.dispose();
     }//GEN-LAST:event_formWindowClosing
 
     private void rkTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rkTextActionPerformed
@@ -866,58 +866,58 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_programmerTextActionPerformed
 
     private void BtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPreviousActionPerformed
-        if (rowInView == 0) {
-            JOptionPane.showMessageDialog(this, "This is the first row!");
-        } else {
-            if (contentChanged) {
-                for (int col = 0; col < formValues.length; col++) {
-                    if (formValues[col] != null) {
-
-                        selectedTable.setValueAt(formValues[col], rowInView, col + 1);
-                    }
-                }
-                projectManager.uploadChanges(getIssueActiveTabName());
-            }
-            //            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView-1, 2));
-
-            projectManager.deleteNumOfAddIssueWindowOpened();
-            //            this.dispose();
-            projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
-            rowInView = rowInView - 1;
-            projectManager.viewNextIssue(rowInView, columnFocused, selectedTable);
-            updateForm();
-            selectedTable.setRowSelectionInterval(rowInView, rowInView);
-        }
+//        if (rowInView == 0) {
+//            JOptionPane.showMessageDialog(this, "This is the first row!");
+//        } else {
+//            if (contentChanged) {
+//                for (int col = 0; col < formValues.length; col++) {
+//                    if (formValues[col] != null) {
+//
+//                        selectedTable.setValueAt(formValues[col], rowInView, col + 1);
+//                    }
+//                }
+//                projectManager.uploadChanges(getIssueActiveTabName());
+//            }
+//            //            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView-1, 2));
+//
+//            projectManager.deleteNumOfAddIssueWindowOpened();
+//            //            this.dispose();
+//            projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
+//            rowInView = rowInView - 1;
+//            projectManager.viewNextIssue(rowInView, columnFocused, selectedTable);
+//            updateForm();
+//            selectedTable.setRowSelectionInterval(rowInView, rowInView);
+//        }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
     private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
 
-        //        System.out.println(contentChanged + " !");
-        if (rowInView == selectedTable.getRowCount() - 1) {
-            JOptionPane.showMessageDialog(this, "This is the last row!");
-        } else {
-            if (contentChanged) {
-                for (int col = 0; col < formValues.length; col++) {
-                    if (formValues[col] != null) {
-
-                        selectedTable.setValueAt(formValues[col], rowInView, col + 1);
-                    }
-                }
-                projectManager.uploadChanges(getIssueActiveTabName());
-                contentChanged = false;
-            }
-            //            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView+1, 2));
-
-            projectManager.deleteNumOfAddIssueWindowOpened();
-            //            this.dispose();
-
-            projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
-            rowInView = rowInView + 1;
-            projectManager.viewNextIssue(rowInView, columnFocused, selectedTable);
-            updateForm();
-            projectManager.makeTableEditable(false, getIssueActiveTabName());
-            selectedTable.setRowSelectionInterval(rowInView, rowInView);
-        }
+//        //        System.out.println(contentChanged + " !");
+//        if (rowInView == selectedTable.getRowCount() - 1) {
+//            JOptionPane.showMessageDialog(this, "This is the last row!");
+//        } else {
+//            if (contentChanged) {
+//                for (int col = 0; col < formValues.length; col++) {
+//                    if (formValues[col] != null) {
+//
+//                        selectedTable.setValueAt(formValues[col], rowInView, col + 1);
+//                    }
+//                }
+//                projectManager.uploadChanges(getIssueActiveTabName());
+//                contentChanged = false;
+//            }
+//            //            System.out.println(projectManager.getSelectedTable().getValueAt(rowInView+1, 2));
+//
+//            projectManager.deleteNumOfAddIssueWindowOpened();
+//            //            this.dispose();
+//
+//            projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
+//            rowInView = rowInView + 1;
+//            projectManager.viewNextIssue(rowInView, columnFocused, selectedTable);
+//            updateForm();
+//            projectManager.makeTableEditable(false);
+//            selectedTable.setRowSelectionInterval(rowInView, rowInView);
+//        }
     }//GEN-LAST:event_BtnNextActionPerformed
 
     private void titleTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titleTextActionPerformed
@@ -982,28 +982,28 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_dateClosedTextActionPerformed
 
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
-        updateLocked();
-        int row = checkConsistencyOfIdAndRowNum();
-        //        System.out.println("real row is: " + row);
-        if (row != -1) {
-            for (int col = 0; col < formValues.length; col++) {
-                //                System.out.println(col + ": " + formValues[col]);
-                //                System.out.println("row 's id is: " + selectedTable.getValueAt(rowInView, 0));
-                if (formValues[col] != null) {
-
-                    selectedTable.setValueAt(formValues[col], rowInView, col + 1);
-                }
-            }
-
-            projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
-            projectManager.deleteNumOfAddIssueWindowOpened();
-            this.dispose();
-            String selectedTableName = selectedTable.getName();
-
-            projectManager.uploadChanges(selectedTableName);
-
-            projectManager.makeTableEditable(false, selectedTableName);
-        }
+//        updateLocked();
+//        int row = checkConsistencyOfIdAndRowNum();
+//        //        System.out.println("real row is: " + row);
+//        if (row != -1) {
+//            for (int col = 0; col < formValues.length; col++) {
+//                //                System.out.println(col + ": " + formValues[col]);
+//                //                System.out.println("row 's id is: " + selectedTable.getValueAt(rowInView, 0));
+//                if (formValues[col] != null) {
+//
+//                    selectedTable.setValueAt(formValues[col], rowInView, col + 1);
+//                }
+//            }
+//
+//            projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
+//            projectManager.deleteNumOfAddIssueWindowOpened();
+//            this.dispose();
+//            String selectedTableName = selectedTable.getName();
+//
+//            projectManager.uploadChanges(selectedTableName);
+//
+//            projectManager.makeTableEditable(false);
+//        }
 
 
     }//GEN-LAST:event_buttonConfirmActionPerformed
@@ -1014,15 +1014,15 @@ public class AddIssueWindow extends JFrame {
     }//GEN-LAST:event_buttonSubmitActionPerformed
 
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        //        System.out.println(selectedTable.getValueAt(0, 0));
-
-        projectManager.makeTableEditable(false, getIssueActiveTabName());
-        projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
-        projectManager.deleteNumOfAddIssueWindowOpened();
-        this.dispose();
-
-        projectManager.getInformationLabel().setText("nothing changed!");
-        projectManager.startCountDownFromNow(5);
+//        //        System.out.println(selectedTable.getValueAt(0, 0));
+//
+//        projectManager.makeTableEditable(false);
+//        projectManager.deleteFromIdNumOfOpenningIssues(rowInView, selectedTable);
+//        projectManager.deleteNumOfAddIssueWindowOpened();
+//        this.dispose();
+//
+//        projectManager.getInformationLabel().setText("nothing changed!");
+//        projectManager.startCountDownFromNow(5);
     }//GEN-LAST:event_buttonCancelActionPerformed
 
     private void descriptionTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionTextKeyReleased
@@ -1167,7 +1167,7 @@ public class AddIssueWindow extends JFrame {
                 LoggingAspect.afterThrown(e);
             }
 
-            projectManager.deleteNumOfAddIssueWindowOpened();
+//            projectManager.deleteNumOfAddIssueWindowOpened();
 //            }
             this.dispose();
             projectManager.setAddRecordsWindowShow(false);
@@ -1210,7 +1210,7 @@ public class AddIssueWindow extends JFrame {
                 projectManager.startCountDownFromNow(5);
             }
 
-            projectManager.makeTableEditable(false, getIssueActiveTabName());
+            projectManager.makeTableEditable(false);
 
         }
     }

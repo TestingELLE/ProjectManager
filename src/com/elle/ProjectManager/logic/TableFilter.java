@@ -25,6 +25,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
     private JTable table;                                  // table to be filtered 
     private TableRowSorter<TableModel> sorter;             // the table sorter
     private Map<Integer, ArrayList<Object>> filterItems;    // distinct items to filter
+    private CustomIDList customIdListFilter;
     private Color color;                                   // color to paint header
     private boolean isFiltering;
 
@@ -78,6 +79,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
         {
             selectedField = "";                    // no reason not to
         }
+        System.out.println("add " + selectedField + " to filter");
         filterItems.get(col).add(selectedField);   // add passed item
 
         addColorHeader(col);                       // highlight header
@@ -107,11 +109,20 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
                 {
                     item = "";                        // no reason not to
                 }
+                System.out.println("add " + item + " to filter");
                 filterItems.get(col).add(item);       // add item to list
             }
 
             addColorHeader(col);                      // highlight header
         }
+    }
+
+    public void addCustomIdListToFilterItem(CustomIDList customIdList) {
+//        for(Object id : customIdList){
+//            filterItems.get(0).add(id);
+//        }
+//        this.addColorHeader(0);
+        this.customIdListFilter = customIdList;
     }
 
     /**
@@ -168,6 +179,14 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
         table.getColumnModel().getColumn(columnIndex)
                 .setHeaderRenderer(cellRenderer);
         table.getTableHeader().repaint();
+    }
+     
+    public void addColorCell(int rowIndex, int columnIndex){
+//        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
+//        cellRenderer.setBackground(color);
+//        cellRenderer.setHorizontalAlignment(JLabel.CENTER);
+//        table.getColumnModel().getColumn(columnIndex).setCellRenderer(cellRenderer);
+//        table.getCellRenderer(rowIndex, columnIndex)
     }
 
     /**
@@ -297,7 +316,6 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      * highlights
      */
     public void clearAllFilters() {
-        
 
         removeAllFilterItems();      // load all rows
         removeAllColorHeaders();     // remove all header highlighted Colors
@@ -349,25 +367,29 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
                             if (cellValue.toString().toLowerCase().contains(distinctItem.toString().toLowerCase())) {
                                 itemsFound++;
                             }
-                        }else{
-                            if(cellValue.toString().equalsIgnoreCase(distinctItem.toString())){
+                        } else {
+                            if (cellValue.toString().equalsIgnoreCase(distinctItem.toString())) {
                                 itemsFound++;
                             }
                         }
                     }
                 }
             }
-
             if (emptyFilterCols == model.getColumnCount()) {
                 isFiltering = false;
                 return true;
             } else if (itemsFound == numColsfiltered) {
                 return true;
             } else {
+                if (!this.customIdListFilter.isEmpty()) {
+                    if (this.customIdListFilter.contains(model.getValueAt(row, 0).toString())) {
+                        return true;
+                    }
+                }
                 return false;
+
             }
-        } else {
-            return true;  // not filtering
         }
+        return true;  // not filtering
     }
 }
