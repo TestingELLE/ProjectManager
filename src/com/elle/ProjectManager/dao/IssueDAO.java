@@ -3,12 +3,14 @@ package com.elle.ProjectManager.dao;
 
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.entities.BackupDBTableRecord;
+import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.Component;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -70,5 +72,53 @@ public class IssueDAO {
         }
         DBConnection.close();
         return id;
+    }
+
+    /**
+     * Inserts issue into the database.
+     * Insert statement is used to add the issue to the database. 
+     * @param sue 
+     */
+    public void insert(Issue issue) {
+        
+        if(DBConnection.open()){
+            
+            // set issue values
+            int id = issue.getId();
+            String app = issue.getApp();
+            String title = issue.getTitle();
+            String description = issue.getDescription();
+            String programmer = issue.getProgrammer();
+            String dateOpened = issue.getDateOpened();
+            int rk = issue.getRk();
+            String version = issue.getVersion();
+            String dateClosed = issue.getDateClosed();
+            String issueType = issue.getIssueType();
+            String submitter = issue.getSubmitter();
+            String locked = issue.getLocked();
+
+            String sql = "INSERT INTO " + DB_TABLE_NAME + "(" + COL_PK_ID + ", " 
+                    + COL_APP + ", " +  COL_TITLE + ", " +  COL_DESCRIPTION + ", " 
+                    +  COL_PROGRAMMER + ", " +  COL_DATE_OPENED + ", " +  COL_RK 
+                    + ", " +  COL_VERSION + ", " +  COL_DATE_CLOSED + ", " 
+                    +  COL_ISSUE_TYPE + ", " +  COL_SUBMITTER + ", " 
+                    +  COL_LOCKED  + ") " 
+                    + "VALUES(" + id + ", '" + app + "', '" +  title + "', '" 
+                    +  description + "', '" +  programmer + "', '" +  dateOpened 
+                    + "', '" +  rk + "', '" +  version + "', '" +  dateClosed 
+                    + "', '" +  issueType + "', '" +  submitter + "', '" 
+                    +  locked  + "'); ";
+
+            ResultSet result = null;
+
+            try {
+                Statement statement = DBConnection.getStatement();
+                statement.executeUpdate(sql);
+            }
+            catch (SQLException ex) {
+                LoggingAspect.afterThrown(ex);
+            }
+        }
+        DBConnection.close();
     }
 }
