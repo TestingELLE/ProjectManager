@@ -1,27 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.elle.ProjectManager.dao;
 
 import com.elle.ProjectManager.database.DBConnection;
-import com.elle.ProjectManager.database.SQL_Commands;
-import com.elle.ProjectManager.entities.BackupDBTableRecord;
 import com.elle.ProjectManager.logic.Field;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
 import com.elle.ProjectManager.logic.Issue;
 import com.elle.ProjectManager.logic.LoggingAspect;
-import java.awt.Component;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /**
  * BackupDBTableDAO

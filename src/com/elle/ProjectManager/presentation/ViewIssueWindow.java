@@ -54,7 +54,7 @@ public class ViewIssueWindow extends JFrame {
     /**
      * Creates new form ViewIssueWindow
      */
-    public ViewIssueWindow(int row, int col, JTable table) {
+    public ViewIssueWindow(int row, Issue issue, JTable table) {
         this.projectManager = ProjectManagerWindow.getInstance();
         this.table = table;
         this.rowNum = row;
