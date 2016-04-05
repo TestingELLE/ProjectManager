@@ -1,7 +1,7 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.dao.BackupDBTableDAO;
-import com.elle.ProjectManager.dbtables.BackupDBTableRecord;
+import com.elle.ProjectManager.entities.BackupDBTableRecord;
 import com.elle.ProjectManager.logic.BackupTableCheckBoxItem;
 import com.elle.ProjectManager.logic.CheckBoxList;
 import com.elle.ProjectManager.logic.LoggingAspect;

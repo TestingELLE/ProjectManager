@@ -8,20 +8,15 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.logic.*;
-import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-//import java.awt.geom.Rectangle2D;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
@@ -31,11 +26,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-//import java.util;
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -44,15 +35,10 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
 
 /**
  *
@@ -89,7 +75,6 @@ public class AddIssueWindow extends JFrame {
 
     private Map<String, JTextField> textAreasInForm;
 
-//    private ArrayList line;
     // used to notify if the tableSelected is editing
     // the tableSelected.isEditing method has issues from the tableModelListener
     private boolean addIssueMode;

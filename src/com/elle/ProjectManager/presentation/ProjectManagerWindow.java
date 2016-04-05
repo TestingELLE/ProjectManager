@@ -5,7 +5,6 @@ import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.logic.*;
-//import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;

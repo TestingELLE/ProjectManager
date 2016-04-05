@@ -1,5 +1,5 @@
 
-package com.elle.ProjectManager.dbtables;
+package com.elle.ProjectManager.entities;
 
 /**
  * BackupDBTableRecord

@@ -7,7 +7,7 @@ package com.elle.ProjectManager.dao;
 
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.SQL_Commands;
-import com.elle.ProjectManager.dbtables.BackupDBTableRecord;
+import com.elle.ProjectManager.entities.BackupDBTableRecord;
 import com.elle.ProjectManager.logic.Field;
 import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
 import com.elle.ProjectManager.logic.Issue;

@@ -1,6 +1,6 @@
 package com.elle.ProjectManager.logic;
 
-import com.elle.ProjectManager.dbtables.BackupDBTableRecord;
+import com.elle.ProjectManager.entities.BackupDBTableRecord;
 
 import javax.swing.*;
 

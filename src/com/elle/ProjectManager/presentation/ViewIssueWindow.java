@@ -1,21 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.dao.IssueWindowDAO;
-import com.elle.ProjectManager.database.ModifiedData;
-import com.elle.ProjectManager.database.ModifiedTableData;
-import com.elle.ProjectManager.database.DBConnection;
-import com.elle.ProjectManager.database.ModifiedData;
-import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.logic.Issue;
-import com.elle.ProjectManager.logic.LoggingAspect;
 import com.elle.ProjectManager.logic.ShortCutSetting;
-import com.elle.ProjectManager.logic.Tab;
-import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -23,8 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,7 +24,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
@@ -57,10 +42,8 @@ public class ViewIssueWindow extends JFrame {
     private Map<String, Component> ComponentsList;
     private JTable table;
     private int rowNum;
-    private int colNum;
     private IssueWindowDAO dao;
     private boolean addIssueMode;
-    private Statement statement;
 
     //feature
     private ShortCutSetting ShortCutSetting;
@@ -73,10 +56,8 @@ public class ViewIssueWindow extends JFrame {
      */
     public ViewIssueWindow(int row, int col, JTable table) {
         this.projectManager = ProjectManagerWindow.getInstance();
-        this.statement = projectManager.getStatement();
         this.table = table;
         this.rowNum = row;
-        this.colNum = col;
         this.dao = new IssueWindowDAO();
         this.issue = new Issue(row, dao);
         this.issue.setIssueValues(table);
