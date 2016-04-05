@@ -1,8 +1,9 @@
 
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.dao.IssueWindowDAO;
-import com.elle.ProjectManager.logic.Issue;
+import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -42,7 +44,7 @@ public class ViewIssueWindow extends JFrame {
     private Map<String, Component> ComponentsList;
     private JTable table;
     private int rowNum;
-    private IssueWindowDAO dao;
+    private IssueDAO dao;
     private boolean addIssueMode;
 
     //feature
@@ -54,25 +56,29 @@ public class ViewIssueWindow extends JFrame {
     /**
      * Creates new form ViewIssueWindow
      */
-    public ViewIssueWindow(int row, Issue issue, JTable table) {
-        this.projectManager = ProjectManagerWindow.getInstance();
+    public ViewIssueWindow(int row, JTable table) {
+        projectManager = ProjectManagerWindow.getInstance();
         this.table = table;
-        this.rowNum = row;
-        this.dao = new IssueWindowDAO();
-        this.issue = new Issue(row, dao);
-        this.issue.setIssueValues(table);
-        this.ComponentsList = new HashMap<String, Component>();
-        this.contentChanged = false; // if we do nothing about the text components' content, it stays false
+        rowNum = row;
+        dao = new IssueDAO();
+        issue = new Issue();
+        ComponentsList = new HashMap<String, Component>();
+        contentChanged = false; // if we do nothing about the text components' content, it stays false
 
+        int id;
         if (rowNum == -1) {
-            this.addIssueMode = true;
+            addIssueMode = true;
+            id = (dao.getMaxId() + 1);
+            issue.setId(id);
         } else {
-            this.addIssueMode = false;
+            addIssueMode = false;
+            setIssueValues(row,table);
+            id = issue.getId();
         }
 
         initComponents();
 
-        idText.setText(issue.getID()); // set idLabel content
+        idText.setText(Integer.toString(id)); // set idLabel content
         //initial issueWindow text components' content and listener
         initIssueWindow();
         setIssueWindowMode();
@@ -153,9 +159,10 @@ public class ViewIssueWindow extends JFrame {
         programmerText = new javax.swing.JTextField();
         rkText = new javax.swing.JTextField();
         lock = new javax.swing.JLabel();
-        lockCheckbox = new java.awt.Checkbox();
         submitterText = new javax.swing.JTextField();
         submitter = new javax.swing.JLabel();
+        lockCheckBox = new javax.swing.JCheckBox();
+        comboBoxBug = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -356,6 +363,8 @@ public class ViewIssueWindow extends JFrame {
 
         submitter.setText(" submitter");
 
+        comboBoxBug.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
         formPane.setLayout(formPaneLayout);
         formPaneLayout.setHorizontalGroup(
@@ -369,14 +378,14 @@ public class ViewIssueWindow extends JFrame {
                             .addComponent(id))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lockCheckbox, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(idText))
-                        .addGap(100, 100, 100)
+                            .addComponent(idText)
+                            .addComponent(lockCheckBox))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(comboBoxBug, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, Short.MAX_VALUE)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(submitterText))
+                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -399,7 +408,7 @@ public class ViewIssueWindow extends JFrame {
                             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(titleText)
                             .addGroup(formPaneLayout.createSequentialGroup()
-                                .addGap(0, 2, Short.MAX_VALUE)
+                                .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(formPaneLayout.createSequentialGroup()
@@ -418,30 +427,35 @@ public class ViewIssueWindow extends JFrame {
             .addGroup(formPaneLayout.createSequentialGroup()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGap(0, 13, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(idText)
-                                .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(idText)
+                                        .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(dateOpened, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(programmer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGap(0, 0, 0)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lockCheckBox)))
                             .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(dateOpened, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(programmer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(0, 0, 0)
-                        .addComponent(lock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addGap(14, 14, 14)
+                                .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(comboBoxBug, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(22, 22, 22)
                         .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(formPaneLayout.createSequentialGroup()
                         .addGap(27, 27, 27)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lockCheckbox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(39, 39, 39)))
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(44, 44, 44)))
                 .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(formPaneLayout.createSequentialGroup()
@@ -627,8 +641,22 @@ public class ViewIssueWindow extends JFrame {
     }//GEN-LAST:event_buttonSubmitActionPerformed
 
     private void submit() {
-//        System.out.println("submit!");
-        dao.submitNewIssue(issue);
+
+        // set issue values
+        issue.setId(Integer.parseInt(idText.getText()));
+        issue.setApp(appText.getText());
+        issue.setTitle(titleText.getText());
+        issue.setDescription(descriptionText.getText());
+        issue.setProgrammer(programmerText.getText());
+        issue.setDateOpened(dateOpenedText.getText());
+        issue.setRk(Integer.parseInt(rkText.getText()));
+        issue.setVersion(versionText.getText());
+        issue.setDateClosed(dateClosedText.getText());
+        issue.setIssueType(comboBoxBug.getSelectedItem().toString());
+        issue.setSubmitter(submitterText.getText());
+        issue.setLocked((lockCheckBox.isSelected())?"Y":null);
+        
+        dao.insert(issue);
         projectManager.loadData();
         projectManager.makeTableEditable(false);
     }
@@ -802,6 +830,7 @@ public class ViewIssueWindow extends JFrame {
     private javax.swing.JButton buttonCancel;
     private javax.swing.JButton buttonConfirm;
     private javax.swing.JButton buttonSubmit;
+    private javax.swing.JComboBox<String> comboBoxBug;
     private javax.swing.JLabel dateClosed;
     private javax.swing.JTextField dateClosedText;
     private javax.swing.JLabel dateOpened;
@@ -815,7 +844,7 @@ public class ViewIssueWindow extends JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JLabel lock;
-    private java.awt.Checkbox lockCheckbox;
+    private javax.swing.JCheckBox lockCheckBox;
     private javax.swing.JLabel programmer;
     private javax.swing.JTextField programmerText;
     private javax.swing.JLabel rk;
@@ -1030,5 +1059,21 @@ public class ViewIssueWindow extends JFrame {
         }
         System.out.println("can not find this issue in Model!");
         return -1;
+    }
+
+    private void setIssueValues(int row, JTable table) {
+
+        issue.setId(Integer.parseInt(table.getValueAt(row, 0).toString()));
+        issue.setApp(table.getValueAt(row, 0).toString());
+        issue.setTitle(table.getValueAt(row, 0).toString());
+        issue.setDescription(table.getValueAt(row, 0).toString());
+        issue.setProgrammer(table.getValueAt(row, 0).toString());
+        issue.setDateOpened(table.getValueAt(row, 0).toString());
+        issue.setRk(Integer.parseInt(table.getValueAt(row, 0).toString()));
+        issue.setVersion(table.getValueAt(row, 0).toString());
+        issue.setDateClosed(table.getValueAt(row, 0).toString());
+        issue.setIssueType(table.getValueAt(row, 0).toString());
+        issue.setSubmitter(table.getValueAt(row, 0).toString());
+        issue.setLocked(table.getValueAt(row, 0).toString());
     }
 }
