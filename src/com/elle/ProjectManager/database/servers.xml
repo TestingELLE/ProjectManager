@@ -8,10 +8,10 @@
     <server>
         <server-name>pupone</server-name>
         <server-url>jdbc:mysql://rendertech.com:3306/</server-url>
-        <server-default>false</server-default>
+        <server-default>true</server-default>
         <database>
             <db-name>pupone_dummy</db-name>
-            <db-default>false</db-default>
+            <db-default>true</db-default>
         </database>
         <database>
             <db-name>pupone_Analyster</db-name>
