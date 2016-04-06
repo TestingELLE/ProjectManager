@@ -79,8 +79,9 @@ public class IssueDAO {
      * Insert statement is used to add the issue to the database. 
      * @param sue 
      */
-    public void insert(Issue issue) {
+    public boolean insert(Issue issue) {
         
+        boolean successful = false;
         if(DBConnection.open()){
             
             // set issue values
@@ -109,16 +110,97 @@ public class IssueDAO {
                     + "', '" +  issueType + "', '" +  submitter + "', '" 
                     +  locked  + "'); ";
 
-            ResultSet result = null;
+            try {
+                Statement statement = DBConnection.getStatement();
+                statement.executeUpdate(sql);
+                successful = true;
+            }
+            catch (SQLException ex) {
+                LoggingAspect.afterThrown(ex);
+                successful = false;
+            }
+        }
+        DBConnection.close();
+        return successful;
+    }
+
+    /**
+     * update
+     * @param issue 
+     */
+    public boolean update(Issue issue) {
+        
+        boolean successful = false;
+        if(DBConnection.open()){
+            
+            // set issue values
+            int id = issue.getId();
+            String app = issue.getApp();
+            String title = issue.getTitle();
+            String description = issue.getDescription();
+            String programmer = issue.getProgrammer();
+            String dateOpened = issue.getDateOpened();
+            int rk = issue.getRk();
+            String version = issue.getVersion();
+            String dateClosed = issue.getDateClosed();
+            String issueType = issue.getIssueType();
+            String submitter = issue.getSubmitter();
+            String locked = issue.getLocked();
+
+            // UPDATE issues SET app = "update app" WHERE ID = 504;
+            
+            String sql = "UPDATE " + DB_TABLE_NAME + " SET " 
+                    + COL_APP + " = '" + app + "', "
+                    + COL_TITLE + " = '" + title + "', "
+                    + COL_DESCRIPTION + " = '" + description + "', "
+                    + COL_PROGRAMMER + " = '" + programmer + "', "
+                    + COL_DATE_OPENED + " = '" + dateOpened + "', "
+                    + COL_RK + " = '" + rk + "', "
+                    + COL_VERSION + " = '" + version + "', "
+                    + COL_DATE_CLOSED + " = '" + dateClosed + "', "
+                    + COL_ISSUE_TYPE + " = '" + issueType + "', "
+                    + COL_SUBMITTER + " = '" + submitter + "', "
+                    + COL_LOCKED + " = '" + locked + "' "
+                    + "WHERE " + COL_PK_ID + " = " + id + ";";
 
             try {
                 Statement statement = DBConnection.getStatement();
                 statement.executeUpdate(sql);
+                successful = true;
             }
             catch (SQLException ex) {
                 LoggingAspect.afterThrown(ex);
+                successful = false;
             }
         }
         DBConnection.close();
+        return successful;
+    }
+    
+    /**
+     * delete
+     * @param issue 
+     */
+    public boolean delete(Issue issue){
+        
+        boolean successful = false;
+        if(DBConnection.open()){
+
+            int id = issue.getId();
+            String sql = "DELETE FROM " + DB_TABLE_NAME + 
+                        " WHERE " + COL_PK_ID + " = " + id + ";";
+
+            try {
+                Statement statement = DBConnection.getStatement();
+                statement.executeUpdate(sql);
+                successful = true;
+            }
+            catch (SQLException ex) {
+                LoggingAspect.afterThrown(ex);
+                successful = false;
+            }
+        }
+        DBConnection.close();
+        return successful;
     }
 }
