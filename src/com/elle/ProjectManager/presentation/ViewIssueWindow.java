@@ -72,7 +72,7 @@ public class ViewIssueWindow extends JFrame {
             issue.setId(id);
         } else {
             addIssueMode = false;
-            setIssueValues(row,table);
+            setIssueValuesFromTable(row,table);
             id = issue.getId();
         }
 
@@ -363,7 +363,7 @@ public class ViewIssueWindow extends JFrame {
 
         submitter.setText(" submitter");
 
-        comboBoxBug.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboBoxBug.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
 
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
         formPane.setLayout(formPaneLayout);
@@ -504,8 +504,8 @@ public class ViewIssueWindow extends JFrame {
 
     private void confirm() {
 //        System.out.println("confirm!");
-
-        dao.updateChanges(issue);
+        setIssueValuesFromComponents();
+        dao.update(issue);
         projectManager.loadData(); // refresh tableSelected
         projectManager.makeTableEditable(false);
     }
@@ -643,18 +643,7 @@ public class ViewIssueWindow extends JFrame {
     private void submit() {
 
         // set issue values
-        issue.setId(Integer.parseInt(idText.getText()));
-        issue.setApp(appText.getText());
-        issue.setTitle(titleText.getText());
-        issue.setDescription(descriptionText.getText());
-        issue.setProgrammer(programmerText.getText());
-        issue.setDateOpened(dateOpenedText.getText());
-        issue.setRk(Integer.parseInt(rkText.getText()));
-        issue.setVersion(versionText.getText());
-        issue.setDateClosed(dateClosedText.getText());
-        issue.setIssueType(comboBoxBug.getSelectedItem().toString());
-        issue.setSubmitter(submitterText.getText());
-        issue.setLocked((lockCheckBox.isSelected())?"Y":null);
+        setIssueValuesFromComponents();
         
         dao.insert(issue);
         projectManager.loadData();
@@ -1061,7 +1050,7 @@ public class ViewIssueWindow extends JFrame {
         return -1;
     }
 
-    private void setIssueValues(int row, JTable table) {
+    private void setIssueValuesFromTable(int row, JTable table) {
 
         issue.setId(Integer.parseInt(table.getValueAt(row, 0).toString()));
         issue.setApp(table.getValueAt(row, 0).toString());
@@ -1075,5 +1064,20 @@ public class ViewIssueWindow extends JFrame {
         issue.setIssueType(table.getValueAt(row, 0).toString());
         issue.setSubmitter(table.getValueAt(row, 0).toString());
         issue.setLocked(table.getValueAt(row, 0).toString());
+    }
+    
+    private void setIssueValuesFromComponents() {
+        issue.setId(Integer.parseInt(idText.getText()));
+        issue.setApp(appText.getText());
+        issue.setTitle(titleText.getText());
+        issue.setDescription(descriptionText.getText());
+        issue.setProgrammer(programmerText.getText());
+        issue.setDateOpened(dateOpenedText.getText());
+        issue.setRk(Integer.parseInt(rkText.getText()));
+        issue.setVersion(versionText.getText());
+        issue.setDateClosed(dateClosedText.getText());
+        issue.setIssueType(comboBoxBug.getSelectedItem().toString());
+        issue.setSubmitter(submitterText.getText());
+        issue.setLocked((lockCheckBox.isSelected())?"Y":null);
     }
 }
