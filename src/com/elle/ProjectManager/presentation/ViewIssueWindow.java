@@ -43,7 +43,7 @@ public class ViewIssueWindow extends JFrame {
 
     private Map<String, Component> ComponentsList;
     private JTable table;
-    private int rowNum;
+    private int row;
     private IssueDAO dao;
     private boolean addIssueMode;
 
@@ -59,14 +59,14 @@ public class ViewIssueWindow extends JFrame {
     public ViewIssueWindow(int row, JTable table) {
         projectManager = ProjectManagerWindow.getInstance();
         this.table = table;
-        rowNum = row;
+        this.row = row;
         dao = new IssueDAO();
         issue = new Issue();
         ComponentsList = new HashMap<String, Component>();
         contentChanged = false; // if we do nothing about the text components' content, it stays false
 
         int id;
-        if (rowNum == -1) {
+        if (this.row == -1) {
             addIssueMode = true;
             id = (dao.getMaxId() + 1);
             issue.setId(id);
@@ -162,7 +162,7 @@ public class ViewIssueWindow extends JFrame {
         submitterText = new javax.swing.JTextField();
         submitter = new javax.swing.JLabel();
         lockCheckBox = new javax.swing.JCheckBox();
-        comboBoxBug = new javax.swing.JComboBox<>();
+        comboBoxIssueType = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -363,7 +363,7 @@ public class ViewIssueWindow extends JFrame {
 
         submitter.setText(" submitter");
 
-        comboBoxBug.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
 
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
         formPane.setLayout(formPaneLayout);
@@ -381,7 +381,7 @@ public class ViewIssueWindow extends JFrame {
                             .addComponent(idText)
                             .addComponent(lockCheckBox))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(comboBoxBug, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, Short.MAX_VALUE)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -446,7 +446,7 @@ public class ViewIssueWindow extends JFrame {
                             .addGroup(formPaneLayout.createSequentialGroup()
                                 .addGap(14, 14, 14)
                                 .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(comboBoxBug, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(22, 22, 22)
                         .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(formPaneLayout.createSequentialGroup()
@@ -574,9 +574,9 @@ public class ViewIssueWindow extends JFrame {
                     break;
                 case "locked":
                     if (cellValue.equals("Y")) {
-                        lockCheckbox.setState(true);
+                        lockCheckBox.setSelected(true);
                     } else {
-                        lockCheckbox.setState(false);
+                        lockCheckBox.setSelected(false);
                     }
                     break;
                 default:
@@ -763,34 +763,68 @@ public class ViewIssueWindow extends JFrame {
     }//GEN-LAST:event_titleTextActionPerformed
 
     private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
-        for (int i = 0; i < table.getRowCount(); i++) {
-            if (table.getValueAt(i, 0).toString().equals(issue.getID())) {
-                rowNum = i;
+        
+        /**
+         * If table has not changed then no need to execute this for loop.
+         * boolean rowFound makes sure the issue is still in the table view.
+         */
+        boolean rowFound = true;
+        if (!table.getValueAt(row, 0).toString().equals(issue.getId())) {
+            rowFound = false;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                if (table.getValueAt(i, 0).toString().equals(issue.getId())) {
+                    row = i;
+                    rowFound = true;
+                }
             }
         }
-        issue.setRowNum(rowNum);
-        if (rowNum == table.getRowCount() - 1) {
-            JOptionPane.showMessageDialog(this, "This is the last row!");
+        
+        // next row
+        if(!rowFound){
+            JOptionPane.showMessageDialog(this, "This issue is no longer on the table!");
+        }
+        else if (row == table.getRowCount() - 1) {
+            JOptionPane.showMessageDialog(this, "This issue is already the last row on the table!");
         } else {
-            rowNum = rowNum + 1;
-            showNextIssue(rowNum);
-
+            row++;
+            setIssueValuesFromTable(row,table);
+            setComponentValuesFromIssue();
+            // set corresponding table row selected
+            table.setRowSelectionInterval(row, row);
+            //showNextIssue(row);
         }
     }//GEN-LAST:event_BtnNextActionPerformed
 
     private void BtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPreviousActionPerformed
-        for (int i = 0; i < table.getRowCount(); i++) {
-            if (table.getValueAt(i, 0).toString().equals(issue.getID())) {
-                rowNum = i;
+
+        /**
+         * If table has not changed then no need to execute this for loop.
+         * boolean found makes sure the issue is still in the table view.
+         */
+        boolean rowFound = true;
+        if (!table.getValueAt(row, 0).toString().equals(issue.getId())) {
+            rowFound = false;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                if (table.getValueAt(i, 0).toString().equals(issue.getId())) {
+                    row = i;
+                    rowFound = true;
+                }
             }
         }
-        issue.setRowNum(rowNum);
-        if (rowNum == 0) {
-            JOptionPane.showMessageDialog(this, "This is the first row!");
+        
+        // previous row
+        if(!rowFound){
+            JOptionPane.showMessageDialog(this, "This issue is no longer on the table!");
+        }
+        else if (row == 0) {
+            JOptionPane.showMessageDialog(this, "This issue is already the first row on the table!");
         } else {
-            rowNum = rowNum - 1;
-            showNextIssue(rowNum);
-
+            row--;
+            setIssueValuesFromTable(row,table);
+            setComponentValuesFromIssue();
+            // set corresponding table row selected
+            table.setRowSelectionInterval(row, row);
+            //showNextIssue(row);
         }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
@@ -819,7 +853,7 @@ public class ViewIssueWindow extends JFrame {
     private javax.swing.JButton buttonCancel;
     private javax.swing.JButton buttonConfirm;
     private javax.swing.JButton buttonSubmit;
-    private javax.swing.JComboBox<String> comboBoxBug;
+    private javax.swing.JComboBox<String> comboBoxIssueType;
     private javax.swing.JLabel dateClosed;
     private javax.swing.JTextField dateClosedText;
     private javax.swing.JLabel dateOpened;
@@ -1050,6 +1084,11 @@ public class ViewIssueWindow extends JFrame {
         return -1;
     }
 
+    /**
+     * Sets issue values from table
+     * @param row the row index on table for issue to retrieve
+     * @param table the table with the row/issue data
+     */
     private void setIssueValuesFromTable(int row, JTable table) {
 
         issue.setId(Integer.parseInt(table.getValueAt(row, 0).toString()));
@@ -1066,6 +1105,9 @@ public class ViewIssueWindow extends JFrame {
         issue.setLocked(table.getValueAt(row, 0).toString());
     }
     
+    /**
+     * Sets the issue values from the components and fields from issue window.
+     */
     private void setIssueValuesFromComponents() {
         issue.setId(Integer.parseInt(idText.getText()));
         issue.setApp(appText.getText());
@@ -1076,8 +1118,27 @@ public class ViewIssueWindow extends JFrame {
         issue.setRk(Integer.parseInt(rkText.getText()));
         issue.setVersion(versionText.getText());
         issue.setDateClosed(dateClosedText.getText());
-        issue.setIssueType(comboBoxBug.getSelectedItem().toString());
+        issue.setIssueType(comboBoxIssueType.getSelectedItem().toString());
         issue.setSubmitter(submitterText.getText());
         issue.setLocked((lockCheckBox.isSelected())?"Y":null);
+    }
+
+    /**
+     * Sets the components and fields on issue window from the issue object.
+     */
+    private void setComponentValuesFromIssue() {
+
+        idText.setText(Integer.toString(issue.getId()));
+        appText.setText(issue.getApp());
+        titleText.setText(issue.getTitle());
+        descriptionText.setText(issue.getDescription());
+        programmerText.setText(issue.getProgrammer());
+        dateOpenedText.setText(issue.getDateOpened());
+        rkText.setText(Integer.toString(issue.getRk()));
+        versionText.setText(issue.getVersion());
+        dateClosedText.setText(issue.getDateClosed());
+        comboBoxIssueType.setSelectedItem(issue.getIssueType());
+        submitterText.setText(issue.getSubmitter());
+        lockCheckBox.setSelected(issue.getLocked().equals("Y")?true:false);
     }
 }

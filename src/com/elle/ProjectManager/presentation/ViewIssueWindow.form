@@ -69,7 +69,7 @@
                                   <Component id="lockCheckBox" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="comboBoxBug" min="-2" pref="65" max="-2" attributes="0"/>
+                              <Component id="comboBoxIssueType" min="-2" pref="65" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="submitter" min="-2" pref="72" max="-2" attributes="0"/>
@@ -155,7 +155,7 @@
                                       <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                                       <Component id="submitterText" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="comboBoxBug" min="-2" max="-2" attributes="0"/>
+                                  <Component id="comboBoxIssueType" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                               <Component id="title" min="-2" pref="13" max="-2" attributes="0"/>
@@ -472,7 +472,7 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="lockCheckBox">
             </Component>
-            <Component class="javax.swing.JComboBox" name="comboBoxBug">
+            <Component class="javax.swing.JComboBox" name="comboBoxIssueType">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="3">

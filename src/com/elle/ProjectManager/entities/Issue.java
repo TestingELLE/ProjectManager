@@ -1,8 +1,6 @@
 
 package com.elle.ProjectManager.entities;
 
-import java.util.Date;
-
 /**
  * Issue
  * @author Carlos Igreja
@@ -15,11 +13,11 @@ public class Issue {
     private String title;
     private String description;
     private String programmer;
-    private Date dateOpened;
+    private String dateOpened;
     private int rk;
     private String version;
-    private Date dateClosed;
-    private String issue_type;
+    private String dateClosed;
+    private String issueType;
     private String submitter;
     private String locked;
     
@@ -27,7 +25,7 @@ public class Issue {
         this(-1,null,null,null,null,null,-1,null,null,null,null,null);
     }
 
-    public Issue(int id, String app, String title, String description, String programmer, Date dateOpened, int rk, String version, Date dateClosed, String issue_type, String submitter, String locked) {
+    public Issue(int id, String app, String title, String description, String programmer, String dateOpened, int rk, String version, String dateClosed, String issue_type, String submitter, String locked) {
         this.id = id;
         this.app = app;
         this.title = title;
@@ -37,7 +35,7 @@ public class Issue {
         this.rk = rk;
         this.version = version;
         this.dateClosed = dateClosed;
-        this.issue_type = issue_type;
+        this.issueType = issue_type;
         this.submitter = submitter;
         this.locked = locked;
     }
@@ -82,11 +80,11 @@ public class Issue {
         this.programmer = programmer;
     }
 
-    public Date getDateOpened() {
+    public String getDateOpened() {
         return dateOpened;
     }
 
-    public void setDateOpened(Date dateOpened) {
+    public void setDateOpened(String dateOpened) {
         this.dateOpened = dateOpened;
     }
 
@@ -106,20 +104,20 @@ public class Issue {
         this.version = version;
     }
 
-    public Date getDateClosed() {
+    public String getDateClosed() {
         return dateClosed;
     }
 
-    public void setDateClosed(Date dateClosed) {
+    public void setDateClosed(String dateClosed) {
         this.dateClosed = dateClosed;
     }
 
-    public String getIssue_type() {
-        return issue_type;
+    public String getIssueType() {
+        return issueType;
     }
 
-    public void setIssue_type(String issue_type) {
-        this.issue_type = issue_type;
+    public void setIssueType(String issueType) {
+        this.issueType = issueType;
     }
 
     public String getSubmitter() {
@@ -137,8 +135,4 @@ public class Issue {
     public void setLocked(String locked) {
         this.locked = locked;
     }
-    
-    
-    
-    
 }
