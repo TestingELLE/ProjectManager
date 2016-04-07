@@ -997,49 +997,50 @@ public class ViewIssueWindow extends JFrame {
     }
 
     private void setTextComponentListener() {
-        DocumentListener textDocumentLis = new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                contentChanged = true;
-                if (addIssueMode) {
-                    buttonSubmit.setEnabled(true);
-                } else {
-                    buttonConfirm.setEnabled(true);
-                }
-                Document doc = e.getDocument();
-                String columnName = (String) doc.getProperty("id");
-                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
-
-//                System.out.println("here " + doc.getProperty("id") + " " + newValue);
-                issue.setIssueValueAt(columnName, newValue);
-                issue.getIssueData(columnName).setChanged(true);
-
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                contentChanged = true;
-                if (addIssueMode) {
-                    buttonSubmit.setEnabled(true);
-                } else {
-                    buttonConfirm.setEnabled(true);
-                }
-                Document doc = e.getDocument();
-                String columnName = (String) doc.getProperty("id");
-                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
-
-//                System.out.println("here " + doc.getProperty("id") + " " + newValue);
-                issue.setIssueValueAt(columnName, newValue);
-                issue.getIssueData(columnName).setChanged(true);
-//                System.out.println(doc.getProperty("id") + " " + newValue);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-            }
-
-        };
+//        DocumentListener textDocumentLis = new DocumentListener() {
+//
+//            @Override
+//            public void insertUpdate(DocumentEvent e) {
+//                contentChanged = true;
+//                if (addIssueMode) {
+//                    buttonSubmit.setEnabled(true);
+//                } else {
+//                    buttonConfirm.setEnabled(true);
+//                }
+//                Document doc = e.getDocument();
+//                String columnName = (String) doc.getProperty("id");
+//                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
+//
+////                System.out.println("here " + doc.getProperty("id") + " " + newValue);
+//                issue.setIssueValueAt(columnName, newValue);
+//                issue.getIssueData(columnName).setChanged(true);
+//
+//            }
+//
+//            @Override
+//            public void removeUpdate(DocumentEvent e) {
+//                contentChanged = true;
+//                if (addIssueMode) {
+//                    buttonSubmit.setEnabled(true);
+//                } else {
+//                    buttonConfirm.setEnabled(true);
+//                }
+//                Document doc = e.getDocument();
+//                String columnName = (String) doc.getProperty("id");
+//                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
+//
+////                System.out.println("here " + doc.getProperty("id") + " " + newValue);
+//                issue.setIssueValueAt(columnName, newValue);
+//                issue.getIssueData(columnName).setChanged(true);
+////                System.out.println(doc.getProperty("id") + " " + newValue);
+//            }
+//
+//            @Override
+//            public void changedUpdate(DocumentEvent e) {
+//            }
+//
+//        };
+        
         InputMap ip = null;
         for (int i = 1; i < issue.getFieldsNumber(); i++) {
             String columnName = issue.getFieldName(i);
