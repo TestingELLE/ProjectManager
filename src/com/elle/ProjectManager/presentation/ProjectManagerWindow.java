@@ -78,7 +78,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private ShortCutSetting ShortCut;
     private ConsistencyOfTableColumnName ColumnNameConsistency;
 
-    private Map<String, ViewIssueWindow> openingIssuesList;
+    private Map<Integer, ViewIssueWindow> openingIssuesList;
 
     // colors - Edit mode labels
     private Color editModeDefaultTextColor;
@@ -255,16 +255,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // - must be before setTerminalFunctions is called
         // - because the mouslistener is added to the tableSelected header
         tabs.get(tableNames[0])
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[0]).getFilter()));
+                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[0]).
+                                getFilter(), tabs.get(tableNames[0]).getCustomIdList()));
         tabs.get(tableNames[1])
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[1]).getFilter()));
+                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[1]).
+                                getFilter(), tabs.get(tableNames[1]).getCustomIdList()));
         tabs.get(tableNames[2])
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[2]).getFilter()));
+                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[2]).
+                                getFilter(), tabs.get(tableNames[2]).getCustomIdList()));
         tabs.get(tableNames[3])
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[3]).getFilter()));
+                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[3]).
+                                getFilter(), tabs.get(tableNames[3]).getCustomIdList()));
 
         tabs.get(TASKFILES_TABLE_NAME)
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKFILES_TABLE_NAME).getFilter()));
+                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKFILES_TABLE_NAME).
+                                getFilter(), tabs.get(TASKFILES_TABLE_NAME).getCustomIdList()));
 //        tabs.get(TASKNOTES_TABLE_NAME)
 //                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKNOTES_TABLE_NAME).getFilter()));
         comboBoxStartToSearch = false;
@@ -302,7 +307,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         // initial openedIssuesList to manager all the openning issues
-        openingIssuesList = new HashMap<String, ViewIssueWindow>();
+        openingIssuesList = new HashMap<Integer, ViewIssueWindow>();
 //        tabs.get(TASKNOTES_TABLE_NAME).setEditing(false);
 
 //        // Call the initTableCellPopup method to initiate the Table Cell Popup window
@@ -2283,11 +2288,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         boolean isIssueAlreadyOpened = false;
 
-        String openningIssueId = table.getValueAt(row, 0).toString();
+        Integer openningIssueId = (Integer) table.getValueAt(row, 0);
 
-        for (String id : openingIssuesList.keySet()) {
-            if (id.equals(openningIssueId)) {
-                isIssueAlreadyOpened = true;
+        for (Integer id : openingIssuesList.keySet()) {
+            if (openningIssueId != null) {
+                if (id == openningIssueId) {
+                    isIssueAlreadyOpened = true;
+                }
             }
         }
 
@@ -2649,11 +2656,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                                 boolean isIssueAlreadyOpened = false;
 
-                                String openningIssueId = table.getValueAt(row, 0).toString();
+                                Integer openningIssueId = (Integer) table.getValueAt(row, 0);
 
-                                for (String id : openingIssuesList.keySet()) {
-                                    if (id.equals(openningIssueId)) {
-                                        isIssueAlreadyOpened = true;
+                                for (Integer id : openingIssuesList.keySet()) {
+                                    if (openningIssueId != null) {
+                                        if (id == openningIssueId) {
+                                            isIssueAlreadyOpened = true;
+                                        }
                                     }
                                 }
 
@@ -3184,8 +3193,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public Map getOpenningIssuesList() {
         return openingIssuesList;
     }
-    
-    public ViewIssueWindow getViewIssueWindowOf(String id){
+
+    public ViewIssueWindow getViewIssueWindowOf(String id) {
         return this.openingIssuesList.get(id);
     }
 
@@ -3376,11 +3385,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                                 boolean isIssueAlreadyOpened = false;
 
-                                String openningIssueId = table.getValueAt(row, 0).toString();
+                                Integer openningIssueId = (Integer) table.getValueAt(row, 0);
 
-                                for (String id : openingIssuesList.keySet()) {
-                                    if (id.equals(openningIssueId)) {
-                                        isIssueAlreadyOpened = true;
+                                for (Integer id : openingIssuesList.keySet()) {
+                                    if (openningIssueId != null) {
+                                        if (id == openningIssueId) {
+                                            isIssueAlreadyOpened = true;
+                                        }
                                     }
                                 }
 
@@ -3810,7 +3821,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             while (rs.next()) {
                 Vector row = new Vector(columns);
                 for (int i = 1; i <= columns; i++) {
-                    System.out.println("from data base: " + rs.getObject(i));
                     row.addElement(rs.getObject(i));
                 }
                 data.addElement(row);
