@@ -13,6 +13,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,7 +85,8 @@ public class ViewIssueWindow extends JFrame {
 
         idText.setText(Integer.toString(id)); // set idLabel content
         //initial issueWindow text components' content and listener
-        initIssueWindow();
+        //initIssueWindow();
+        setInputMapping();
         setIssueWindowMode();
 
         this.setTitle("Issue in " + table.getName());
@@ -1041,20 +1043,43 @@ public class ViewIssueWindow extends JFrame {
 //
 //        };
         
-        InputMap ip = null;
-        for (int i = 1; i < issue.getFieldsNumber(); i++) {
-            String columnName = issue.getFieldName(i);
-            Component comp = ComponentsList.get(columnName);
-            if (comp instanceof JTextComponent) {
-                Document doc = ((JTextComponent) comp).getDocument();
-                doc.addDocumentListener(textDocumentLis);
-                doc.putProperty("id", columnName);
-
-                ip = ((JTextComponent) comp).getInputMap();
-                ShortCutSetting.copyAndPasteShortCut(ip);
-                ShortCutSetting.undoAndRedoShortCut(((JTextComponent) comp));
-            }
-        }
+//        InputMap ip = null;
+//        for (int i = 1; i < issue.getFieldsNumber(); i++) {
+//            if (comp instanceof JTextComponent) {
+//                Document doc = ((JTextComponent) comp).getDocument();
+//                //doc.addDocumentListener(textDocumentLis);
+//                doc.putProperty("id", columnName);
+//
+//                ip = ((JTextComponent) comp).getInputMap();
+//                ShortCutSetting.copyAndPasteShortCut(ip);
+//                ShortCutSetting.undoAndRedoShortCut(((JTextComponent) comp));
+//            }
+//        }
+    }
+    
+    /**
+     * set the input mapping and shortcuts for JTextComponent Objects 
+     * (ex. TextFields, TextAreas)
+     */
+    private void setInputMapping(){
+        
+        // add all components to add input mapping to list
+        ArrayList<JTextComponent> componentList = new ArrayList<>();
+        componentList.add(submitterText);
+        componentList.add(dateOpenedText);
+        componentList.add(programmerText);
+        componentList.add(rkText);
+        componentList.add(titleText);
+        componentList.add(descriptionText);
+        componentList.add(appText);
+        componentList.add(dateClosedText);
+        componentList.add(versionText);
+        
+        // add input mapping and shortcuts for to these components
+        for(JTextComponent comp:componentList){
+            ShortCutSetting.copyAndPasteShortCut(comp.getInputMap());
+            ShortCutSetting.undoAndRedoShortCut(comp);
+        }      
     }
 
     private void setTabKeyTransferFocusBtwTextArea() {
