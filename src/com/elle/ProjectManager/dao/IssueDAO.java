@@ -64,7 +64,9 @@ public class IssueDAO {
                 Connection con = DBConnection.getConnection();
                 PreparedStatement statement = con.prepareStatement(sql);
                 result = statement.executeQuery();
-                id = result.getInt(1);
+                if(result.next()){
+                    id = result.getInt(1);
+                }
             }
             catch (SQLException ex) {
                 LoggingAspect.afterThrown(ex);
