@@ -1929,7 +1929,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             addIssueFileWindow.toFront();
         } else {
             if (btnAddIssue.getText().contains("Add issue to")) {
-                addIssueWindow = new ViewIssueWindow(-1, -1, this.getSelectedTable());
+                addIssueWindow = new ViewIssueWindow(-1, this.getSelectedTable());
                 addIssueWindow.setVisible(true);
 //                numOfAddIssueWindowOpened++;
                 //addRecordWindow become visible
@@ -2294,7 +2294,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             openingIssuesList.get(openningIssueId).toFront();
         } else {
             if (openingIssuesList.size() < 6) {
-                ViewIssueWindow viewIssue = new ViewIssueWindow(row, col, table);
+                ViewIssueWindow viewIssue = new ViewIssueWindow(row, table);
                 openingIssuesList.put(openningIssueId, viewIssue);
                 tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                tab.getCustomIdList().printOutIDList();
@@ -2660,7 +2660,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     openingIssuesList.get(openningIssueId).toFront();
                                 } else {
                                     if (openingIssuesList.size() < 6) {
-                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, col, table);
+                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, table);
                                         openingIssuesList.put(openningIssueId, viewIssue);
                                         tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                                        tabs.get(getSelectedTabName()).getCustomIdList().printOutIDList();
@@ -3387,7 +3387,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     openingIssuesList.get(openningIssueId).toFront();
                                 } else {
                                     if (openingIssuesList.size() < 6) {
-                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, col, table);
+                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, table);
                                         openingIssuesList.put(openningIssueId, viewIssue);
                                         tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                                        tab.getCustomIdList().printOutIDList();
