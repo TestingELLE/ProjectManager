@@ -18,16 +18,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.AbstractAction;
-import javax.swing.InputMap;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -1082,27 +1078,27 @@ public class ViewIssueWindow extends JFrame {
         }      
     }
 
-    private void setTabKeyTransferFocusBtwTextArea() {
-        AbstractAction transferFocus = new AbstractAction() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ((Component) e.getSource()).transferFocus();
-            }
-        };
-        for (int i = 1; i < issue.getFieldsNumber(); i++) {
-            String columnName = issue.getFieldName(i);
-            Component comp = this.ComponentsList.get(i);
-            if (comp instanceof JTextComponent) {
-                if (!columnName.equals("description")) {
-                    ((JTextComponent) comp).getInputMap().
-                            put(KeyStroke.getKeyStroke("TAB"), "transferFocus");
-                    ((JTextComponent) comp).getActionMap().
-                            put("transferFocus", transferFocus);
-                }
-            }
-        }
-    }
+//    private void setTabKeyTransferFocusBtwTextArea() {
+//        AbstractAction transferFocus = new AbstractAction() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                ((Component) e.getSource()).transferFocus();
+//            }
+//        };
+//        for (int i = 1; i < issue.getFieldsNumber(); i++) {
+//            String columnName = issue.getFieldName(i);
+//            Component comp = this.ComponentsList.get(i);
+//            if (comp instanceof JTextComponent) {
+//                if (!columnName.equals("description")) {
+//                    ((JTextComponent) comp).getInputMap().
+//                            put(KeyStroke.getKeyStroke("TAB"), "transferFocus");
+//                    ((JTextComponent) comp).getActionMap().
+//                            put("transferFocus", transferFocus);
+//                }
+//            }
+//        }
+//    }
 
     private int getIssueRowInTableModel() {
         for (int i = 0; i < table.getModel().getRowCount(); i++) {
