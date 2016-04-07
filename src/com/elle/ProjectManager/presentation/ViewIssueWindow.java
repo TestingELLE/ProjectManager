@@ -2,7 +2,6 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.dao.IssueDAO;
-import com.elle.ProjectManager.dao.IssueWindowDAO;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import java.awt.Component;
@@ -19,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -510,87 +508,83 @@ public class ViewIssueWindow extends JFrame {
         projectManager.makeTableEditable(false);
     }
 
-    private void showNextIssue(int newRow) {
-        projectManager.getOpenningIssuesList().remove(issue.getID(), this);
-        projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getID());
+//    private void showNextIssue(int newRow) {
+//        projectManager.getOpenningIssuesList().remove(issue.getID(), this);
+//        projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getID());
+//
+//        String newID = table.getValueAt(newRow, 0).toString();
+//
+//        if (!projectManager.getOpenningIssuesList().containsKey(newID)) {
+//            issue = new Issue(newRow, dao);
+//            issue.setIssueValues(table);
+//            this.contentChanged = false;
+//            //reinitial issueWindow text components' content and listener
+//            updateIssueWindow();
+//
+//            this.contentChanged = false;
+//            buttonConfirm.setEnabled(false);
+//
+//            projectManager.getOpenningIssuesList().put(issue.getID(), this);
+//            projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getID());
+//
+//        } else {
+//            projectManager.getViewIssueWindowOf(newID).toFront();
+//            this.dispose();
+//        }
+//
+//        table.setRowSelectionInterval(newRow, newRow);
+//    }
 
-        String newID = table.getValueAt(newRow, 0).toString();
-
-        if (!projectManager.getOpenningIssuesList().containsKey(newID)) {
-            issue = new Issue(newRow, dao);
-            issue.setIssueValues(table);
-            this.contentChanged = false;
-            //reinitial issueWindow text components' content and listener
-            updateIssueWindow();
-
-            this.contentChanged = false;
-            buttonConfirm.setEnabled(false);
-
-            projectManager.getOpenningIssuesList().put(issue.getID(), this);
-            projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getID());
-
-        } else {
-            projectManager.getViewIssueWindowOf(newID).toFront();
-            this.dispose();
-        }
-
-        table.setRowSelectionInterval(newRow, newRow);
-    }
-
-    private void updateIssueWindow() {
-        for (int i = 0; i < issue.getFieldsNumber(); i++) {
-            String columnName = issue.getFieldName(i);
-            String cellValue = issue.getIssueValueAt(i);
-            switch (columnName) {
-                case "ID":
-                    idText.setText(cellValue);
-                case "app":
-//                    System.out.println(issue.getIssueValueAt(i));
-                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
-                    break;
-                case "title":
-                    titleText.setText(cellValue);
-                    break;
-                case "description":
-                    descriptionText.setText(cellValue);
-                    break;
-                case "programmer":
-                    programmerText.setText(cellValue);
-                    break;
-                case "dateOpened":
-                    dateOpenedText.setText(cellValue);
-                    break;
-                case "rk":
-                    rkText.setText(cellValue);
-                    break;
-                case "version":
-                    versionText.setText(cellValue);
-                    break;
-                case "dateClosed":
-                    dateClosedText.setText(cellValue);
-                    break;
-                case "submitter":
-                    submitterText.setText(cellValue);
-                    break;
-                case "locked":
-                    if (cellValue.equals("Y")) {
-                        lockCheckBox.setSelected(true);
-                    } else {
-                        lockCheckBox.setSelected(false);
-                    }
-                    break;
-                default:
-                    break;
-            }
-            issue.getIssueData(columnName).setChanged(false);
-        }
-        //set close issue btn property
-        if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
-            btnCloseIssue.setText("Close Issue");
-        } else {
-            btnCloseIssue.setText("Reopen Issue");
-        }
-    }
+//    private void updateIssueWindow() {
+//        for (int i = 0; i < issue.getFieldsNumber(); i++) {
+//            String columnName = issue.getFieldName(i);
+//            String cellValue = issue.getIssueValueAt(i);
+//            switch (columnName) {
+//                case "ID":
+//                    idText.setText(cellValue);
+//                case "app":
+////                    System.out.println(issue.getIssueValueAt(i));
+//                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
+//                    break;
+//                case "title":
+//                    titleText.setText(cellValue);
+//                    break;
+//                case "description":
+//                    descriptionText.setText(cellValue);
+//                    break;
+//                case "programmer":
+//                    programmerText.setText(cellValue);
+//                    break;
+//                case "dateOpened":
+//                    dateOpenedText.setText(cellValue);
+//                    break;
+//                case "rk":
+//                    rkText.setText(cellValue);
+//                    break;
+//                case "version":
+//                    versionText.setText(cellValue);
+//                    break;
+//                case "dateClosed":
+//                    dateClosedText.setText(cellValue);
+//                    break;
+//                case "submitter":
+//                    submitterText.setText(cellValue);
+//                    break;
+//                case "locked":
+//                    if (cellValue.equals("Y")) {
+//                        lockCheckBox.setSelected(true);
+//                    } else {
+//                        lockCheckBox.setSelected(false);
+//                    }
+//                    break;
+//                default:
+//                    break;
+//            }
+//            issue.getIssueData(columnName).setChanged(false);
+//        }
+//        
+//        setOpenCloseIssueBtnText();
+//    }
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         formWindowClosing();
@@ -837,8 +831,8 @@ public class ViewIssueWindow extends JFrame {
             projectManager.setAddRecordsWindowShow(false);
         } else {
 //            System.out.println(addIssueMode);
-            projectManager.getOpenningIssuesList().remove(issue.getID(), this);
-            projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getID());
+            projectManager.getOpenningIssuesList().remove(issue.getId(), this);
+            projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
             projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
         }
         this.dispose();
@@ -1140,5 +1134,16 @@ public class ViewIssueWindow extends JFrame {
         comboBoxIssueType.setSelectedItem(issue.getIssueType());
         submitterText.setText(issue.getSubmitter());
         lockCheckBox.setSelected(issue.getLocked().equals("Y")?true:false);
+        
+        setOpenCloseIssueBtnText(); // set button text to Open/Close issue
+    }
+
+    private void setOpenCloseIssueBtnText() {
+        //set close issue btn property
+        if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
+            btnCloseIssue.setText("Close Issue");
+        } else {
+            btnCloseIssue.setText("Reopen Issue");
+        }
     }
 }
