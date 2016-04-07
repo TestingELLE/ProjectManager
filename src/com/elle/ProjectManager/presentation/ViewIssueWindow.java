@@ -972,29 +972,29 @@ public class ViewIssueWindow extends JFrame {
         setOpenCloseIssueBtnText();
     }
 
-    private void setCheckBoxListener() {
-        lockCheckbox.addItemListener(new ItemListener() {
-            //set listener to lockCheckbox, so when we click it, it can be detected and confirm button should set at enabled
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                contentChanged = true;
-                if (addIssueMode) {
-                    buttonSubmit.setEnabled(true);
-                } else {
-                    buttonConfirm.setEnabled(true);
-                }
-                issue.getIssueData("locked").setChanged(true);
-                if (e.getStateChange() == 1) {
-                    issue.setIssueValueAt("locked", "Y");
-                }
-//                else
-//                    issue.setIssueValueAt("locked", null);
+//    private void setCheckBoxListener() {
+//        lockCheckbox.addItemListener(new ItemListener() {
+//            //set listener to lockCheckbox, so when we click it, it can be detected and confirm button should set at enabled
+//            @Override
+//            public void itemStateChanged(ItemEvent e) {
+//                contentChanged = true;
+//                if (addIssueMode) {
+//                    buttonSubmit.setEnabled(true);
+//                } else {
+//                    buttonConfirm.setEnabled(true);
+//                }
+//                issue.getIssueData("locked").setChanged(true);
+//                if (e.getStateChange() == 1) {
+//                    issue.setIssueValueAt("locked", "Y");
+//                }
+////                else
+////                    issue.setIssueValueAt("locked", null);
+//
+//            }
+//        });
+//    }
 
-            }
-        });
-    }
-
-    private void setTextComponentListener() {
+//    private void setTextComponentListener() {
 //        DocumentListener textDocumentLis = new DocumentListener() {
 //
 //            @Override
