@@ -3810,6 +3810,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             while (rs.next()) {
                 Vector row = new Vector(columns);
                 for (int i = 1; i <= columns; i++) {
+                    System.out.println("from data base: " + rs.getObject(i));
                     row.addElement(rs.getObject(i));
                 }
                 data.addElement(row);
