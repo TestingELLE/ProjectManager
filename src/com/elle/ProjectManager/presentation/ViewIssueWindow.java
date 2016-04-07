@@ -64,11 +64,16 @@ public class ViewIssueWindow extends JFrame {
         contentChanged = false; // if we do nothing about the text components' content, it stays false
 
         int id;
+        // new issue
         if (this.row == -1) {
             addIssueMode = true;
             id = (dao.getMaxId() + 1);
             issue.setId(id);
-        } else {
+            issue.setApp(projectManager.getSelectedTabName());
+            issue.setDateOpened(todaysDate());
+        } 
+        // existing issue
+        else {
             addIssueMode = false;
             setIssueValuesFromTable(row,table);
             id = issue.getId();
@@ -498,6 +503,15 @@ public class ViewIssueWindow extends JFrame {
         Date date = new Date();
         String today = dateFormat.format(date);
         dateArea.setText(today);
+    }
+    
+    /**
+     * Returns today's date as a String in format yyyy-MM-dd
+     * @return today's date as a String in format yyyy-MM-dd
+     */
+    private String todaysDate() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.format(new Date());
     }
 
     private void confirm() {
