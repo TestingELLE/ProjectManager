@@ -83,6 +83,7 @@ public class ViewIssueWindow extends JFrame {
         //initial issueWindow text components' content and listener
         //initIssueWindow();
         setInputMapping();
+        setOpenCloseIssueBtnText();
         setIssueWindowMode();
 
         this.setTitle("Issue in " + table.getName());
@@ -888,89 +889,89 @@ public class ViewIssueWindow extends JFrame {
     private javax.swing.JTextField versionText;
     // End of variables declaration//GEN-END:variables
 
-    private void initIssueWindow() {
-        for (int i = 1; i < issue.getFieldsNumber(); i++) {
-            String columnName = issue.getFieldName(i);
-            String cellValue = issue.getIssueValueAt(i);
-//            System.out.println(columnName);
-            switch (columnName) {
-                case "app":
-                    if (addIssueMode) {
-                        cellValue = projectManager.getSelectedTabName();
-                        issue.setIssueValueAt(columnName, cellValue);
-                        issue.getIssueData(i).setChanged(true);
-                    }
-                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
-                    ComponentsList.put(columnName, appText); // add app text field to textcomponentlist
-                    break;
-                case "title":
-                    titleText.setText(cellValue);
-                    ComponentsList.put(columnName, titleText);
-                    break;
-                case "description":
-                    descriptionText.setText(cellValue);
-                    ComponentsList.put(columnName, descriptionText);
-                    break;
-                case "programmer":
-                    programmerText.setText(cellValue);
-                    ComponentsList.put(columnName, programmerText);
-                    break;
-                case "dateOpened":
-                    if (addIssueMode) {
-                        this.FillItWithDate(dateOpenedText);
-                        issue.setIssueValueAt(columnName, dateOpenedText.getText());
-                        issue.getIssueData(i).setChanged(true);
-                    } else {
-                        dateOpenedText.setText(cellValue);
-                    }
-                    ComponentsList.put(columnName, dateOpenedText);
-                    break;
-                case "rk":
-                    rkText.setText(cellValue);
-                    ComponentsList.put(columnName, rkText);
-                    break;
-                case "version":
-                    versionText.setText(cellValue);
-                    ComponentsList.put(columnName, versionText);
-                    break;
-                case "dateClosed":
-//                    System.out.println("dateClosed " + cellValue);
-                    dateClosedText.setText(cellValue);
-                    ComponentsList.put(columnName, dateClosedText);
-                    break;
-                case "submitter":
-//                    System.out.println("submitter " + cellValue);
-                    if (addIssueMode) {
-                        cellValue = projectManager.getUserName();
-                        issue.setIssueValueAt(columnName, cellValue);
-                        issue.getIssueData(i).setChanged(true);
-                    }
-                    submitterText.setText(cellValue);
-                    ComponentsList.put(columnName, submitterText);
-                    break;
-                case "locked":
-//                    System.out.println("locked " + cellValue);
-                    if (cellValue.equalsIgnoreCase("y")) {
-                        lockCheckbox.setState(true);
-                    } else {
-                        lockCheckbox.setState(false);
-                    }
-                    ComponentsList.put(columnName, lockCheckbox);
-                    break;
-                default:
-                    break;
-            }
-        }
-        //add document listener to all text components in this window
-        setTextComponentListener();
-        //add action listener to all text components and using tab to transfer 
-        // all text area except description
-        setTabKeyTransferFocusBtwTextArea();
-
-        setCheckBoxListener();
-
-        setOpenCloseIssueBtnText();
-    }
+//    private void initIssueWindow() {
+//        for (int i = 1; i < issue.getFieldsNumber(); i++) {
+//            String columnName = issue.getFieldName(i);
+//            String cellValue = issue.getIssueValueAt(i);
+////            System.out.println(columnName);
+//            switch (columnName) {
+//                case "app":
+//                    if (addIssueMode) {
+//                        cellValue = projectManager.getSelectedTabName();
+//                        issue.setIssueValueAt(columnName, cellValue);
+//                        issue.getIssueData(i).setChanged(true);
+//                    }
+//                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
+//                    ComponentsList.put(columnName, appText); // add app text field to textcomponentlist
+//                    break;
+//                case "title":
+//                    titleText.setText(cellValue);
+//                    ComponentsList.put(columnName, titleText);
+//                    break;
+//                case "description":
+//                    descriptionText.setText(cellValue);
+//                    ComponentsList.put(columnName, descriptionText);
+//                    break;
+//                case "programmer":
+//                    programmerText.setText(cellValue);
+//                    ComponentsList.put(columnName, programmerText);
+//                    break;
+//                case "dateOpened":
+//                    if (addIssueMode) {
+//                        this.FillItWithDate(dateOpenedText);
+//                        issue.setIssueValueAt(columnName, dateOpenedText.getText());
+//                        issue.getIssueData(i).setChanged(true);
+//                    } else {
+//                        dateOpenedText.setText(cellValue);
+//                    }
+//                    ComponentsList.put(columnName, dateOpenedText);
+//                    break;
+//                case "rk":
+//                    rkText.setText(cellValue);
+//                    ComponentsList.put(columnName, rkText);
+//                    break;
+//                case "version":
+//                    versionText.setText(cellValue);
+//                    ComponentsList.put(columnName, versionText);
+//                    break;
+//                case "dateClosed":
+////                    System.out.println("dateClosed " + cellValue);
+//                    dateClosedText.setText(cellValue);
+//                    ComponentsList.put(columnName, dateClosedText);
+//                    break;
+//                case "submitter":
+////                    System.out.println("submitter " + cellValue);
+//                    if (addIssueMode) {
+//                        cellValue = projectManager.getUserName();
+//                        issue.setIssueValueAt(columnName, cellValue);
+//                        issue.getIssueData(i).setChanged(true);
+//                    }
+//                    submitterText.setText(cellValue);
+//                    ComponentsList.put(columnName, submitterText);
+//                    break;
+//                case "locked":
+////                    System.out.println("locked " + cellValue);
+//                    if (cellValue.equalsIgnoreCase("y")) {
+//                        lockCheckbox.setState(true);
+//                    } else {
+//                        lockCheckbox.setState(false);
+//                    }
+//                    ComponentsList.put(columnName, lockCheckbox);
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
+//        //add document listener to all text components in this window
+//        setTextComponentListener();
+//        //add action listener to all text components and using tab to transfer 
+//        // all text area except description
+//        setTabKeyTransferFocusBtwTextArea();
+//
+//        setCheckBoxListener();
+//
+//        setOpenCloseIssueBtnText();
+//    }
 
 //    private void setCheckBoxListener() {
 //        lockCheckbox.addItemListener(new ItemListener() {
@@ -1051,7 +1052,7 @@ public class ViewIssueWindow extends JFrame {
 //                ShortCutSetting.undoAndRedoShortCut(((JTextComponent) comp));
 //            }
 //        }
-    }
+//    }
     
     /**
      * set the input mapping and shortcuts for JTextComponent Objects 
@@ -1102,7 +1103,7 @@ public class ViewIssueWindow extends JFrame {
 
     private int getIssueRowInTableModel() {
         for (int i = 0; i < table.getModel().getRowCount(); i++) {
-            if (table.getModel().getValueAt(i, 0).equals(issue.getID())) {
+            if (table.getModel().getValueAt(i, 0).equals(issue.getId())) {
                 return i;
             }
         }
