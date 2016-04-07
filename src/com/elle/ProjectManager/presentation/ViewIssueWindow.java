@@ -971,12 +971,7 @@ public class ViewIssueWindow extends JFrame {
 
         setCheckBoxListener();
 
-        //set close issue btn property
-        if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
-            btnCloseIssue.setText("Close Issue");
-        } else {
-            btnCloseIssue.setText("Reopen Issue");
-        }
+        setOpenCloseIssueBtnText();
     }
 
     private void setCheckBoxListener() {
