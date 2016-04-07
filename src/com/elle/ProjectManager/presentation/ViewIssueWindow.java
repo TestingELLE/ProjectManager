@@ -71,6 +71,7 @@ public class ViewIssueWindow extends JFrame {
             issue.setId(id);
             issue.setApp(projectManager.getSelectedTabName());
             issue.setDateOpened(todaysDate());
+            issue.setSubmitter(projectManager.getUserName());
         } 
         // existing issue
         else {
