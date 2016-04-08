@@ -22,7 +22,7 @@ public class Issue {
     private String locked;
     
     public Issue(){
-        this(-1,"","","","","","","","","","","");
+        this(-1,"","","","","","","","","FEATURE","","");
     }
 
     public Issue(int id, String app, String title, String description, String programmer, String dateOpened, String rk, String version, String dateClosed, String issue_type, String submitter, String locked) {
