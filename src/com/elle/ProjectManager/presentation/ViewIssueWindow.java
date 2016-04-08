@@ -1137,7 +1137,7 @@ public class ViewIssueWindow extends JFrame {
         issue.setDescription(table.getValueAt(row, 0).toString());
         issue.setProgrammer(table.getValueAt(row, 0).toString());
         issue.setDateOpened(table.getValueAt(row, 0).toString());
-        issue.setRk(Integer.parseInt(table.getValueAt(row, 0).toString()));
+        issue.setRk(table.getValueAt(row, 0).toString());
         issue.setVersion(table.getValueAt(row, 0).toString());
         issue.setDateClosed(table.getValueAt(row, 0).toString());
         issue.setIssueType(table.getValueAt(row, 0).toString());
@@ -1155,7 +1155,7 @@ public class ViewIssueWindow extends JFrame {
         issue.setDescription(descriptionText.getText());
         issue.setProgrammer(programmerText.getText());
         issue.setDateOpened(dateOpenedText.getText());
-        issue.setRk(Integer.parseInt(rkText.getText()));
+        issue.setRk(rkText.getText());
         issue.setVersion(versionText.getText());
         issue.setDateClosed(dateClosedText.getText());
         issue.setIssueType(comboBoxIssueType.getSelectedItem().toString());
@@ -1174,7 +1174,7 @@ public class ViewIssueWindow extends JFrame {
         descriptionText.setText(issue.getDescription());
         programmerText.setText(issue.getProgrammer());
         dateOpenedText.setText(issue.getDateOpened());
-        rkText.setText(Integer.toString(issue.getRk()));
+        rkText.setText(issue.getRk());
         versionText.setText(issue.getVersion());
         dateClosedText.setText(issue.getDateClosed());
         comboBoxIssueType.setSelectedItem(issue.getIssueType());
@@ -1196,7 +1196,7 @@ public class ViewIssueWindow extends JFrame {
             && descriptionText.getText().equals(issue.getDescription())
             && programmerText.getText().equals(issue.getProgrammer())
             && dateOpenedText.getText().equals(issue.getDateOpened())
-            && rkText.getText().equals(Integer.toString(issue.getRk()))
+            && rkText.getText().equals(issue.getRk())
             && versionText.getText().equals(issue.getVersion())
             && dateClosedText.getText().equals(issue.getDateClosed())
             && comboBoxIssueType.getSelectedItem().equals(issue.getIssueType())

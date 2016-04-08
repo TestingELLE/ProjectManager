@@ -14,7 +14,7 @@ public class Issue {
     private String description;
     private String programmer;
     private String dateOpened;
-    private int rk;
+    private String rk; 
     private String version;
     private String dateClosed;
     private String issueType;
@@ -22,10 +22,10 @@ public class Issue {
     private String locked;
     
     public Issue(){
-        this(-1,"","","","","",0,"","","","","");
+        this(-1,"","","","","","","","","","","");
     }
 
-    public Issue(int id, String app, String title, String description, String programmer, String dateOpened, int rk, String version, String dateClosed, String issue_type, String submitter, String locked) {
+    public Issue(int id, String app, String title, String description, String programmer, String dateOpened, String rk, String version, String dateClosed, String issue_type, String submitter, String locked) {
         this.id = id;
         this.app = app;
         this.title = title;
@@ -88,11 +88,11 @@ public class Issue {
         this.dateOpened = dateOpened;
     }
 
-    public int getRk() {
+    public String getRk() {
         return rk;
     }
 
-    public void setRk(int rk) {
+    public void setRk(String rk) {
         this.rk = rk;
     }
 
