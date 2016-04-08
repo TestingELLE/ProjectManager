@@ -844,13 +844,7 @@ public class ViewIssueWindow extends JFrame {
     }//GEN-LAST:event_submitterTextActionPerformed
 
     private void lockCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockCheckBoxActionPerformed
-        // Check if there is a change
-        if((lockCheckBox.isSelected()?"Y":"").equals(issue.getLocked())){
-            buttonSubmit.setEnabled(isChange());
-        }
-        else{
-            buttonSubmit.setEnabled(true);
-        }
+
     }//GEN-LAST:event_lockCheckBoxActionPerformed
 
     private void formWindowClosing() {
