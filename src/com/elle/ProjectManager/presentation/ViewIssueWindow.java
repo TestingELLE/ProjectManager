@@ -84,6 +84,9 @@ public class ViewIssueWindow extends JFrame {
         /**
          * Add all JTextComponents to add document listener, input mappings,
          * and shortcuts.
+         * Note: ComboBox and CheckBox components can use the action event.
+         * You can double click it on the designer to create one for it.
+         * You can reference one that exists for help with the code if needed.
          */
         ArrayList<JTextComponent> textComponentList = new ArrayList<>();
         textComponentList.add(submitterText);
@@ -97,19 +100,6 @@ public class ViewIssueWindow extends JFrame {
         textComponentList.add(versionText);
         addDocumentListener(textComponentList);
         addInputMappingsAndShortcuts(textComponentList);
-        
-        /**
-         * Add all JCheckBox components to add ItemListener to.
-         */
-        ArrayList<JCheckBox> checkBoxList = new ArrayList<>();
-        checkBoxList.add(lockCheckBox);
-        addItemListener(checkBoxList);
-        
-        /**
-         * Note: Combobox can use the action event.
-         * You can double click it on the designer to create one for it.
-         * You can check if one exists and use that for reference if needed.
-         */
         
         setOpenCloseIssueBtnText();
         setIssueWindowMode();
@@ -881,8 +871,20 @@ public class ViewIssueWindow extends JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_submitterTextActionPerformed
 
+    /**
+     * Fires when Lock CheckBox selection is changed
+     * @param evt action event for the Lock CheckBox
+     */
     private void lockCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockCheckBoxActionPerformed
 
+        // if the same then check for other changes
+        if((lockCheckBox.isSelected()?"Y":"").equals(issue.getLocked())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
     }//GEN-LAST:event_lockCheckBoxActionPerformed
 
     /**
@@ -1292,24 +1294,6 @@ public class ViewIssueWindow extends JFrame {
         }
         else if(buttonConfirm.isVisible()){
             buttonConfirm.setEnabled(hasChange);
-        }
-    }
-    
-    /**
-     * Sets ItemListener for JCheckBox Components 
-     * @param checkBoxList The JCheckBox Components to add the ItemListener to.
-     */
-    private void addItemListener(ArrayList<JCheckBox> checkBoxList) {
-        
-        ItemListener itemListener = new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                checkForChangeAndSetBtnsEnabled();
-            }
-        };
-        
-        for(JCheckBox checkbox: checkBoxList){
-            checkbox.addItemListener(itemListener);
         }
     }
 }
