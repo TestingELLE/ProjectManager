@@ -1167,18 +1167,29 @@ public class ViewIssueWindow extends JFrame {
      */
     private void setIssueValuesFromTable(int row, JTable table) {
 
-        issue.setId(Integer.parseInt(table.getValueAt(row, 0).toString()));
-        issue.setApp(table.getValueAt(row, 0).toString());
-        issue.setTitle(table.getValueAt(row, 0).toString());
-        issue.setDescription(table.getValueAt(row, 0).toString());
-        issue.setProgrammer(table.getValueAt(row, 0).toString());
-        issue.setDateOpened(table.getValueAt(row, 0).toString());
-        issue.setRk(table.getValueAt(row, 0).toString());
-        issue.setVersion(table.getValueAt(row, 0).toString());
-        issue.setDateClosed(table.getValueAt(row, 0).toString());
-        issue.setIssueType(table.getValueAt(row, 0).toString());
-        issue.setSubmitter(table.getValueAt(row, 0).toString());
-        issue.setLocked(table.getValueAt(row, 0).toString());
+        issue.setId(Integer.parseInt(getTableValueAt(row, 0).toString()));
+        issue.setApp(getTableValueAt(row, 1).toString());
+        issue.setTitle(getTableValueAt(row, 2).toString());
+        issue.setDescription(getTableValueAt(row, 3).toString());
+        issue.setProgrammer(getTableValueAt(row, 4).toString());
+        issue.setDateOpened(getTableValueAt(row, 5).toString());
+        issue.setRk(getTableValueAt(row, 6).toString());
+        issue.setVersion(getTableValueAt(row, 7).toString());
+        issue.setDateClosed(getTableValueAt(row, 8).toString());
+        issue.setIssueType(getTableValueAt(row, 9).toString());
+        issue.setSubmitter(getTableValueAt(row, 10).toString());
+        issue.setLocked(getTableValueAt(row, 11).toString());
+    }
+    
+    /**
+     * This returns cell value of table but replaces null with "" to handle
+     * null pointer exceptions.
+     * @param row row of table cell
+     * @param col column of table cell
+     * @return Object of cell value but null values are replaced with ""
+     */
+    private Object getTableValueAt(int row, int col){
+        return (table.getValueAt(row, col)==null)?"":table.getValueAt(row, col);
     }
     
     /**
