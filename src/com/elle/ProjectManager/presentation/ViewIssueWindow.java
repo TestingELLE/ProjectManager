@@ -1223,7 +1223,7 @@ public class ViewIssueWindow extends JFrame {
      * and returns true or false.
      * @return boolean true if there is a change in any of the component values
      */
-    private boolean isChange(){
+    private boolean hasChange(){
 
         return (appText.getText().equals(issue.getApp())
             && titleText.getText().equals(issue.getTitle())
@@ -1277,7 +1277,7 @@ public class ViewIssueWindow extends JFrame {
      * and sets the submit or confirm buttons accordingly.
      */
     private void checkForChangeAndSetBtnsEnabled() {
-        setBtnsEnabled(isChange());
+        setBtnsEnabled(hasChange());
     }
     
     /**
