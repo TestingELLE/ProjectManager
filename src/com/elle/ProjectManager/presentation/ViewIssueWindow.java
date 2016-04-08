@@ -60,12 +60,10 @@ public class ViewIssueWindow extends JFrame {
         ComponentsList = new HashMap<String, Component>();
         contentChanged = false; // if we do nothing about the text components' content, it stays false
 
-        int id;
         // new issue
         if (this.row == -1) {
             addIssueMode = true;
-            id = (dao.getMaxId() + 1);
-            issue.setId(id);
+            issue.setId(dao.getMaxId() + 1);
             issue.setApp(projectManager.getSelectedTabName());
             issue.setDateOpened(todaysDate());
             issue.setSubmitter(projectManager.getUserName());
@@ -74,14 +72,11 @@ public class ViewIssueWindow extends JFrame {
         else {
             addIssueMode = false;
             setIssueValuesFromTable(row,table);
-            id = issue.getId();
         }
 
         initComponents();
 
-        idText.setText(Integer.toString(id)); // set idLabel content
-        //initial issueWindow text components' content and listener
-        //initIssueWindow();
+        setComponentValuesFromIssue();
         setInputMapping();
         setOpenCloseIssueBtnText();
         setIssueWindowMode();
