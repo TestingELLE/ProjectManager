@@ -862,9 +862,7 @@ public class ViewIssueWindow extends JFrame {
             row--;
             setIssueValuesFromTable(row,table);
             setComponentValuesFromIssue();
-            // set corresponding table row selected
-            table.setRowSelectionInterval(row, row);
-            //showNextIssue(row);
+            table.setRowSelectionInterval(row, row); // select row on table
         }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
