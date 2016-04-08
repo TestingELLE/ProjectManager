@@ -808,10 +808,10 @@ public class ViewIssueWindow extends JFrame {
          * boolean rowFound makes sure the issue is still in the table view.
          */
         boolean rowFound = true;
-        if (!table.getValueAt(row, 0).toString().equals(issue.getId())) {
+        if (!table.getValueAt(row, 0).toString().equals(Integer.toString(issue.getId()))) {
             rowFound = false;
             for (int i = 0; i < table.getRowCount(); i++) {
-                if (table.getValueAt(i, 0).toString().equals(issue.getId())) {
+                if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
                     row = i;
                     rowFound = true;
                 }
@@ -841,10 +841,11 @@ public class ViewIssueWindow extends JFrame {
          * boolean found makes sure the issue is still in the table view.
          */
         boolean rowFound = true;
-        if (!table.getValueAt(row, 0).toString().equals(issue.getId())) {
+        if (!table.getValueAt(row, 0).toString().equals(Integer.toString(issue.getId()))) {
+
             rowFound = false;
             for (int i = 0; i < table.getRowCount(); i++) {
-                if (table.getValueAt(i, 0).toString().equals(issue.getId())) {
+                if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
                     row = i;
                     rowFound = true;
                 }
