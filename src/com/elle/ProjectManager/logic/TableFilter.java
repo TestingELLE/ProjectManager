@@ -118,11 +118,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
     }
 
     public void addCustomIdListToFilterItem(CustomIDList customIdList) {
-//        for(Object id : customIdList){
-//            filterItems.get(0).add(id);
-//        }
-//        this.addColorHeader(0);
         this.customIdListFilter = customIdList;
+        addColorHeader(0);
     }
 
     /**
@@ -382,7 +379,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
                 return true;
             } else {
                 if (!this.customIdListFilter.isEmpty()) {
-                    if (this.customIdListFilter.contains(model.getValueAt(row, 0).toString())) {
+                    if (this.customIdListFilter.contains((Integer) model.getValueAt(row, 0))) {
                         return true;
                     }
                 }
