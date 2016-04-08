@@ -1255,13 +1255,11 @@ public class ViewIssueWindow extends JFrame {
         DocumentListener documentListener = new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                System.out.println("insertUpdate fired");
                 checkForChangeAndSetBtnsEnabled();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                System.out.println("removeUpdate fired");
                 checkForChangeAndSetBtnsEnabled();
             }
 
