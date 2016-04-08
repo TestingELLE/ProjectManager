@@ -18,12 +18,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.AbstractAction;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -77,7 +80,37 @@ public class ViewIssueWindow extends JFrame {
         initComponents();
 
         setComponentValuesFromIssue();
-        setInputMapping();
+        
+        /**
+         * Add all JTextComponents to add document listener, input mappings,
+         * and shortcuts.
+         */
+        ArrayList<JTextComponent> textComponentList = new ArrayList<>();
+        textComponentList.add(submitterText);
+        textComponentList.add(dateOpenedText);
+        textComponentList.add(programmerText);
+        textComponentList.add(rkText);
+        textComponentList.add(titleText);
+        textComponentList.add(descriptionText);
+        textComponentList.add(appText);
+        textComponentList.add(dateClosedText);
+        textComponentList.add(versionText);
+        addDocumentListener(textComponentList);
+        addInputMappingsAndShortcuts(textComponentList);
+        
+        /**
+         * Add all JCheckBox components to add ItemListener to.
+         */
+        ArrayList<JCheckBox> checkBoxList = new ArrayList<>();
+        checkBoxList.add(lockCheckBox);
+        addItemListener(checkBoxList);
+        
+        /**
+         * Note: Combobox can use the action event.
+         * You can double click it on the designer to create one for it.
+         * You can check if one exists and use that for reference if needed.
+         */
+        
         setOpenCloseIssueBtnText();
         setIssueWindowMode();
 
@@ -368,6 +401,11 @@ public class ViewIssueWindow extends JFrame {
         });
 
         comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
+        comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxIssueTypeActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
         formPane.setLayout(formPaneLayout);
@@ -847,6 +885,21 @@ public class ViewIssueWindow extends JFrame {
 
     }//GEN-LAST:event_lockCheckBoxActionPerformed
 
+    /**
+     * Fires when IssueType ComboBox selection is changed
+     * @param evt action event for the IssueType ComboBox
+     */
+    private void comboBoxIssueTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxIssueTypeActionPerformed
+        // if the same then check for other changes
+        if(comboBoxIssueType.getSelectedItem().toString().equals(issue.getIssueType())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_comboBoxIssueTypeActionPerformed
+
     private void formWindowClosing() {
         if (addIssueMode) {
             projectManager.setAddRecordsWindowShow(false);
@@ -1062,25 +1115,12 @@ public class ViewIssueWindow extends JFrame {
 //    }
     
     /**
-     * set the input mapping and shortcuts for JTextComponent Objects 
+     * Adds input mappings and shortcuts for JTextComponent Objects
      * (ex. TextFields, TextAreas)
      */
-    private void setInputMapping(){
-        
-        // add all components to add input mapping to list
-        ArrayList<JTextComponent> componentList = new ArrayList<>();
-        componentList.add(submitterText);
-        componentList.add(dateOpenedText);
-        componentList.add(programmerText);
-        componentList.add(rkText);
-        componentList.add(titleText);
-        componentList.add(descriptionText);
-        componentList.add(appText);
-        componentList.add(dateClosedText);
-        componentList.add(versionText);
-        
-        // add input mapping and shortcuts for to these components
-        for(JTextComponent comp:componentList){
+    private void addInputMappingsAndShortcuts(ArrayList<JTextComponent> textComponentList){
+
+        for(JTextComponent comp:textComponentList){
             ShortCutSetting.copyAndPasteShortCut(comp.getInputMap());
             ShortCutSetting.undoAndRedoShortCut(comp);
         }      
@@ -1205,6 +1245,69 @@ public class ViewIssueWindow extends JFrame {
             btnCloseIssue.setText("Close Issue");
         } else {
             btnCloseIssue.setText("Reopen Issue");
+        }
+    }
+
+    private void addDocumentListener(ArrayList<JTextComponent> textComponentList) {
+        
+        DocumentListener documentListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                checkForChangeAndSetBtnsEnabled();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                checkForChangeAndSetBtnsEnabled();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                // this does not get fired for plain text
+            }
+        };
+        
+        for(JTextComponent comp:textComponentList){
+            comp.getDocument().addDocumentListener(documentListener);
+        }      
+    }
+    
+    /**
+     * Checks all components for a change in value
+     * and sets the submit or confirm buttons accordingly.
+     */
+    private void checkForChangeAndSetBtnsEnabled() {
+        setBtnsEnabled(isChange());
+    }
+    
+    /**
+     * Sets the visible button enabled for either submit or confirm
+     * @param isChange if true then sets the button enabled or disables if false.
+     */
+    private void setBtnsEnabled(boolean isChange){
+        if(buttonSubmit.isVisible()){
+            buttonSubmit.setEnabled(isChange);
+        }
+        else if(buttonConfirm.isVisible()){
+            buttonConfirm.setEnabled(isChange);
+        }
+    }
+    
+    /**
+     * Sets ItemListener for JCheckBox Components 
+     * @param checkBoxList The JCheckBox Components to add the ItemListener to.
+     */
+    private void addItemListener(ArrayList<JCheckBox> checkBoxList) {
+        
+        ItemListener itemListener = new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                checkForChangeAndSetBtnsEnabled();
+            }
+        };
+        
+        for(JCheckBox checkbox: checkBoxList){
+            checkbox.addItemListener(itemListener);
         }
     }
 }
