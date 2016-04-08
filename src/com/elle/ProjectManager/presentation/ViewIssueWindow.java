@@ -1282,14 +1282,14 @@ public class ViewIssueWindow extends JFrame {
     
     /**
      * Sets the visible button enabled for either submit or confirm
-     * @param isChange if true then sets the button enabled or disables if false.
+     * @param hasChange if true then sets the button enabled or disables if false.
      */
-    private void setBtnsEnabled(boolean isChange){
+    private void setBtnsEnabled(boolean hasChange){
         if(buttonSubmit.isVisible()){
-            buttonSubmit.setEnabled(isChange);
+            buttonSubmit.setEnabled(hasChange);
         }
         else if(buttonConfirm.isVisible()){
-            buttonConfirm.setEnabled(isChange);
+            buttonConfirm.setEnabled(hasChange);
         }
     }
     
