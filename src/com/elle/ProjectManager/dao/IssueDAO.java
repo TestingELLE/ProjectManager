@@ -93,7 +93,7 @@ public class IssueDAO {
             String description = issue.getDescription();
             String programmer = issue.getProgrammer();
             String dateOpened = issue.getDateOpened();
-            int rk = issue.getRk();
+            String rk = issue.getRk();
             String version = issue.getVersion();
             String dateClosed = issue.getDateClosed();
             String issueType = issue.getIssueType();
@@ -142,7 +142,7 @@ public class IssueDAO {
             String description = issue.getDescription();
             String programmer = issue.getProgrammer();
             String dateOpened = issue.getDateOpened();
-            int rk = issue.getRk();
+            String rk = issue.getRk();
             String version = issue.getVersion();
             String dateClosed = issue.getDateClosed();
             String issueType = issue.getIssueType();
