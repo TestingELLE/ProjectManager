@@ -361,6 +361,12 @@ public class ViewIssueWindow extends JFrame {
 
         submitter.setText(" submitter");
 
+        lockCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lockCheckBoxActionPerformed(evt);
+            }
+        });
+
         comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
 
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
@@ -379,11 +385,11 @@ public class ViewIssueWindow extends JFrame {
                             .addComponent(idText)
                             .addComponent(lockCheckBox))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -440,19 +446,21 @@ public class ViewIssueWindow extends JFrame {
                                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(lock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(lockCheckBox)))
-                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(22, 22, 22)
                         .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(13, 13, 13)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(formPaneLayout.createSequentialGroup()
+                                    .addGap(14, 14, 14)
+                                    .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(44, 44, 44)))
                 .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -762,7 +770,7 @@ public class ViewIssueWindow extends JFrame {
     }//GEN-LAST:event_btnCloseIssueActionPerformed
 
     private void titleTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titleTextActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_titleTextActionPerformed
 
     private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
@@ -834,6 +842,16 @@ public class ViewIssueWindow extends JFrame {
     private void submitterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitterTextActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_submitterTextActionPerformed
+
+    private void lockCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockCheckBoxActionPerformed
+        // Check if there is a change
+        if((lockCheckBox.isSelected()?"Y":"").equals(issue.getLocked())){
+            buttonSubmit.setEnabled(isChange());
+        }
+        else{
+            buttonSubmit.setEnabled(true);
+        }
+    }//GEN-LAST:event_lockCheckBoxActionPerformed
 
     private void formWindowClosing() {
         if (addIssueMode) {
@@ -1164,6 +1182,27 @@ public class ViewIssueWindow extends JFrame {
         lockCheckBox.setSelected(issue.getLocked().equals("Y")?true:false);
         
         setOpenCloseIssueBtnText(); // set button text to Open/Close issue
+    }
+    
+    /**
+     * This method compares the values of the issue with the component values
+     * and returns true or false.
+     * @return boolean true if there is a change in any of the component values
+     */
+    private boolean isChange(){
+
+        return (appText.getText().equals(issue.getApp())
+            && titleText.getText().equals(issue.getTitle())
+            && descriptionText.getText().equals(issue.getDescription())
+            && programmerText.getText().equals(issue.getProgrammer())
+            && dateOpenedText.getText().equals(issue.getDateOpened())
+            && rkText.getText().equals(Integer.toString(issue.getRk()))
+            && versionText.getText().equals(issue.getVersion())
+            && dateClosedText.getText().equals(issue.getDateClosed())
+            && comboBoxIssueType.getSelectedItem().equals(issue.getIssueType())
+            && submitterText.getText().equals(issue.getSubmitter())
+            && (lockCheckBox.isSelected()?"Y":"").equals(issue.getLocked()))
+            ?false:true;
     }
 
     private void setOpenCloseIssueBtnText() {
