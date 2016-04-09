@@ -72,8 +72,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private LoginWindow loginWindow;
     private BatchEditWindow batchEditWindow;
     private EditDatabaseWindow editDatabaseWindow;
-//    private ReportWindow reportWindow;
-    private AddIssueFileWindow addIssueFileWindow;
     private ShortCutSetting ShortCut;
     private ConsistencyOfTableColumnName ColumnNameConsistency;
 
@@ -1924,21 +1922,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         if (addIssueWindowShow) {
             addIssueWindow.toFront();
-
-        } else if (addIssueFileWindow != null) {
-            addIssueFileWindow.toFront();
         } else {
             if (btnAddIssue.getText().contains("Add issue to")) {
                 addIssueWindow = new IssueWindow(-1, this.getSelectedTable());
                 addIssueWindow.setVisible(true);
-//                numOfAddIssueWindowOpened++;
-                //addRecordWindow become visible
                 addIssueWindowShow = true;
-            } else {
-//                numOfAddIssueWindowOpened++;
-                addIssueFileWindow = new AddIssueFileWindow();
-                addIssueFileWindow.setVisible(true);
-            }
+            } 
         }
 
         // update records
@@ -4298,10 +4287,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public EditDatabaseWindow getEditDatabaseWindow() {
         return editDatabaseWindow;
-    }
-
-    public AddIssueFileWindow getAddIssueFileWindow() {
-        return addIssueFileWindow;
     }
 
     public Color getEditModeDefaultTextColor() {
