@@ -237,10 +237,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[3]).setFilter(new TableFilter(OtherTable));
 
         //add custom id list for each tab
-        tabs.get(tableNames[0]).setCustomIdList(new CustomIDList(PMTable));
-        tabs.get(tableNames[1]).setCustomIdList(new CustomIDList(ELLEGUITable));
-        tabs.get(tableNames[2]).setCustomIdList(new CustomIDList(AnalysterTable));
-        tabs.get(tableNames[3]).setCustomIdList(new CustomIDList(OtherTable));
+        tabs.get(tableNames[0]).setCustomIdList(new CustomIDList());
+        tabs.get(tableNames[1]).setCustomIdList(new CustomIDList());
+        tabs.get(tableNames[2]).setCustomIdList(new CustomIDList());
+        tabs.get(tableNames[3]).setCustomIdList(new CustomIDList());
 
         tabs.get(TASKFILES_TABLE_NAME).setFilter(new TableFilter(issue_filesTable));
 //        tabs.get(TASKNOTES_TABLE_NAME).setFilter(new TableFilter(issue_notesTable));
