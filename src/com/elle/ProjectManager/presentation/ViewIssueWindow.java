@@ -553,32 +553,30 @@ public class ViewIssueWindow extends JFrame {
         projectManager.makeTableEditable(false);
     }
 
-//    private void showNextIssue(int newRow) {
-//        projectManager.getOpenningIssuesList().remove(issue.getID(), this);
-//        projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getID());
-//
-//        String newID = table.getValueAt(newRow, 0).toString();
-//
-//        if (!projectManager.getOpenningIssuesList().containsKey(newID)) {
-//            issue = new Issue(newRow, dao);
-//            issue.setIssueValues(table);
-//            this.contentChanged = false;
-//            //reinitial issueWindow text components' content and listener
-//            updateIssueWindow();
-//
-//            this.contentChanged = false;
-//            buttonConfirm.setEnabled(false);
-//
-//            projectManager.getOpenningIssuesList().put(issue.getID(), this);
-//            projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getID());
-//
-//        } else {
-//            projectManager.getViewIssueWindowOf(newID).toFront();
-//            this.dispose();
-//        }
-//
-//        table.setRowSelectionInterval(newRow, newRow);
-//    }
+    /**
+     * This updates the custom id list when traversing the table
+     * @param newRow 
+     */
+    private void updateCustomIdList(int newRow) {
+        
+        // remove this id from the openIssuesList and CustomIdList
+        projectManager.getOpenningIssuesList().remove(issue.getId(), this);
+        projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
+
+        String newID = table.getValueAt(newRow, 0).toString();
+
+        // if issue is not open
+        if (!projectManager.getOpenningIssuesList().containsKey(newID)) {
+            projectManager.getOpenningIssuesList().put(issue.getId(), this);
+            projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getId());
+
+        } 
+        // use the window with this issue already open
+        else {
+            projectManager.getViewIssueWindowOf(newID).toFront();
+            this.dispose();
+        }
+    }
 
 //    private void updateIssueWindow() {
 //        for (int i = 0; i < issue.getFieldsNumber(); i++) {
@@ -828,9 +826,8 @@ public class ViewIssueWindow extends JFrame {
             row++;
             setIssueValuesFromTable(row,table);
             setComponentValuesFromIssue();
-            // set corresponding table row selected
             table.setRowSelectionInterval(row, row);
-            //showNextIssue(row);
+            updateCustomIdList(row);
         }
     }//GEN-LAST:event_BtnNextActionPerformed
 
@@ -862,7 +859,8 @@ public class ViewIssueWindow extends JFrame {
             row--;
             setIssueValuesFromTable(row,table);
             setComponentValuesFromIssue();
-            table.setRowSelectionInterval(row, row); // select row on table
+            table.setRowSelectionInterval(row, row);
+            updateCustomIdList(row);
         }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
