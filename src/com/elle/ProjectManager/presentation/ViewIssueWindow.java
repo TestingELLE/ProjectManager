@@ -498,7 +498,8 @@ public class ViewIssueWindow extends JFrame {
 
     private void showNextIssue(int newRow) {
         projectManager.getOpenningIssuesList().remove(issue.getID(), this);
-        projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getID());
+        projectManager.getSelectedTabCustomIdList(table.getName()).delete(Integer
+                .parseInt(issue.getID()));
 
         String newID = table.getValueAt(newRow, 0).toString();
 
@@ -513,7 +514,8 @@ public class ViewIssueWindow extends JFrame {
             buttonConfirm.setEnabled(false);
 
             projectManager.getOpenningIssuesList().put(issue.getID(), this);
-            projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getID());
+            projectManager.getSelectedTabCustomIdList(table.getName()).add(Integer.
+                    parseInt(issue.getID()));
 
         } else {
             projectManager.getViewIssueWindowOf(newID).toFront();
@@ -787,7 +789,7 @@ public class ViewIssueWindow extends JFrame {
         } else {
 //            System.out.println(addIssueMode);
             projectManager.getOpenningIssuesList().remove(issue.getID(), this);
-            projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getID());
+            projectManager.getSelectedTabCustomIdList(table.getName()).delete(Integer.parseInt(issue.getID()));
             projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
         }
         this.dispose();

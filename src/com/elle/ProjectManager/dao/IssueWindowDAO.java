@@ -70,8 +70,8 @@ public class IssueWindowDAO {
                     if (value.equals("")) {
                         value = null;
                     } else {
-                        this.processCellValue(value);
-                        value = "'" + value + "'";
+                        value = "'" + processCellValue(value) + "'";
+                        System.out.println(value);
                     }
                     if (sqlChange.endsWith("SET ")) {
                         sqlChange += columnName + " = " + value;
