@@ -4,27 +4,18 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ShortCutSetting;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import javax.swing.AbstractAction;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
@@ -35,24 +26,16 @@ import javax.swing.text.JTextComponent;
  */
 public class IssueWindow extends JFrame {
 
-    // components
     private ProjectManagerWindow projectManager;
     private Issue issue;
-
-    private Map<String, Component> ComponentsList;
     private JTable table;
     private int row;
     private IssueDAO dao;
     private boolean addIssueMode;
-
-    //feature
     private ShortCutSetting ShortCutSetting;
 
-    // boolean trigger
-    private boolean contentChanged;
-
     /**
-     * Creates new form ViewIssueWindow
+     * Creates new form IssueWindow
      */
     public IssueWindow(int row, JTable table) {
         projectManager = ProjectManagerWindow.getInstance();
@@ -60,8 +43,6 @@ public class IssueWindow extends JFrame {
         this.row = row;
         dao = new IssueDAO();
         issue = new Issue();
-        ComponentsList = new HashMap<String, Component>();
-        contentChanged = false; // if we do nothing about the text components' content, it stays false
 
         // new issue
         if (this.row == -1) {
@@ -105,13 +86,11 @@ public class IssueWindow extends JFrame {
         setIssueWindowMode();
 
         this.setTitle("Issue in " + table.getName());
-
         this.setPreferredSize(new Dimension(600, 750));
 
         // set view issue window location in screen
         Point pmWindowLocation = projectManager.getLocationOnScreen(); //get the project manager window in screen
         int numWindow = projectManager.getOpenningIssuesList().size();
-//        System.out.println("now number of opened window is: " + numWindow);
         int x = pmWindowLocation.x - 150;
         int y = pmWindowLocation.y - 120;
         this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
@@ -119,6 +98,11 @@ public class IssueWindow extends JFrame {
         this.pack();
     }
 
+    /**
+     * Displays the components accordingly 
+     * for either a new issue submittal form
+     * or populate the form with an existing issue.
+     */
     private void setIssueWindowMode() {
         dateClosedText.setEnabled(!addIssueMode);
         dateClosedText.setVisible(!addIssueMode);
@@ -256,11 +240,6 @@ public class IssueWindow extends JFrame {
 
         dateClosedText.setText("jTextField2");
         dateClosedText.setName("dateClosed"); // NOI18N
-        dateClosedText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dateClosedTextActionPerformed(evt);
-            }
-        });
         dateClosedText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 dateClosedTextKeyReleased(evt);
@@ -334,11 +313,6 @@ public class IssueWindow extends JFrame {
 
         titleText.setText("jTextField1");
         titleText.setName("title"); // NOI18N
-        titleText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                titleTextActionPerformed(evt);
-            }
-        });
 
         description.setText(" description");
 
@@ -375,12 +349,6 @@ public class IssueWindow extends JFrame {
         rkText.setName("rk"); // NOI18N
 
         lock.setText(" lock");
-
-        submitterText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                submitterTextActionPerformed(evt);
-            }
-        });
 
         submitter.setText(" submitter");
 
@@ -545,14 +513,6 @@ public class IssueWindow extends JFrame {
         return dateFormat.format(new Date());
     }
 
-    private void confirm() {
-//        System.out.println("confirm!");
-        setIssueValuesFromComponents();
-        dao.update(issue);
-        projectManager.loadData(); // refresh tableSelected
-        projectManager.makeTableEditable(false);
-    }
-
     /**
      * This updates the custom id list when traversing the table
      * @param newRow 
@@ -687,82 +647,13 @@ public class IssueWindow extends JFrame {
         projectManager.makeTableEditable(false);
     }
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
-//        updateLocked();
-        confirm();
+        setIssueValuesFromComponents();
+        dao.update(issue);
+        projectManager.loadData(); // refresh tableSelected
+        projectManager.makeTableEditable(false);
         formWindowClosing();
-
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
-//    private void updateLocked() {
-//
-//        //update the locked value back to database
-//        String ID = idText.getText();
-//        String sql = "";
-//        if (lockCheckbox.getState() == true) {
-//            sql = "UPDATE issues SET locked ='Y' WHERE ID ='" + ID + "';";
-//
-//        } else {
-//            sql = "UPDATE issues SET locked = NULL WHERE ID ='" + ID + "';";
-//        }
-//        DBConnection.close();
-//        DBConnection.open();
-//
-//        statement = DBConnection.getStatement();
-//        try {
-//            statement.executeUpdate(sql);
-//
-//        } catch (Exception ex) {
-//            LoggingAspect.afterThrown(ex);
-//        }
-//
-//    }
-//    public String getSubmitter(String ID) {
-//        String submitter = "";
-//        String sql = "select submitter from issues where ID = '" + ID + "';";
-//        ResultSet rs = null;
-//        DBConnection.close();
-//        DBConnection.open();
-//
-//        statement = DBConnection.getStatement();
-//        try {
-//            rs = statement.executeQuery(sql);
-//
-//            while (rs.next()) {
-//                submitter = rs.getString("submitter");
-//
-//            }
-//
-//        } catch (Exception ex) {
-//            LoggingAspect.afterThrown(ex);
-//        }
-//        return submitter;
-//    }
-//    public String getLock(String ID) {
-//        String locked = "";
-//        String sql = "select locked from issues where ID = '" + ID + "';";
-//        ResultSet rs = null;
-//        DBConnection.close();
-//        DBConnection.open();
-//
-//        statement = DBConnection.getStatement();
-//        try {
-//            rs = statement.executeQuery(sql);
-//
-//            while (rs.next()) {
-//                locked = rs.getString("locked");
-//
-//            }
-//
-//        } catch (Exception ex) {
-//            LoggingAspect.afterThrown(ex);
-//        }
-//        System.out.println(sql + "..." + locked);
-//        return locked;
-//    }
-
-    private void dateClosedTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateClosedTextActionPerformed
-
-    }//GEN-LAST:event_dateClosedTextActionPerformed
 
     private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
         if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
@@ -795,10 +686,11 @@ public class IssueWindow extends JFrame {
         descriptionText.setText(value);
     }//GEN-LAST:event_btnCloseIssueActionPerformed
 
-    private void titleTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titleTextActionPerformed
-        
-    }//GEN-LAST:event_titleTextActionPerformed
-
+    /**
+     * Fired when the next button is invoked.
+     * The next button traverses the table to get the next issue.
+     * @param evt 
+     */
     private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
         
         /**
@@ -831,6 +723,11 @@ public class IssueWindow extends JFrame {
         }
     }//GEN-LAST:event_BtnNextActionPerformed
 
+    /**
+     * Fired when the previous button is invoked.
+     * The previous button traverses the table to get the previous issue.
+     * @param evt 
+     */
     private void BtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPreviousActionPerformed
 
         /**
@@ -864,10 +761,6 @@ public class IssueWindow extends JFrame {
         }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
-    private void submitterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitterTextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_submitterTextActionPerformed
-
     /**
      * Fires when Lock CheckBox selection is changed
      * @param evt action event for the Lock CheckBox
@@ -899,219 +792,19 @@ public class IssueWindow extends JFrame {
         }
     }//GEN-LAST:event_comboBoxIssueTypeActionPerformed
 
+    /**
+     * Called to close the form
+     */
     private void formWindowClosing() {
         if (addIssueMode) {
             projectManager.setAddRecordsWindowShow(false);
         } else {
-//            System.out.println(addIssueMode);
             projectManager.getOpenningIssuesList().remove(issue.getId(), this);
             projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
             projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
         }
         this.dispose();
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BtnNext;
-    private javax.swing.JButton BtnPrevious;
-    private javax.swing.JLabel app;
-    private javax.swing.JTextField appText;
-    private javax.swing.JButton btnCloseIssue;
-    private javax.swing.JButton buttonCancel;
-    private javax.swing.JButton buttonConfirm;
-    private javax.swing.JButton buttonSubmit;
-    private javax.swing.JComboBox<String> comboBoxIssueType;
-    private javax.swing.JLabel dateClosed;
-    private javax.swing.JTextField dateClosedText;
-    private javax.swing.JLabel dateOpened;
-    private javax.swing.JTextField dateOpenedText;
-    private javax.swing.JLabel description;
-    private javax.swing.JTextArea descriptionText;
-    private javax.swing.JPanel formPane;
-    private javax.swing.JLabel id;
-    private javax.swing.JLabel idText;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JLabel lock;
-    private javax.swing.JCheckBox lockCheckBox;
-    private javax.swing.JLabel programmer;
-    private javax.swing.JTextField programmerText;
-    private javax.swing.JLabel rk;
-    private javax.swing.JTextField rkText;
-    private javax.swing.JScrollPane scrollPane;
-    private javax.swing.JLabel submitter;
-    private javax.swing.JTextField submitterText;
-    private javax.swing.JLabel title;
-    private javax.swing.JTextField titleText;
-    private javax.swing.JLabel version;
-    private javax.swing.JTextField versionText;
-    // End of variables declaration//GEN-END:variables
-
-//    private void initIssueWindow() {
-//        for (int i = 1; i < issue.getFieldsNumber(); i++) {
-//            String columnName = issue.getFieldName(i);
-//            String cellValue = issue.getIssueValueAt(i);
-////            System.out.println(columnName);
-//            switch (columnName) {
-//                case "app":
-//                    if (addIssueMode) {
-//                        cellValue = projectManager.getSelectedTabName();
-//                        issue.setIssueValueAt(columnName, cellValue);
-//                        issue.getIssueData(i).setChanged(true);
-//                    }
-//                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
-//                    ComponentsList.put(columnName, appText); // add app text field to textcomponentlist
-//                    break;
-//                case "title":
-//                    titleText.setText(cellValue);
-//                    ComponentsList.put(columnName, titleText);
-//                    break;
-//                case "description":
-//                    descriptionText.setText(cellValue);
-//                    ComponentsList.put(columnName, descriptionText);
-//                    break;
-//                case "programmer":
-//                    programmerText.setText(cellValue);
-//                    ComponentsList.put(columnName, programmerText);
-//                    break;
-//                case "dateOpened":
-//                    if (addIssueMode) {
-//                        this.FillItWithDate(dateOpenedText);
-//                        issue.setIssueValueAt(columnName, dateOpenedText.getText());
-//                        issue.getIssueData(i).setChanged(true);
-//                    } else {
-//                        dateOpenedText.setText(cellValue);
-//                    }
-//                    ComponentsList.put(columnName, dateOpenedText);
-//                    break;
-//                case "rk":
-//                    rkText.setText(cellValue);
-//                    ComponentsList.put(columnName, rkText);
-//                    break;
-//                case "version":
-//                    versionText.setText(cellValue);
-//                    ComponentsList.put(columnName, versionText);
-//                    break;
-//                case "dateClosed":
-////                    System.out.println("dateClosed " + cellValue);
-//                    dateClosedText.setText(cellValue);
-//                    ComponentsList.put(columnName, dateClosedText);
-//                    break;
-//                case "submitter":
-////                    System.out.println("submitter " + cellValue);
-//                    if (addIssueMode) {
-//                        cellValue = projectManager.getUserName();
-//                        issue.setIssueValueAt(columnName, cellValue);
-//                        issue.getIssueData(i).setChanged(true);
-//                    }
-//                    submitterText.setText(cellValue);
-//                    ComponentsList.put(columnName, submitterText);
-//                    break;
-//                case "locked":
-////                    System.out.println("locked " + cellValue);
-//                    if (cellValue.equalsIgnoreCase("y")) {
-//                        lockCheckbox.setState(true);
-//                    } else {
-//                        lockCheckbox.setState(false);
-//                    }
-//                    ComponentsList.put(columnName, lockCheckbox);
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//        //add document listener to all text components in this window
-//        setTextComponentListener();
-//        //add action listener to all text components and using tab to transfer 
-//        // all text area except description
-//        setTabKeyTransferFocusBtwTextArea();
-//
-//        setCheckBoxListener();
-//
-//        setOpenCloseIssueBtnText();
-//    }
-
-//    private void setCheckBoxListener() {
-//        lockCheckbox.addItemListener(new ItemListener() {
-//            //set listener to lockCheckbox, so when we click it, it can be detected and confirm button should set at enabled
-//            @Override
-//            public void itemStateChanged(ItemEvent e) {
-//                contentChanged = true;
-//                if (addIssueMode) {
-//                    buttonSubmit.setEnabled(true);
-//                } else {
-//                    buttonConfirm.setEnabled(true);
-//                }
-//                issue.getIssueData("locked").setChanged(true);
-//                if (e.getStateChange() == 1) {
-//                    issue.setIssueValueAt("locked", "Y");
-//                }
-////                else
-////                    issue.setIssueValueAt("locked", null);
-//
-//            }
-//        });
-//    }
-
-//    private void setTextComponentListener() {
-//        DocumentListener textDocumentLis = new DocumentListener() {
-//
-//            @Override
-//            public void insertUpdate(DocumentEvent e) {
-//                contentChanged = true;
-//                if (addIssueMode) {
-//                    buttonSubmit.setEnabled(true);
-//                } else {
-//                    buttonConfirm.setEnabled(true);
-//                }
-//                Document doc = e.getDocument();
-//                String columnName = (String) doc.getProperty("id");
-//                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
-//
-////                System.out.println("here " + doc.getProperty("id") + " " + newValue);
-//                issue.setIssueValueAt(columnName, newValue);
-//                issue.getIssueData(columnName).setChanged(true);
-//
-//            }
-//
-//            @Override
-//            public void removeUpdate(DocumentEvent e) {
-//                contentChanged = true;
-//                if (addIssueMode) {
-//                    buttonSubmit.setEnabled(true);
-//                } else {
-//                    buttonConfirm.setEnabled(true);
-//                }
-//                Document doc = e.getDocument();
-//                String columnName = (String) doc.getProperty("id");
-//                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
-//
-////                System.out.println("here " + doc.getProperty("id") + " " + newValue);
-//                issue.setIssueValueAt(columnName, newValue);
-//                issue.getIssueData(columnName).setChanged(true);
-////                System.out.println(doc.getProperty("id") + " " + newValue);
-//            }
-//
-//            @Override
-//            public void changedUpdate(DocumentEvent e) {
-//            }
-//
-//        };
-        
-//        InputMap ip = null;
-//        for (int i = 1; i < issue.getFieldsNumber(); i++) {
-//            if (comp instanceof JTextComponent) {
-//                Document doc = ((JTextComponent) comp).getDocument();
-//                //doc.addDocumentListener(textDocumentLis);
-//                doc.putProperty("id", columnName);
-//
-//                ip = ((JTextComponent) comp).getInputMap();
-//                ShortCutSetting.copyAndPasteShortCut(ip);
-//                ShortCutSetting.undoAndRedoShortCut(((JTextComponent) comp));
-//            }
-//        }
-//    }
     
     /**
      * Adds input mappings and shortcuts for JTextComponent Objects
@@ -1123,38 +816,6 @@ public class IssueWindow extends JFrame {
             ShortCutSetting.copyAndPasteShortCut(comp.getInputMap());
             ShortCutSetting.undoAndRedoShortCut(comp);
         }      
-    }
-
-//    private void setTabKeyTransferFocusBtwTextArea() {
-//        AbstractAction transferFocus = new AbstractAction() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                ((Component) e.getSource()).transferFocus();
-//            }
-//        };
-//        for (int i = 1; i < issue.getFieldsNumber(); i++) {
-//            String columnName = issue.getFieldName(i);
-//            Component comp = this.ComponentsList.get(i);
-//            if (comp instanceof JTextComponent) {
-//                if (!columnName.equals("description")) {
-//                    ((JTextComponent) comp).getInputMap().
-//                            put(KeyStroke.getKeyStroke("TAB"), "transferFocus");
-//                    ((JTextComponent) comp).getActionMap().
-//                            put("transferFocus", transferFocus);
-//                }
-//            }
-//        }
-//    }
-
-    private int getIssueRowInTableModel() {
-        for (int i = 0; i < table.getModel().getRowCount(); i++) {
-            if (table.getModel().getValueAt(i, 0).equals(issue.getId())) {
-                return i;
-            }
-        }
-        System.out.println("can not find this issue in Model!");
-        return -1;
     }
 
     /**
@@ -1302,4 +963,42 @@ public class IssueWindow extends JFrame {
             buttonConfirm.setEnabled(hasChange);
         }
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnNext;
+    private javax.swing.JButton BtnPrevious;
+    private javax.swing.JLabel app;
+    private javax.swing.JTextField appText;
+    private javax.swing.JButton btnCloseIssue;
+    private javax.swing.JButton buttonCancel;
+    private javax.swing.JButton buttonConfirm;
+    private javax.swing.JButton buttonSubmit;
+    private javax.swing.JComboBox<String> comboBoxIssueType;
+    private javax.swing.JLabel dateClosed;
+    private javax.swing.JTextField dateClosedText;
+    private javax.swing.JLabel dateOpened;
+    private javax.swing.JTextField dateOpenedText;
+    private javax.swing.JLabel description;
+    private javax.swing.JTextArea descriptionText;
+    private javax.swing.JPanel formPane;
+    private javax.swing.JLabel id;
+    private javax.swing.JLabel idText;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JLabel lock;
+    private javax.swing.JCheckBox lockCheckBox;
+    private javax.swing.JLabel programmer;
+    private javax.swing.JTextField programmerText;
+    private javax.swing.JLabel rk;
+    private javax.swing.JTextField rkText;
+    private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JLabel submitter;
+    private javax.swing.JTextField submitterText;
+    private javax.swing.JLabel title;
+    private javax.swing.JTextField titleText;
+    private javax.swing.JLabel version;
+    private javax.swing.JTextField versionText;
+    // End of variables declaration//GEN-END:variables
+
 }
