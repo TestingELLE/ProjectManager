@@ -33,7 +33,7 @@ import javax.swing.text.JTextComponent;
  *
  * @author fuxiaoqian
  */
-public class ViewIssueWindow extends JFrame {
+public class IssueWindow extends JFrame {
 
     // components
     private ProjectManagerWindow projectManager;
@@ -54,7 +54,7 @@ public class ViewIssueWindow extends JFrame {
     /**
      * Creates new form ViewIssueWindow
      */
-    public ViewIssueWindow(int row, JTable table) {
+    public IssueWindow(int row, JTable table) {
         projectManager = ProjectManagerWindow.getInstance();
         this.table = table;
         this.row = row;

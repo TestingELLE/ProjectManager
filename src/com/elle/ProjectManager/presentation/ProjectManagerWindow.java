@@ -67,7 +67,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // components
     private static ProjectManagerWindow instance;
-    private ViewIssueWindow addIssueWindow;
+    private IssueWindow addIssueWindow;
     private LogWindow logWindow;
     private LoginWindow loginWindow;
     private BatchEditWindow batchEditWindow;
@@ -77,7 +77,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private ShortCutSetting ShortCut;
     private ConsistencyOfTableColumnName ColumnNameConsistency;
 
-    private Map<Integer, ViewIssueWindow> openingIssuesList;
+    private Map<Integer, IssueWindow> openingIssuesList;
 
     // colors - Edit mode labels
     private Color editModeDefaultTextColor;
@@ -301,7 +301,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         // initial openedIssuesList to manager all the openning issues
-        openingIssuesList = new HashMap<Integer, ViewIssueWindow>();
+        openingIssuesList = new HashMap<Integer, IssueWindow>();
 //        tabs.get(TASKNOTES_TABLE_NAME).setEditing(false);
 
 //        // Call the initTableCellPopup method to initiate the Table Cell Popup window
@@ -1929,7 +1929,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             addIssueFileWindow.toFront();
         } else {
             if (btnAddIssue.getText().contains("Add issue to")) {
-                addIssueWindow = new ViewIssueWindow(-1, this.getSelectedTable());
+                addIssueWindow = new IssueWindow(-1, this.getSelectedTable());
                 addIssueWindow.setVisible(true);
 //                numOfAddIssueWindowOpened++;
                 //addRecordWindow become visible
@@ -2296,7 +2296,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             openingIssuesList.get(openningIssueId).toFront();
         } else {
             if (openingIssuesList.size() < 6) {
-                ViewIssueWindow viewIssue = new ViewIssueWindow(row, table);
+                IssueWindow viewIssue = new IssueWindow(row, table);
                 openingIssuesList.put(openningIssueId, viewIssue);
                 tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                tab.getCustomIdList().printOutIDList();
@@ -2664,7 +2664,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     openingIssuesList.get(openningIssueId).toFront();
                                 } else {
                                     if (openingIssuesList.size() < 6) {
-                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, table);
+                                        IssueWindow viewIssue = new IssueWindow(row, table);
                                         openingIssuesList.put(openningIssueId, viewIssue);
                                         tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                                        tabs.get(getSelectedTabName()).getCustomIdList().printOutIDList();
@@ -3220,7 +3220,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return openingIssuesList;
     }
 
-    public ViewIssueWindow getViewIssueWindowOf(String id) {
+    public IssueWindow getViewIssueWindowOf(String id) {
         return this.openingIssuesList.get(id);
     }
 
@@ -3425,7 +3425,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     openingIssuesList.get(openningIssueId).toFront();
                                 } else {
                                     if (openingIssuesList.size() < 6) {
-                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, table);
+                                        IssueWindow viewIssue = new IssueWindow(row, table);
                                         openingIssuesList.put(openningIssueId, viewIssue);
                                         tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                                        tab.getCustomIdList().printOutIDList();
@@ -4288,7 +4288,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return tableNames;
     }
 
-    public ViewIssueWindow getAddIssueWindow() {
+    public IssueWindow getAddIssueWindow() {
         return addIssueWindow;
     }
 

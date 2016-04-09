@@ -10,18 +10,12 @@ import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.Database;
 import com.elle.ProjectManager.database.Server;
-import com.elle.ProjectManager.logic.LoggingAspect;
 import static com.elle.ProjectManager.presentation.LogWindow.HYPHENS;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Vector;
 
 public class LoginWindow extends JFrame {
@@ -45,9 +39,6 @@ public class LoginWindow extends JFrame {
         initComponents();
         this.setTitle("Log in");
         loadServers();
-        comboBoxServer.setSelectedIndex(1);
-        textFieldUsername.setText("pupone_Xiao");
-        passwordFieldPW.setText("XiaoXXXX8");
     }
 
     /**
