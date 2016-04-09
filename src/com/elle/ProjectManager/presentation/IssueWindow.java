@@ -631,21 +631,22 @@ public class IssueWindow extends JFrame {
         formWindowClosing();
     }//GEN-LAST:event_buttonCancelActionPerformed
 
+    /**
+     * This method is called when the submit button is pressed.
+     * @param evt 
+     */
     private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
-        submit();
-        
-        this.formWindowClosing();
-    }//GEN-LAST:event_buttonSubmitActionPerformed
-
-    private void submit() {
-
-        // set issue values
         setIssueValuesFromComponents();
-        
         dao.insert(issue);
         projectManager.loadData();
         projectManager.makeTableEditable(false);
-    }
+        formWindowClosing();
+    }//GEN-LAST:event_buttonSubmitActionPerformed
+
+    /**
+     * This method is called when the confirm button is pressed.
+     * @param evt 
+     */
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
         setIssueValuesFromComponents();
         dao.update(issue);
@@ -865,7 +866,7 @@ public class IssueWindow extends JFrame {
         issue.setDateClosed(dateClosedText.getText());
         issue.setIssueType(comboBoxIssueType.getSelectedItem().toString());
         issue.setSubmitter(submitterText.getText());
-        issue.setLocked((lockCheckBox.isSelected())?"Y":null);
+        issue.setLocked((lockCheckBox.isSelected())?"Y":"");
     }
 
     /**

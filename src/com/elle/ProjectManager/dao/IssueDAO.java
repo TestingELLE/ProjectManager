@@ -31,7 +31,7 @@ public class IssueDAO {
     private final String COL_RK = "rk";
     private final String COL_VERSION = "version";
     private final String COL_DATE_CLOSED = "dateClosed";
-    private final String COL_ISSUE_TYPE = "issue_type";
+    private final String COL_ISSUE_TYPE = "issueType";
     private final String COL_SUBMITTER = "submitter";
     private final String COL_LOCKED = "locked";
     
@@ -88,29 +88,29 @@ public class IssueDAO {
             
             // set issue values
             int id = issue.getId();
-            String app = issue.getApp();
-            String title = issue.getTitle();
-            String description = issue.getDescription();
-            String programmer = issue.getProgrammer();
-            String dateOpened = issue.getDateOpened();
-            String rk = issue.getRk();
-            String version = issue.getVersion();
-            String dateClosed = issue.getDateClosed();
-            String issueType = issue.getIssueType();
-            String submitter = issue.getSubmitter();
-            String locked = issue.getLocked();
+            String app = format(issue.getApp());
+            String title = format(issue.getTitle());
+            String description = format(issue.getDescription());
+            String programmer = format(issue.getProgrammer());
+            String dateOpened = format(issue.getDateOpened());
+            String rk = (issue.getRk().equals(""))?null:issue.getRk(); // no single quotes
+            String version = format(issue.getVersion());
+            String dateClosed = format(issue.getDateClosed());
+            String issueType = format(issue.getIssueType());
+            String submitter = format(issue.getSubmitter());
+            String locked = format(issue.getLocked());
 
-            String sql = "INSERT INTO " + DB_TABLE_NAME + "(" + COL_PK_ID + ", " 
+            String sql = "INSERT INTO " + DB_TABLE_NAME + " (" + COL_PK_ID + ", " 
                     + COL_APP + ", " +  COL_TITLE + ", " +  COL_DESCRIPTION + ", " 
                     +  COL_PROGRAMMER + ", " +  COL_DATE_OPENED + ", " +  COL_RK 
                     + ", " +  COL_VERSION + ", " +  COL_DATE_CLOSED + ", " 
                     +  COL_ISSUE_TYPE + ", " +  COL_SUBMITTER + ", " 
                     +  COL_LOCKED  + ") " 
-                    + "VALUES(" + id + ", '" + app + "', '" +  title + "', '" 
-                    +  description + "', '" +  programmer + "', '" +  dateOpened 
-                    + "', '" +  rk + "', '" +  version + "', '" +  dateClosed 
-                    + "', '" +  issueType + "', '" +  submitter + "', '" 
-                    +  locked  + "'); ";
+                    + "VALUES (" + id + ", " + app + ", " +  title + ", " 
+                    +  description + ", " +  programmer + ", " +  dateOpened 
+                    + ", " +  rk + ", " +  version + ", " +  dateClosed 
+                    + ", " +  issueType + ", " +  submitter + ", " 
+                    +  locked  + ") ";
 
             try {
                 Statement statement = DBConnection.getStatement();
@@ -137,32 +137,30 @@ public class IssueDAO {
             
             // set issue values
             int id = issue.getId();
-            String app = issue.getApp();
-            String title = issue.getTitle();
-            String description = issue.getDescription();
-            String programmer = issue.getProgrammer();
-            String dateOpened = issue.getDateOpened();
-            String rk = issue.getRk();
-            String version = issue.getVersion();
-            String dateClosed = issue.getDateClosed();
-            String issueType = issue.getIssueType();
-            String submitter = issue.getSubmitter();
-            String locked = issue.getLocked();
-
-            // UPDATE issues SET app = "update app" WHERE ID = 504;
+            String app = format(issue.getApp());
+            String title = format(issue.getTitle());
+            String description = format(issue.getDescription());
+            String programmer = format(issue.getProgrammer());
+            String dateOpened = format(issue.getDateOpened());
+            String rk = (issue.getRk().equals(""))?null:issue.getRk(); // no single quotes
+            String version = format(issue.getVersion());
+            String dateClosed = format(issue.getDateClosed());
+            String issueType = format(issue.getIssueType());
+            String submitter = format(issue.getSubmitter());
+            String locked = format(issue.getLocked());
             
             String sql = "UPDATE " + DB_TABLE_NAME + " SET " 
-                    + COL_APP + " = '" + app + "', "
-                    + COL_TITLE + " = '" + title + "', "
-                    + COL_DESCRIPTION + " = '" + description + "', "
-                    + COL_PROGRAMMER + " = '" + programmer + "', "
-                    + COL_DATE_OPENED + " = '" + dateOpened + "', "
-                    + COL_RK + " = '" + rk + "', "
-                    + COL_VERSION + " = '" + version + "', "
-                    + COL_DATE_CLOSED + " = '" + dateClosed + "', "
-                    + COL_ISSUE_TYPE + " = '" + issueType + "', "
-                    + COL_SUBMITTER + " = '" + submitter + "', "
-                    + COL_LOCKED + " = '" + locked + "' "
+                    + COL_APP + " = " + app + ", "
+                    + COL_TITLE + " = " + title + ", "
+                    + COL_DESCRIPTION + " = " + description + ", "
+                    + COL_PROGRAMMER + " = " + programmer + ", "
+                    + COL_DATE_OPENED + " = " + dateOpened + ", "
+                    + COL_RK + " = " + rk + ", "
+                    + COL_VERSION + " = " + version + ", "
+                    + COL_DATE_CLOSED + " = " + dateClosed + ", "
+                    + COL_ISSUE_TYPE + " = " + issueType + ", "
+                    + COL_SUBMITTER + " = " + submitter + ", "
+                    + COL_LOCKED + " = " + locked + " "
                     + "WHERE " + COL_PK_ID + " = " + id + ";";
 
             try {
@@ -204,5 +202,17 @@ public class IssueDAO {
         }
         DBConnection.close();
         return successful;
+    }
+    
+    /**
+     * Formats string to return null or single quotes.
+     * This will work for now as all the defaults for
+     * the issues table is null. However his could change.
+     * This was a last minute fix to get the factoring out.
+     * @param s
+     * @return 
+     */
+    private String format(String s){
+        return (s.equals(""))?null:"'"+s+"'";
     }
 }
