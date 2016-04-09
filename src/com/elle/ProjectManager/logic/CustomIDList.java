@@ -1,23 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.elle.ProjectManager.logic;
 
 import java.util.Vector;
-import javax.swing.JTable;
 
 /**
  *
  * @author fuxiaoqian
  */
 public class CustomIDList extends Vector<Integer> {
-    private JTable table;
     
-    public CustomIDList(JTable table){
+    public CustomIDList(){
         super();
-        this.table = table;
     }
     
     public Integer has(Integer target){
@@ -42,6 +35,4 @@ public class CustomIDList extends Vector<Integer> {
         }
         System.out.println(line);
     }
-    
-    
 }
