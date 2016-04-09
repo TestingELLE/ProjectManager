@@ -7,7 +7,7 @@
     <import file="nbproject/build-impl.xml"/>
     
     <!-- set the version of ProjectManager here -->
-    <property name="version" value="ProjectManager-1.6.0"/>
+    <property name="version" value="ProjectManager-1.7.0"/>
     
     <!-- this is used to allow the jar file to use customised
      manifest files -->
