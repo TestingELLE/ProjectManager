@@ -12,14 +12,6 @@ import com.elle.ProjectManager.presentation.*;
 public class Administrator implements IAdminComponent{
 
     @Override
-    public void setComponent(AddIssueFileWindow window) {
-    }
-
-    @Override
-    public void setComponent(AddIssueWindow window) {
-    }
-
-    @Override
     public void setComponent(BackupDBTablesDialog window) {
     }
 
@@ -44,16 +36,7 @@ public class Administrator implements IAdminComponent{
     }
 
     @Override
-    public void setComponent(PopupWindowInTableCell window) {
-    }
-
-    @Override
     public void setComponent(ProjectManagerWindow window) {
         window.getMenuReports().setEnabled(false);
     }
-
-    @Override
-    public void setComponent(ReportWindow window) {
-    }
-
 }
