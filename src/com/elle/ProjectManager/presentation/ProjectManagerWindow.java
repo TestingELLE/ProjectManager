@@ -120,8 +120,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         this.userName = userName;
 
-//        idNumOfOpenningIssues = new ArrayList<Integer>();
-//        idNumOfOpenningIssues.add(-1);
         // initialize tabs
         tabs = new HashMap();
         // initialize comboBoxForSeachDropDownList
@@ -129,14 +127,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         programmersActiveForSearching = new ArrayList<String>();
 
         // create tabName objects -> this has to be before initcomponents();
-//        tabs.put(TASKNOTES_TABLE_NAME, new Tab());
-//        tabs.put(TASKS_TABLE_NAME, new Tab());
         for (int tableName = 0; tableName < tableNames.length; tableName++) {
             tabs.put(tableNames[tableName], new Tab());
 
             // set tableSelected names 
             tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
-//        tabs.get(TASKNOTES_TABLE_NAME).setTableName(TASKNOTES_TABLE_NAME);
             tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
 
             if (!tableNames[tableName].equals(TASKFILES_TABLE_NAME)) {
@@ -1934,7 +1929,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             addIssueFileWindow.toFront();
         } else {
             if (btnAddIssue.getText().contains("Add issue to")) {
-                addIssueWindow = new ViewIssueWindow(-1, -1, this.getSelectedTable());
+                addIssueWindow = new ViewIssueWindow(-1, this.getSelectedTable());
                 addIssueWindow.setVisible(true);
 //                numOfAddIssueWindowOpened++;
                 //addRecordWindow become visible
@@ -2301,7 +2296,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             openingIssuesList.get(openningIssueId).toFront();
         } else {
             if (openingIssuesList.size() < 6) {
-                ViewIssueWindow viewIssue = new ViewIssueWindow(row, col, table);
+                ViewIssueWindow viewIssue = new ViewIssueWindow(row, table);
                 openingIssuesList.put(openningIssueId, viewIssue);
                 tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                tab.getCustomIdList().printOutIDList();
@@ -2669,7 +2664,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     openingIssuesList.get(openningIssueId).toFront();
                                 } else {
                                     if (openingIssuesList.size() < 6) {
-                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, col, table);
+                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, table);
                                         openingIssuesList.put(openningIssueId, viewIssue);
                                         tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                                        tabs.get(getSelectedTabName()).getCustomIdList().printOutIDList();
@@ -3047,6 +3042,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
                     }
+                    
+                    // hide lock and submitter columns
+                    if(i == 10 || i == 11){
+                        TableColumn column = table.getColumnModel().getColumn(i);
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                        column.setPreferredWidth(pWidth);
+                    }
                 }
                 break;
             }
@@ -3058,6 +3061,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                    
+                    // hide lock and submitter columns
+                    if(i == 10 || i == 11){
+                        TableColumn column = table.getColumnModel().getColumn(i);
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                        column.setPreferredWidth(pWidth);
                     }
                 }
                 break;
@@ -3071,6 +3082,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
                     }
+                    
+                    // hide lock and submitter columns
+                    if(i == 10 || i == 11){
+                        TableColumn column = table.getColumnModel().getColumn(i);
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                        column.setPreferredWidth(pWidth);
+                    }
                 }
                 break;
             }
@@ -3082,6 +3101,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                    
+                    // hide lock and submitter columns
+                    if(i == 10 || i == 11){
+                        TableColumn column = table.getColumnModel().getColumn(i);
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                        column.setPreferredWidth(pWidth);
                     }
                 }
                 break;
@@ -3398,7 +3425,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     openingIssuesList.get(openningIssueId).toFront();
                                 } else {
                                     if (openingIssuesList.size() < 6) {
-                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, col, table);
+                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, table);
                                         openingIssuesList.put(openningIssueId, viewIssue);
                                         tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                                        tab.getCustomIdList().printOutIDList();
@@ -3806,7 +3833,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         try {
             // Do not show "submitter" in "PM", "ELLEGUI", "Analyster" and "other" table
             if (!table.getName().equals("issue_files")) {
-                columns = metaData.getColumnCount() - 2;
+                columns = metaData.getColumnCount();
             } else {
                 columns = metaData.getColumnCount();
 

@@ -1,8 +1,8 @@
 
 package com.elle.ProjectManager.presentation;
 
-import com.elle.ProjectManager.dao.IssueWindowDAO;
-import com.elle.ProjectManager.logic.Issue;
+import com.elle.ProjectManager.dao.IssueDAO;
+import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -13,11 +13,12 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.AbstractAction;
-import javax.swing.InputMap;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -26,7 +27,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -41,8 +41,8 @@ public class ViewIssueWindow extends JFrame {
 
     private Map<String, Component> ComponentsList;
     private JTable table;
-    private int rowNum;
-    private IssueWindowDAO dao;
+    private int row;
+    private IssueDAO dao;
     private boolean addIssueMode;
 
     //feature
@@ -54,27 +54,54 @@ public class ViewIssueWindow extends JFrame {
     /**
      * Creates new form ViewIssueWindow
      */
-    public ViewIssueWindow(int row, int col, JTable table) {
-        this.projectManager = ProjectManagerWindow.getInstance();
+    public ViewIssueWindow(int row, JTable table) {
+        projectManager = ProjectManagerWindow.getInstance();
         this.table = table;
-        this.rowNum = row;
-        this.dao = new IssueWindowDAO();
-        this.issue = new Issue(row, dao);
-        this.issue.setIssueValues(table);
-        this.ComponentsList = new HashMap<String, Component>();
-        this.contentChanged = false; // if we do nothing about the text components' content, it stays false
+        this.row = row;
+        dao = new IssueDAO();
+        issue = new Issue();
+        ComponentsList = new HashMap<String, Component>();
+        contentChanged = false; // if we do nothing about the text components' content, it stays false
 
-        if (rowNum == -1) {
-            this.addIssueMode = true;
-        } else {
-            this.addIssueMode = false;
+        // new issue
+        if (this.row == -1) {
+            addIssueMode = true;
+            issue.setId(dao.getMaxId() + 1);
+            issue.setApp(projectManager.getSelectedTabName());
+            issue.setDateOpened(todaysDate());
+            issue.setSubmitter(projectManager.getUserName());
+        } 
+        // existing issue
+        else {
+            addIssueMode = false;
+            setIssueValuesFromTable(row,table);
         }
 
         initComponents();
 
-        idText.setText(issue.getID()); // set idLabel content
-        //initial issueWindow text components' content and listener
-        initIssueWindow();
+        setComponentValuesFromIssue();
+        
+        /**
+         * Add all JTextComponents to add document listener, input mappings,
+         * and shortcuts.
+         * Note: ComboBox and CheckBox components can use the action event.
+         * You can double click it on the designer to create one for it.
+         * You can reference one that exists for help with the code if needed.
+         */
+        ArrayList<JTextComponent> textComponentList = new ArrayList<>();
+        textComponentList.add(submitterText);
+        textComponentList.add(dateOpenedText);
+        textComponentList.add(programmerText);
+        textComponentList.add(rkText);
+        textComponentList.add(titleText);
+        textComponentList.add(descriptionText);
+        textComponentList.add(appText);
+        textComponentList.add(dateClosedText);
+        textComponentList.add(versionText);
+        addDocumentListener(textComponentList);
+        addInputMappingsAndShortcuts(textComponentList);
+        
+        setOpenCloseIssueBtnText();
         setIssueWindowMode();
 
         this.setTitle("Issue in " + table.getName());
@@ -153,9 +180,10 @@ public class ViewIssueWindow extends JFrame {
         programmerText = new javax.swing.JTextField();
         rkText = new javax.swing.JTextField();
         lock = new javax.swing.JLabel();
-        lockCheckbox = new java.awt.Checkbox();
         submitterText = new javax.swing.JTextField();
         submitter = new javax.swing.JLabel();
+        lockCheckBox = new javax.swing.JCheckBox();
+        comboBoxIssueType = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -356,6 +384,19 @@ public class ViewIssueWindow extends JFrame {
 
         submitter.setText(" submitter");
 
+        lockCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lockCheckBoxActionPerformed(evt);
+            }
+        });
+
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
+        comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxIssueTypeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
         formPane.setLayout(formPaneLayout);
         formPaneLayout.setHorizontalGroup(
@@ -369,14 +410,14 @@ public class ViewIssueWindow extends JFrame {
                             .addComponent(id))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lockCheckbox, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(idText))
-                        .addGap(100, 100, 100)
+                            .addComponent(idText)
+                            .addComponent(lockCheckBox))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(submitterText))
+                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -399,7 +440,7 @@ public class ViewIssueWindow extends JFrame {
                             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(titleText)
                             .addGroup(formPaneLayout.createSequentialGroup()
-                                .addGap(0, 2, Short.MAX_VALUE)
+                                .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(formPaneLayout.createSequentialGroup()
@@ -418,30 +459,37 @@ public class ViewIssueWindow extends JFrame {
             .addGroup(formPaneLayout.createSequentialGroup()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGap(0, 13, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(idText)
-                                .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(dateOpened, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(programmer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(0, 0, 0)
-                        .addComponent(lock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(idText)
+                                        .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(dateOpened, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(programmer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGap(0, 0, 0)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lockCheckBox)))
+                            .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(22, 22, 22)
                         .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(13, 13, 13)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(formPaneLayout.createSequentialGroup()
+                                    .addGap(14, 14, 14)
+                                    .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lockCheckbox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(39, 39, 39)))
+                                .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(44, 44, 44)))
                 .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(formPaneLayout.createSequentialGroup()
@@ -487,98 +535,101 @@ public class ViewIssueWindow extends JFrame {
         String today = dateFormat.format(date);
         dateArea.setText(today);
     }
+    
+    /**
+     * Returns today's date as a String in format yyyy-MM-dd
+     * @return today's date as a String in format yyyy-MM-dd
+     */
+    private String todaysDate() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.format(new Date());
+    }
 
     private void confirm() {
 //        System.out.println("confirm!");
-
-        dao.updateChanges(issue);
+        setIssueValuesFromComponents();
+        dao.update(issue);
         projectManager.loadData(); // refresh tableSelected
         projectManager.makeTableEditable(false);
     }
 
-    private void showNextIssue(int newRow) {
-        projectManager.getOpenningIssuesList().remove(issue.getID(), this);
-        projectManager.getSelectedTabCustomIdList(table.getName()).delete(Integer
-                .parseInt(issue.getID()));
+//    private void showNextIssue(int newRow) {
+//        projectManager.getOpenningIssuesList().remove(issue.getID(), this);
+//        projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getID());
+//
+//        String newID = table.getValueAt(newRow, 0).toString();
+//
+//        if (!projectManager.getOpenningIssuesList().containsKey(newID)) {
+//            issue = new Issue(newRow, dao);
+//            issue.setIssueValues(table);
+//            this.contentChanged = false;
+//            //reinitial issueWindow text components' content and listener
+//            updateIssueWindow();
+//
+//            this.contentChanged = false;
+//            buttonConfirm.setEnabled(false);
+//
+//            projectManager.getOpenningIssuesList().put(issue.getID(), this);
+//            projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getID());
+//
+//        } else {
+//            projectManager.getViewIssueWindowOf(newID).toFront();
+//            this.dispose();
+//        }
+//
+//        table.setRowSelectionInterval(newRow, newRow);
+//    }
 
-        String newID = table.getValueAt(newRow, 0).toString();
-
-        if (!projectManager.getOpenningIssuesList().containsKey(newID)) {
-            issue = new Issue(newRow, dao);
-            issue.setIssueValues(table);
-            this.contentChanged = false;
-            //reinitial issueWindow text components' content and listener
-            updateIssueWindow();
-
-            this.contentChanged = false;
-            buttonConfirm.setEnabled(false);
-
-            projectManager.getOpenningIssuesList().put(issue.getID(), this);
-            projectManager.getSelectedTabCustomIdList(table.getName()).add(Integer.
-                    parseInt(issue.getID()));
-
-        } else {
-            projectManager.getViewIssueWindowOf(newID).toFront();
-            this.dispose();
-        }
-
-        table.setRowSelectionInterval(newRow, newRow);
-    }
-
-    private void updateIssueWindow() {
-        for (int i = 0; i < issue.getFieldsNumber(); i++) {
-            String columnName = issue.getFieldName(i);
-            String cellValue = issue.getIssueValueAt(i);
-            switch (columnName) {
-                case "ID":
-                    idText.setText(cellValue);
-                case "app":
-//                    System.out.println(issue.getIssueValueAt(i));
-                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
-                    break;
-                case "title":
-                    titleText.setText(cellValue);
-                    break;
-                case "description":
-                    descriptionText.setText(cellValue);
-                    break;
-                case "programmer":
-                    programmerText.setText(cellValue);
-                    break;
-                case "dateOpened":
-                    dateOpenedText.setText(cellValue);
-                    break;
-                case "rk":
-                    rkText.setText(cellValue);
-                    break;
-                case "version":
-                    versionText.setText(cellValue);
-                    break;
-                case "dateClosed":
-                    dateClosedText.setText(cellValue);
-                    break;
-                case "submitter":
-                    submitterText.setText(cellValue);
-                    break;
-                case "locked":
-                    if (cellValue.equals("Y")) {
-                        lockCheckbox.setState(true);
-                    } else {
-                        lockCheckbox.setState(false);
-                    }
-                    break;
-                default:
-                    break;
-            }
-            issue.getIssueData(columnName).setChanged(false);
-        }
-        //set close issue btn property
-        if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
-            btnCloseIssue.setText("Close Issue");
-        } else {
-            btnCloseIssue.setText("Reopen Issue");
-        }
-    }
+//    private void updateIssueWindow() {
+//        for (int i = 0; i < issue.getFieldsNumber(); i++) {
+//            String columnName = issue.getFieldName(i);
+//            String cellValue = issue.getIssueValueAt(i);
+//            switch (columnName) {
+//                case "ID":
+//                    idText.setText(cellValue);
+//                case "app":
+////                    System.out.println(issue.getIssueValueAt(i));
+//                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
+//                    break;
+//                case "title":
+//                    titleText.setText(cellValue);
+//                    break;
+//                case "description":
+//                    descriptionText.setText(cellValue);
+//                    break;
+//                case "programmer":
+//                    programmerText.setText(cellValue);
+//                    break;
+//                case "dateOpened":
+//                    dateOpenedText.setText(cellValue);
+//                    break;
+//                case "rk":
+//                    rkText.setText(cellValue);
+//                    break;
+//                case "version":
+//                    versionText.setText(cellValue);
+//                    break;
+//                case "dateClosed":
+//                    dateClosedText.setText(cellValue);
+//                    break;
+//                case "submitter":
+//                    submitterText.setText(cellValue);
+//                    break;
+//                case "locked":
+//                    if (cellValue.equals("Y")) {
+//                        lockCheckBox.setSelected(true);
+//                    } else {
+//                        lockCheckBox.setSelected(false);
+//                    }
+//                    break;
+//                default:
+//                    break;
+//            }
+//            issue.getIssueData(columnName).setChanged(false);
+//        }
+//        
+//        setOpenCloseIssueBtnText();
+//    }
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         formWindowClosing();
@@ -629,8 +680,11 @@ public class ViewIssueWindow extends JFrame {
     }//GEN-LAST:event_buttonSubmitActionPerformed
 
     private void submit() {
-//        System.out.println("submit!");
-        dao.submitNewIssue(issue);
+
+        // set issue values
+        setIssueValuesFromComponents();
+        
+        dao.insert(issue);
         projectManager.loadData();
         projectManager.makeTableEditable(false);
     }
@@ -744,38 +798,71 @@ public class ViewIssueWindow extends JFrame {
     }//GEN-LAST:event_btnCloseIssueActionPerformed
 
     private void titleTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titleTextActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_titleTextActionPerformed
 
     private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
-        for (int i = 0; i < table.getRowCount(); i++) {
-            if (table.getValueAt(i, 0).toString().equals(issue.getID())) {
-                rowNum = i;
+        
+        /**
+         * If table has not changed then no need to execute this for loop.
+         * boolean rowFound makes sure the issue is still in the table view.
+         */
+        boolean rowFound = true;
+        if (!table.getValueAt(row, 0).toString().equals(Integer.toString(issue.getId()))) {
+            rowFound = false;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
+                    row = i;
+                    rowFound = true;
+                }
             }
         }
-        issue.setRowNum(rowNum);
-        if (rowNum == table.getRowCount() - 1) {
-            JOptionPane.showMessageDialog(this, "This is the last row!");
+        
+        // next row
+        if(!rowFound){
+            JOptionPane.showMessageDialog(this, "This issue is no longer on the table!");
+        }
+        else if (row == table.getRowCount() - 1) {
+            JOptionPane.showMessageDialog(this, "This issue is already the last row on the table!");
         } else {
-            rowNum = rowNum + 1;
-            showNextIssue(rowNum);
-
+            row++;
+            setIssueValuesFromTable(row,table);
+            setComponentValuesFromIssue();
+            // set corresponding table row selected
+            table.setRowSelectionInterval(row, row);
+            //showNextIssue(row);
         }
     }//GEN-LAST:event_BtnNextActionPerformed
 
     private void BtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPreviousActionPerformed
-        for (int i = 0; i < table.getRowCount(); i++) {
-            if (table.getValueAt(i, 0).toString().equals(issue.getID())) {
-                rowNum = i;
+
+        /**
+         * If table has not changed then no need to execute this for loop.
+         * boolean found makes sure the issue is still in the table view.
+         */
+        boolean rowFound = true;
+        if (!table.getValueAt(row, 0).toString().equals(Integer.toString(issue.getId()))) {
+
+            rowFound = false;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
+                    row = i;
+                    rowFound = true;
+                }
             }
         }
-        issue.setRowNum(rowNum);
-        if (rowNum == 0) {
-            JOptionPane.showMessageDialog(this, "This is the first row!");
+        
+        // previous row
+        if(!rowFound){
+            JOptionPane.showMessageDialog(this, "This issue is no longer on the table!");
+        }
+        else if (row == 0) {
+            JOptionPane.showMessageDialog(this, "This issue is already the first row on the table!");
         } else {
-            rowNum = rowNum - 1;
-            showNextIssue(rowNum);
-
+            row--;
+            setIssueValuesFromTable(row,table);
+            setComponentValuesFromIssue();
+            table.setRowSelectionInterval(row, row); // select row on table
         }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
@@ -783,13 +870,44 @@ public class ViewIssueWindow extends JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_submitterTextActionPerformed
 
+    /**
+     * Fires when Lock CheckBox selection is changed
+     * @param evt action event for the Lock CheckBox
+     */
+    private void lockCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockCheckBoxActionPerformed
+
+        // if the same then check for other changes
+        if((lockCheckBox.isSelected()?"Y":"").equals(issue.getLocked())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_lockCheckBoxActionPerformed
+
+    /**
+     * Fires when IssueType ComboBox selection is changed
+     * @param evt action event for the IssueType ComboBox
+     */
+    private void comboBoxIssueTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxIssueTypeActionPerformed
+        // if the same then check for other changes
+        if(comboBoxIssueType.getSelectedItem().toString().equals(issue.getIssueType())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_comboBoxIssueTypeActionPerformed
+
     private void formWindowClosing() {
         if (addIssueMode) {
             projectManager.setAddRecordsWindowShow(false);
         } else {
 //            System.out.println(addIssueMode);
-            projectManager.getOpenningIssuesList().remove(issue.getID(), this);
-            projectManager.getSelectedTabCustomIdList(table.getName()).delete(Integer.parseInt(issue.getID()));
+            projectManager.getOpenningIssuesList().remove(issue.getId(), this);
+            projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
             projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
         }
         this.dispose();
@@ -804,6 +922,7 @@ public class ViewIssueWindow extends JFrame {
     private javax.swing.JButton buttonCancel;
     private javax.swing.JButton buttonConfirm;
     private javax.swing.JButton buttonSubmit;
+    private javax.swing.JComboBox<String> comboBoxIssueType;
     private javax.swing.JLabel dateClosed;
     private javax.swing.JTextField dateClosedText;
     private javax.swing.JLabel dateOpened;
@@ -817,7 +936,7 @@ public class ViewIssueWindow extends JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JLabel lock;
-    private java.awt.Checkbox lockCheckbox;
+    private javax.swing.JCheckBox lockCheckBox;
     private javax.swing.JLabel programmer;
     private javax.swing.JTextField programmerText;
     private javax.swing.JLabel rk;
@@ -831,87 +950,308 @@ public class ViewIssueWindow extends JFrame {
     private javax.swing.JTextField versionText;
     // End of variables declaration//GEN-END:variables
 
-    private void initIssueWindow() {
-        for (int i = 1; i < issue.getFieldsNumber(); i++) {
-            String columnName = issue.getFieldName(i);
-            String cellValue = issue.getIssueValueAt(i);
-//            System.out.println(columnName);
-            switch (columnName) {
-                case "app":
-                    if (addIssueMode) {
-                        cellValue = projectManager.getSelectedTabName();
-                        issue.setIssueValueAt(columnName, cellValue);
-                        issue.getIssueData(i).setChanged(true);
-                    }
-                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
-                    ComponentsList.put(columnName, appText); // add app text field to textcomponentlist
-                    break;
-                case "title":
-                    titleText.setText(cellValue);
-                    ComponentsList.put(columnName, titleText);
-                    break;
-                case "description":
-                    descriptionText.setText(cellValue);
-                    ComponentsList.put(columnName, descriptionText);
-                    break;
-                case "programmer":
-                    programmerText.setText(cellValue);
-                    ComponentsList.put(columnName, programmerText);
-                    break;
-                case "dateOpened":
-                    if (addIssueMode) {
-                        this.FillItWithDate(dateOpenedText);
-                        issue.setIssueValueAt(columnName, dateOpenedText.getText());
-                        issue.getIssueData(i).setChanged(true);
-                    } else {
-                        dateOpenedText.setText(cellValue);
-                    }
-                    ComponentsList.put(columnName, dateOpenedText);
-                    break;
-                case "rk":
-                    rkText.setText(cellValue);
-                    ComponentsList.put(columnName, rkText);
-                    break;
-                case "version":
-                    versionText.setText(cellValue);
-                    ComponentsList.put(columnName, versionText);
-                    break;
-                case "dateClosed":
-//                    System.out.println("dateClosed " + cellValue);
-                    dateClosedText.setText(cellValue);
-                    ComponentsList.put(columnName, dateClosedText);
-                    break;
-                case "submitter":
-//                    System.out.println("submitter " + cellValue);
-                    if (addIssueMode) {
-                        cellValue = projectManager.getUserName();
-                        issue.setIssueValueAt(columnName, cellValue);
-                        issue.getIssueData(i).setChanged(true);
-                    }
-                    submitterText.setText(cellValue);
-                    ComponentsList.put(columnName, submitterText);
-                    break;
-                case "locked":
-//                    System.out.println("locked " + cellValue);
-                    if (cellValue.equalsIgnoreCase("y")) {
-                        lockCheckbox.setState(true);
-                    } else {
-                        lockCheckbox.setState(false);
-                    }
-                    ComponentsList.put(columnName, lockCheckbox);
-                    break;
-                default:
-                    break;
+//    private void initIssueWindow() {
+//        for (int i = 1; i < issue.getFieldsNumber(); i++) {
+//            String columnName = issue.getFieldName(i);
+//            String cellValue = issue.getIssueValueAt(i);
+////            System.out.println(columnName);
+//            switch (columnName) {
+//                case "app":
+//                    if (addIssueMode) {
+//                        cellValue = projectManager.getSelectedTabName();
+//                        issue.setIssueValueAt(columnName, cellValue);
+//                        issue.getIssueData(i).setChanged(true);
+//                    }
+//                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
+//                    ComponentsList.put(columnName, appText); // add app text field to textcomponentlist
+//                    break;
+//                case "title":
+//                    titleText.setText(cellValue);
+//                    ComponentsList.put(columnName, titleText);
+//                    break;
+//                case "description":
+//                    descriptionText.setText(cellValue);
+//                    ComponentsList.put(columnName, descriptionText);
+//                    break;
+//                case "programmer":
+//                    programmerText.setText(cellValue);
+//                    ComponentsList.put(columnName, programmerText);
+//                    break;
+//                case "dateOpened":
+//                    if (addIssueMode) {
+//                        this.FillItWithDate(dateOpenedText);
+//                        issue.setIssueValueAt(columnName, dateOpenedText.getText());
+//                        issue.getIssueData(i).setChanged(true);
+//                    } else {
+//                        dateOpenedText.setText(cellValue);
+//                    }
+//                    ComponentsList.put(columnName, dateOpenedText);
+//                    break;
+//                case "rk":
+//                    rkText.setText(cellValue);
+//                    ComponentsList.put(columnName, rkText);
+//                    break;
+//                case "version":
+//                    versionText.setText(cellValue);
+//                    ComponentsList.put(columnName, versionText);
+//                    break;
+//                case "dateClosed":
+////                    System.out.println("dateClosed " + cellValue);
+//                    dateClosedText.setText(cellValue);
+//                    ComponentsList.put(columnName, dateClosedText);
+//                    break;
+//                case "submitter":
+////                    System.out.println("submitter " + cellValue);
+//                    if (addIssueMode) {
+//                        cellValue = projectManager.getUserName();
+//                        issue.setIssueValueAt(columnName, cellValue);
+//                        issue.getIssueData(i).setChanged(true);
+//                    }
+//                    submitterText.setText(cellValue);
+//                    ComponentsList.put(columnName, submitterText);
+//                    break;
+//                case "locked":
+////                    System.out.println("locked " + cellValue);
+//                    if (cellValue.equalsIgnoreCase("y")) {
+//                        lockCheckbox.setState(true);
+//                    } else {
+//                        lockCheckbox.setState(false);
+//                    }
+//                    ComponentsList.put(columnName, lockCheckbox);
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
+//        //add document listener to all text components in this window
+//        setTextComponentListener();
+//        //add action listener to all text components and using tab to transfer 
+//        // all text area except description
+//        setTabKeyTransferFocusBtwTextArea();
+//
+//        setCheckBoxListener();
+//
+//        setOpenCloseIssueBtnText();
+//    }
+
+//    private void setCheckBoxListener() {
+//        lockCheckbox.addItemListener(new ItemListener() {
+//            //set listener to lockCheckbox, so when we click it, it can be detected and confirm button should set at enabled
+//            @Override
+//            public void itemStateChanged(ItemEvent e) {
+//                contentChanged = true;
+//                if (addIssueMode) {
+//                    buttonSubmit.setEnabled(true);
+//                } else {
+//                    buttonConfirm.setEnabled(true);
+//                }
+//                issue.getIssueData("locked").setChanged(true);
+//                if (e.getStateChange() == 1) {
+//                    issue.setIssueValueAt("locked", "Y");
+//                }
+////                else
+////                    issue.setIssueValueAt("locked", null);
+//
+//            }
+//        });
+//    }
+
+//    private void setTextComponentListener() {
+//        DocumentListener textDocumentLis = new DocumentListener() {
+//
+//            @Override
+//            public void insertUpdate(DocumentEvent e) {
+//                contentChanged = true;
+//                if (addIssueMode) {
+//                    buttonSubmit.setEnabled(true);
+//                } else {
+//                    buttonConfirm.setEnabled(true);
+//                }
+//                Document doc = e.getDocument();
+//                String columnName = (String) doc.getProperty("id");
+//                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
+//
+////                System.out.println("here " + doc.getProperty("id") + " " + newValue);
+//                issue.setIssueValueAt(columnName, newValue);
+//                issue.getIssueData(columnName).setChanged(true);
+//
+//            }
+//
+//            @Override
+//            public void removeUpdate(DocumentEvent e) {
+//                contentChanged = true;
+//                if (addIssueMode) {
+//                    buttonSubmit.setEnabled(true);
+//                } else {
+//                    buttonConfirm.setEnabled(true);
+//                }
+//                Document doc = e.getDocument();
+//                String columnName = (String) doc.getProperty("id");
+//                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
+//
+////                System.out.println("here " + doc.getProperty("id") + " " + newValue);
+//                issue.setIssueValueAt(columnName, newValue);
+//                issue.getIssueData(columnName).setChanged(true);
+////                System.out.println(doc.getProperty("id") + " " + newValue);
+//            }
+//
+//            @Override
+//            public void changedUpdate(DocumentEvent e) {
+//            }
+//
+//        };
+        
+//        InputMap ip = null;
+//        for (int i = 1; i < issue.getFieldsNumber(); i++) {
+//            if (comp instanceof JTextComponent) {
+//                Document doc = ((JTextComponent) comp).getDocument();
+//                //doc.addDocumentListener(textDocumentLis);
+//                doc.putProperty("id", columnName);
+//
+//                ip = ((JTextComponent) comp).getInputMap();
+//                ShortCutSetting.copyAndPasteShortCut(ip);
+//                ShortCutSetting.undoAndRedoShortCut(((JTextComponent) comp));
+//            }
+//        }
+//    }
+    
+    /**
+     * Adds input mappings and shortcuts for JTextComponent Objects
+     * (ex. TextFields, TextAreas)
+     */
+    private void addInputMappingsAndShortcuts(ArrayList<JTextComponent> textComponentList){
+
+        for(JTextComponent comp:textComponentList){
+            ShortCutSetting.copyAndPasteShortCut(comp.getInputMap());
+            ShortCutSetting.undoAndRedoShortCut(comp);
+        }      
+    }
+
+//    private void setTabKeyTransferFocusBtwTextArea() {
+//        AbstractAction transferFocus = new AbstractAction() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                ((Component) e.getSource()).transferFocus();
+//            }
+//        };
+//        for (int i = 1; i < issue.getFieldsNumber(); i++) {
+//            String columnName = issue.getFieldName(i);
+//            Component comp = this.ComponentsList.get(i);
+//            if (comp instanceof JTextComponent) {
+//                if (!columnName.equals("description")) {
+//                    ((JTextComponent) comp).getInputMap().
+//                            put(KeyStroke.getKeyStroke("TAB"), "transferFocus");
+//                    ((JTextComponent) comp).getActionMap().
+//                            put("transferFocus", transferFocus);
+//                }
+//            }
+//        }
+//    }
+
+    private int getIssueRowInTableModel() {
+        for (int i = 0; i < table.getModel().getRowCount(); i++) {
+            if (table.getModel().getValueAt(i, 0).equals(issue.getId())) {
+                return i;
             }
         }
-        //add document listener to all text components in this window
-        setTextComponentListener();
-        //add action listener to all text components and using tab to transfer 
-        // all text area except description
-        setTabKeyTransferFocusBtwTextArea();
+        System.out.println("can not find this issue in Model!");
+        return -1;
+    }
 
-        setCheckBoxListener();
+    /**
+     * Sets issue values from table
+     * @param row the row index on table for issue to retrieve
+     * @param table the table with the row/issue data
+     */
+    private void setIssueValuesFromTable(int row, JTable table) {
 
+        issue.setId(Integer.parseInt(getTableValueAt(row, 0).toString()));
+        issue.setApp(getTableValueAt(row, 1).toString());
+        issue.setTitle(getTableValueAt(row, 2).toString());
+        issue.setDescription(getTableValueAt(row, 3).toString());
+        issue.setProgrammer(getTableValueAt(row, 4).toString());
+        issue.setDateOpened(getTableValueAt(row, 5).toString());
+        issue.setRk(getTableValueAt(row, 6).toString());
+        issue.setVersion(getTableValueAt(row, 7).toString());
+        issue.setDateClosed(getTableValueAt(row, 8).toString());
+        issue.setIssueType(getTableValueAt(row, 9).toString());
+        issue.setSubmitter(getTableValueAt(row, 10).toString());
+        issue.setLocked(getTableValueAt(row, 11).toString());
+    }
+    
+    /**
+     * This returns cell value of table but replaces null with "" to handle
+     * null pointer exceptions.
+     * @param row row of table cell
+     * @param col column of table cell
+     * @return Object of cell value but null values are replaced with ""
+     */
+    private Object getTableValueAt(int row, int col){
+        return (table.getValueAt(row, col)==null)?"":table.getValueAt(row, col);
+    }
+    
+    /**
+     * Sets the issue values from the components and fields from issue window.
+     */
+    private void setIssueValuesFromComponents() {
+        issue.setId(Integer.parseInt(idText.getText()));
+        issue.setApp(appText.getText());
+        issue.setTitle(titleText.getText());
+        issue.setDescription(descriptionText.getText());
+        issue.setProgrammer(programmerText.getText());
+        issue.setDateOpened(dateOpenedText.getText());
+        issue.setRk(rkText.getText());
+        issue.setVersion(versionText.getText());
+        issue.setDateClosed(dateClosedText.getText());
+        issue.setIssueType(comboBoxIssueType.getSelectedItem().toString());
+        issue.setSubmitter(submitterText.getText());
+        issue.setLocked((lockCheckBox.isSelected())?"Y":null);
+    }
+
+    /**
+     * Sets the components and fields on issue window from the issue object.
+     */
+    private void setComponentValuesFromIssue() {
+
+        idText.setText(Integer.toString(issue.getId()));
+        appText.setText(issue.getApp());
+        titleText.setText(issue.getTitle());
+        descriptionText.setText(issue.getDescription());
+        programmerText.setText(issue.getProgrammer());
+        dateOpenedText.setText(issue.getDateOpened());
+        rkText.setText(issue.getRk());
+        versionText.setText(issue.getVersion());
+        dateClosedText.setText(issue.getDateClosed());
+        comboBoxIssueType.setSelectedItem(issue.getIssueType());
+        submitterText.setText(issue.getSubmitter());
+        lockCheckBox.setSelected(issue.getLocked().equals("Y")?true:false);
+        
+        setOpenCloseIssueBtnText(); // set button text to Open/Close issue
+    }
+    
+    /**
+     * This method compares the values of the issue with the component values
+     * and returns true or false.
+     * @return boolean true if there is a change in any of the component values
+     */
+    private boolean hasChange(){
+
+        return (appText.getText().equals(issue.getApp())
+            && titleText.getText().equals(issue.getTitle())
+            && descriptionText.getText().equals(issue.getDescription())
+            && programmerText.getText().equals(issue.getProgrammer())
+            && dateOpenedText.getText().equals(issue.getDateOpened())
+            && rkText.getText().equals(issue.getRk())
+            && versionText.getText().equals(issue.getVersion())
+            && dateClosedText.getText().equals(issue.getDateClosed())
+            && comboBoxIssueType.getSelectedItem().equals(issue.getIssueType())
+            && submitterText.getText().equals(issue.getSubmitter())
+            && (lockCheckBox.isSelected()?"Y":"").equals(issue.getLocked()))
+            ?false:true;
+    }
+
+    private void setOpenCloseIssueBtnText() {
         //set close issue btn property
         if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
             btnCloseIssue.setText("Close Issue");
@@ -920,117 +1260,48 @@ public class ViewIssueWindow extends JFrame {
         }
     }
 
-    private void setCheckBoxListener() {
-        lockCheckbox.addItemListener(new ItemListener() {
-            //set listener to lockCheckbox, so when we click it, it can be detected and confirm button should set at enabled
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                contentChanged = true;
-                if (addIssueMode) {
-                    buttonSubmit.setEnabled(true);
-                } else {
-                    buttonConfirm.setEnabled(true);
-                }
-                issue.getIssueData("locked").setChanged(true);
-                if (e.getStateChange() == 1) {
-                    issue.setIssueValueAt("locked", "Y");
-                }
-//                else
-//                    issue.setIssueValueAt("locked", null);
-
-            }
-        });
-    }
-
-    private void setTextComponentListener() {
-        DocumentListener textDocumentLis = new DocumentListener() {
-
+    private void addDocumentListener(ArrayList<JTextComponent> textComponentList) {
+        
+        DocumentListener documentListener = new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                contentChanged = true;
-                if (addIssueMode) {
-                    buttonSubmit.setEnabled(true);
-                } else {
-                    buttonConfirm.setEnabled(true);
-                }
-                Document doc = e.getDocument();
-                String columnName = (String) doc.getProperty("id");
-                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
-
-//                System.out.println("here " + doc.getProperty("id") + " " + newValue);
-                issue.setIssueValueAt(columnName, newValue);
-                issue.getIssueData(columnName).setChanged(true);
-
+                checkForChangeAndSetBtnsEnabled();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                contentChanged = true;
-                if (addIssueMode) {
-                    buttonSubmit.setEnabled(true);
-                } else {
-                    buttonConfirm.setEnabled(true);
-                }
-                Document doc = e.getDocument();
-                String columnName = (String) doc.getProperty("id");
-                String newValue = ((JTextComponent) ComponentsList.get(columnName)).getText();
-
-//                System.out.println("here " + doc.getProperty("id") + " " + newValue);
-                issue.setIssueValueAt(columnName, newValue);
-                issue.getIssueData(columnName).setChanged(true);
-//                System.out.println(doc.getProperty("id") + " " + newValue);
+                checkForChangeAndSetBtnsEnabled();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-            }
-
-        };
-        InputMap ip = null;
-        for (int i = 1; i < issue.getFieldsNumber(); i++) {
-            String columnName = issue.getFieldName(i);
-            Component comp = ComponentsList.get(columnName);
-            if (comp instanceof JTextComponent) {
-                Document doc = ((JTextComponent) comp).getDocument();
-                doc.addDocumentListener(textDocumentLis);
-                doc.putProperty("id", columnName);
-
-                ip = ((JTextComponent) comp).getInputMap();
-                ShortCutSetting.copyAndPasteShortCut(ip);
-                ShortCutSetting.undoAndRedoShortCut(((JTextComponent) comp));
-            }
-        }
-    }
-
-    private void setTabKeyTransferFocusBtwTextArea() {
-        AbstractAction transferFocus = new AbstractAction() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ((Component) e.getSource()).transferFocus();
+                // this does not get fired for plain text
             }
         };
-        for (int i = 1; i < issue.getFieldsNumber(); i++) {
-            String columnName = issue.getFieldName(i);
-            Component comp = this.ComponentsList.get(i);
-            if (comp instanceof JTextComponent) {
-                if (!columnName.equals("description")) {
-                    ((JTextComponent) comp).getInputMap().
-                            put(KeyStroke.getKeyStroke("TAB"), "transferFocus");
-                    ((JTextComponent) comp).getActionMap().
-                            put("transferFocus", transferFocus);
-                }
-            }
-        }
+        
+        for(JTextComponent comp:textComponentList){
+            comp.getDocument().addDocumentListener(documentListener);
+        }      
     }
-
-    private int getIssueRowInTableModel() {
-        for (int i = 0; i < table.getModel().getRowCount(); i++) {
-            if (table.getModel().getValueAt(i, 0).equals(issue.getID())) {
-                return i;
-            }
+    
+    /**
+     * Checks all components for a change in value
+     * and sets the submit or confirm buttons accordingly.
+     */
+    private void checkForChangeAndSetBtnsEnabled() {
+        setBtnsEnabled(hasChange());
+    }
+    
+    /**
+     * Sets the visible button enabled for either submit or confirm
+     * @param hasChange if true then sets the button enabled or disables if false.
+     */
+    private void setBtnsEnabled(boolean hasChange){
+        if(buttonSubmit.isVisible()){
+            buttonSubmit.setEnabled(hasChange);
         }
-        System.out.println("can not find this issue in Model!");
-        return -1;
+        else if(buttonConfirm.isVisible()){
+            buttonConfirm.setEnabled(hasChange);
+        }
     }
 }
