@@ -53,6 +53,7 @@ public class IssueDAO {
     public int getMaxId() {
         
         int id = -1;
+        DBConnection.close();
         if(DBConnection.open()){
 
             String sql = "SELECT MAX(" + COL_PK_ID + ") "
@@ -84,6 +85,7 @@ public class IssueDAO {
     public boolean insert(Issue issue) {
         
         boolean successful = false;
+        DBConnection.close();
         if(DBConnection.open()){
             
             // set issue values
@@ -133,6 +135,7 @@ public class IssueDAO {
     public boolean update(Issue issue) {
         
         boolean successful = false;
+        DBConnection.close();
         if(DBConnection.open()){
             
             // set issue values
@@ -184,6 +187,7 @@ public class IssueDAO {
     public boolean delete(Issue issue){
         
         boolean successful = false;
+        DBConnection.close();
         if(DBConnection.open()){
 
             int id = issue.getId();
