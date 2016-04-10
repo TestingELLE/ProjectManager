@@ -117,6 +117,7 @@ public class IssueDAO {
             try {
                 Statement statement = DBConnection.getStatement();
                 statement.executeUpdate(sql);
+                LoggingAspect.afterReturn("Upload Successful!");
                 successful = true;
             }
             catch (SQLException ex) {
@@ -169,6 +170,7 @@ public class IssueDAO {
             try {
                 Statement statement = DBConnection.getStatement();
                 statement.executeUpdate(sql);
+                LoggingAspect.afterReturn("Upload Successful!");
                 successful = true;
             }
             catch (SQLException ex) {
@@ -197,6 +199,7 @@ public class IssueDAO {
             try {
                 Statement statement = DBConnection.getStatement();
                 statement.executeUpdate(sql);
+                LoggingAspect.afterReturn("Delete Successful!");
                 successful = true;
             }
             catch (SQLException ex) {
