@@ -39,8 +39,6 @@ public class LoginWindow extends JFrame {
         initComponents();
         this.setTitle("Log in");
         loadServers();
-        textFieldUsername.setText("pupone_Carlos");
-        passwordFieldPW.setText("CarlosCCCC");
     }
 
     /**
