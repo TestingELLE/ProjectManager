@@ -4,6 +4,7 @@ import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
+import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.*;
 
 import javax.swing.*;
@@ -425,12 +426,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //        
 //        tableSelected.addMouseListener(new MouseAdapter(){             
 //            public void mouseClicked(MouseEvent evt){
-//                int row = tableSelected.getSelectedRow();
+//                int rowIndex = tableSelected.getSelectedRow();
 //                int column = tableSelected.getSelectedColumn();   
 //                if(tableSelected.equals(tasksTable)){                   
 //                    if(column == 2 || column == 4 || column == 5){
 //                        // popup tableSelected cell edit window
-//                        tableCellPopup(tasksTable, row , column);
+//                        tableCellPopup(tasksTable, rowIndex , column);
 //                    }else{
 //                        tableCellPopupPanel.setVisible(false);
 //                        controlPopupPanel.setVisible(false);
@@ -439,7 +440,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                else if(tableSelected.equals(task_filesTable)){
 //                    if(column == 5 || column == 6 || column == 7){
 //                        // popup tableSelected cell edit window
-//                        tableCellPopup(task_filesTable, row , column);
+//                        tableCellPopup(task_filesTable, rowIndex , column);
 //                    }else{
 //                        tableCellPopupPanel.setVisible(false);
 //                        controlPopupPanel.setVisible(false);
@@ -448,7 +449,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                else if(tableSelected.equals(task_notesTable)){
 //                    if(column == 3){
 //                        // popup tableSelected cell edit window
-//                        tableCellPopup(task_notesTable, row , column);
+//                        tableCellPopup(task_notesTable, rowIndex , column);
 //                    }else{
 //                        tableCellPopupPanel.setVisible(false);
 //                        controlPopupPanel.setVisible(false);
@@ -467,12 +468,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                    
 //                    if (evt.getComponent() instanceof JTable){
 //                        JTable tableSelected = (JTable) evt.getComponent();
-//                        int row = tableSelected.getSelectedRow();                    
+//                        int rowIndex = tableSelected.getSelectedRow();                    
 //                        int column = tableSelected.getSelectedColumn();   
 //                        if(tableSelected.equals(tasksTable)){
 //                            if(column == 2 || column == 4 || column == 5 || column == 6){
 //                                // popup tableSelected cell edit window
-//                                tableCellPopup(tasksTable, row , column);
+//                                tableCellPopup(tasksTable, rowIndex , column);
 //                            }else{
 //                                tableCellPopupPanel.setVisible(false);
 //                                controlPopupPanel.setVisible(false);
@@ -481,7 +482,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                        else if(tableSelected.equals(task_filesTable)){
 //                            if(column == 5 || column == 6 || column == 7){
 //                                // popup tableSelected cell edit window
-//                                tableCellPopup(task_filesTable, row , column);
+//                                tableCellPopup(task_filesTable, rowIndex , column);
 //                            }else{
 //                                tableCellPopupPanel.setVisible(false);
 //                                controlPopupPanel.setVisible(false);
@@ -490,7 +491,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                        else if(tableSelected.equals(task_notesTable)){
 //                            if(column == 3){
 //                                // popup tableSelected cell edit window
-//                                tableCellPopup(task_notesTable, row , column);
+//                                tableCellPopup(task_notesTable, rowIndex , column);
 //                            }else{
 //                                tableCellPopupPanel.setVisible(false);
 //                                controlPopupPanel.setVisible(false);
@@ -507,12 +508,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //    
 //    /*
 //     * This is to set the tableSelected cell popup window visible to edit.
-//     * @parm selectedTable, row , column
+//     * @parm selectedTable, rowIndex , column
 //    */    
-//    private void tableCellPopup(JTable selectedTable, int row, int column){
+//    private void tableCellPopup(JTable selectedTable, int rowIndex, int column){
 //        
 //        // find the selected tableSelected cell 
-//        Rectangle cellRect = selectedTable.getCellRect(row, column, true);
+//        Rectangle cellRect = selectedTable.getCellRect(rowIndex, column, true);
 //        
 //        // set the tableSelected cell popup window visible
 //        tableCellPopupPanel.setVisible(true);
@@ -520,7 +521,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //   
 //        // use the tableSelected cell content to set the content for textarea
 //        textAreatableCellPopup.setText("");
-//        textAreatableCellPopup.setText((String) selectedTable.getValueAt(row, column)); 
+//        textAreatableCellPopup.setText((String) selectedTable.getValueAt(rowIndex, column)); 
 //    
 //        // set the tableCellPopupPanel position
 //        tableCellPopupPanel.setLocation(cellRect.x + 2, cellRect.y + cellRect.height + 2 + 150);  
@@ -534,7 +535,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                String newTableCellValue = textAreatableCellPopup.getText();
 //                tableCellPopupPanel.setVisible(false);
 //                controlPopupPanel.setVisible(false);                   
-//                selectedTable.setValueAt(newTableCellValue, row, column);
+//                selectedTable.setValueAt(newTableCellValue, rowIndex, column);
 //                uploadChanges();
 //            }
 //        });
@@ -2474,15 +2475,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         loadTables(tabs);
     }
 
-//    public void viewNextIssue(int row, String columnName, JTable selectedTable) {
+//    public void viewNextIssue(int rowIndex, String columnName, JTable selectedTable) {
 //
 //        Object[] cellsValue = new Object[selectedTable.getColumnCount()];
 //        for (int col = 1; col < selectedTable.getColumnCount(); col++) {
-//            cellsValue[col - 1] = selectedTable.getValueAt(row, col);
+//            cellsValue[col - 1] = selectedTable.getValueAt(rowIndex, col);
 //        }
 //        boolean alreadyOpened = false;
 //
-//        Integer openningIssue = (Integer) selectedTable.getValueAt(row, 0);
+//        Integer openningIssue = (Integer) selectedTable.getValueAt(rowIndex, 0);
 //
 //        String value = "openning issues are: ";
 //        for (int issue : idNumOfOpenningIssues) {
@@ -2541,9 +2542,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                            if (columnName.equalsIgnoreCase("ID")) {
 //                                ArrayList<String> ID = new ArrayList<>();
 //
-//                                for (int row = 0; row < table.getModel().getRowCount(); row++) {
+//                                for (int rowIndex = 0; rowIndex < table.getModel().getRowCount(); rowIndex++) {
 //
-//                                    String Value = table.getModel().getValueAt(row, 0).toString();
+//                                    String Value = table.getModel().getValueAt(rowIndex, 0).toString();
 //
 //                                    ID.add(Value);
 //                                }
@@ -2568,9 +2569,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                        if (e.getClickCount() == 1 && columnName.equalsIgnoreCase("ID")) {
 //                            ArrayList<String> ID = new ArrayList<>();
 //
-//                            for (int row = 0; row < table.getModel().getRowCount(); row++) {
+//                            for (int rowIndex = 0; rowIndex < table.getModel().getRowCount(); rowIndex++) {
 //
-//                                String Value = table.getModel().getValueAt(row, 0).toString();
+//                                String Value = table.getModel().getValueAt(rowIndex, 0).toString();
 //
 //                                ID.add(Value);
 //                            }
@@ -2789,6 +2790,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             @Override
             public void tableChanged(TableModelEvent e) {
 
+                System.out.println("table changed called");
                 int row = e.getFirstRow();
                 int col = e.getColumn();
                 String tab = table.getName();
@@ -4619,6 +4621,88 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public Tab getSelectedTab() {
         return tabs.get(getSelectedTabName());
+    }
+
+    /**
+     * Updates a table rowIndex's data
+     * @param table
+     * @param issue 
+     */
+    public void updateTableRow(JTable table, Issue issue) {
+        int row = findTableModelRow(table,issue);
+        if(row != -1){
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            
+            // remove table listeners because this listens for changes in 
+            // table and changes the cell green for upload changes and revert
+            // changes. So I remove them and then put them back.
+            TableModelListener[] listeners = model.getTableModelListeners();
+            for(int i = 0; i < listeners.length; i++){
+                model.removeTableModelListener(listeners[i]);
+            }
+
+            // update -> no need for id
+            model.setValueAt(issue.getApp(), row, 1);
+            model.setValueAt(issue.getTitle(), row, 2);
+            model.setValueAt(issue.getDescription(), row, 3);
+            model.setValueAt(issue.getProgrammer(), row, 4);
+            model.setValueAt(issue.getDateOpened(), row, 5);
+            model.setValueAt(issue.getRk(), row, 6);
+            model.setValueAt(issue.getVersion(), row, 7);
+            model.setValueAt(issue.getDateClosed(), row, 8);
+            model.setValueAt(issue.getIssueType(), row, 9);
+            model.setValueAt(issue.getSubmitter(), row, 10);
+            model.setValueAt(issue.getLocked(), row, 11);
+            
+            // add back the table listeners
+            for(int i = 0; i < listeners.length; i++){
+                model.addTableModelListener(listeners[i]);
+            }
+        }
+        else{
+            String errMsg = "Problem updating row: Row not Found";
+            LoggingAspect.afterReturn(errMsg);
+        }
+    }
+
+    /**
+     * Inserts a new rowIndex in the table
+     * @param table
+     * @param issue 
+     */
+    public void inserTableRow(JTable table, Issue issue) {
+
+        Object[] rowData = new Object[12];
+        rowData[0] = issue.getId();
+        rowData[1] = issue.getApp();
+        rowData[2] = issue.getTitle();
+        rowData[3] = issue.getDescription();
+        rowData[4] = issue.getProgrammer();
+        rowData[5] = issue.getDateOpened();
+        rowData[6] = issue.getRk();
+        rowData[7] = issue.getVersion();
+        rowData[8] = issue.getDateClosed();
+        rowData[9] = issue.getIssueType();
+        rowData[10] = issue.getSubmitter();
+        rowData[11] = issue.getLocked();
+        ((DefaultTableModel)table.getModel()).addRow(rowData);
+    }
+
+    /**
+     * Locates the table model rowIndex index
+     * @param issue
+     * @return int table model rowIndex
+     */
+    private int findTableModelRow(JTable table, Issue issue) {
+        int rowCount = table.getModel().getRowCount();
+        TableModel model = table.getModel();
+        for(int rowIndex = 0; rowIndex < rowCount; rowIndex++){
+            int rowId = Integer.parseInt(model.getValueAt(rowIndex, 0).toString());
+            if(rowId == issue.getId()){
+                return rowIndex;
+            }
+        }
+        return -1; // rowIndex not found
     }
 
     /**

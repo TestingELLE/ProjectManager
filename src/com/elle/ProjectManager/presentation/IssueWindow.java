@@ -638,7 +638,7 @@ public class IssueWindow extends JFrame {
     private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
         setIssueValuesFromComponents();
         dao.insert(issue);
-        projectManager.loadData();
+        projectManager.inserTableRow(table,issue);
         projectManager.makeTableEditable(false);
         formWindowClosing();
     }//GEN-LAST:event_buttonSubmitActionPerformed
@@ -650,7 +650,7 @@ public class IssueWindow extends JFrame {
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
         setIssueValuesFromComponents();
         dao.update(issue);
-        projectManager.loadData(); // refresh tableSelected
+        projectManager.updateTableRow(table,issue);
         projectManager.makeTableEditable(false);
         formWindowClosing();
     }//GEN-LAST:event_buttonConfirmActionPerformed
