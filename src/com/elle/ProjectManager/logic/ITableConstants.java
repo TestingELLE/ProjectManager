@@ -15,8 +15,8 @@ package com.elle.ProjectManager.logic;
 public interface ITableConstants {
     
     // Edit the version and date it was created for new archives and jars
-    public final String CREATION_DATE = "2016-03-29";
-    public final String VERSION = "1.5.0";
+    public final String CREATION_DATE = "2016-4-10";
+    public final String VERSION = "1.7.0b";
     
     public static final String TASKS_TABLE_NAME = "issues";
     public static final String TASKFILES_TABLE_NAME = "issue_files";
@@ -26,7 +26,7 @@ public interface ITableConstants {
     public static final String SYMBOL_COLUMN_NAME = "Symbol";
     
     // column width percent constants
-    public static final float[] COL_WIDTH_PER_TASKS = {50, 70, 175, 350, 85, 88, 30, 55, 90};
+    public static final float[] COL_WIDTH_PER_TASKS = {50, 70, 175, 350, 85, 88, 30, 55, 90,90,0,0};
     public static final float[] COL_WIDTH_PER_REPORTS = {55, 60, 70, 115, 60, 95, 275, 200, 325};
 //    public static final float[] COL_WIDTH_PER_ARCHIVE = {60, 60, 115, 845, 105};
     

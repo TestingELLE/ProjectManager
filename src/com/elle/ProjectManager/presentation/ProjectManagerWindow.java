@@ -4,8 +4,8 @@ import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
+import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.*;
-//import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -68,17 +68,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // components
     private static ProjectManagerWindow instance;
-    private ViewIssueWindow addIssueWindow;
+    private IssueWindow addIssueWindow;
     private LogWindow logWindow;
     private LoginWindow loginWindow;
     private BatchEditWindow batchEditWindow;
     private EditDatabaseWindow editDatabaseWindow;
-//    private ReportWindow reportWindow;
-    private AddIssueFileWindow addIssueFileWindow;
     private ShortCutSetting ShortCut;
     private ConsistencyOfTableColumnName ColumnNameConsistency;
 
-    private Map<Integer, ViewIssueWindow> openingIssuesList;
+    private Map<Integer, IssueWindow> openingIssuesList;
 
     // colors - Edit mode labels
     private Color editModeDefaultTextColor;
@@ -121,8 +119,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         this.userName = userName;
 
-//        idNumOfOpenningIssues = new ArrayList<Integer>();
-//        idNumOfOpenningIssues.add(-1);
         // initialize tabs
         tabs = new HashMap();
         // initialize comboBoxForSeachDropDownList
@@ -130,14 +126,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         programmersActiveForSearching = new ArrayList<String>();
 
         // create tabName objects -> this has to be before initcomponents();
-//        tabs.put(TASKNOTES_TABLE_NAME, new Tab());
-//        tabs.put(TASKS_TABLE_NAME, new Tab());
         for (int tableName = 0; tableName < tableNames.length; tableName++) {
             tabs.put(tableNames[tableName], new Tab());
 
             // set tableSelected names 
             tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
-//        tabs.get(TASKNOTES_TABLE_NAME).setTableName(TASKNOTES_TABLE_NAME);
             tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
 
             if (!tableNames[tableName].equals(TASKFILES_TABLE_NAME)) {
@@ -243,10 +236,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[3]).setFilter(new TableFilter(OtherTable));
 
         //add custom id list for each tab
-        tabs.get(tableNames[0]).setCustomIdList(new CustomIDList(PMTable));
-        tabs.get(tableNames[1]).setCustomIdList(new CustomIDList(ELLEGUITable));
-        tabs.get(tableNames[2]).setCustomIdList(new CustomIDList(AnalysterTable));
-        tabs.get(tableNames[3]).setCustomIdList(new CustomIDList(OtherTable));
+        tabs.get(tableNames[0]).setCustomIdList(new CustomIDList());
+        tabs.get(tableNames[1]).setCustomIdList(new CustomIDList());
+        tabs.get(tableNames[2]).setCustomIdList(new CustomIDList());
+        tabs.get(tableNames[3]).setCustomIdList(new CustomIDList());
 
         tabs.get(TASKFILES_TABLE_NAME).setFilter(new TableFilter(issue_filesTable));
 //        tabs.get(TASKNOTES_TABLE_NAME).setFilter(new TableFilter(issue_notesTable));
@@ -307,7 +300,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         // initial openedIssuesList to manager all the openning issues
-        openingIssuesList = new HashMap<Integer, ViewIssueWindow>();
+        openingIssuesList = new HashMap<Integer, IssueWindow>();
 //        tabs.get(TASKNOTES_TABLE_NAME).setEditing(false);
 
 //        // Call the initTableCellPopup method to initiate the Table Cell Popup window
@@ -433,12 +426,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //        
 //        tableSelected.addMouseListener(new MouseAdapter(){             
 //            public void mouseClicked(MouseEvent evt){
-//                int row = tableSelected.getSelectedRow();
+//                int rowIndex = tableSelected.getSelectedRow();
 //                int column = tableSelected.getSelectedColumn();   
 //                if(tableSelected.equals(tasksTable)){                   
 //                    if(column == 2 || column == 4 || column == 5){
 //                        // popup tableSelected cell edit window
-//                        tableCellPopup(tasksTable, row , column);
+//                        tableCellPopup(tasksTable, rowIndex , column);
 //                    }else{
 //                        tableCellPopupPanel.setVisible(false);
 //                        controlPopupPanel.setVisible(false);
@@ -447,7 +440,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                else if(tableSelected.equals(task_filesTable)){
 //                    if(column == 5 || column == 6 || column == 7){
 //                        // popup tableSelected cell edit window
-//                        tableCellPopup(task_filesTable, row , column);
+//                        tableCellPopup(task_filesTable, rowIndex , column);
 //                    }else{
 //                        tableCellPopupPanel.setVisible(false);
 //                        controlPopupPanel.setVisible(false);
@@ -456,7 +449,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                else if(tableSelected.equals(task_notesTable)){
 //                    if(column == 3){
 //                        // popup tableSelected cell edit window
-//                        tableCellPopup(task_notesTable, row , column);
+//                        tableCellPopup(task_notesTable, rowIndex , column);
 //                    }else{
 //                        tableCellPopupPanel.setVisible(false);
 //                        controlPopupPanel.setVisible(false);
@@ -475,12 +468,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                    
 //                    if (evt.getComponent() instanceof JTable){
 //                        JTable tableSelected = (JTable) evt.getComponent();
-//                        int row = tableSelected.getSelectedRow();                    
+//                        int rowIndex = tableSelected.getSelectedRow();                    
 //                        int column = tableSelected.getSelectedColumn();   
 //                        if(tableSelected.equals(tasksTable)){
 //                            if(column == 2 || column == 4 || column == 5 || column == 6){
 //                                // popup tableSelected cell edit window
-//                                tableCellPopup(tasksTable, row , column);
+//                                tableCellPopup(tasksTable, rowIndex , column);
 //                            }else{
 //                                tableCellPopupPanel.setVisible(false);
 //                                controlPopupPanel.setVisible(false);
@@ -489,7 +482,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                        else if(tableSelected.equals(task_filesTable)){
 //                            if(column == 5 || column == 6 || column == 7){
 //                                // popup tableSelected cell edit window
-//                                tableCellPopup(task_filesTable, row , column);
+//                                tableCellPopup(task_filesTable, rowIndex , column);
 //                            }else{
 //                                tableCellPopupPanel.setVisible(false);
 //                                controlPopupPanel.setVisible(false);
@@ -498,7 +491,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                        else if(tableSelected.equals(task_notesTable)){
 //                            if(column == 3){
 //                                // popup tableSelected cell edit window
-//                                tableCellPopup(task_notesTable, row , column);
+//                                tableCellPopup(task_notesTable, rowIndex , column);
 //                            }else{
 //                                tableCellPopupPanel.setVisible(false);
 //                                controlPopupPanel.setVisible(false);
@@ -515,12 +508,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //    
 //    /*
 //     * This is to set the tableSelected cell popup window visible to edit.
-//     * @parm selectedTable, row , column
+//     * @parm selectedTable, rowIndex , column
 //    */    
-//    private void tableCellPopup(JTable selectedTable, int row, int column){
+//    private void tableCellPopup(JTable selectedTable, int rowIndex, int column){
 //        
 //        // find the selected tableSelected cell 
-//        Rectangle cellRect = selectedTable.getCellRect(row, column, true);
+//        Rectangle cellRect = selectedTable.getCellRect(rowIndex, column, true);
 //        
 //        // set the tableSelected cell popup window visible
 //        tableCellPopupPanel.setVisible(true);
@@ -528,7 +521,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //   
 //        // use the tableSelected cell content to set the content for textarea
 //        textAreatableCellPopup.setText("");
-//        textAreatableCellPopup.setText((String) selectedTable.getValueAt(row, column)); 
+//        textAreatableCellPopup.setText((String) selectedTable.getValueAt(rowIndex, column)); 
 //    
 //        // set the tableCellPopupPanel position
 //        tableCellPopupPanel.setLocation(cellRect.x + 2, cellRect.y + cellRect.height + 2 + 150);  
@@ -542,7 +535,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                String newTableCellValue = textAreatableCellPopup.getText();
 //                tableCellPopupPanel.setVisible(false);
 //                controlPopupPanel.setVisible(false);                   
-//                selectedTable.setValueAt(newTableCellValue, row, column);
+//                selectedTable.setValueAt(newTableCellValue, rowIndex, column);
 //                uploadChanges();
 //            }
 //        });
@@ -1930,21 +1923,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         if (addIssueWindowShow) {
             addIssueWindow.toFront();
-
-        } else if (addIssueFileWindow != null) {
-            addIssueFileWindow.toFront();
         } else {
             if (btnAddIssue.getText().contains("Add issue to")) {
-                addIssueWindow = new ViewIssueWindow(-1, -1, this.getSelectedTable());
+                addIssueWindow = new IssueWindow(-1, this.getSelectedTable());
                 addIssueWindow.setVisible(true);
-//                numOfAddIssueWindowOpened++;
-                //addRecordWindow become visible
                 addIssueWindowShow = true;
-            } else {
-//                numOfAddIssueWindowOpened++;
-                addIssueFileWindow = new AddIssueFileWindow();
-                addIssueFileWindow.setVisible(true);
-            }
+            } 
         }
 
         // update records
@@ -2302,7 +2286,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             openingIssuesList.get(openningIssueId).toFront();
         } else {
             if (openingIssuesList.size() < 6) {
-                ViewIssueWindow viewIssue = new ViewIssueWindow(row, col, table);
+                IssueWindow viewIssue = new IssueWindow(row, table);
                 openingIssuesList.put(openningIssueId, viewIssue);
                 tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                tab.getCustomIdList().printOutIDList();
@@ -2491,15 +2475,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         loadTables(tabs);
     }
 
-//    public void viewNextIssue(int row, String columnName, JTable selectedTable) {
+//    public void viewNextIssue(int rowIndex, String columnName, JTable selectedTable) {
 //
 //        Object[] cellsValue = new Object[selectedTable.getColumnCount()];
 //        for (int col = 1; col < selectedTable.getColumnCount(); col++) {
-//            cellsValue[col - 1] = selectedTable.getValueAt(row, col);
+//            cellsValue[col - 1] = selectedTable.getValueAt(rowIndex, col);
 //        }
 //        boolean alreadyOpened = false;
 //
-//        Integer openningIssue = (Integer) selectedTable.getValueAt(row, 0);
+//        Integer openningIssue = (Integer) selectedTable.getValueAt(rowIndex, 0);
 //
 //        String value = "openning issues are: ";
 //        for (int issue : idNumOfOpenningIssues) {
@@ -2558,9 +2542,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                            if (columnName.equalsIgnoreCase("ID")) {
 //                                ArrayList<String> ID = new ArrayList<>();
 //
-//                                for (int row = 0; row < table.getModel().getRowCount(); row++) {
+//                                for (int rowIndex = 0; rowIndex < table.getModel().getRowCount(); rowIndex++) {
 //
-//                                    String Value = table.getModel().getValueAt(row, 0).toString();
+//                                    String Value = table.getModel().getValueAt(rowIndex, 0).toString();
 //
 //                                    ID.add(Value);
 //                                }
@@ -2585,9 +2569,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //                        if (e.getClickCount() == 1 && columnName.equalsIgnoreCase("ID")) {
 //                            ArrayList<String> ID = new ArrayList<>();
 //
-//                            for (int row = 0; row < table.getModel().getRowCount(); row++) {
+//                            for (int rowIndex = 0; rowIndex < table.getModel().getRowCount(); rowIndex++) {
 //
-//                                String Value = table.getModel().getValueAt(row, 0).toString();
+//                                String Value = table.getModel().getValueAt(rowIndex, 0).toString();
 //
 //                                ID.add(Value);
 //                            }
@@ -2670,7 +2654,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     openingIssuesList.get(openningIssueId).toFront();
                                 } else {
                                     if (openingIssuesList.size() < 6) {
-                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, col, table);
+                                        IssueWindow viewIssue = new IssueWindow(row, table);
                                         openingIssuesList.put(openningIssueId, viewIssue);
                                         tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                                        tabs.get(getSelectedTabName()).getCustomIdList().printOutIDList();
@@ -2806,6 +2790,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             @Override
             public void tableChanged(TableModelEvent e) {
 
+                System.out.println("table changed called");
                 int row = e.getFirstRow();
                 int col = e.getColumn();
                 String tab = table.getName();
@@ -3048,6 +3033,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
                     }
+                    
+                    // hide lock and submitter columns
+                    if(i == 10 || i == 11){
+                        TableColumn column = table.getColumnModel().getColumn(i);
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                        column.setPreferredWidth(pWidth);
+                    }
                 }
                 break;
             }
@@ -3059,6 +3052,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                    
+                    // hide lock and submitter columns
+                    if(i == 10 || i == 11){
+                        TableColumn column = table.getColumnModel().getColumn(i);
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                        column.setPreferredWidth(pWidth);
                     }
                 }
                 break;
@@ -3072,6 +3073,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
                     }
+                    
+                    // hide lock and submitter columns
+                    if(i == 10 || i == 11){
+                        TableColumn column = table.getColumnModel().getColumn(i);
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                        column.setPreferredWidth(pWidth);
+                    }
                 }
                 break;
             }
@@ -3083,6 +3092,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                    
+                    // hide lock and submitter columns
+                    if(i == 10 || i == 11){
+                        TableColumn column = table.getColumnModel().getColumn(i);
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                        column.setPreferredWidth(pWidth);
                     }
                 }
                 break;
@@ -3194,7 +3211,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return openingIssuesList;
     }
 
-    public ViewIssueWindow getViewIssueWindowOf(String id) {
+    public IssueWindow getViewIssueWindowOf(String id) {
         return this.openingIssuesList.get(id);
     }
 
@@ -3399,7 +3416,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                     openingIssuesList.get(openningIssueId).toFront();
                                 } else {
                                     if (openingIssuesList.size() < 6) {
-                                        ViewIssueWindow viewIssue = new ViewIssueWindow(row, col, table);
+                                        IssueWindow viewIssue = new IssueWindow(row, table);
                                         openingIssuesList.put(openningIssueId, viewIssue);
                                         tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                                        tab.getCustomIdList().printOutIDList();
@@ -3807,7 +3824,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         try {
             // Do not show "submitter" in "PM", "ELLEGUI", "Analyster" and "other" table
             if (!table.getName().equals("issue_files")) {
-                columns = metaData.getColumnCount() - 2;
+                columns = metaData.getColumnCount();
             } else {
                 columns = metaData.getColumnCount();
 
@@ -4262,7 +4279,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return tableNames;
     }
 
-    public ViewIssueWindow getAddIssueWindow() {
+    public IssueWindow getAddIssueWindow() {
         return addIssueWindow;
     }
 
@@ -4272,10 +4289,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public EditDatabaseWindow getEditDatabaseWindow() {
         return editDatabaseWindow;
-    }
-
-    public AddIssueFileWindow getAddIssueFileWindow() {
-        return addIssueFileWindow;
     }
 
     public Color getEditModeDefaultTextColor() {
@@ -4608,6 +4621,88 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public Tab getSelectedTab() {
         return tabs.get(getSelectedTabName());
+    }
+
+    /**
+     * Updates a table rowIndex's data
+     * @param table
+     * @param issue 
+     */
+    public void updateTableRow(JTable table, Issue issue) {
+        int row = findTableModelRow(table,issue);
+        if(row != -1){
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            
+            // remove table listeners because this listens for changes in 
+            // table and changes the cell green for upload changes and revert
+            // changes. So I remove them and then put them back.
+            TableModelListener[] listeners = model.getTableModelListeners();
+            for(int i = 0; i < listeners.length; i++){
+                model.removeTableModelListener(listeners[i]);
+            }
+
+            // update -> no need for id
+            model.setValueAt(issue.getApp(), row, 1);
+            model.setValueAt(issue.getTitle(), row, 2);
+            model.setValueAt(issue.getDescription(), row, 3);
+            model.setValueAt(issue.getProgrammer(), row, 4);
+            model.setValueAt(issue.getDateOpened(), row, 5);
+            model.setValueAt(issue.getRk(), row, 6);
+            model.setValueAt(issue.getVersion(), row, 7);
+            model.setValueAt(issue.getDateClosed(), row, 8);
+            model.setValueAt(issue.getIssueType(), row, 9);
+            model.setValueAt(issue.getSubmitter(), row, 10);
+            model.setValueAt(issue.getLocked(), row, 11);
+            
+            // add back the table listeners
+            for(int i = 0; i < listeners.length; i++){
+                model.addTableModelListener(listeners[i]);
+            }
+        }
+        else{
+            String errMsg = "Problem updating row: Row not Found";
+            LoggingAspect.afterReturn(errMsg);
+        }
+    }
+
+    /**
+     * Inserts a new rowIndex in the table
+     * @param table
+     * @param issue 
+     */
+    public void inserTableRow(JTable table, Issue issue) {
+
+        Object[] rowData = new Object[12];
+        rowData[0] = issue.getId();
+        rowData[1] = issue.getApp();
+        rowData[2] = issue.getTitle();
+        rowData[3] = issue.getDescription();
+        rowData[4] = issue.getProgrammer();
+        rowData[5] = issue.getDateOpened();
+        rowData[6] = issue.getRk();
+        rowData[7] = issue.getVersion();
+        rowData[8] = issue.getDateClosed();
+        rowData[9] = issue.getIssueType();
+        rowData[10] = issue.getSubmitter();
+        rowData[11] = issue.getLocked();
+        ((DefaultTableModel)table.getModel()).addRow(rowData);
+    }
+
+    /**
+     * Locates the table model rowIndex index
+     * @param issue
+     * @return int table model rowIndex
+     */
+    private int findTableModelRow(JTable table, Issue issue) {
+        int rowCount = table.getModel().getRowCount();
+        TableModel model = table.getModel();
+        for(int rowIndex = 0; rowIndex < rowCount; rowIndex++){
+            int rowId = Integer.parseInt(model.getValueAt(rowIndex, 0).toString());
+            if(rowId == issue.getId()){
+                return rowIndex;
+            }
+        }
+        return -1; // rowIndex not found
     }
 
     /**

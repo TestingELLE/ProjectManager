@@ -65,16 +65,15 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lockCheckbox" alignment="0" min="-2" pref="17" max="-2" attributes="0"/>
-                                  <Component id="idText" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="idText" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lockCheckBox" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="100" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="comboBoxIssueType" min="-2" pref="83" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="submitter" min="-2" pref="72" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Component id="submitterText" max="32767" attributes="0"/>
+                                  <Component id="submitter" min="-2" pref="72" max="-2" attributes="0"/>
+                                  <Component id="submitterText" min="-2" pref="100" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -103,7 +102,7 @@
                                   <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
                                   <Component id="titleText" alignment="1" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                           <Component id="jScrollPane7" alignment="1" min="-2" pref="580" max="-2" attributes="0"/>
                                           <Group type="102" alignment="1" attributes="0">
@@ -131,36 +130,48 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="0" pref="13" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                      <Component id="idText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="id" alignment="3" min="-2" pref="21" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                              <Component id="idText" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="id" alignment="3" min="-2" pref="21" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="rk" alignment="1" max="32767" attributes="0"/>
+                                              <Component id="dateOpened" alignment="0" max="32767" attributes="0"/>
+                                              <Component id="programmer" alignment="0" max="32767" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="lock" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                                          <Component id="lockCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
-                                  <Component id="submitter" alignment="0" min="-2" pref="13" max="-2" attributes="0"/>
-                                  <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="rk" alignment="1" max="32767" attributes="0"/>
-                                      <Component id="dateOpened" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="programmer" alignment="0" max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="comboBoxIssueType" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                              <Component id="lock" min="-2" pref="26" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                               <Component id="title" min="-2" pref="13" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="submitter" alignment="0" min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                                          <Component id="submitterText" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="103" groupAlignment="3" attributes="0">
                                       <Component id="dateOpenedText" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="programmerText" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="rkText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="submitterText" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="lockCheckbox" alignment="1" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Component id="titleText" min="-2" pref="26" max="-2" attributes="0"/>
@@ -353,7 +364,6 @@
                     <Property name="name" type="java.lang.String" value="dateClosed" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dateClosedTextActionPerformed"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="dateClosedTextKeyReleased"/>
                   </Events>
                 </Component>
@@ -392,9 +402,6 @@
                 <Property name="text" type="java.lang.String" value="jTextField1"/>
                 <Property name="name" type="java.lang.String" value="title" noResource="true"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="titleTextActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="description">
               <Properties>
@@ -453,17 +460,34 @@
                 <Property name="text" type="java.lang.String" value=" lock"/>
               </Properties>
             </Component>
-            <Component class="java.awt.Checkbox" name="lockCheckbox">
-            </Component>
             <Component class="javax.swing.JTextField" name="submitterText">
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="submitterTextActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="submitter">
               <Properties>
                 <Property name="text" type="java.lang.String" value=" submitter"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="lockCheckBox">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lockCheckBoxActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="comboBoxIssueType">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="3">
+                    <StringItem index="0" value="FEATURE"/>
+                    <StringItem index="1" value="BUG"/>
+                    <StringItem index="2" value="REFERENCE"/>
+                  </StringArray>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="comboBoxIssueTypeActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>

@@ -3,7 +3,7 @@ package com.elle.ProjectManager.dao;
 
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.SQL_Commands;
-import com.elle.ProjectManager.dbtables.BackupDBTableRecord;
+import com.elle.ProjectManager.entities.BackupDBTableRecord;
 import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.Component;
 import java.sql.Connection;

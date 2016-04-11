@@ -90,13 +90,7 @@ public class Authorization {
     
     private static void setPermissions(Component c, IAdminComponent admin){
 
-        if(c instanceof AddIssueFileWindow){
-            admin.setComponent((AddIssueFileWindow)c);
-        }
-        else if(c instanceof AddIssueWindow){
-            admin.setComponent((AddIssueWindow)c);
-        }
-        else if(c instanceof BackupDBTablesDialog){
+        if(c instanceof BackupDBTablesDialog){
             admin.setComponent((BackupDBTablesDialog)c);
         }
         else if(c instanceof BatchEditWindow){
@@ -114,14 +108,8 @@ public class Authorization {
         else if(c instanceof LoginWindow){
             admin.setComponent((LoginWindow)c);
         }
-        else if(c instanceof PopupWindowInTableCell){
-            admin.setComponent((PopupWindowInTableCell)c);
-        }
         else if(c instanceof ProjectManagerWindow){
             admin.setComponent((ProjectManagerWindow)c);
-        }
-        else if(c instanceof ReportWindow){
-            admin.setComponent((ReportWindow)c);
         }
     }
 }
