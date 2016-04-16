@@ -90,7 +90,7 @@ public class IssueWindow extends JFrame {
 
         // set view issue window location in screen
         Point pmWindowLocation = projectManager.getLocationOnScreen(); //get the project manager window in screen
-        int numWindow = projectManager.getOpenningIssuesList().size();
+        int numWindow = projectManager.getOpeningIssuesList().size();
         int x = pmWindowLocation.x - 150;
         int y = pmWindowLocation.y - 120;
         this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
@@ -520,14 +520,14 @@ public class IssueWindow extends JFrame {
     private void updateCustomIdList(int newRow) {
         
         // remove this id from the openIssuesList and CustomIdList
-        projectManager.getOpenningIssuesList().remove(issue.getId(), this);
+        projectManager.getOpeningIssuesList().remove(issue.getId(), this);
         projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
 
         String newID = table.getValueAt(newRow, 0).toString();
 
         // if issue is not open
-        if (!projectManager.getOpenningIssuesList().containsKey(newID)) {
-            projectManager.getOpenningIssuesList().put(issue.getId(), this);
+        if (!projectManager.getOpeningIssuesList().containsKey(newID)) {
+            projectManager.getOpeningIssuesList().put(issue.getId(), this);
             projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getId());
 
         } 
@@ -590,7 +590,7 @@ public class IssueWindow extends JFrame {
 //    }
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        formWindowClosing();
+        issueWindowClosing();
 //        System.out.println("window closing!");
     }//GEN-LAST:event_formWindowClosing
 
@@ -627,8 +627,8 @@ public class IssueWindow extends JFrame {
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
         //        System.out.println(selectedTable.getValueAt(0, 0));
 
-//        projectManager.getOpenningIssuesList().remove(issue.getID(), this);
-        formWindowClosing();
+//        projectManager.getOpeningIssuesList().remove(issue.getID(), this);
+        issueWindowClosing();
     }//GEN-LAST:event_buttonCancelActionPerformed
 
     /**
@@ -640,7 +640,7 @@ public class IssueWindow extends JFrame {
         dao.insert(issue);
         projectManager.inserTableRow(table,issue);
         projectManager.makeTableEditable(false);
-        formWindowClosing();
+        issueWindowClosing();
     }//GEN-LAST:event_buttonSubmitActionPerformed
 
     /**
@@ -652,7 +652,7 @@ public class IssueWindow extends JFrame {
         dao.update(issue);
         projectManager.updateTableRow(table,issue);
         projectManager.makeTableEditable(false);
-        formWindowClosing();
+        issueWindowClosing();
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
 
@@ -796,11 +796,11 @@ public class IssueWindow extends JFrame {
     /**
      * Called to close the form
      */
-    private void formWindowClosing() {
+    private void issueWindowClosing() {
         if (addIssueMode) {
-            projectManager.setAddRecordsWindowShow(false);
+            projectManager.setAddIssueWindowShow(false);
         } else {
-            projectManager.getOpenningIssuesList().remove(issue.getId(), this);
+            projectManager.getOpeningIssuesList().remove(issue.getId(), this);
             projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
             projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
         }

@@ -14,10 +14,10 @@ public class CustomIDList extends Vector<Integer> {
     }
     
     public Integer has(Integer target){
-        System.out.println("enter: " + target.toString());
+//        System.out.println("enter: " + target.toString());
         for(Integer id: this){
             if(id == target){
-                System.out.println("has: " + id.toString());
+//                System.out.println("has: " + id.toString());
                 return id;
             }
         }

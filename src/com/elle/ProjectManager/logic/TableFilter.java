@@ -119,7 +119,9 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
     public void addCustomIdListToFilterItem(CustomIDList customIdList) {
         this.customIdListFilter = customIdList;
-        addColorHeader(0);
+        if (!customIdList.isEmpty()) {
+            addColorHeader(0);
+        }
     }
 
     /**
@@ -176,14 +178,6 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
         table.getColumnModel().getColumn(columnIndex)
                 .setHeaderRenderer(cellRenderer);
         table.getTableHeader().repaint();
-    }
-     
-    public void addColorCell(int rowIndex, int columnIndex){
-//        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
-//        cellRenderer.setBackground(color);
-//        cellRenderer.setHorizontalAlignment(JLabel.CENTER);
-//        table.getColumnModel().getColumn(columnIndex).setCellRenderer(cellRenderer);
-//        table.getCellRenderer(rowIndex, columnIndex)
     }
 
     /**
