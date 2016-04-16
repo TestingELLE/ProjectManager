@@ -4,13 +4,21 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ShortCutSetting;
+import com.elle.ProjectManager.logic.Tab;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -18,6 +26,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -33,12 +42,15 @@ public class IssueWindow extends JFrame {
     private IssueDAO dao;
     private boolean addIssueMode;
     private ShortCutSetting ShortCutSetting;
+    private String[] dropdownlist = {"app","title", "description","programmer", "dateOpened", "rk", "version", "dateClosed"};
+    private Map<String, Tab> tabs;       // used to update the records label
 
     /**
      * Creates new form IssueWindow
      */
     public IssueWindow(int row, JTable table) {
         projectManager = ProjectManagerWindow.getInstance();
+         tabs = projectManager.getTabs();
         this.table = table;
         this.row = row;
         dao = new IssueDAO();
@@ -57,7 +69,7 @@ public class IssueWindow extends JFrame {
             addIssueMode = false;
             setIssueValuesFromTable(row,table);
         }
-
+       
         initComponents();
 
         setComponentValuesFromIssue();
@@ -72,21 +84,28 @@ public class IssueWindow extends JFrame {
         ArrayList<JTextComponent> textComponentList = new ArrayList<>();
         textComponentList.add(submitterText);
         textComponentList.add(dateOpenedText);
-        textComponentList.add(programmerText);
-        textComponentList.add(rkText);
+        
         textComponentList.add(titleText);
         textComponentList.add(descriptionText);
-        textComponentList.add(appText);
+   
         textComponentList.add(dateClosedText);
         textComponentList.add(versionText);
         addDocumentListener(textComponentList);
         addInputMappingsAndShortcuts(textComponentList);
+         updateComboList("programmer", projectManager.getSelectedTabName());
+        updateComboList("rk", projectManager.getSelectedTabName());
+        updateComboList("app", projectManager.getSelectedTabName());
+        setComponentValuesFromIssue();
+        
+        
+        
         
         setOpenCloseIssueBtnText();
         setIssueWindowMode();
+       
 
         this.setTitle("Issue in " + table.getName());
-        this.setPreferredSize(new Dimension(600, 750));
+        this.setPreferredSize(new Dimension(620, 750));
 
         // set view issue window location in screen
         Point pmWindowLocation = projectManager.getLocationOnScreen(); //get the project manager window in screen
@@ -154,20 +173,20 @@ public class IssueWindow extends JFrame {
         versionText = new javax.swing.JTextField();
         btnCloseIssue = new javax.swing.JButton();
         app = new javax.swing.JLabel();
-        appText = new javax.swing.JTextField();
+        appComboBox = new javax.swing.JComboBox();
         titleText = new javax.swing.JTextField();
         description = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         idText = new javax.swing.JLabel();
         BtnNext = new javax.swing.JButton();
         BtnPrevious = new javax.swing.JButton();
-        programmerText = new javax.swing.JTextField();
-        rkText = new javax.swing.JTextField();
         lock = new javax.swing.JLabel();
         submitterText = new javax.swing.JTextField();
         submitter = new javax.swing.JLabel();
         lockCheckBox = new javax.swing.JCheckBox();
-        comboBoxIssueType = new javax.swing.JComboBox<>();
+        comboBoxIssueType = new javax.swing.JComboBox<String>();
+        programmerComboBox = new javax.swing.JComboBox();
+        rkComboBox = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -258,35 +277,42 @@ public class IssueWindow extends JFrame {
 
         app.setText(" app");
 
-        appText.setText("jTextField1");
-        appText.setName("app"); // NOI18N
+        appComboBox.setEditable(true);
+        appComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        appComboBox.setPreferredSize(new java.awt.Dimension(80, 28));
+        appComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                appComboBoxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(buttonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(buttonCancel)
-                .addGap(4, 4, 4))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(appText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(app))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnCloseIssue, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(app)
+                    .addComponent(appComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dateClosedText, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dateClosed))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(version)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnCloseIssue, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dateClosedText, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dateClosed))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(version)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(buttonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buttonSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(buttonCancel)
+                        .addGap(0, 0, 0))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -296,20 +322,22 @@ public class IssueWindow extends JFrame {
                     .addComponent(app)
                     .addComponent(dateClosed)
                     .addComponent(version))
-                .addGap(0, 0, 0)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(appText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCloseIssue, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(dateClosedText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(versionText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(buttonSubmit)
-                    .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonConfirm)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnCloseIssue, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(dateClosedText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(versionText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(buttonSubmit)
+                            .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(buttonConfirm)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(appComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
-
-        appText.setPreferredSize(new Dimension(84,28));
 
         titleText.setText("jTextField1");
         titleText.setName("title"); // NOI18N
@@ -343,12 +371,13 @@ public class IssueWindow extends JFrame {
             }
         });
 
-        programmerText.setName("programmer"); // NOI18N
-
-        rkText.setText("jTextField2");
-        rkText.setName("rk"); // NOI18N
-
         lock.setText(" lock");
+
+        submitterText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                submitterTextActionPerformed(evt);
+            }
+        });
 
         submitter.setText(" submitter");
 
@@ -358,10 +387,27 @@ public class IssueWindow extends JFrame {
             }
         });
 
-        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE" }));
         comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxIssueTypeActionPerformed(evt);
+            }
+        });
+
+        programmerComboBox.setEditable(true);
+        programmerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        programmerComboBox.setPreferredSize(new java.awt.Dimension(80, 28));
+        programmerComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                programmerComboBoxActionPerformed(evt);
+            }
+        });
+
+        rkComboBox.setEditable(true);
+        rkComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        rkComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rkComboBoxActionPerformed(evt);
             }
         });
 
@@ -374,100 +420,90 @@ public class IssueWindow extends JFrame {
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lock)
-                            .addComponent(id))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(id)
+                            .addComponent(lock))
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(idText)
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addComponent(idText)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(lockCheckBox))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(dateOpened, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(programmer)
+                            .addComponent(programmerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(programmer))
-                        .addGap(18, 18, 18)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(19, 19, 19))
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(rkComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())
                     .addGroup(formPaneLayout.createSequentialGroup()
                         .addGap(177, 177, 177)
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(6, 6, 6))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(titleText)
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(formPaneLayout.createSequentialGroup()
-                                        .addComponent(description)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(BtnPrevious)
-                                        .addGap(0, 0, 0)
-                                        .addComponent(BtnNext)))))
-                        .addGap(18, 18, 18))
                     .addGroup(formPaneLayout.createSequentialGroup()
                         .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(titleText, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane7, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addComponent(description)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(BtnPrevious)
+                                .addGap(0, 0, 0)
+                                .addComponent(BtnNext)))
+                        .addContainerGap())))
         );
         formPaneLayout.setVerticalGroup(
             formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(formPaneLayout.createSequentialGroup()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(idText)
-                                        .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(rk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(dateOpened, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(programmer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addGap(0, 0, 0)
-                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(lock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lockCheckBox)))
-                            .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(22, 22, 22)
-                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(formPaneLayout.createSequentialGroup()
-                                    .addGap(14, 14, 14)
-                                    .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(programmerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(rkText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(44, 44, 44)))
-                .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGap(2, 2, 2)
+                        .addGap(31, 31, 31)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(BtnNext)
-                            .addComponent(BtnPrevious)))
+                            .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(programmerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rkComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(idText)
+                            .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dateOpened, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(programmer)
+                            .addComponent(rk)
+                            .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lockCheckBox))
+                        .addGap(25, 25, 25))
                     .addGroup(formPaneLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(description, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BtnNext)
+                    .addComponent(BtnPrevious)
+                    .addComponent(description, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0)
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
@@ -619,7 +655,7 @@ public class IssueWindow extends JFrame {
             //String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
             dateArea.insert(message, pos);
 
-            dateArea.setCaretPosition(pos + 31);
+            dateArea.setCaretPosition(pos + userName.length() + 25);
 
         }
     }//GEN-LAST:event_descriptionTextKeyReleased
@@ -637,6 +673,7 @@ public class IssueWindow extends JFrame {
      */
     private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
         setIssueValuesFromComponents();
+        
         dao.insert(issue);
         projectManager.inserTableRow(table,issue);
         projectManager.makeTableEditable(false);
@@ -649,7 +686,9 @@ public class IssueWindow extends JFrame {
      */
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
         setIssueValuesFromComponents();
+
         dao.update(issue);
+       
         projectManager.updateTableRow(table,issue);
         projectManager.makeTableEditable(false);
         formWindowClosing();
@@ -793,6 +832,40 @@ public class IssueWindow extends JFrame {
         }
     }//GEN-LAST:event_comboBoxIssueTypeActionPerformed
 
+    private void submitterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitterTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_submitterTextActionPerformed
+
+    private void programmerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programmerComboBoxActionPerformed
+        if(programmerComboBox.getSelectedItem().toString().equals(issue.getProgrammer())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_programmerComboBoxActionPerformed
+
+    private void rkComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rkComboBoxActionPerformed
+      if(rkComboBox.getSelectedItem().toString().equals(issue.getRk())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_rkComboBoxActionPerformed
+
+    private void appComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appComboBoxActionPerformed
+        if(appComboBox.getSelectedItem().toString().equals(issue.getApp())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_appComboBoxActionPerformed
+
     /**
      * Called to close the form
      */
@@ -856,12 +929,12 @@ public class IssueWindow extends JFrame {
      */
     private void setIssueValuesFromComponents() {
         issue.setId(Integer.parseInt(idText.getText()));
-        issue.setApp(appText.getText());
+        issue.setApp(appComboBox.getSelectedItem().toString());
         issue.setTitle(titleText.getText());
         issue.setDescription(descriptionText.getText());
-        issue.setProgrammer(programmerText.getText());
+        issue.setProgrammer(programmerComboBox.getSelectedItem().toString());
         issue.setDateOpened(dateOpenedText.getText());
-        issue.setRk(rkText.getText());
+        issue.setRk(rkComboBox.getSelectedItem().toString());
         issue.setVersion(versionText.getText());
         issue.setDateClosed(dateClosedText.getText());
         issue.setIssueType(comboBoxIssueType.getSelectedItem().toString());
@@ -875,12 +948,12 @@ public class IssueWindow extends JFrame {
     private void setComponentValuesFromIssue() {
 
         idText.setText(Integer.toString(issue.getId()));
-        appText.setText(issue.getApp());
+        appComboBox.setSelectedItem(issue.getApp());
         titleText.setText(issue.getTitle());
         descriptionText.setText(issue.getDescription());
-        programmerText.setText(issue.getProgrammer());
+        programmerComboBox.setSelectedItem(issue.getProgrammer());
         dateOpenedText.setText(issue.getDateOpened());
-        rkText.setText(issue.getRk());
+        rkComboBox.setSelectedItem(issue.getRk());
         versionText.setText(issue.getVersion());
         dateClosedText.setText(issue.getDateClosed());
         comboBoxIssueType.setSelectedItem(issue.getIssueType());
@@ -897,12 +970,12 @@ public class IssueWindow extends JFrame {
      */
     private boolean hasChange(){
 
-        return (appText.getText().equals(issue.getApp())
-            && titleText.getText().equals(issue.getTitle())
+        return ( appComboBox.getSelectedItem().equals(issue.getApp())
+                &&titleText.getText().equals(issue.getTitle())
             && descriptionText.getText().equals(issue.getDescription())
-            && programmerText.getText().equals(issue.getProgrammer())
+            && programmerComboBox.getSelectedItem().equals(issue.getProgrammer())
             && dateOpenedText.getText().equals(issue.getDateOpened())
-            && rkText.getText().equals(issue.getRk())
+            && rkComboBox.getSelectedItem().equals(issue.getRk())
             && versionText.getText().equals(issue.getVersion())
             && dateClosedText.getText().equals(issue.getDateClosed())
             && comboBoxIssueType.getSelectedItem().equals(issue.getIssueType())
@@ -964,12 +1037,189 @@ public class IssueWindow extends JFrame {
             buttonConfirm.setEnabled(hasChange);
         }
     }
+    private Map loadingDropdownList() {
+        String selectedTabName = projectManager.getSelectedTabName();
+        Tab tab = tabs.get(selectedTabName);
+        
+   
+        Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
+        if (!selectedTabName.equalsIgnoreCase("issue_files")) {
+            for (String searchField : dropdownlist) {
+
+                for (int i = 0; i < tab.getTable().getColumnCount(); i++) {
+                    if (tab.getTable().getColumnName(i).equalsIgnoreCase(searchField)) {
+                        valueListMap.put(i, new ArrayList<Object>());
+                    }
+                }
+            }
+            for (int col : valueListMap.keySet()) {
+                //for each search item, create a new drop down list
+                ArrayList DropDownListValueForEachColumn = new ArrayList<Object>();
+                // load drop down for each table
+                for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+                    if (!entry.getKey().equalsIgnoreCase("issue_files")) {
+                        tab = tabs.get(entry.getKey());
+
+                        String[] columnNames = tab.getTableColNames();
+                        JTable table = tab.getTable();
+                        TableModel tableModel = table.getModel();
+                        String colName;
+                        colName = columnNames[col].toLowerCase();
+                  
+
+                        switch (colName) {
+                            case "title":
+                            case "description":
+                            case "version":
+                                DropDownListValueForEachColumn.add("");
+                                break;
+                            default:
+                                Object valueAddToDropDownList;
+                                for (int row = 0; row < tableModel.getRowCount(); row++) {
+                                    valueAddToDropDownList = tableModel.getValueAt(row, col);
+
+                                    if (valueAddToDropDownList != null) {
+                                        // add to drop down list
+                                        DropDownListValueForEachColumn.add(valueAddToDropDownList);
+                                    } else {
+                                        DropDownListValueForEachColumn.add("");
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                }
+
+                //make every item in drop down list unique
+                Set<Object> uniqueValue = new HashSet<Object>(DropDownListValueForEachColumn);
+                ArrayList uniqueList = new ArrayList<Object>(uniqueValue);
+//                System.out.println(col + " " + uniqueList);
+                valueListMap.put(col, uniqueList);
+                System.out.println(uniqueList);
+            }
+        }
+        return valueListMap;
+
+    }
+        private void updateComboList(String colName, String tableName) {
+        //create a combo box model
+        DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
+        if (colName.equalsIgnoreCase("programmer")) {
+            programmerComboBox.setModel(comboBoxSearchModel);
+        } else if (colName.equalsIgnoreCase("rk")) {
+            rkComboBox.setModel(comboBoxSearchModel);
+        } else if (colName.equalsIgnoreCase("app")) {
+            appComboBox.setModel(comboBoxSearchModel);
+        }
+
+
+        Map comboBoxForSearchValue = loadingDropdownList();
+
+        JTable table = tabs.get(tableName).getTable();
+
+        for (int col = 0; col < table.getColumnCount(); col++) {
+
+            if (table.getColumnName(col).equalsIgnoreCase(colName)) {
+                ArrayList<Object> dropDownList = (ArrayList<Object>) comboBoxForSearchValue.get(col);
+
+                if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed")) {
+                    Collections.sort(dropDownList, new Comparator<Object>() {
+                        public int compare(Object o1, Object o2) {
+                            return o2.toString().compareTo(o1.toString());
+                        }
+
+                    });
+
+                } else if (colName.equalsIgnoreCase("rk")) {
+                    if (dropDownList.get(0) == "") {
+                        ArrayList<Object> list = new ArrayList<Object>();
+
+                        for (int i = 1; i < dropDownList.size(); i++) {
+                            list.add(dropDownList.get(i));
+                        }
+                        list.add(dropDownList.get(0));
+
+                        dropDownList = list;
+                    }
+                } else if (colName.equalsIgnoreCase("programmer") || colName.equalsIgnoreCase("app") ) {
+                    Object nullValue = "";
+
+                    Collections.sort(dropDownList, new Comparator<Object>() {
+                        public int compare(Object o1, Object o2) {
+                            if (o1 == nullValue && o2 == nullValue) {
+                                return 0;
+                            }
+
+                            if (o1 == nullValue) {
+
+                                return 1;
+                            }
+
+                            if (o2 == nullValue) {
+
+                                return -1;
+                            }
+
+                            return o1.toString().toLowerCase().compareTo(o2.toString().toLowerCase());
+                        }
+
+                    });
+
+                }
+//                System.out.println(dropDownList);
+
+                for (Object item : dropDownList) {
+ 
+                    comboBoxSearchModel.addElement(item);
+
+                }
+
+            }
+        }
+//        comboBoxForSearch.setSelectedItem("Enter " + colName + " here");
+//        comboBoxStartToSearch = true;
+    }
+            private void setComboBoxValue() {
+        int row = projectManager.getSelectedTable().getSelectedRow();
+        String programmer = "";
+        String rk = "";
+        String app = "";
+        if (projectManager.getSelectedTable().getModel().getValueAt(row, 1) != null) {
+            app = projectManager.getSelectedTable().getModel().getValueAt(row, 1).toString();
+        }
+        if (projectManager.getSelectedTable().getModel().getValueAt(row, 4) != null) {
+            programmer = projectManager.getSelectedTable().getModel().getValueAt(row, 4).toString();
+        }
+        if (projectManager.getSelectedTable().getModel().getValueAt(row, 6) != null) {
+            rk = projectManager.getSelectedTable().getModel().getValueAt(row, 6).toString();
+        }
+        programmerComboBox.setSelectedItem(programmer);
+        rkComboBox.setSelectedItem(rk);
+        appComboBox.setSelectedItem(app);
+
+    }
+    
+
+//    private void updateComboBoxValue() {
+//        int row = projectManager.getSelectedTable().getSelectedRow();
+//        String programmer = "";
+//        String rk = "";
+//        String app = "";
+//        programmer = programmerComboBox.getSelectedItem().toString();
+//        rk = rkComboBox.getSelectedItem().toString();
+//        app = appComboBox.getSelectedItem().toString();
+//        projectManager.getSelectedTable().getModel().setValueAt(programmer, row, 4);
+//        projectManager.getSelectedTable().getModel().setValueAt(rk, row, 6);
+//        projectManager.getSelectedTable().getModel().setValueAt(app, row, 1);
+//
+//    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnNext;
     private javax.swing.JButton BtnPrevious;
     private javax.swing.JLabel app;
-    private javax.swing.JTextField appText;
+    private javax.swing.JComboBox appComboBox;
     private javax.swing.JButton btnCloseIssue;
     private javax.swing.JButton buttonCancel;
     private javax.swing.JButton buttonConfirm;
@@ -990,9 +1240,9 @@ public class IssueWindow extends JFrame {
     private javax.swing.JLabel lock;
     private javax.swing.JCheckBox lockCheckBox;
     private javax.swing.JLabel programmer;
-    private javax.swing.JTextField programmerText;
+    private javax.swing.JComboBox programmerComboBox;
     private javax.swing.JLabel rk;
-    private javax.swing.JTextField rkText;
+    private javax.swing.JComboBox rkComboBox;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JLabel submitter;
     private javax.swing.JTextField submitterText;
