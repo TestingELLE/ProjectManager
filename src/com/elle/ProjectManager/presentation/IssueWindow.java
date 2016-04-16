@@ -655,7 +655,7 @@ public class IssueWindow extends JFrame {
             //String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
             dateArea.insert(message, pos);
 
-            dateArea.setCaretPosition(pos + 31);
+            dateArea.setCaretPosition(pos + userName.length() + 25);
 
         }
     }//GEN-LAST:event_descriptionTextKeyReleased
