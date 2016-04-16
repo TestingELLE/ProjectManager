@@ -4658,6 +4658,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             for(int i = 0; i < listeners.length; i++){
                 model.addTableModelListener(listeners[i]);
             }
+            
+            table.repaint();
         }
         else{
             String errMsg = "Problem updating row: Row not Found";
