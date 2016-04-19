@@ -3209,7 +3209,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      *
      * @return openingIssuesList
      */
-    public Map getOpenningIssuesList() {
+    public Map getOpeningIssuesList() {
         return openingIssuesList;
     }
 
@@ -4226,7 +4226,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.addIssueWindow;
     }
 
-    public void setAddRecordsWindowShow(boolean a) {
+    public void setAddIssueWindowShow(boolean a) {
 
         this.addIssueWindowShow = a;
 
