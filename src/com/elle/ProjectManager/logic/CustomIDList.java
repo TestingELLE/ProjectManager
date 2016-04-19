@@ -1,13 +1,13 @@
 
 package com.elle.ProjectManager.logic;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  *
  * @author fuxiaoqian
  */
-public class CustomIDList extends Vector<Integer> {
+public class CustomIDList extends ArrayList<Integer> {
     
     public CustomIDList(){
         super();
