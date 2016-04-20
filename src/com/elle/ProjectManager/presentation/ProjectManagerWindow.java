@@ -869,7 +869,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
 
-        btnAddIssue.setText("Add " + getSelectedTabName());
+        btnAddIssue.setText("Add Issue");
         btnAddIssue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddIssueActionPerformed(evt);
@@ -914,7 +914,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRevertChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
                         .addComponent(btnAddIssue)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnBatchEdit)
@@ -1533,15 +1533,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     boolean isValueInTable = false;
                     isValueInTable = checkValueInTableCell(col, searchBoxValue, table);
 
-//                    if (isValueInTable) {
-//
-//                        filter.addFilterItem(col, searchBoxValue);
-//                        filter.applyFilter();
-//
-//                    } else {
-//                        count++;
-//                    }
-//                    tab.getCustomIdList().printOutIDList();
+
                     filter.addCustomIdListToFilterItem(tab.getCustomIdList());
                     filter.addFilterItem(col, searchBoxValue);
                     filter.applyFilter();
