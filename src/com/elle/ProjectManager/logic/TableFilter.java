@@ -360,15 +360,11 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
                 } else {
                     // search for a match and ignore case
                     for (Object distinctItem : distinctItems) {
-                        if (col == 2 || col == 3) {
+                       
                             if (cellValue.toString().toLowerCase().contains(distinctItem.toString().toLowerCase())) {
                                 itemsFound++;
                             }
-                        } else {
-                            if (cellValue.toString().equalsIgnoreCase(distinctItem.toString())) {
-                                itemsFound++;
-                            }
-                        }
+                         
                     }
                 }
             }
