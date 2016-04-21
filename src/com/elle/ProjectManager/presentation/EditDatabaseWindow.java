@@ -413,7 +413,7 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
 
     private void btnAddDatabasesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDatabasesActionPerformed
         DefaultTableModel model = (DefaultTableModel)tableDatabases.getModel();
-        model.addRow(new Object[]{false,""});
+        model.addRow(new Object[]{false,"","",""});
         int server = cbServer.getSelectedIndex();
         servers.get(server).getDatabases().add(new Database());
     }//GEN-LAST:event_btnAddDatabasesActionPerformed
@@ -466,9 +466,11 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         
         // fill table with the databases
         for(Database database: databases){
-            Vector rowData = new Vector(2);
+            Vector rowData = new Vector(4);
             rowData.addElement(database.isDefaultSelection());
             rowData.addElement(database.getName());
+            rowData.addElement(database.getUsername());
+            rowData.addElement(database.getPassword());
             model.addRow(rowData);
         }
     }
