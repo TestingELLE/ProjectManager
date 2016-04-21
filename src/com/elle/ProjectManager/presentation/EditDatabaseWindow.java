@@ -379,8 +379,12 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         for(int db = 0; db < dbCount; db++){
             boolean setDefault = (boolean) tableDatabases.getModel().getValueAt(db, 0);
             String dbName = (String) tableDatabases.getModel().getValueAt(db, 1);
+            String dbUsername = (String) tableDatabases.getModel().getValueAt(db, 2);
+            String dbPassword = (String) tableDatabases.getModel().getValueAt(db, 3);
             servers.get(server).getDatabases().get(db).setDefaultSelection(setDefault);
             servers.get(server).getDatabases().get(db).setName(dbName);
+            servers.get(server).getDatabases().get(db).setUsername(dbUsername);
+            servers.get(server).getDatabases().get(db).setPassword(dbPassword);
         }
         DBConnection.writeServers(servers);
         labelDatabasesInfo.setText("Databases saved!");
