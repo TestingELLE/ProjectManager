@@ -16,7 +16,7 @@ public interface ITableConstants {
     
     // Edit the version and date it was created for new archives and jars
     public final String CREATION_DATE = "2016-4-21";
-    public final String VERSION = "1.7.1";
+    public final String VERSION = "1.7.2";
     
     public static final String TASKS_TABLE_NAME = "issues";
     public static final String TASKFILES_TABLE_NAME = "issue_files";

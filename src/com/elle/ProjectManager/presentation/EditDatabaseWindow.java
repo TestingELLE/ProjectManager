@@ -218,20 +218,20 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
 
         tableDatabases.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Default", "Database Name"
+                "Default", "Database Name", "Username", "Password"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Boolean.class, java.lang.String.class
+                java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true
+                false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -379,8 +379,12 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         for(int db = 0; db < dbCount; db++){
             boolean setDefault = (boolean) tableDatabases.getModel().getValueAt(db, 0);
             String dbName = (String) tableDatabases.getModel().getValueAt(db, 1);
+            String dbUsername = (String) tableDatabases.getModel().getValueAt(db, 2);
+            String dbPassword = (String) tableDatabases.getModel().getValueAt(db, 3);
             servers.get(server).getDatabases().get(db).setDefaultSelection(setDefault);
             servers.get(server).getDatabases().get(db).setName(dbName);
+            servers.get(server).getDatabases().get(db).setUsername(dbUsername);
+            servers.get(server).getDatabases().get(db).setPassword(dbPassword);
         }
         DBConnection.writeServers(servers);
         labelDatabasesInfo.setText("Databases saved!");
@@ -413,7 +417,7 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
 
     private void btnAddDatabasesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDatabasesActionPerformed
         DefaultTableModel model = (DefaultTableModel)tableDatabases.getModel();
-        model.addRow(new Object[]{false,""});
+        model.addRow(new Object[]{false,"","",""});
         int server = cbServer.getSelectedIndex();
         servers.get(server).getDatabases().add(new Database());
     }//GEN-LAST:event_btnAddDatabasesActionPerformed
@@ -466,9 +470,11 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         
         // fill table with the databases
         for(Database database: databases){
-            Vector rowData = new Vector(2);
+            Vector rowData = new Vector(4);
             rowData.addElement(database.isDefaultSelection());
             rowData.addElement(database.getName());
+            rowData.addElement(database.getUsername());
+            rowData.addElement(database.getPassword());
             model.addRow(rowData);
         }
     }

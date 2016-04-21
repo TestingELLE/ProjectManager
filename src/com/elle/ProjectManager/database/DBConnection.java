@@ -258,6 +258,8 @@ public class DBConnection {
             
             // Database variables
             String dbName = "";
+            String dbUsername = "";
+            String dbPassword = "";
             boolean dbDefault = false;
             
             //Read XML here
@@ -284,9 +286,15 @@ public class DBConnection {
                         else if(elementName.equals("db-name")){
                             dbName = xmlStrReader.getElementText();
                         }
+                        else if(elementName.equals("db-username")){
+                            dbUsername = xmlStrReader.getElementText();
+                        }
+                        else if(elementName.equals("db-password")){
+                            dbPassword = xmlStrReader.getElementText();
+                        }
                         else if(elementName.equals("db-default")){
                             dbDefault = (xmlStrReader.getElementText().equals("true"))?true:false;
-                            server.getDatabases().add(new Database(dbName,dbDefault));
+                            server.getDatabases().add(new Database(dbName,dbDefault,dbUsername,dbPassword));
                         }
                         break;
                     case XMLStreamConstants.END_ELEMENT:
@@ -342,6 +350,12 @@ public class DBConnection {
                     writer.writeStartElement("database");
                     writer.writeStartElement("db-name");
                     writer.writeCharacters(database.getName());
+                    writer.writeEndElement();
+                    writer.writeStartElement("db-username");
+                    writer.writeCharacters(database.getUsername());
+                    writer.writeEndElement();
+                    writer.writeStartElement("db-password");
+                    writer.writeCharacters(database.getPassword());
                     writer.writeEndElement();
                     writer.writeStartElement("db-default");
                     writer.writeCharacters(Boolean.toString(database.isDefaultSelection()));
