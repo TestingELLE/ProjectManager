@@ -218,20 +218,20 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
 
         tableDatabases.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Default", "Database Name"
+                "Default", "Database Name", "Username", "Password"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Boolean.class, java.lang.String.class
+                java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true
+                false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
