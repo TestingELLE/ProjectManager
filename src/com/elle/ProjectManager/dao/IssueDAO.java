@@ -128,6 +128,11 @@ public class IssueDAO {
         DBConnection.close();
         return successful;
     }
+    
+    private Object processCellValue(String cellValue) {
+
+        return cellValue.replaceAll("'", "''");
+    }
 
     /**
      * update
@@ -152,6 +157,20 @@ public class IssueDAO {
             String issueType = format(issue.getIssueType());
             String submitter = format(issue.getSubmitter());
             String locked = format(issue.getLocked());
+            
+            // format the description for sql
+            if(description != null){
+                
+                // if description is empty, it must be null
+                if(description.equals("")){
+                    description = null;
+                } // if the cell is not empty it must have single quotes
+                else{
+                    description = (String) processCellValue(description);
+                    description = "'" + description + "'";
+                    
+                }
+            }
             
             String sql = "UPDATE " + DB_TABLE_NAME + " SET " 
                     + COL_APP + " = " + app + ", "
