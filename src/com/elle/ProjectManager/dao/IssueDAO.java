@@ -129,9 +129,9 @@ public class IssueDAO {
         return successful;
     }
     
-    private Object processCellValue(String cellValue) {
+    private Object processCellValue(Object cellValue) {
 
-        return cellValue.replaceAll("'", "''");
+        return cellValue.toString().replaceAll("'", "''");
     }
 
     /**
@@ -147,8 +147,8 @@ public class IssueDAO {
             // set issue values
             int id = issue.getId();
             String app = format(issue.getApp());
-            String title = format(issue.getTitle());
-            String description = format(issue.getDescription());
+            Object title = format(issue.getTitle());
+            Object description = format(issue.getDescription());
             String programmer = format(issue.getProgrammer());
             String dateOpened = format(issue.getDateOpened());
             String rk = (issue.getRk().equals(""))?null:issue.getRk(); // no single quotes
@@ -158,16 +158,31 @@ public class IssueDAO {
             String submitter = format(issue.getSubmitter());
             String locked = format(issue.getLocked());
             
-            // format the description for sql
+            // format the description for sql ---Youzhi
+            
+            
             if(description != null){
                 
-                // if description is empty, it must be null
-                if(description.equals("")){
+                // if description is empty, it must be null ---Youzhi
+                if(description.toString().equals("")){
                     description = null;
-                } // if the cell is not empty it must have single quotes
+                } // if the cell is not empty it must have single quotes ---Youzhi
                 else{
-                    description = (String) processCellValue(description);
+                    description = processCellValue(description);
                     description = "'" + description + "'";
+                    
+                }
+            }
+            // format the title for sql
+            if(title != null){
+                
+                // if description is empty, it must be null ---Youzhi
+                if(title.toString().equals("")){
+                    title = null;
+                } // if the cell is not empty it must have single quotes ---Youzhi
+                else{
+                    title = processCellValue(title);
+                    title = "'" + title+ "'";
                     
                 }
             }
