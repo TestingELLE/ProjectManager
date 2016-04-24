@@ -129,9 +129,9 @@ public class IssueDAO {
         return successful;
     }
     
-    private Object processCellValue(Object cellValue) {
+    private String processCellValue(String cellValue) {
 
-        return cellValue.toString().replaceAll("'", "''");
+        return cellValue.replaceAll("'", "''");
     }
 
     /**
@@ -147,8 +147,8 @@ public class IssueDAO {
             // set issue values
             int id = issue.getId();
             String app = format(issue.getApp());
-            Object title = format(issue.getTitle());
-            Object description = format(issue.getDescription());
+            String title = format(issue.getTitle());
+            String description = format(issue.getDescription());
             String programmer = format(issue.getProgrammer());
             String dateOpened = format(issue.getDateOpened());
             String rk = (issue.getRk().equals(""))?null:issue.getRk(); // no single quotes
@@ -157,35 +157,9 @@ public class IssueDAO {
             String issueType = format(issue.getIssueType());
             String submitter = format(issue.getSubmitter());
             String locked = format(issue.getLocked());
+          
             
-            // format the description for sql ---Youzhi
-            
-            
-            if(description != null){
-                
-                // if description is empty, it must be null ---Youzhi
-                if(description.toString().equals("")){
-                    description = null;
-                } // if the cell is not empty it must have single quotes ---Youzhi
-                else{
-                    description = processCellValue(description);
-                    description = "'" + description + "'";
-                    
-                }
-            }
-            // format the title for sql
-            if(title != null){
-                
-                // if description is empty, it must be null ---Youzhi
-                if(title.toString().equals("")){
-                    title = null;
-                } // if the cell is not empty it must have single quotes ---Youzhi
-                else{
-                    title = processCellValue(title);
-                    title = "'" + title+ "'";
-                    
-                }
-            }
+   
             
             String sql = "UPDATE " + DB_TABLE_NAME + " SET " 
                     + COL_APP + " = " + app + ", "
@@ -200,7 +174,7 @@ public class IssueDAO {
                     + COL_SUBMITTER + " = " + submitter + ", "
                     + COL_LOCKED + " = " + locked + " "
                     + "WHERE " + COL_PK_ID + " = " + id + ";";
-
+          System.out.println("update : " + sql );
             try {
                 Statement statement = DBConnection.getStatement();
                 statement.executeUpdate(sql);
@@ -254,6 +228,7 @@ public class IssueDAO {
      * @return 
      */
     private String format(String s){
+        s=processCellValue(s);
         return (s.equals(""))?null:"'"+s+"'";
     }
 }
