@@ -108,7 +108,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     
     // Data Access Objects
     IssueDAO issueDAO;
-    IssueFileDAO issueFilesDAO;
+    IssueFileDAO issueFileDAO;
 
     /**
      * CONSTRUCTOR
@@ -123,7 +123,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // the statement is created in LoginWindow and passed to Analyster.
         statement = DBConnection.getStatement();
         issueDAO = new IssueDAO();
-        issueFilesDAO = new IssueFileDAO();
+        issueFileDAO = new IssueFileDAO();
         instance = this;                         // this is used to call this instance of Analyster 
 
         this.userName = userName;
@@ -2354,7 +2354,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
             
             if (tableName.equals(TASKFILES_TABLE_NAME)) {
-                issueFilesDAO.delete(table);
+                issueFileDAO.delete(table);
             } else {
                 issueDAO.delete(ids);
             }
@@ -3096,7 +3096,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 updateSuccessful = issueDAO.update(tableName,modifiedData);
             }
             else{
-                updateSuccessful = issueFilesDAO.update(tableName,modifiedData);
+                updateSuccessful = issueFileDAO.update(tableName,modifiedData);
             }
         }
 
@@ -3603,19 +3603,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             loadTable(tab);
 
             LoggingAspect.afterReturn("Table loaded succesfully");
-//            informationLabel.setText("Table loaded succesfully");
-//            startCountDownFromNow(10);
             setTableListeners(table, this);
-
-            String[] colNames = tab.getTableColNames();
-//            Map tableComboBoxForSearchDropDownList = this.loadingDropdownListToTable();
-//            this.comboBoxForSearchDropDown.put(entry.getKey(), tableComboBoxForSearchDropDownList);
 
             boolean isColumnNameTheSame = ColumnNameConsistency.IsTableColumnNameTheSame(tab, table);
             if (!isColumnNameTheSame) {
                 System.out.println(ColumnNameConsistency.getErrorMessage());
-//                logWindow.addMessage(a);
-//                logWindow.addMessageWithDate("3:" + a);
                 LoggingAspect.afterReturn("Column Name(s) is(are) different from what in database");
             }
         }
@@ -3649,6 +3641,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String tableName = table.getName();
         if (tableName.equals(TASKFILES_TABLE_NAME)) {
             // this is for the issue_files tab/table
+            ArrayList<IssueFile> issuesFiles = issueFileDAO.get(tableName);
+            if(!issuesFiles.isEmpty() && issuesFiles != null){
+                for(IssueFile issueFile: issuesFiles){
+                    inserTableRow(table, issueFile);
+                }
+            }
         }
         else{
             // this is for all other tabs which are all from the issues table
@@ -4483,6 +4481,26 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         rowData[9] = issue.getIssueType();
         rowData[10] = issue.getSubmitter();
         rowData[11] = issue.getLocked();
+        ((DefaultTableModel)table.getModel()).addRow(rowData);
+    }
+    
+    /**
+     * Inserts a new rowIndex in the table
+     * @param table
+     * @param issue 
+     */
+    public void inserTableRow(JTable table, IssueFile issueFile) {
+
+        Object[] rowData = new Object[9];
+        rowData[0] = issueFile.getFileID();
+        rowData[1] = issueFile.getTaskID();
+        rowData[2] = issueFile.getApp();
+        rowData[3] = issueFile.getSubmitter();
+        rowData[4] = issueFile.getStep();
+        rowData[5] = issueFile.getDate();
+        rowData[6] = issueFile.getFiles();
+        rowData[7] = issueFile.getPath();
+        rowData[8] = issueFile.getNotes();
         ((DefaultTableModel)table.getModel()).addRow(rowData);
     }
 
