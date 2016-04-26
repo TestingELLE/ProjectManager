@@ -184,31 +184,42 @@ public class IssueDAO {
     
     /**
      * delete
-     * @param issue 
+     * @param ids 
      */
-    public boolean delete(Issue issue){
-        
-        boolean successful = false;
-        DBConnection.close();
-        if(DBConnection.open()){
+    public boolean delete(int[] ids){
 
-            int id = issue.getId();
-            String sql = "DELETE FROM " + DB_TABLE_NAME + 
-                        " WHERE " + COL_PK_ID + " = " + id + ";";
+        String sqlDelete = ""; // String for the SQL Statement
+
+        if (ids.length != -1) {
+            for (int i = 0; i < ids.length; i++) {
+                if (i == 0) // this is the first rowIndex
+                {
+                    sqlDelete += "DELETE FROM " + DB_TABLE_NAME
+                            + " WHERE " + COL_PK_ID + " IN (" + ids[i]; 
+                } else // this adds the rest of the rows
+                {
+                    sqlDelete += ", " + ids[i];
+                }
+            }
+            sqlDelete += ");";
 
             try {
-                Statement statement = DBConnection.getStatement();
-                statement.executeUpdate(sql);
-                LoggingAspect.afterReturn("Delete Successful!");
-                successful = true;
-            }
-            catch (SQLException ex) {
-                LoggingAspect.afterThrown(ex);
-                successful = false;
+
+                // delete records from database
+                DBConnection.close();
+                DBConnection.open();
+                DBConnection.getStatement().executeUpdate(sqlDelete);
+                LoggingAspect.afterReturn(ids.length + " Record(s) Deleted");
+                return true;
+
+            } catch (SQLException e) {
+                LoggingAspect.afterThrown(e);
+                return false;
             }
         }
-        DBConnection.close();
-        return successful;
+        else{
+            return false;
+        }
     }
     
     /**
