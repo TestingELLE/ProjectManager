@@ -2427,12 +2427,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
             
             if (tableName.equals(TASKFILES_TABLE_NAME)) {
-                //tableName = TASKFILES_TABLE_NAME;
-                // TODO
-                // implement the taskfilesDAO here
+                issueFilesDAO.delete(table);
             } else {
-                //tableName = TASKS_TABLE_NAME;
-                
+                issueDAO.delete(ids);
             }
             
             removeSelectedRows(table);
@@ -2441,7 +2438,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             tab.subtractFromTotalRowCount(rowCount); // update total rowIndex count
             String recordsLabel = tab.getRecordsLabel();
             labelRecords.setText(recordsLabel); // update label
-            
         }
         else{
             // no rows are selected
