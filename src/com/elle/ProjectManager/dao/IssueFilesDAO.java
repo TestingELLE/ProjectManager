@@ -69,6 +69,7 @@ public class IssueFilesDAO {
             }
         }
         else{
+            // no selected rows
             return false;
         }
     }

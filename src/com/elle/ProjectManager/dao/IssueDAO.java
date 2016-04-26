@@ -220,6 +220,7 @@ public class IssueDAO {
             }
         }
         else{
+            // ids were passed in empty
             return false;
         }
     }
