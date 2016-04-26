@@ -55,14 +55,9 @@ import javax.imageio.ImageIO;
  */
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
-    // Edit the version and date it was created for new archives and jars
-    // this looks like it was moved to ITableConstants
-    //private final String CREATION_DATE = "2016-02-25";
-    //private final String VERSION = "1.2.0";
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
-    //   private Map<Integer, ArrayList<Object>> valueListMap;
     private static Statement statement;
     private String database;
 
@@ -91,19 +86,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private boolean addIssueWindowShow;
     private boolean isBatchEditWindowShow;
     private boolean comboBoxStartToSearch;
-    private boolean ifDeleteRecords;
 
-//    private int addRecordLevel = 2;
-//    private int deleteRecordLevel = 2;
-//    private PopupWindowInTableCell tableCellPopupWindow;
     private boolean popupWindowShowInPM;
-//    int lastSelectedRow = -1, lastSelectedColumn = -1;
+
     // create a jlabel to show the database used
     private JLabel databaseLabel;
     private String currentTabName;
     private String userName;
     private String searchValue = null;
-//    private ArrayList<Integer> idNumOfOpenningIssues;
+
     private ArrayList<String> programmersActiveForSearching;
     
     // Data Access Objects
@@ -3640,6 +3631,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public JTable loadTableData(JTable table) {
         String tableName = table.getName();
         
+        System.out.println("table name = " + tableName);
         // set table model data
         if (tableName.equals(TASKFILES_TABLE_NAME)) {
             // this is for the issue_files tab/table
@@ -3659,10 +3651,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
             }
         }
-        
-        // set table model to the custom editable table model
-        EditableTableModel model = (EditableTableModel)table.getModel();
-        table.setModel(model);
         
         // if reloading data then deselects any selections
         table.getSelectionModel().clearSelection();
