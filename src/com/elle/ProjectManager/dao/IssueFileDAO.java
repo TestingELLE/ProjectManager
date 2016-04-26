@@ -147,8 +147,7 @@ public class IssueFileDAO {
     }
 
     public ArrayList<IssueFile> get(String tableName) {
-        tableName = TASKS_TABLE_NAME + " WHERE app != 'PM' and app != 'Analyster' "
-                    + "and app != 'ELLEGUI' or app IS NULL";
+        
         return new ArrayList<>();
     }
 }

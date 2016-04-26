@@ -4,10 +4,7 @@ package com.elle.ProjectManager.dao;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.entities.Issue;
-import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
-import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
 import com.elle.ProjectManager.logic.LoggingAspect;
-import java.awt.Component;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -282,5 +279,53 @@ public class IssueDAO {
         // finally close connection
         DBConnection.close();
         return updateSuccessful;
+    }
+
+    public ArrayList<Issue> get(String tableName) {
+        
+        ArrayList<Issue> issues = new ArrayList<>();
+        ResultSet rs = null;
+        String sql = "";
+        
+        if(tableName.equals("Other")){
+            sql = "SELECT * FROM " + DB_TABLE_NAME 
+               + " WHERE app != 'PM' and app != 'Analyster'"
+               + " AND app != 'ELLEGUI' or app IS NULL";
+        }
+        else{
+            sql = "SELECT * FROM " + DB_TABLE_NAME + " WHERE app = " + "'" 
+            + tableName + "' ORDER BY case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
+        }
+        
+        try {
+
+            // delete records from database
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while(rs.next()){
+                Issue issue = new Issue();
+                issue.setId(rs.getInt(COL_PK_ID));
+                issue.setApp(rs.getString(COL_APP));
+                issue.setTitle(rs.getString(COL_TITLE));
+                issue.setDescription(rs.getString(COL_DESCRIPTION));
+                issue.setProgrammer(rs.getString(COL_PROGRAMMER));
+                issue.setDateOpened(rs.getString(COL_DATE_OPENED));
+                issue.setRk(rs.getString(COL_RK));
+                issue.setVersion(rs.getString(COL_VERSION));
+                issue.setDateClosed(rs.getString(COL_DATE_CLOSED));
+                issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
+                issue.setSubmitter(rs.getString(COL_SUBMITTER));
+                issue.setLocked(rs.getString(COL_LOCKED));
+                issues.add(issue);
+            }
+            
+            LoggingAspect.afterReturn("Loaded table " + tableName);
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return issues;
     }
 }
