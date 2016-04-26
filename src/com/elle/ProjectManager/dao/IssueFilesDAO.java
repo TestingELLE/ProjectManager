@@ -59,6 +59,8 @@ public class IssueFilesDAO {
                 DBConnection.open();
                 DBConnection.getStatement().executeUpdate(sqlDelete);
                 LoggingAspect.afterReturn(rowCount + " Record(s) Deleted");
+                String levelMessage = "3:" + sqlDelete;
+                LoggingAspect.addLogMsgWthDate(levelMessage);
                 return true;
 
             } catch (SQLException e) {

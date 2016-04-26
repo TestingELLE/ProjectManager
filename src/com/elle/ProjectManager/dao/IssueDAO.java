@@ -210,6 +210,8 @@ public class IssueDAO {
                 DBConnection.open();
                 DBConnection.getStatement().executeUpdate(sqlDelete);
                 LoggingAspect.afterReturn(ids.length + " Record(s) Deleted");
+                String levelMessage = "3:" + sqlDelete;
+                LoggingAspect.addLogMsgWthDate(levelMessage);
                 return true;
 
             } catch (SQLException e) {
