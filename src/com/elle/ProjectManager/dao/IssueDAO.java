@@ -2,7 +2,10 @@
 package com.elle.ProjectManager.dao;
 
 import com.elle.ProjectManager.database.DBConnection;
+import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.entities.Issue;
+import static com.elle.ProjectManager.logic.ITableConstants.TASKFILES_TABLE_NAME;
+import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
 import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.Component;
 import java.sql.Connection;
@@ -10,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  * IssueDAO
@@ -222,5 +226,61 @@ public class IssueDAO {
      */
     private String format(String s){
         return (s.equals(""))?null:"'"+s+"'";
+    }
+
+    private Object processCellValue(Object cellValue) {
+        return cellValue.toString().replaceAll("'", "''");
+    }
+    
+    /**
+     * update
+     * @param tableName
+     * @param modifiedData
+     * @return 
+     */
+    public boolean update(String tableName,ModifiedData modifiedData) {
+        
+        boolean updateSuccessful = true;
+        String sqlChange = null;
+
+        DBConnection.close();
+        if (DBConnection.open()) {
+
+            String columnName = modifiedData.getColumnName();
+            Object value = modifiedData.getValue();
+            value = processCellValue(value);
+            int id = modifiedData.getId();
+
+            try {
+
+                if (value.equals("")) {
+                    value = null;
+                    sqlChange = "UPDATE " + tableName + " SET " + columnName
+                            + " = " + value + " WHERE ID = " + id + ";";
+                } else {
+                    sqlChange = "UPDATE " + tableName + " SET " + columnName
+                            + " = '" + value + "' WHERE ID = " + id + ";";
+                }
+
+                DBConnection.getStatement().executeUpdate(sqlChange);
+                LoggingAspect.afterReturn(sqlChange);
+
+            } catch (SQLException e) {
+                LoggingAspect.addLogMsgWthDate("3:" + e.getMessage());
+                LoggingAspect.addLogMsgWthDate("3:" + e.getSQLState() + "\n");
+                LoggingAspect.addLogMsgWthDate(("Upload failed! " + e.getMessage()));
+                LoggingAspect.afterThrown(e);
+                updateSuccessful = false;
+            }
+            if (updateSuccessful) {
+                LoggingAspect.afterReturn(("Edits uploaded successfully!"));
+            }
+        } else {
+            // connection failed
+            LoggingAspect.afterReturn("Failed to connect");
+        }
+        // finally close connection
+        DBConnection.close();
+        return updateSuccessful;
     }
 }

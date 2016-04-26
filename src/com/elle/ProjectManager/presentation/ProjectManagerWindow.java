@@ -1609,25 +1609,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * a keylistener when editing mode is on and enter is pressed
      */
     public void uploadChanges() {
-//        String tabName;
-//        if (addIssueWindowShow) {
-//            tabName = addIssueWindow.getIssueActiveTabName();
-//        } else {
-//            tabName = getSelectedTabName();
-//        }
+
         String tabName = getSelectedTabName();
         Tab tab = tabs.get(tabName);
         JTable table = tab.getTable();
         JTableCellRenderer cellRenderer = tab.getCellRenderer();
         ModifiedTableData data = tab.getTableData();
 
+        // this updates database and should be replaced with dao
         boolean uploaded = updateTable(table, data.getNewData());
+        
         if (uploaded) {
 
-//            int[] rowsId = getSelectedRowsId(table);
             int[] rows = table.getSelectedRows();
 
-            loadTable(tab); // refresh tableSelected
+            //loadTable(tab); // refresh tableSelected
 
             ListSelectionModel model = table.getSelectionModel();
             model.clearSelection();
@@ -3160,56 +3156,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // should probably not be here
         // this method is to update the database, that is all it should do.
         table.getModel().addTableModelListener(table);
-
-        //String uploadQuery = uploadRecord(tableSelected, modifiedDataList);
-        String sqlChange = null;
-
-        DBConnection.close();
-        if (DBConnection.open()) {
-            statement = DBConnection.getStatement();
-            for (ModifiedData modifiedData : modifiedDataList) {
-
-                String tableName = modifiedData.getTableName();
-                String columnName = modifiedData.getColumnName();
-                Object value = modifiedData.getValue();
-                int id = modifiedData.getId();
-
-                value = processCellValue(value);
-                if (!tableName.equals(TASKFILES_TABLE_NAME)) {
-                    tableName = TASKS_TABLE_NAME;
-                }
-
-                try {
-
-                    if (value.equals("")) {
-                        value = null;
-                        sqlChange = "UPDATE " + tableName + " SET " + columnName
-                                + " = " + value + " WHERE ID = " + id + ";";
-                    } else {
-                        sqlChange = "UPDATE " + tableName + " SET " + columnName
-                                + " = '" + value + "' WHERE ID = " + id + ";";
-                    }
-
-                    statement.executeUpdate(sqlChange);
-                    LoggingAspect.afterReturn(sqlChange);
-
-                } catch (SQLException e) {
-                    LoggingAspect.addLogMsgWthDate("3:" + e.getMessage());
-                    LoggingAspect.addLogMsgWthDate("3:" + e.getSQLState() + "\n");
-                    LoggingAspect.addLogMsgWthDate(("Upload failed! " + e.getMessage()));
-                    LoggingAspect.afterThrown(e);
-                    updateSuccessful = false;
-                }
+        
+        //loop the modified data list
+        for (ModifiedData modifiedData : modifiedDataList) {
+            String tableName = modifiedData.getTableName();
+            if (!tableName.equals(TASKFILES_TABLE_NAME)) {
+                tableName = TASKS_TABLE_NAME;
+                updateSuccessful = issueDAO.update(tableName,modifiedData);
             }
-            if (updateSuccessful) {
-                LoggingAspect.afterReturn(("Edits uploaded successfully!"));
+            else{
+                updateSuccessful = issueFilesDAO.update(tableName,modifiedData);
             }
-        } else {
-            // connection failed
-            LoggingAspect.afterReturn("Failed to connect");
         }
-        // finally close connection
-        DBConnection.close();
+
         return updateSuccessful;
     }
 
@@ -3236,10 +3195,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public IssueWindow getViewIssueWindowOf(String id) {
         return this.openingIssuesList.get(id);
-    }
-
-    private Object processCellValue(Object cellValue) {
-        return cellValue.toString().replaceAll("'", "''");
     }
 
     /**
