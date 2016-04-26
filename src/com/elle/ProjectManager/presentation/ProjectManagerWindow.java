@@ -1,6 +1,8 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
+import com.elle.ProjectManager.dao.IssueDAO;
+import com.elle.ProjectManager.dao.IssueFilesDAO;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
@@ -102,6 +104,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private String searchValue = null;
 //    private ArrayList<Integer> idNumOfOpenningIssues;
     private ArrayList<String> programmersActiveForSearching;
+    
+    // Data Access Objects
+    IssueDAO issueDAO;
+    IssueFilesDAO issueFilesDAO;
 
     /**
      * CONSTRUCTOR
@@ -115,6 +121,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // the statement is used for sql statements with the database connection
         // the statement is created in LoginWindow and passed to Analyster.
         statement = DBConnection.getStatement();
+        issueDAO = new IssueDAO();
+        issueFilesDAO = new IssueFilesDAO();
         instance = this;                         // this is used to call this instance of Analyster 
 
         this.userName = userName;
@@ -2419,11 +2427,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
             
             if (tableName.equals(TASKFILES_TABLE_NAME)) {
-                tableName = TASKFILES_TABLE_NAME;
+                //tableName = TASKFILES_TABLE_NAME;
                 // TODO
                 // implement the taskfilesDAO here
             } else {
-                tableName = TASKS_TABLE_NAME;
+                //tableName = TASKS_TABLE_NAME;
+                
             }
             
             removeSelectedRows(table);
