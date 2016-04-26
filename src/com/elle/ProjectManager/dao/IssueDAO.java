@@ -299,7 +299,6 @@ public class IssueDAO {
         
         try {
 
-            // delete records from database
             DBConnection.close();
             DBConnection.open();
             rs = DBConnection.getStatement().executeQuery(sql);
