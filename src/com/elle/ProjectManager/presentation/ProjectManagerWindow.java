@@ -3659,60 +3659,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
             }
         }
-        
-
-        
-//        int[] rows = table.getSelectedRows();
-//        Object[] selectedRowsID = new Object[rows.length];
-
-//        if (ifDeleteRecords) {
-//            //get selected rows' id store it into an object array
-//            for (int row = 0; row < rows.length - 1; row++) {
-//                Object Id = table.getValueAt(rows[row], 0);
-//                selectedRowsID[row] = Id;
-//            }
-//        } else {
-//            for (int row = 0; row < rows.length; row++) {
-//                Object Id = table.getValueAt(rows[row], 0);
-//                selectedRowsID[row] = Id;
-//            }
-//            ifDeleteRecords = false;
-//        }
-//
-//        if (tableName == "PM" || tableName == "ELLEGUI" || tableName == "Analyster") {
-//            
-//        } else if (tableName == "Other") {
-//            
-//            
-//        }
-
-//        String sql;
-//        if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
-//            
-//            loadTable(table);
-//            
-//        } else {
-//            ArrayList<IssueFile> issueFiles = issueFilesDAO.get(tableName);
-//            sql = "SELECT * FROM " + TASKFILES_TABLE_NAME + " ORDER BY taskId ASC";
-//        }
-//        loadTable(sql, table);
-//
-//        for (int i = 0; i < selectedRowsID.length; i++) {
-//            for (int r = 0; r < table.getRowCount(); r++) {
-//                if (table.getValueAt(r, 0).equals(selectedRowsID[i])) {
-//
-//                    rows[i] = r;
-//                }
-//            }
-//        }
-        ListSelectionModel model = table.getSelectionModel();
-        model.clearSelection();
-//        for (int row : rows) {
-//            model.addSelectionInterval(row, row);
-//        }
-
+        table.getSelectionModel().clearSelection();
         return table;
-
     }
 
     /**

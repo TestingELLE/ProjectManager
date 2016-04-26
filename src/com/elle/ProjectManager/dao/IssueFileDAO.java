@@ -147,7 +147,7 @@ public class IssueFileDAO {
     }
 
     public ArrayList<IssueFile> get(String tableName) {
-        
+        String sql = "SELECT * FROM " + TASKFILES_TABLE_NAME + " ORDER BY taskId ASC";
         return new ArrayList<>();
     }
 }
