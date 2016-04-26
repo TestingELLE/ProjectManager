@@ -26,12 +26,7 @@ public class IssueFilesDAO {
      * @return 
      */
     public boolean delete(JTable table){
-        
-        /**
-         * BEGIN
-         * REPLACE THE DELETE RECORDS SELECTED HERE WITH DAO.DELETE
-         */
-        
+
         String tableName = table.getName(); // name of the tableSelected
         
         String sqlDelete = ""; // String for the SQL Statement
