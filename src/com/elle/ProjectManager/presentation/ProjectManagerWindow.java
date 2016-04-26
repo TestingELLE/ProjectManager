@@ -1096,7 +1096,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 96, Short.MAX_VALUE))
+                .addGap(0, 166, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1965,27 +1965,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemLogOffActionPerformed
 
     /**
-     * menuItemDeleteRecordActionPerformed Delete records menu item action
-     * performed
-     *
-     * @param evt
-     */
-    private void menuItemDeleteRecordActionPerformed(java.awt.event.ActionEvent evt) {
-
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        String sqlDelete = deleteRecordsSelected(table);
-        reloadData();
-        table.getSelectionModel().clearSelection();
-
-        String levelMessage = "3:" + sqlDelete;
-        logWindow.addMessageWithDate(levelMessage);
-        System.out.println(levelMessage);
-//        logWindow.setLevel(deleteRecordLevel);
-    }
-
-    /**
      * btnClearAllFilterActionPerformed clear all filters
      *
      * @param evt
@@ -2414,6 +2393,51 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         LoggingAspect.afterReturn("All tabs reload complete");
 
     }//GEN-LAST:event_menuItemReloadAllDataActionPerformed
+
+    /**
+     * menuItemDeleteRecordActionPerformed Delete records menu item action
+     * performed
+     *
+     * @param evt
+     */
+    private void menuItemDeleteRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemDeleteRecordActionPerformed
+        String tabName = getSelectedTabName();
+        Tab tab = tabs.get(tabName);
+        JTable table = tab.getTable();
+        String tableName = table.getName(); // name of the tableSelected
+
+        // get the ids
+        int[] ids; // ids to delete from database
+        int[] selectedRows = table.getSelectedRows(); // array of the rows selected
+        int rowCount = selectedRows.length; // the number of rows selected
+        if (rowCount != -1) {
+            ids = new int[rowCount];
+            for (int i = 0; i < rowCount; i++) {
+                int row = selectedRows[i];
+                Integer selectedID = (Integer) table.getValueAt(row, 0); // Add Note to selected taskID
+                ids[i] = selectedID;
+            }
+            
+            if (tableName.equals(TASKFILES_TABLE_NAME)) {
+                tableName = TASKFILES_TABLE_NAME;
+                // TODO
+                // implement the taskfilesDAO here
+            } else {
+                tableName = TASKS_TABLE_NAME;
+            }
+            
+            removeSelectedRows(table);
+        
+            // the update label for row count
+            tab.subtractFromTotalRowCount(rowCount); // update total rowIndex count
+            String recordsLabel = tab.getRecordsLabel();
+            labelRecords.setText(recordsLabel); // update label
+            
+        }
+        else{
+            // no rows are selected
+        }
+    }//GEN-LAST:event_menuItemDeleteRecordActionPerformed
 
     public void comboBoxForSearchEditorMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -3904,75 +3928,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
 
     /**
-     * deleteRecordsSelected deletes the selected records
-     *
-     * @param table
-     * @return
-     * @throws HeadlessException
-     */
-    public String deleteRecordsSelected(JTable table) throws HeadlessException {
-
-        String sqlDelete = ""; // String for the SQL Statement
-        String tableName = table.getName(); // name of the tableSelected
-        if (tableName.equals(TASKFILES_TABLE_NAME)) {
-            tableName = TASKFILES_TABLE_NAME;
-        } else {
-            tableName = TASKS_TABLE_NAME;
-        }
-
-        int[] selectedRows = table.getSelectedRows(); // array of the rows selected
-        int rowCount = selectedRows.length; // the number of rows selected
-        if (rowCount != -1) {
-            for (int i = 0; i < rowCount; i++) {
-                int row = selectedRows[i];
-                Integer selectedID = (Integer) table.getValueAt(row, 0); // Add Note to selected taskID
-
-                if (i == 0) // this is the first rowIndex
-                {
-                    sqlDelete += "DELETE FROM " + database + "." + tableName
-                            + " WHERE " + table.getColumnName(0) + " IN (" + selectedID; // 0 is the first column index = primary key
-                } else // this adds the rest of the rows
-                {
-                    sqlDelete += ", " + selectedID;
-                }
-
-            }
-
-            // windowClose the sql statement
-            sqlDelete += ");";
-
-            try {
-
-                // delete records from database
-                DBConnection.close();
-                DBConnection.open();
-                statement = DBConnection.getStatement();
-                statement.executeUpdate(sqlDelete);
-
-                // output pop up dialog that a record was deleted 
-//                JOptionPane.showMessageDialog(this, rowCount + " Record(s) Deleted");
-                LoggingAspect.afterReturn(rowCount + " Record(s) Deleted");
-//                informationLabel.setText(rowCount + " Record(s) Deleted");
-//                startCountDownFromNow(10);
-                // set label record information
-                String tabName = getSelectedTabName();
-                Tab tab = tabs.get(tabName);
-                // refresh tableSelected and retain filters
-                loadTable(tab);
-                tab.subtractFromTotalRowCount(rowCount); // update total rowIndex count
-                String recordsLabel = tab.getRecordsLabel();
-                labelRecords.setText(recordsLabel); // update label
-
-            } catch (SQLException e) {
-                LoggingAspect.afterThrown(e);
-            }
-
-        }
-        ifDeleteRecords = true;
-        return sqlDelete;
-    }
-
-    /**
      * ***** added methods ******************************
      */
     public JPanel getAddPanel_control() {
@@ -4699,6 +4654,32 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         }
         return -1; // rowIndex not found
+    }
+
+    /**
+     * removes the selected rows from the table
+     * @param table
+     * @return 
+     */
+    private boolean removeSelectedRows(JTable table) {
+        
+        int[] rows = table.getSelectedRows();
+	DefaultTableModel model = (DefaultTableModel)table.getModel();
+
+        if(rows.length != -1){
+            while(rows.length>0)
+            {
+                int row = table.convertRowIndexToModel(rows[0]);
+                model.removeRow(row);
+                rows = table.getSelectedRows();
+            }
+            table.getSelectionModel().clearSelection();
+            return true;
+        }
+        else{
+            // no rows selected
+            return false;
+        }
     }
 
     /**
