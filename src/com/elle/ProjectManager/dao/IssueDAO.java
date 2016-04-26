@@ -2,7 +2,6 @@
 package com.elle.ProjectManager.dao;
 
 import com.elle.ProjectManager.database.DBConnection;
-import com.elle.ProjectManager.entities.BackupDBTableRecord;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.Component;
@@ -11,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
 /**
  * IssueDAO
@@ -34,18 +32,7 @@ public class IssueDAO {
     private final String COL_ISSUE_TYPE = "issueType";
     private final String COL_SUBMITTER = "submitter";
     private final String COL_LOCKED = "locked";
-    
-    // components
-    private Component parent;
-    
-    public IssueDAO(){
-        this(null);
-    }
-    
-    public IssueDAO(Component parent){
-        this.parent = parent;
-    }
-    
+
     /**
      * get max id from issues table
      * @return max id from issues table
