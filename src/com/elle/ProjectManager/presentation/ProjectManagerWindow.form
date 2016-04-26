@@ -342,7 +342,7 @@
                   <Properties>
                     <Property name="autoCreateRowSorter" type="boolean" value="true"/>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="9" rowCount="15">
+                      <Table columnCount="12" rowCount="15">
                         <Column editable="false" title="ID" type="java.lang.Integer"/>
                         <Column editable="true" title="app" type="java.lang.Object"/>
                         <Column editable="true" title="title" type="java.lang.Object"/>
@@ -352,11 +352,29 @@
                         <Column editable="true" title="rk" type="java.lang.Object"/>
                         <Column editable="true" title="version" type="java.lang.Object"/>
                         <Column editable="true" title="dateClosed" type="java.lang.Object"/>
+                        <Column editable="true" title="issueType" type="java.lang.Object"/>
+                        <Column editable="true" title="submitter" type="java.lang.Object"/>
+                        <Column editable="true" title="locked" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="autoResizeMode" type="int" value="4"/>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title/>
                           <Editor/>
@@ -433,8 +451,8 @@
                   <Properties>
                     <Property name="autoCreateRowSorter" type="boolean" value="true"/>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="9" rowCount="15">
-                        <Column editable="false" title="taskID" type="java.lang.Integer"/>
+                      <Table columnCount="12" rowCount="15">
+                        <Column editable="false" title="ID" type="java.lang.Integer"/>
                         <Column editable="true" title="app" type="java.lang.Object"/>
                         <Column editable="true" title="title" type="java.lang.Object"/>
                         <Column editable="true" title="description" type="java.lang.Object"/>
@@ -443,11 +461,29 @@
                         <Column editable="true" title="rk" type="java.lang.Object"/>
                         <Column editable="true" title="version" type="java.lang.Object"/>
                         <Column editable="true" title="dateClosed" type="java.lang.Object"/>
+                        <Column editable="true" title="issueType" type="java.lang.Object"/>
+                        <Column editable="true" title="submitter" type="java.lang.Object"/>
+                        <Column editable="true" title="locked" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="autoResizeMode" type="int" value="4"/>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title/>
                           <Editor/>
@@ -524,8 +560,8 @@
                   <Properties>
                     <Property name="autoCreateRowSorter" type="boolean" value="true"/>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="9" rowCount="15">
-                        <Column editable="false" title="taskID" type="java.lang.Integer"/>
+                      <Table columnCount="12" rowCount="15">
+                        <Column editable="false" title="ID" type="java.lang.Integer"/>
                         <Column editable="true" title="app" type="java.lang.Object"/>
                         <Column editable="true" title="title" type="java.lang.Object"/>
                         <Column editable="true" title="description" type="java.lang.Object"/>
@@ -534,11 +570,29 @@
                         <Column editable="true" title="rk" type="java.lang.Object"/>
                         <Column editable="true" title="version" type="java.lang.Object"/>
                         <Column editable="true" title="dateClosed" type="java.lang.Object"/>
+                        <Column editable="true" title="issueType" type="java.lang.Object"/>
+                        <Column editable="true" title="submitter" type="java.lang.Object"/>
+                        <Column editable="true" title="locked" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="autoResizeMode" type="int" value="4"/>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title/>
                           <Editor/>
@@ -615,8 +669,8 @@
                   <Properties>
                     <Property name="autoCreateRowSorter" type="boolean" value="true"/>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="9" rowCount="15">
-                        <Column editable="false" title="taskID" type="java.lang.Integer"/>
+                      <Table columnCount="12" rowCount="15">
+                        <Column editable="false" title="ID" type="java.lang.Integer"/>
                         <Column editable="true" title="app" type="java.lang.Object"/>
                         <Column editable="true" title="title" type="java.lang.Object"/>
                         <Column editable="true" title="description" type="java.lang.Object"/>
@@ -625,11 +679,29 @@
                         <Column editable="true" title="rk" type="java.lang.Object"/>
                         <Column editable="true" title="version" type="java.lang.Object"/>
                         <Column editable="true" title="dateClosed" type="java.lang.Object"/>
+                        <Column editable="true" title="issueType" type="java.lang.Object"/>
+                        <Column editable="true" title="submitter" type="java.lang.Object"/>
+                        <Column editable="true" title="locked" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="autoResizeMode" type="int" value="4"/>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title/>
                           <Editor/>

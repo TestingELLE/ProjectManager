@@ -2,11 +2,12 @@ package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.dao.IssueDAO;
-import com.elle.ProjectManager.dao.IssueFilesDAO;
+import com.elle.ProjectManager.dao.IssueFileDAO;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.entities.Issue;
+import com.elle.ProjectManager.entities.IssueFile;
 import com.elle.ProjectManager.logic.*;
 
 import javax.swing.*;
@@ -107,7 +108,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     
     // Data Access Objects
     IssueDAO issueDAO;
-    IssueFilesDAO issueFilesDAO;
+    IssueFileDAO issueFilesDAO;
 
     /**
      * CONSTRUCTOR
@@ -122,7 +123,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // the statement is created in LoginWindow and passed to Analyster.
         statement = DBConnection.getStatement();
         issueDAO = new IssueDAO();
-        issueFilesDAO = new IssueFilesDAO();
+        issueFilesDAO = new IssueFileDAO();
         instance = this;                         // this is used to call this instance of Analyster 
 
         this.userName = userName;
@@ -654,31 +655,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         PMTable.setAutoCreateRowSorter(true);
         PMTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -699,31 +700,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         ELLEGUITable.setAutoCreateRowSorter(true);
         ELLEGUITable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -744,31 +745,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         AnalysterTable.setAutoCreateRowSorter(true);
         AnalysterTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -789,31 +790,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         OtherTable.setAutoCreateRowSorter(true);
         OtherTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -2460,13 +2461,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
         table.setRowSelectionInterval(rowNum - count, rowNum - 1);
     }
-//    private void buttonFilteringTables(JTable table, String str) {
+//    private void buttonFilteringTables(JTable table, String tableName) {
 //
 //        try {
 //            // open connection because might time out
 //            DBConnection.open();
 //            statement = DBConnection.getStatement();
-//            String sql = "SELECT * FROM " + table.getName() + str + " ORDER BY "
+//            String sql = "SELECT * FROM " + table.getName() + tableName + " ORDER BY "
 //                    + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, taskID ASC";
 //            System.out.println(sql);
 //            loadTableData(sql, table);
@@ -3699,7 +3700,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     /**
      * This loads table data and updates orange dot.
-     *
      * @param tab
      * @return
      */
@@ -3713,48 +3713,43 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     /**
      * This loads table data but does not update orange dot. Use loadTable(Tab
      * tab) to load table and update orange dot.
-     *
      * @param table
      */
     public JTable loadTableData(JTable table) {
-        String str = table.getName();
-
+        String tableName = table.getName();
+        ArrayList<Issue> issues = issueDAO.get(tableName);
         int[] rows = table.getSelectedRows();
         Object[] selectedRowsID = new Object[rows.length];
 
-        if (ifDeleteRecords) {
-            //get selected rows' id store it into an object array
-            for (int row = 0; row < rows.length - 1; row++) {
-                Object Id = table.getValueAt(rows[row], 0);
-                selectedRowsID[row] = Id;
-            }
-        } else {
-            for (int row = 0; row < rows.length; row++) {
-                Object Id = table.getValueAt(rows[row], 0);
-                selectedRowsID[row] = Id;
-            }
-            ifDeleteRecords = false;
-        }
+//        if (ifDeleteRecords) {
+//            //get selected rows' id store it into an object array
+//            for (int row = 0; row < rows.length - 1; row++) {
+//                Object Id = table.getValueAt(rows[row], 0);
+//                selectedRowsID[row] = Id;
+//            }
+//        } else {
+//            for (int row = 0; row < rows.length; row++) {
+//                Object Id = table.getValueAt(rows[row], 0);
+//                selectedRowsID[row] = Id;
+//            }
+//            ifDeleteRecords = false;
+//        }
+//
+//        if (tableName == "PM" || tableName == "ELLEGUI" || tableName == "Analyster") {
+//            
+//        } else if (tableName == "Other") {
+//            
+//            
+//        }
 
-        if (str == "PM" || str == "ELLEGUI" || str == "Analyster") {
-
-            str = TASKS_TABLE_NAME + " WHERE app = " + "'" + str + "'";
-        } else if (str == "Other") {
-            str = TASKS_TABLE_NAME + " WHERE app != 'PM' and app != 'Analyster' "
-                    + "and app != 'ELLEGUI' or app IS NULL";
-        }
-
-        // connection might time out
-        DBConnection.close();
-        DBConnection.open();
-
-        statement = DBConnection.getStatement();
         String sql;
         if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
-            sql = "SELECT * FROM " + str + " ORDER BY "
-                    + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
+            
+            loadTable(table);
+            
         } else {
-            sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
+            ArrayList<IssueFile> issueFiles = issueFilesDAO.get(tableName);
+            sql = "SELECT * FROM " + TASKFILES_TABLE_NAME + " ORDER BY taskId ASC";
         }
         loadTable(sql, table);
 
@@ -4640,6 +4635,91 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // no rows selected
             return false;
         }
+    }
+
+    private void loadTable(JTable table, ArrayList<Issue> issues) {
+        Vector data = new Vector();
+        Vector columnNames = new Vector();
+        Vector columnClass = new Vector();
+        int columns;
+
+        ResultSet rs = null;
+        ResultSetMetaData metaData = null;
+        try {
+            rs = statement.executeQuery(sql);
+            metaData = rs.getMetaData();
+
+        } catch (Exception ex) {
+            LoggingAspect.afterThrown(ex);
+        }
+        try {
+            // Do not show "submitter" in "PM", "ELLEGUI", "Analyster" and "other" table
+            if (!table.getName().equals("issue_files")) {
+                columns = metaData.getColumnCount();
+            } else {
+                columns = metaData.getColumnCount();
+
+            }
+            for (int i = 1; i <= columns; i++) {
+                columnClass.addElement(metaData.getColumnClassName(i));
+                //              System.out.println(metaData.getColumnClassName(i) + " 1");
+                columnNames.addElement(metaData.getColumnName(i));
+                //               System.out.println(metaData.getColumnName(i) + " 2");
+            }
+            while (rs.next()) {
+                Vector row = new Vector(columns);
+                for (int i = 1; i <= columns; i++) {
+                    row.addElement(rs.getObject(i));
+                }
+                data.addElement(row);
+            }
+            rs.close();
+
+        } catch (SQLException ex) {
+            LoggingAspect.afterThrown(ex);
+        }
+
+        EditableTableModel model = new EditableTableModel(data, columnNames, columnClass);
+
+        // this has to be set here or else I get errors
+        // I tried passing the model to the filter and setting it there
+        // but it caused errors
+        table.setModel(model);
+
+        // check that the filter items are initialized
+        String tabName = table.getName();
+        Tab tab = tabs.get(tabName);
+
+        // apply filter
+        TableFilter filter = tab.getFilter();
+        if (filter.getFilterItems() == null) {
+            filter.initFilterItems();
+        }
+        filter.applyFilter();
+        filter.applyColorHeaders();
+
+        // load all checkbox items for the checkbox column pop up filter
+        ColumnPopupMenu columnPopupMenu = tab.getColumnPopupMenu();
+        columnPopupMenu.loadAllCheckBoxItems();
+
+        // set column format
+        float[] colWidthPercent = tab.getColWidthPercent();
+        setColumnFormat(colWidthPercent, table);
+
+        // set the listeners for the tableSelected
+        setTableListeners(table, this);
+//        table.setEnabled(false);
+
+        // update last time the tableSelected was updated
+        setLastUpdateTime();
+
+        //make table scroll down as default
+        scrollDown(jScrollPane1);
+        scrollDown(jScrollPane4);
+        scrollDown(jScrollPane5);
+        scrollDown(jScrollPane6);
+        scrollDown(jScrollPane7);
+        return table;
     }
 
     /**
