@@ -3639,6 +3639,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     public JTable loadTableData(JTable table) {
         String tableName = table.getName();
+        
+        // set table model data
         if (tableName.equals(TASKFILES_TABLE_NAME)) {
             // this is for the issue_files tab/table
             ArrayList<IssueFile> issuesFiles = issueFileDAO.get(tableName);
@@ -3657,67 +3659,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
             }
         }
-        table.getSelectionModel().clearSelection();
-        return table;
-    }
-
-    /**
-     * Loads table using an sql command
-     *
-     * @param sql
-     * @param table
-     * @return
-     */
-    public JTable loadTable(String sql, JTable table) {
-
-        Vector data = new Vector();
-        Vector columnNames = new Vector();
-        Vector columnClass = new Vector();
-        int columns;
-
-        ResultSet rs = null;
-        ResultSetMetaData metaData = null;
-        try {
-            rs = statement.executeQuery(sql);
-            metaData = rs.getMetaData();
-
-        } catch (Exception ex) {
-            LoggingAspect.afterThrown(ex);
-        }
-        try {
-            // Do not show "submitter" in "PM", "ELLEGUI", "Analyster" and "other" table
-            if (!table.getName().equals("issue_files")) {
-                columns = metaData.getColumnCount();
-            } else {
-                columns = metaData.getColumnCount();
-
-            }
-            for (int i = 1; i <= columns; i++) {
-                columnClass.addElement(metaData.getColumnClassName(i));
-                //              System.out.println(metaData.getColumnClassName(i) + " 1");
-                columnNames.addElement(metaData.getColumnName(i));
-                //               System.out.println(metaData.getColumnName(i) + " 2");
-            }
-            while (rs.next()) {
-                Vector row = new Vector(columns);
-                for (int i = 1; i <= columns; i++) {
-                    row.addElement(rs.getObject(i));
-                }
-                data.addElement(row);
-            }
-            rs.close();
-
-        } catch (SQLException ex) {
-            LoggingAspect.afterThrown(ex);
-        }
-
-        EditableTableModel model = new EditableTableModel(data, columnNames, columnClass);
-
-        // this has to be set here or else I get errors
-        // I tried passing the model to the filter and setting it there
-        // but it caused errors
+        
+        // set table model to the custom editable table model
+        EditableTableModel model = (EditableTableModel)table.getModel();
         table.setModel(model);
-
+        
+        // if reloading data then deselects any selections
+        table.getSelectionModel().clearSelection();
+        
+        /** This is all for reloading table data **/
+        
         // check that the filter items are initialized
         String tabName = table.getName();
         Tab tab = tabs.get(tabName);
@@ -3740,7 +3691,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // set the listeners for the tableSelected
         setTableListeners(table, this);
-//        table.setEnabled(false);
 
         // update last time the tableSelected was updated
         setLastUpdateTime();
