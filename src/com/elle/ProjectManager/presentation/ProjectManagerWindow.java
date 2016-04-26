@@ -3705,6 +3705,99 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
 
     /**
+     * This is only used for the sql command panel
+     *
+     * @param sql
+     * @param table
+     * @return
+     */
+    public JTable loadTable(String sql, JTable table) {
+
+        Vector data = new Vector();
+        Vector columnNames = new Vector();
+        Vector columnClass = new Vector();
+        int columns;
+
+        ResultSet rs = null;
+        ResultSetMetaData metaData = null;
+        try {
+            rs = statement.executeQuery(sql);
+            metaData = rs.getMetaData();
+
+        } catch (Exception ex) {
+            LoggingAspect.afterThrown(ex);
+        }
+        try {
+            // Do not show "submitter" in "PM", "ELLEGUI", "Analyster" and "other" table
+            if (!table.getName().equals("issue_files")) {
+                columns = metaData.getColumnCount();
+            } else {
+                columns = metaData.getColumnCount();
+
+            }
+            for (int i = 1; i <= columns; i++) {
+                columnClass.addElement(metaData.getColumnClassName(i));
+                //              System.out.println(metaData.getColumnClassName(i) + " 1");
+                columnNames.addElement(metaData.getColumnName(i));
+                //               System.out.println(metaData.getColumnName(i) + " 2");
+            }
+            while (rs.next()) {
+                Vector row = new Vector(columns);
+                for (int i = 1; i <= columns; i++) {
+                    row.addElement(rs.getObject(i));
+                }
+                data.addElement(row);
+            }
+            rs.close();
+
+        } catch (SQLException ex) {
+            LoggingAspect.afterThrown(ex);
+        }
+
+        EditableTableModel model = new EditableTableModel(data, columnNames, columnClass);
+
+        // this has to be set here or else I get errors
+        // I tried passing the model to the filter and setting it there
+        // but it caused errors
+        table.setModel(model);
+
+        // check that the filter items are initialized
+        String tabName = table.getName();
+        Tab tab = tabs.get(tabName);
+
+        // apply filter
+        TableFilter filter = tab.getFilter();
+        if (filter.getFilterItems() == null) {
+            filter.initFilterItems();
+        }
+        filter.applyFilter();
+        filter.applyColorHeaders();
+
+        // load all checkbox items for the checkbox column pop up filter
+        ColumnPopupMenu columnPopupMenu = tab.getColumnPopupMenu();
+        columnPopupMenu.loadAllCheckBoxItems();
+
+        // set column format
+        float[] colWidthPercent = tab.getColWidthPercent();
+        setColumnFormat(colWidthPercent, table);
+
+        // set the listeners for the tableSelected
+        setTableListeners(table, this);
+//        table.setEnabled(false);
+
+        // update last time the tableSelected was updated
+        setLastUpdateTime();
+
+        //make table scroll down as default
+        scrollDown(jScrollPane1);
+        scrollDown(jScrollPane4);
+        scrollDown(jScrollPane5);
+        scrollDown(jScrollPane6);
+        scrollDown(jScrollPane7);
+        return table;
+    }
+
+    /**
      * set the timer for information Label show
      *
      * @param waitSeconds
