@@ -2,10 +2,9 @@
 package com.elle.ProjectManager.dao;
 
 import com.elle.ProjectManager.database.DBConnection;
-import com.elle.ProjectManager.entities.BackupDBTableRecord;
+import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.LoggingAspect;
-import java.awt.Component;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,18 +33,7 @@ public class IssueDAO {
     private final String COL_ISSUE_TYPE = "issueType";
     private final String COL_SUBMITTER = "submitter";
     private final String COL_LOCKED = "locked";
-    
-    // components
-    private Component parent;
-    
-    public IssueDAO(){
-        this(null);
-    }
-    
-    public IssueDAO(Component parent){
-        this.parent = parent;
-    }
-    
+
     /**
      * get max id from issues table
      * @return max id from issues table
@@ -192,31 +180,45 @@ public class IssueDAO {
     
     /**
      * delete
-     * @param issue 
+     * @param ids 
      */
-    public boolean delete(Issue issue){
-        
-        boolean successful = false;
-        DBConnection.close();
-        if(DBConnection.open()){
+    public boolean delete(int[] ids){
 
-            int id = issue.getId();
-            String sql = "DELETE FROM " + DB_TABLE_NAME + 
-                        " WHERE " + COL_PK_ID + " = " + id + ";";
+        String sqlDelete = ""; // String for the SQL Statement
+
+        if (ids.length != -1) {
+            for (int i = 0; i < ids.length; i++) {
+                if (i == 0) // this is the first rowIndex
+                {
+                    sqlDelete += "DELETE FROM " + DB_TABLE_NAME
+                            + " WHERE " + COL_PK_ID + " IN (" + ids[i]; 
+                } else // this adds the rest of the rows
+                {
+                    sqlDelete += ", " + ids[i];
+                }
+            }
+            sqlDelete += ");";
 
             try {
-                Statement statement = DBConnection.getStatement();
-                statement.executeUpdate(sql);
-                LoggingAspect.afterReturn("Delete Successful!");
-                successful = true;
-            }
-            catch (SQLException ex) {
-                LoggingAspect.afterThrown(ex);
-                successful = false;
+
+                // delete records from database
+                DBConnection.close();
+                DBConnection.open();
+                DBConnection.getStatement().executeUpdate(sqlDelete);
+                LoggingAspect.afterReturn(ids.length + " Record(s) Deleted");
+                String levelMessage = "3:" + sqlDelete;
+                LoggingAspect.addLogMsgWthDate(levelMessage);
+                return true;
+
+            } catch (SQLException e) {
+                LoggingAspect.afterThrown(e);
+                return false;
             }
         }
-        DBConnection.close();
-        return successful;
+        else{
+            // ids were passed in empty
+            return false;
+        }
     }
     
     /**
@@ -230,5 +232,108 @@ public class IssueDAO {
     private String format(String s){
         s=processCellValue(s);
         return (s.equals(""))?null:"'"+s+"'";
+    }
+
+    private Object processCellValue(Object cellValue) {
+        return cellValue.toString().replaceAll("'", "''");
+    }
+    
+    /**
+     * update
+     * @param tableName
+     * @param modifiedData
+     * @return 
+     */
+    public boolean update(String tableName,ModifiedData modifiedData) {
+        
+        boolean updateSuccessful = true;
+        String sqlChange = null;
+
+        DBConnection.close();
+        if (DBConnection.open()) {
+
+            String columnName = modifiedData.getColumnName();
+            Object value = modifiedData.getValue();
+            value = processCellValue(value);
+            int id = modifiedData.getId();
+
+            try {
+
+                if (value.equals("")) {
+                    value = null;
+                    sqlChange = "UPDATE " + tableName + " SET " + columnName
+                            + " = " + value + " WHERE ID = " + id + ";";
+                } else {
+                    sqlChange = "UPDATE " + tableName + " SET " + columnName
+                            + " = '" + value + "' WHERE ID = " + id + ";";
+                }
+
+                DBConnection.getStatement().executeUpdate(sqlChange);
+                LoggingAspect.afterReturn(sqlChange);
+
+            } catch (SQLException e) {
+                LoggingAspect.addLogMsgWthDate("3:" + e.getMessage());
+                LoggingAspect.addLogMsgWthDate("3:" + e.getSQLState() + "\n");
+                LoggingAspect.addLogMsgWthDate(("Upload failed! " + e.getMessage()));
+                LoggingAspect.afterThrown(e);
+                updateSuccessful = false;
+            }
+            if (updateSuccessful) {
+                LoggingAspect.afterReturn(("Edits uploaded successfully!"));
+            }
+        } else {
+            // connection failed
+            LoggingAspect.afterReturn("Failed to connect");
+        }
+        // finally close connection
+        DBConnection.close();
+        return updateSuccessful;
+    }
+
+    public ArrayList<Issue> get(String tableName) {
+        
+        ArrayList<Issue> issues = new ArrayList<>();
+        ResultSet rs = null;
+        String sql = "";
+        
+        if(tableName.equals("Other")){
+            sql = "SELECT * FROM " + DB_TABLE_NAME 
+               + " WHERE app != 'PM' and app != 'Analyster'"
+               + " AND app != 'ELLEGUI' or app IS NULL";
+        }
+        else{
+            sql = "SELECT * FROM " + DB_TABLE_NAME + " WHERE app = " + "'" 
+            + tableName + "' ORDER BY case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
+        }
+        
+        try {
+
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while(rs.next()){
+                Issue issue = new Issue();
+                issue.setId(rs.getInt(COL_PK_ID));
+                issue.setApp(rs.getString(COL_APP));
+                issue.setTitle(rs.getString(COL_TITLE));
+                issue.setDescription(rs.getString(COL_DESCRIPTION));
+                issue.setProgrammer(rs.getString(COL_PROGRAMMER));
+                issue.setDateOpened(rs.getString(COL_DATE_OPENED));
+                issue.setRk(rs.getString(COL_RK));
+                issue.setVersion(rs.getString(COL_VERSION));
+                issue.setDateClosed(rs.getString(COL_DATE_CLOSED));
+                issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
+                issue.setSubmitter(rs.getString(COL_SUBMITTER));
+                issue.setLocked(rs.getString(COL_LOCKED));
+                issues.add(issue);
+            }
+            
+            LoggingAspect.afterReturn("Loaded table " + tableName);
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return issues;
     }
 }

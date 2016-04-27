@@ -1,10 +1,13 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
+import com.elle.ProjectManager.dao.IssueDAO;
+import com.elle.ProjectManager.dao.IssueFileDAO;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.entities.Issue;
+import com.elle.ProjectManager.entities.IssueFile;
 import com.elle.ProjectManager.logic.*;
 
 import javax.swing.*;
@@ -52,14 +55,9 @@ import javax.imageio.ImageIO;
  */
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
-    // Edit the version and date it was created for new archives and jars
-    // this looks like it was moved to ITableConstants
-    //private final String CREATION_DATE = "2016-02-25";
-    //private final String VERSION = "1.2.0";
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
-    //   private Map<Integer, ArrayList<Object>> valueListMap;
     private static Statement statement;
     private String database;
 
@@ -88,13 +86,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private boolean addIssueWindowShow;
     private boolean isBatchEditWindowShow;
     private boolean comboBoxStartToSearch;
-    private boolean ifDeleteRecords;
 
-//    private int addRecordLevel = 2;
-//    private int deleteRecordLevel = 2;
-//    private PopupWindowInTableCell tableCellPopupWindow;
     private boolean popupWindowShowInPM;
-//    int lastSelectedRow = -1, lastSelectedColumn = -1;
+
     // create a jlabel to show the database used
     private JLabel databaseLabel;
     private String currentTabName;
@@ -103,6 +97,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private String searchColName = "programmer";
 //    private ArrayList<Integer> idNumOfOpenningIssues;
     private ArrayList<String> programmersActiveForSearching;
+    
+    // Data Access Objects
+    IssueDAO issueDAO;
+    IssueFileDAO issueFileDAO;
 
     /**
      * CONSTRUCTOR
@@ -116,6 +114,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // the statement is used for sql statements with the database connection
         // the statement is created in LoginWindow and passed to Analyster.
         statement = DBConnection.getStatement();
+        issueDAO = new IssueDAO();
+        issueFileDAO = new IssueFileDAO();
         instance = this;                         // this is used to call this instance of Analyster 
 
         this.userName = userName;
@@ -647,31 +647,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         PMTable.setAutoCreateRowSorter(true);
         PMTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -692,31 +678,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         ELLEGUITable.setAutoCreateRowSorter(true);
         ELLEGUITable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -737,31 +709,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         AnalysterTable.setAutoCreateRowSorter(true);
         AnalysterTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -782,31 +740,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         OtherTable.setAutoCreateRowSorter(true);
         OtherTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "taskID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -826,21 +770,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         issue_filesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "fileID", "taskID", "app", "submitter", "step", "date_", "files", "path", "notes"
@@ -1097,7 +1027,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 96, Short.MAX_VALUE))
+                .addGap(0, 166, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1602,25 +1532,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * a keylistener when editing mode is on and enter is pressed
      */
     public void uploadChanges() {
-//        String tabName;
-//        if (addIssueWindowShow) {
-//            tabName = addIssueWindow.getIssueActiveTabName();
-//        } else {
-//            tabName = getSelectedTabName();
-//        }
+
         String tabName = getSelectedTabName();
         Tab tab = tabs.get(tabName);
         JTable table = tab.getTable();
         JTableCellRenderer cellRenderer = tab.getCellRenderer();
         ModifiedTableData data = tab.getTableData();
 
+        // this updates database and should be replaced with dao
         boolean uploaded = updateTable(table, data.getNewData());
+        
         if (uploaded) {
 
-//            int[] rowsId = getSelectedRowsId(table);
             int[] rows = table.getSelectedRows();
 
-            loadTable(tab); // refresh tableSelected
+            //loadTable(tab); // refresh tableSelected
 
             ListSelectionModel model = table.getSelectionModel();
             model.clearSelection();
@@ -1964,27 +1890,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 System.exit(0); // Quit
         }
     }//GEN-LAST:event_menuItemLogOffActionPerformed
-
-    /**
-     * menuItemDeleteRecordActionPerformed Delete records menu item action
-     * performed
-     *
-     * @param evt
-     */
-    private void menuItemDeleteRecordActionPerformed(java.awt.event.ActionEvent evt) {
-
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        String sqlDelete = deleteRecordsSelected(table);
-        reloadData();
-        table.getSelectionModel().clearSelection();
-
-        String levelMessage = "3:" + sqlDelete;
-        logWindow.addMessageWithDate(levelMessage);
-        System.out.println(levelMessage);
-//        logWindow.setLevel(deleteRecordLevel);
-    }
 
     /**
      * btnClearAllFilterActionPerformed clear all filters
@@ -2417,6 +2322,48 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     }//GEN-LAST:event_menuItemReloadAllDataActionPerformed
 
+    /**
+     * menuItemDeleteRecordActionPerformed Delete records menu item action
+     * performed
+     *
+     * @param evt
+     */
+    private void menuItemDeleteRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemDeleteRecordActionPerformed
+        String tabName = getSelectedTabName();
+        Tab tab = tabs.get(tabName);
+        JTable table = tab.getTable();
+        String tableName = table.getName(); // name of the tableSelected
+
+        // get the ids
+        int[] ids; // ids to delete from database
+        int[] selectedRows = table.getSelectedRows(); // array of the rows selected
+        int rowCount = selectedRows.length; // the number of rows selected
+        if (rowCount != -1) {
+            ids = new int[rowCount];
+            for (int i = 0; i < rowCount; i++) {
+                int row = selectedRows[i];
+                Integer selectedID = (Integer) table.getValueAt(row, 0); // Add Note to selected taskID
+                ids[i] = selectedID;
+            }
+            
+            if (tableName.equals(TASKFILES_TABLE_NAME)) {
+                issueFileDAO.delete(table);
+            } else {
+                issueDAO.delete(ids);
+            }
+            
+            removeSelectedRows(table);
+        
+            // the update label for row count
+            tab.subtractFromTotalRowCount(rowCount); // update total rowIndex count
+            String recordsLabel = tab.getRecordsLabel();
+            labelRecords.setText(recordsLabel); // update label
+        }
+        else{
+            // no rows are selected
+        }
+    }//GEN-LAST:event_menuItemDeleteRecordActionPerformed
+
     public void comboBoxForSearchEditorMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
             comboBoxValue.getEditor().selectAll();
@@ -2437,13 +2384,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
         table.setRowSelectionInterval(rowNum - count, rowNum - 1);
     }
-//    private void buttonFilteringTables(JTable table, String str) {
+//    private void buttonFilteringTables(JTable table, String tableName) {
 //
 //        try {
 //            // open connection because might time out
 //            DBConnection.open();
 //            statement = DBConnection.getStatement();
-//            String sql = "SELECT * FROM " + table.getName() + str + " ORDER BY "
+//            String sql = "SELECT * FROM " + table.getName() + tableName + " ORDER BY "
 //                    + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, taskID ASC";
 //            System.out.println(sql);
 //            loadTableData(sql, table);
@@ -3133,56 +3080,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // should probably not be here
         // this method is to update the database, that is all it should do.
         table.getModel().addTableModelListener(table);
-
-        //String uploadQuery = uploadRecord(tableSelected, modifiedDataList);
-        String sqlChange = null;
-
-        DBConnection.close();
-        if (DBConnection.open()) {
-            statement = DBConnection.getStatement();
-            for (ModifiedData modifiedData : modifiedDataList) {
-
-                String tableName = modifiedData.getTableName();
-                String columnName = modifiedData.getColumnName();
-                Object value = modifiedData.getValue();
-                int id = modifiedData.getId();
-
-                value = processCellValue(value);
-                if (!tableName.equals(TASKFILES_TABLE_NAME)) {
-                    tableName = TASKS_TABLE_NAME;
-                }
-
-                try {
-
-                    if (value.equals("")) {
-                        value = null;
-                        sqlChange = "UPDATE " + tableName + " SET " + columnName
-                                + " = " + value + " WHERE ID = " + id + ";";
-                    } else {
-                        sqlChange = "UPDATE " + tableName + " SET " + columnName
-                                + " = '" + value + "' WHERE ID = " + id + ";";
-                    }
-
-                    statement.executeUpdate(sqlChange);
-                    LoggingAspect.afterReturn(sqlChange);
-
-                } catch (SQLException e) {
-                    LoggingAspect.addLogMsgWthDate("3:" + e.getMessage());
-                    LoggingAspect.addLogMsgWthDate("3:" + e.getSQLState() + "\n");
-                    LoggingAspect.addLogMsgWthDate(("Upload failed! " + e.getMessage()));
-                    LoggingAspect.afterThrown(e);
-                    updateSuccessful = false;
-                }
+        
+        //loop the modified data list
+        for (ModifiedData modifiedData : modifiedDataList) {
+            String tableName = modifiedData.getTableName();
+            if (!tableName.equals(TASKFILES_TABLE_NAME)) {
+                tableName = TASKS_TABLE_NAME;
+                updateSuccessful = issueDAO.update(tableName,modifiedData);
             }
-            if (updateSuccessful) {
-                LoggingAspect.afterReturn(("Edits uploaded successfully!"));
+            else{
+                updateSuccessful = issueFileDAO.update(tableName,modifiedData);
             }
-        } else {
-            // connection failed
-            LoggingAspect.afterReturn("Failed to connect");
         }
-        // finally close connection
-        DBConnection.close();
+
         return updateSuccessful;
     }
 
@@ -3209,10 +3119,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public IssueWindow getViewIssueWindowOf(String id) {
         return this.openingIssuesList.get(id);
-    }
-
-    private Object processCellValue(Object cellValue) {
-        return cellValue.toString().replaceAll("'", "''");
     }
 
     /**
@@ -3690,19 +3596,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             loadTable(tab);
 
             LoggingAspect.afterReturn("Table loaded succesfully");
-//            informationLabel.setText("Table loaded succesfully");
-//            startCountDownFromNow(10);
             setTableListeners(table, this);
-
-            String[] colNames = tab.getTableColNames();
-//            Map tableComboBoxForSearchDropDownList = this.loadingDropdownListToTable();
-//            this.comboBoxForSearchDropDown.put(entry.getKey(), tableComboBoxForSearchDropDownList);
 
             boolean isColumnNameTheSame = ColumnNameConsistency.IsTableColumnNameTheSame(tab, table);
             if (!isColumnNameTheSame) {
                 System.out.println(ColumnNameConsistency.getErrorMessage());
-//                logWindow.addMessage(a);
-//                logWindow.addMessageWithDate("3:" + a);
                 LoggingAspect.afterReturn("Column Name(s) is(are) different from what in database");
             }
         }
@@ -3717,7 +3615,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     /**
      * This loads table data and updates orange dot.
-     *
      * @param tab
      * @return
      */
@@ -3731,71 +3628,74 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     /**
      * This loads table data but does not update orange dot. Use loadTable(Tab
      * tab) to load table and update orange dot.
-     *
      * @param table
      */
     public JTable loadTableData(JTable table) {
-        String str = table.getName();
-
-        int[] rows = table.getSelectedRows();
-        Object[] selectedRowsID = new Object[rows.length];
-
-        if (ifDeleteRecords) {
-            //get selected rows' id store it into an object array
-            for (int row = 0; row < rows.length - 1; row++) {
-                Object Id = table.getValueAt(rows[row], 0);
-                selectedRowsID[row] = Id;
-            }
-        } else {
-            for (int row = 0; row < rows.length; row++) {
-                Object Id = table.getValueAt(rows[row], 0);
-                selectedRowsID[row] = Id;
-            }
-            ifDeleteRecords = false;
-        }
-
-        if (str == "PM" || str == "ELLEGUI" || str == "Analyster") {
-
-            str = TASKS_TABLE_NAME + " WHERE app = " + "'" + str + "'";
-        } else if (str == "Other") {
-            str = TASKS_TABLE_NAME + " WHERE app != 'PM' and app != 'Analyster' "
-                    + "and app != 'ELLEGUI' or app IS NULL";
-        }
-
-        // connection might time out
-        DBConnection.close();
-        DBConnection.open();
-
-        statement = DBConnection.getStatement();
-        String sql;
-        if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
-            sql = "SELECT * FROM " + str + " ORDER BY "
-                    + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
-        } else {
-            sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
-        }
-        loadTable(sql, table);
-
-        for (int i = 0; i < selectedRowsID.length; i++) {
-            for (int r = 0; r < table.getRowCount(); r++) {
-                if (table.getValueAt(r, 0).equals(selectedRowsID[i])) {
-
-                    rows[i] = r;
+        String tableName = table.getName();
+        
+        System.out.println("table name = " + tableName);
+        // set table model data
+        if (tableName.equals(TASKFILES_TABLE_NAME)) {
+            // this is for the issue_files tab/table
+            ArrayList<IssueFile> issuesFiles = issueFileDAO.get(tableName);
+            if(!issuesFiles.isEmpty() && issuesFiles != null){
+                for(IssueFile issueFile: issuesFiles){
+                    inserTableRow(table, issueFile);
                 }
             }
         }
-        ListSelectionModel model = table.getSelectionModel();
-        model.clearSelection();
-        for (int row : rows) {
-            model.addSelectionInterval(row, row);
+        else{
+            // this is for all other tabs which are all from the issues table
+            ArrayList<Issue> issues = issueDAO.get(tableName);
+            if(!issues.isEmpty() && issues != null){
+                for(Issue issue: issues){
+                    inserTableRow(table, issue);
+                }
+            }
         }
+        
+        // if reloading data then deselects any selections
+        table.getSelectionModel().clearSelection();
+        
+        /** This is all for reloading table data **/
+        
+        // check that the filter items are initialized
+        String tabName = table.getName();
+        Tab tab = tabs.get(tabName);
 
+        // apply filter
+        TableFilter filter = tab.getFilter();
+        if (filter.getFilterItems() == null) {
+            filter.initFilterItems();
+        }
+        filter.applyFilter();
+        filter.applyColorHeaders();
+
+        // load all checkbox items for the checkbox column pop up filter
+        ColumnPopupMenu columnPopupMenu = tab.getColumnPopupMenu();
+        columnPopupMenu.loadAllCheckBoxItems();
+
+        // set column format
+        float[] colWidthPercent = tab.getColWidthPercent();
+        setColumnFormat(colWidthPercent, table);
+
+        // set the listeners for the tableSelected
+        setTableListeners(table, this);
+
+        // update last time the tableSelected was updated
+        setLastUpdateTime();
+
+        //make table scroll down as default
+        scrollDown(jScrollPane1);
+        scrollDown(jScrollPane4);
+        scrollDown(jScrollPane5);
+        scrollDown(jScrollPane6);
+        scrollDown(jScrollPane7);
         return table;
-
     }
 
     /**
-     * Loads table using an sql command
+     * This is only used for the sql command panel
      *
      * @param sql
      * @param table
@@ -3903,75 +3803,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         timer.setRepeats(false);
         timer.start();
-    }
-
-    /**
-     * deleteRecordsSelected deletes the selected records
-     *
-     * @param table
-     * @return
-     * @throws HeadlessException
-     */
-    public String deleteRecordsSelected(JTable table) throws HeadlessException {
-
-        String sqlDelete = ""; // String for the SQL Statement
-        String tableName = table.getName(); // name of the tableSelected
-        if (tableName.equals(TASKFILES_TABLE_NAME)) {
-            tableName = TASKFILES_TABLE_NAME;
-        } else {
-            tableName = TASKS_TABLE_NAME;
-        }
-
-        int[] selectedRows = table.getSelectedRows(); // array of the rows selected
-        int rowCount = selectedRows.length; // the number of rows selected
-        if (rowCount != -1) {
-            for (int i = 0; i < rowCount; i++) {
-                int row = selectedRows[i];
-                Integer selectedID = (Integer) table.getValueAt(row, 0); // Add Note to selected taskID
-
-                if (i == 0) // this is the first rowIndex
-                {
-                    sqlDelete += "DELETE FROM " + database + "." + tableName
-                            + " WHERE " + table.getColumnName(0) + " IN (" + selectedID; // 0 is the first column index = primary key
-                } else // this adds the rest of the rows
-                {
-                    sqlDelete += ", " + selectedID;
-                }
-
-            }
-
-            // windowClose the sql statement
-            sqlDelete += ");";
-
-            try {
-
-                // delete records from database
-                DBConnection.close();
-                DBConnection.open();
-                statement = DBConnection.getStatement();
-                statement.executeUpdate(sqlDelete);
-
-                // output pop up dialog that a record was deleted 
-//                JOptionPane.showMessageDialog(this, rowCount + " Record(s) Deleted");
-                LoggingAspect.afterReturn(rowCount + " Record(s) Deleted");
-//                informationLabel.setText(rowCount + " Record(s) Deleted");
-//                startCountDownFromNow(10);
-                // set label record information
-                String tabName = getSelectedTabName();
-                Tab tab = tabs.get(tabName);
-                // refresh tableSelected and retain filters
-                loadTable(tab);
-                tab.subtractFromTotalRowCount(rowCount); // update total rowIndex count
-                String recordsLabel = tab.getRecordsLabel();
-                labelRecords.setText(recordsLabel); // update label
-
-            } catch (SQLException e) {
-                LoggingAspect.afterThrown(e);
-            }
-
-        }
-        ifDeleteRecords = true;
-        return sqlDelete;
     }
 
     /**
@@ -4685,6 +4516,26 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         rowData[11] = issue.getLocked();
         ((DefaultTableModel)table.getModel()).addRow(rowData);
     }
+    
+    /**
+     * Inserts a new rowIndex in the table
+     * @param table
+     * @param issue 
+     */
+    public void inserTableRow(JTable table, IssueFile issueFile) {
+
+        Object[] rowData = new Object[9];
+        rowData[0] = issueFile.getFileID();
+        rowData[1] = issueFile.getTaskID();
+        rowData[2] = issueFile.getApp();
+        rowData[3] = issueFile.getSubmitter();
+        rowData[4] = issueFile.getStep();
+        rowData[5] = issueFile.getDate();
+        rowData[6] = issueFile.getFiles();
+        rowData[7] = issueFile.getPath();
+        rowData[8] = issueFile.getNotes();
+        ((DefaultTableModel)table.getModel()).addRow(rowData);
+    }
 
     /**
      * Locates the table model rowIndex index
@@ -4703,6 +4554,32 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return -1; // rowIndex not found
     }
 
+    /**
+     * removes the selected rows from the table
+     * @param table
+     * @return 
+     */
+    private boolean removeSelectedRows(JTable table) {
+        
+        int[] rows = table.getSelectedRows();
+	DefaultTableModel model = (DefaultTableModel)table.getModel();
+
+        if(rows.length != -1){
+            while(rows.length>0)
+            {
+                int row = table.convertRowIndexToModel(rows[0]);
+                model.removeRow(row);
+                rows = table.getSelectedRows();
+            }
+            table.getSelectionModel().clearSelection();
+            return true;
+        }
+        else{
+            // no rows selected
+            return false;
+        }
+    }
+    
     /**
      * CLASS
      */
