@@ -116,6 +116,11 @@ public class IssueDAO {
         DBConnection.close();
         return successful;
     }
+    
+    private String processCellValue(String cellValue) {
+
+        return cellValue.replaceAll("'", "''");
+    }
 
     /**
      * update
@@ -140,6 +145,9 @@ public class IssueDAO {
             String issueType = format(issue.getIssueType());
             String submitter = format(issue.getSubmitter());
             String locked = format(issue.getLocked());
+          
+            
+   
             
             String sql = "UPDATE " + DB_TABLE_NAME + " SET " 
                     + COL_APP + " = " + app + ", "
@@ -154,7 +162,7 @@ public class IssueDAO {
                     + COL_SUBMITTER + " = " + submitter + ", "
                     + COL_LOCKED + " = " + locked + " "
                     + "WHERE " + COL_PK_ID + " = " + id + ";";
-
+          System.out.println("update : " + sql );
             try {
                 Statement statement = DBConnection.getStatement();
                 statement.executeUpdate(sql);
@@ -222,6 +230,7 @@ public class IssueDAO {
      * @return 
      */
     private String format(String s){
+        s=processCellValue(s);
         return (s.equals(""))?null:"'"+s+"'";
     }
 

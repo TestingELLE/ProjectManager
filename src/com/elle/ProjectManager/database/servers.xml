@@ -13,11 +13,13 @@
             <db-name>pupone_dummy</db-name>
             <db-username></db-username>
             <db-password></db-password>
-            <db-default>true</db-default>
+            <db-default>false</db-default>
         </database>
         <database>
-            <db-name>pupone_Analyster</db-name>
-            <db-default>false</db-default>
+            <db-name>pupone_PM</db-name>
+            <db-username></db-username>
+            <db-password></db-password>
+            <db-default>true</db-default>
         </database>
     </server>
 </servers>

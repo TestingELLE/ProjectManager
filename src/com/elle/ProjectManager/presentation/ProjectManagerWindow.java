@@ -94,7 +94,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private String currentTabName;
     private String userName;
     private String searchValue = null;
-
+    private String searchColName = "programmer";
+//    private ArrayList<Integer> idNumOfOpenningIssues;
     private ArrayList<String> programmersActiveForSearching;
     
     // Data Access Objects
@@ -2203,7 +2204,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void comboBoxFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxFieldActionPerformed
         System.out.println("here" + comboBoxStartToSearch);
-        String searchColName = comboBoxField.getSelectedItem().toString();
+        searchColName = comboBoxField.getSelectedItem().toString();
         searchValue = comboBoxValue.getSelectedItem().toString();
         String tabName = getSelectedTabName();
         // update the dropdown list when we change a searchable item
@@ -2227,9 +2228,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param evt
      */
     private void tabbedPanelStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPanelStateChanged
-
+        
         changeTabbedPanelState();
-
+        
         // this changes the search fields for the comboBox for each tabName
         // this event is fired from initCompnents hence the null condition
         String tabName = getSelectedTabName();
@@ -2240,6 +2241,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         if (searchFields != null) {
             comboBoxField.setModel(new DefaultComboBoxModel(searchFields));
         }
+        comboBoxField.setSelectedItem(searchColName);
 //        if (tabName.equalsIgnoreCase("issue_files")) {
 //            comboBoxForSearch.setSelectedItem("Enter submitter here");
 //        } else {
