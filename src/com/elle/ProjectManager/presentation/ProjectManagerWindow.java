@@ -3654,6 +3654,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         }
         
+        // set table model to the custom editable table model		
+        addEditableTableModel(table);
+ 
         // if reloading data then deselects any selections
         table.getSelectionModel().clearSelection();
         
@@ -4578,6 +4581,26 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // no rows selected
             return false;
         }
+    }
+
+    /**
+     * sets the table model with the custom editable table model
+     * @param table 
+     */
+    private void addEditableTableModel(JTable table) {
+        Vector data = new Vector();
+        Vector columnNames = new Vector();
+        Vector columnClasses = new Vector();
+        
+        DefaultTableModel model = (DefaultTableModel)table.getModel();
+        data = model.getDataVector();
+        for(int i = 0; i < model.getColumnCount();i++){
+            columnNames.addElement(model.getColumnName(i));
+            columnClasses.addElement(model.getColumnClass(i).toString());
+        }
+        
+        EditableTableModel etm = new EditableTableModel(data, columnNames, columnClasses);
+        table.setModel(etm);
     }
     
     /**
