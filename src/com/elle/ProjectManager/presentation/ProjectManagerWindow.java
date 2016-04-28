@@ -1686,30 +1686,30 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String tabName = getSelectedTabName();
         Tab tab = tabs.get(tabName);
 
-        // get booleans for the states of the selected tab
-//        boolean isActivateRecordMenuItemEnabled = tab.isActivateRecordMenuItemEnabled();
-//        boolean isArchiveRecordMenuItemEnabled = tab.isArchiveRecordMenuItemEnabled();
         JTable table = tab.getTable();
-
-        if (tabName.equals(TASKFILES_TABLE_NAME)) {
-            String str = tabName;
-            if (currentTabName.equals("PM") || currentTabName.equals("ELLEGUI") || currentTabName.equals("Analyster")) {
-                str = str + " WHERE app = " + "'" + currentTabName + "'";
-            } else if (currentTabName.equals("Other")) {
-                str = str + " WHERE app != 'PM' and app != 'Analyster' "
-                        + "and app != 'ELLEGUI' or app IS NULL";
-            }
-
-            // connection might time out
-            DBConnection.close();
-            DBConnection.open();
-
-            statement = DBConnection.getStatement();
-            String sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
-//                System.out.println(sql);
-            loadTable(sql, table);
-        }
-        currentTabName = getSelectedTabName();
+/**
+ * COMMENTED THIS OUT BECAUSE THIS BEHAVIOR MAY NO LONGER BE USED FOR THE
+ * TASKFILES_TABLE
+ */
+//        if (tabName.equals(TASKFILES_TABLE_NAME)) {
+//            String str = tabName;
+//            if (currentTabName.equals("PM") || currentTabName.equals("ELLEGUI") || currentTabName.equals("Analyster")) {
+//                str = str + " WHERE app = " + "'" + currentTabName + "'";
+//            } else if (currentTabName.equals("Other")) {
+//                str = str + " WHERE app != 'PM' and app != 'Analyster' "
+//                        + "and app != 'ELLEGUI' or app IS NULL";
+//            }
+//
+//            // connection might time out
+//            DBConnection.close();
+//            DBConnection.open();
+//
+//            statement = DBConnection.getStatement();
+//            String sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
+////                System.out.println(sql);
+//            loadTable(sql, table);
+//        }
+//        currentTabName = getSelectedTabName();
 
         boolean isBatchEditBtnEnabled = tab.isBatchEditBtnEnabled();
         boolean isBatchEditWindowOpen = tab.isBatchEditWindowOpen();

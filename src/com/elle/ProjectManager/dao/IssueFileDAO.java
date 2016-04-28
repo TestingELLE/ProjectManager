@@ -154,7 +154,11 @@ public class IssueFileDAO {
         return updateSuccessful;
     }
 
-    public ArrayList<IssueFile> get(String tableName) {
+    /**
+     * Returns a list of IssueFiles for the entire table
+     * @return a list of IssueFiles
+     */
+    public ArrayList<IssueFile> get() {
         
         ArrayList<IssueFile> issueFiles = new ArrayList<>();
         ResultSet rs = null;
@@ -180,7 +184,56 @@ public class IssueFileDAO {
                 issueFiles.add(issueFile);
             }
             
-            LoggingAspect.afterReturn("Loaded table " + tableName);
+            LoggingAspect.afterReturn("Loaded table " + DB_TABLE_NAME);
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return issueFiles;
+    }
+    
+    /**
+     * This is used in the changedTabState method.
+     * This queries based on the last tab before selecting the issue_files tab.
+     * @param currentTabName this is the 
+     * @return a list of IssueFiles
+     */
+    public ArrayList<IssueFile> get(String currentTabName){
+        
+        ArrayList<IssueFile> issueFiles = new ArrayList<>();
+        ResultSet rs = null;
+        String sql = "SELECT * FROM " + DB_TABLE_NAME;
+
+        if (currentTabName.equals("PM") || currentTabName.equals("ELLEGUI") || currentTabName.equals("Analyster")) {
+            sql = sql + " WHERE app = " + "'" + currentTabName + "'";
+        } else if (currentTabName.equals("Other")) {
+            sql = sql + " WHERE app != 'PM' and app != 'Analyster' "
+                    + "and app != 'ELLEGUI' or app IS NULL";
+        }
+
+        sql = sql + " ORDER BY taskId ASC";
+
+        try {
+
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while(rs.next()){
+                IssueFile issueFile = new IssueFile();
+                issueFile.setFileID(rs.getString(COL_PK_FILE_ID));
+                issueFile.setTaskID(rs.getString(COL_TASK_ID));
+                issueFile.setApp(rs.getString(COL_APP));
+                issueFile.setSubmitter(rs.getString(COL_SUBMITTER));
+                issueFile.setStep(rs.getString(COL_STEP));
+                issueFile.setDate(rs.getString(COL_DATE));
+                issueFile.setFiles(rs.getString(COL_FILES));
+                issueFile.setPath(rs.getString(COL_PATH));
+                issueFile.setNotes(rs.getString(COL_NOTES));
+                issueFiles.add(issueFile);
+            }
+            
+            LoggingAspect.afterReturn("Loaded table " + DB_TABLE_NAME);
         } 
         catch (SQLException e) {
             LoggingAspect.afterThrown(e);
