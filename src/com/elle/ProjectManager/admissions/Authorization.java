@@ -31,6 +31,7 @@ public class Authorization {
     // class variables
     private static String userLogin;
     private static String accessLevel;
+    private static IAdminComponent adminComponent;
     
     /**
      * When the user logs in, we will need to know the access level and 
@@ -49,6 +50,7 @@ public class Authorization {
         map = sql_commands.getTableData(sql_commands.executeQuery(query));
         if(!map.get(DB_COLUMN_2).isEmpty()){
             accessLevel = map.get(DB_COLUMN_2).get(0).toString();
+            setAdminComponentType(accessLevel);
             return true;
         }
         else{
@@ -58,28 +60,35 @@ public class Authorization {
     }
     
     /**
-     * This takes any component and overrides any behavior for that component.
-     * @param c 
+     * Sets the IAdminComponent according to the accessLevel
+     * @param accessLevel access level of the user
      */
-    public static void authorize( Component c){
-        
+    public static void setAdminComponentType(String accessLevel){
         if(accessLevel != null) // changed tab state is called from initComponents
             switch(accessLevel){
                 case ADMINISTRATOR:
-                    setPermissions(c, new Administrator());
+                    adminComponent = new Administrator();
                     break;
                 case DEVELOPER:
-                    setPermissions(c, new Developer());
+                    adminComponent = new Developer();
                     break;
                 case USER:
-                    setPermissions(c, new User());
+                    adminComponent = new User();
                     break;
                 case VIEWER:
-                    setPermissions(c, new Viewer());
+                    adminComponent = new Viewer();
                     break;
                 default:
                     break;
             }
+    }
+    
+    /**
+     * This takes any component and overrides any behavior for that component.
+     * @param c 
+     */
+    public static void authorize( Component c){
+        setPermissions(c, adminComponent);
     }
     
     private static void setPermissions(Component c, IAdminComponent admin){
