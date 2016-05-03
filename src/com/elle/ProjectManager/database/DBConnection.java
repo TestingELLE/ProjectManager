@@ -231,7 +231,7 @@ public class DBConnection {
     
     /**
      * readServers
- readDBUsername servers data from xml path
+     * read servers data from xml path
      * @return 
      */
     public static ArrayList<Server> readServers()
