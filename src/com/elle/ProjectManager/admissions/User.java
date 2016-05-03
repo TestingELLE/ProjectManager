@@ -9,7 +9,7 @@ import com.elle.ProjectManager.presentation.*;
  * @author Carlos Igreja
  * @since  Mar 1, 2016
  */
-public class User implements IAdminComponent{
+public class User extends AdminComponent{
 
     @Override
     public void setComponent(BackupDBTablesDialog window) {
