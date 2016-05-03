@@ -71,6 +71,7 @@ public class IssueWindow extends JFrame {
         }
        
         initComponents();
+        submitterText.setText(projectManager.getUserName());
 
         setComponentValuesFromIssue();
         
