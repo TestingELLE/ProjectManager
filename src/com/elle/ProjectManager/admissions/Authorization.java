@@ -55,6 +55,7 @@ public class Authorization {
         }
         else{
             accessLevel = USER; // defaults to user
+            setAdminComponentType(accessLevel);
             return false;
         }
     }
