@@ -4,23 +4,18 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.Database;
 import com.elle.ProjectManager.database.Server;
-import com.elle.ProjectManager.logic.LoggingAspect;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.*;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
 import javax.swing.Timer;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -530,6 +525,40 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
                         selectedDefault = (row == selectedRow)?true:false;
                         tableDatabases.setValueAt(selectedDefault, row, 0);
                     }
+                }
+            }
+        });
+    }
+    
+    /**
+     * Sets the table listeners.
+     * Currently used to listen for changes or mouse pressed to enable the 
+     * save buttons when the table is not being edited.
+     * @param table 
+     */
+    private void setTableListeners(JTable table){
+        table.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                // set save button enabled only when not editing the table
+                boolean b = !table.isEditing();
+                if(table.equals(tableServers)){
+                    btnSaveServers.setEnabled(b);
+                }
+                else{
+                    btnSaveDatabases.setEnabled(b);
+                }
+            }
+        });
+        table.getModel().addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                // set save button enabled only when not editing the table
+                boolean b = !table.isEditing();
+                if(table.equals(tableServers)){
+                    btnSaveServers.setEnabled(b);
+                }
+                else{
+                    btnSaveDatabases.setEnabled(b);
                 }
             }
         });
