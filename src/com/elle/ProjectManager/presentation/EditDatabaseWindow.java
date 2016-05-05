@@ -4,23 +4,19 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.Database;
 import com.elle.ProjectManager.database.Server;
-import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.*;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
 import javax.swing.Timer;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -55,11 +51,13 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         
         // set the servers, cb, databases
         servers = DBConnection.readServers();
-        setServersTableListener();
-        setDatabasesTableListener();
         fillServersTable(tableServers);
         cbServer.setModel(getServerNamesCBModel());
         fillDatabasesTable(tableDatabases, servers.get(0).getName());
+        
+        // set table listeners
+        setTableListeners(tableServers);
+        setTableListeners(tableDatabases);
     }
 
     /**
@@ -501,35 +499,68 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         timer.start();
     }
     
-    private void setServersTableListener() {
-        tableServers.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                int rows = tableServers.getRowCount();
-                int selectedRow = tableServers.rowAtPoint(e.getPoint());
-                int selectedCol = tableServers.columnAtPoint(e.getPoint());
-                boolean selectedDefault;
-                if(selectedCol == 0){ // this is the default checkbox column
-                    for(int row = 0; row < rows; row++){
-                        selectedDefault = (row == selectedRow)?true:false;
-                        tableServers.setValueAt(selectedDefault, row, 0);
-                    }
+    /**
+     * Sets the table listeners.
+     * Currently used to listen for changes or mouse/key pressed to enable the 
+     * save buttons when the table is not being edited.
+     * @param table 
+     */
+    private void setTableListeners(JTable table){
+        table.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // set save button enabled only when not editing the table
+                boolean b = !table.isEditing();
+                if(table.equals(tableServers)){
+                    btnSaveServers.setEnabled(b);
+                }
+                else{
+                    btnSaveDatabases.setEnabled(b);
                 }
             }
         });
-    }
-
-    private void setDatabasesTableListener() {
-    tableDatabases.addMouseListener(new MouseAdapter() {
+        table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                int rows = tableDatabases.getRowCount();
-                int selectedRow = tableDatabases.rowAtPoint(e.getPoint());
-                int selectedCol = tableDatabases.columnAtPoint(e.getPoint());
+                int rows = table.getRowCount();
+                int selectedRow = table.rowAtPoint(e.getPoint());
+                int selectedCol = table.columnAtPoint(e.getPoint());
                 boolean selectedDefault;
                 if(selectedCol == 0){ // this is the default checkbox column
                     for(int row = 0; row < rows; row++){
                         selectedDefault = (row == selectedRow)?true:false;
-                        tableDatabases.setValueAt(selectedDefault, row, 0);
+                        table.setValueAt(selectedDefault, row, 0);
                     }
+                }
+            }
+            public void mousePressed(MouseEvent e) {
+                // set save button enabled only when not editing the table
+                boolean b = !table.isEditing();
+                if(table.equals(tableServers)){
+                    btnSaveServers.setEnabled(b);
+                }
+                else{
+                    btnSaveDatabases.setEnabled(b);
+                }
+            }
+        });
+        table.getModel().addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                // set save button enabled only when not editing the table
+                boolean b = !table.isEditing();
+                if(table.equals(tableServers)){
+                    btnSaveServers.setEnabled(b);
+                }
+                else{
+                    btnSaveDatabases.setEnabled(b);
                 }
             }
         });

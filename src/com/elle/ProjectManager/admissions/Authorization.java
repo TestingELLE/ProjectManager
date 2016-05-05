@@ -31,6 +31,7 @@ public class Authorization {
     // class variables
     private static String userLogin;
     private static String accessLevel;
+    private static IAdminComponent adminComponent;
     
     /**
      * When the user logs in, we will need to know the access level and 
@@ -49,12 +50,38 @@ public class Authorization {
         map = sql_commands.getTableData(sql_commands.executeQuery(query));
         if(!map.get(DB_COLUMN_2).isEmpty()){
             accessLevel = map.get(DB_COLUMN_2).get(0).toString();
+            setAdminComponentType(accessLevel);
             return true;
         }
         else{
             accessLevel = USER; // defaults to user
+            setAdminComponentType(accessLevel);
             return false;
         }
+    }
+    
+    /**
+     * Sets the IAdminComponent according to the accessLevel
+     * @param accessLevel access level of the user
+     */
+    public static void setAdminComponentType(String accessLevel){
+        if(accessLevel != null) // changed tab state is called from initComponents
+            switch(accessLevel){
+                case ADMINISTRATOR:
+                    adminComponent = new Administrator();
+                    break;
+                case DEVELOPER:
+                    adminComponent = new Developer();
+                    break;
+                case USER:
+                    adminComponent = new User();
+                    break;
+                case VIEWER:
+                    adminComponent = new Viewer();
+                    break;
+                default:
+                    break;
+            }
     }
     
     /**
@@ -62,30 +89,7 @@ public class Authorization {
      * @param c 
      */
     public static void authorize( Component c){
-        
-        if(accessLevel != null) // changed tab state is called from initComponents
-            switch(accessLevel){
-                case ADMINISTRATOR:
-                    setPermissions(c, new Administrator());
-                    break;
-                case DEVELOPER:
-                    setPermissions(c, new Administrator());
-                    setPermissions(c, new Developer());
-                    break;
-                case USER:
-                    setPermissions(c, new Administrator());
-                    setPermissions(c, new Developer());
-                    setPermissions(c, new User());
-                    break;
-                case VIEWER:
-                    setPermissions(c, new Administrator());
-                    setPermissions(c, new Developer());
-                    setPermissions(c, new User());
-                    setPermissions(c, new Viewer());
-                    break;
-                default:
-                    break;
-            }
+        setPermissions(c, adminComponent);
     }
     
     private static void setPermissions(Component c, IAdminComponent admin){
