@@ -1,6 +1,7 @@
 
 package com.elle.ProjectManager.presentation;
 
+import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ShortCutSetting;
@@ -19,8 +20,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -41,6 +48,346 @@ public class IssueWindow extends JFrame {
     private int row;
     private IssueDAO dao;
     private boolean addIssueMode;
+
+    public ProjectManagerWindow getProjectManager() {
+        return projectManager;
+    }
+
+    public void setProjectManager(ProjectManagerWindow projectManager) {
+        this.projectManager = projectManager;
+    }
+
+    public Issue getIssue() {
+        return issue;
+    }
+
+    public void setIssue(Issue issue) {
+        this.issue = issue;
+    }
+
+    public JTable getTable() {
+        return table;
+    }
+
+    public void setTable(JTable table) {
+        this.table = table;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public IssueDAO getDao() {
+        return dao;
+    }
+
+    public void setDao(IssueDAO dao) {
+        this.dao = dao;
+    }
+
+    public boolean isAddIssueMode() {
+        return addIssueMode;
+    }
+
+    public void setAddIssueMode(boolean addIssueMode) {
+        this.addIssueMode = addIssueMode;
+    }
+
+    public ShortCutSetting getShortCutSetting() {
+        return ShortCutSetting;
+    }
+
+    public void setShortCutSetting(ShortCutSetting ShortCutSetting) {
+        this.ShortCutSetting = ShortCutSetting;
+    }
+
+    public String[] getDropdownlist() {
+        return dropdownlist;
+    }
+
+    public void setDropdownlist(String[] dropdownlist) {
+        this.dropdownlist = dropdownlist;
+    }
+
+    public Map<String, Tab> getTabs() {
+        return tabs;
+    }
+
+    public void setTabs(Map<String, Tab> tabs) {
+        this.tabs = tabs;
+    }
+
+    public JButton getBtnNext() {
+        return BtnNext;
+    }
+
+    public void setBtnNext(JButton BtnNext) {
+        this.BtnNext = BtnNext;
+    }
+
+    public JButton getBtnPrevious() {
+        return BtnPrevious;
+    }
+
+    public void setBtnPrevious(JButton BtnPrevious) {
+        this.BtnPrevious = BtnPrevious;
+    }
+
+    public JLabel getApp() {
+        return app;
+    }
+
+    public void setApp(JLabel app) {
+        this.app = app;
+    }
+
+    public JComboBox getAppComboBox() {
+        return appComboBox;
+    }
+
+    public void setAppComboBox(JComboBox appComboBox) {
+        this.appComboBox = appComboBox;
+    }
+
+    public JButton getBtnCloseIssue() {
+        return btnCloseIssue;
+    }
+
+    public void setBtnCloseIssue(JButton btnCloseIssue) {
+        this.btnCloseIssue = btnCloseIssue;
+    }
+
+    public JButton getButtonCancel() {
+        return buttonCancel;
+    }
+
+    public void setButtonCancel(JButton buttonCancel) {
+        this.buttonCancel = buttonCancel;
+    }
+
+    public JButton getButtonConfirm() {
+        return buttonConfirm;
+    }
+
+    public void setButtonConfirm(JButton buttonConfirm) {
+        this.buttonConfirm = buttonConfirm;
+    }
+
+    public JButton getButtonSubmit() {
+        return buttonSubmit;
+    }
+
+    public void setButtonSubmit(JButton buttonSubmit) {
+        this.buttonSubmit = buttonSubmit;
+    }
+
+    public JComboBox<String> getComboBoxIssueType() {
+        return comboBoxIssueType;
+    }
+
+    public void setComboBoxIssueType(JComboBox<String> comboBoxIssueType) {
+        this.comboBoxIssueType = comboBoxIssueType;
+    }
+
+    public JLabel getDateClosed() {
+        return dateClosed;
+    }
+
+    public void setDateClosed(JLabel dateClosed) {
+        this.dateClosed = dateClosed;
+    }
+
+    public JTextField getDateClosedText() {
+        return dateClosedText;
+    }
+
+    public void setDateClosedText(JTextField dateClosedText) {
+        this.dateClosedText = dateClosedText;
+    }
+
+    public JLabel getDateOpened() {
+        return dateOpened;
+    }
+
+    public void setDateOpened(JLabel dateOpened) {
+        this.dateOpened = dateOpened;
+    }
+
+    public JTextField getDateOpenedText() {
+        return dateOpenedText;
+    }
+
+    public void setDateOpenedText(JTextField dateOpenedText) {
+        this.dateOpenedText = dateOpenedText;
+    }
+
+    public JLabel getDescription() {
+        return description;
+    }
+
+    public void setDescription(JLabel description) {
+        this.description = description;
+    }
+
+    public JTextArea getDescriptionText() {
+        return descriptionText;
+    }
+
+    public void setDescriptionText(JTextArea descriptionText) {
+        this.descriptionText = descriptionText;
+    }
+
+    public JPanel getFormPane() {
+        return formPane;
+    }
+
+    public void setFormPane(JPanel formPane) {
+        this.formPane = formPane;
+    }
+
+    public JLabel getId() {
+        return id;
+    }
+
+    public void setId(JLabel id) {
+        this.id = id;
+    }
+
+    public JLabel getIdText() {
+        return idText;
+    }
+
+    public void setIdText(JLabel idText) {
+        this.idText = idText;
+    }
+
+    public JPanel getjPanel1() {
+        return jPanel1;
+    }
+
+    public void setjPanel1(JPanel jPanel1) {
+        this.jPanel1 = jPanel1;
+    }
+
+    public JPanel getjPanel2() {
+        return jPanel2;
+    }
+
+    public void setjPanel2(JPanel jPanel2) {
+        this.jPanel2 = jPanel2;
+    }
+
+    public JScrollPane getjScrollPane7() {
+        return jScrollPane7;
+    }
+
+    public void setjScrollPane7(JScrollPane jScrollPane7) {
+        this.jScrollPane7 = jScrollPane7;
+    }
+
+    public JLabel getLock() {
+        return lock;
+    }
+
+    public void setLock(JLabel lock) {
+        this.lock = lock;
+    }
+
+    public JCheckBox getLockCheckBox() {
+        return lockCheckBox;
+    }
+
+    public void setLockCheckBox(JCheckBox lockCheckBox) {
+        this.lockCheckBox = lockCheckBox;
+    }
+
+    public JLabel getProgrammer() {
+        return programmer;
+    }
+
+    public void setProgrammer(JLabel programmer) {
+        this.programmer = programmer;
+    }
+
+    public JComboBox getProgrammerComboBox() {
+        return programmerComboBox;
+    }
+
+    public void setProgrammerComboBox(JComboBox programmerComboBox) {
+        this.programmerComboBox = programmerComboBox;
+    }
+
+    public JLabel getRk() {
+        return rk;
+    }
+
+    public void setRk(JLabel rk) {
+        this.rk = rk;
+    }
+
+    public JComboBox getRkComboBox() {
+        return rkComboBox;
+    }
+
+    public void setRkComboBox(JComboBox rkComboBox) {
+        this.rkComboBox = rkComboBox;
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
+    }
+
+    public void setScrollPane(JScrollPane scrollPane) {
+        this.scrollPane = scrollPane;
+    }
+
+    public JLabel getSubmitter() {
+        return submitter;
+    }
+
+    public void setSubmitter(JLabel submitter) {
+        this.submitter = submitter;
+    }
+
+    public JTextField getSubmitterText() {
+        return submitterText;
+    }
+
+    public void setSubmitterText(JTextField submitterText) {
+        this.submitterText = submitterText;
+    }
+
+    public void setTitle(JLabel title) {
+        this.title = title;
+    }
+
+    public JTextField getTitleText() {
+        return titleText;
+    }
+
+    public void setTitleText(JTextField titleText) {
+        this.titleText = titleText;
+    }
+
+    public JLabel getVersion() {
+        return version;
+    }
+
+    public void setVersion(JLabel version) {
+        this.version = version;
+    }
+
+    public JTextField getVersionText() {
+        return versionText;
+    }
+
+    public void setVersionText(JTextField versionText) {
+        this.versionText = versionText;
+    }
     private ShortCutSetting ShortCutSetting;
     private String[] dropdownlist = {"app","title", "description","programmer", "dateOpened", "rk", "version", "dateClosed"};
     private Map<String, Tab> tabs;       // used to update the records label
@@ -116,6 +463,8 @@ public class IssueWindow extends JFrame {
         this.setLocation(x + numWindow * 30, y + numWindow * 15); // set location of view issue window depend on how many window open
 
         this.pack();
+        
+        Authorization.authorize(this);
     }
 
     /**

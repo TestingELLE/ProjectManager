@@ -15,4 +15,5 @@ public interface IAdminComponent {
     public abstract void setComponent(LogWindow window);
     public abstract void setComponent(LoginWindow window);
     public abstract void setComponent(ProjectManagerWindow window);
+    public abstract void setComponent(IssueWindow window);
 }
