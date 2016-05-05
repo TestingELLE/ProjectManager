@@ -7,6 +7,8 @@ import com.elle.ProjectManager.database.Server;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -55,6 +57,10 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         fillServersTable(tableServers);
         cbServer.setModel(getServerNamesCBModel());
         fillDatabasesTable(tableDatabases, servers.get(0).getName());
+        
+        // set table listeners
+        setTableListeners(tableServers);
+        setTableListeners(tableDatabases);
     }
 
     /**
@@ -532,11 +538,32 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
     
     /**
      * Sets the table listeners.
-     * Currently used to listen for changes or mouse pressed to enable the 
+     * Currently used to listen for changes or mouse/key pressed to enable the 
      * save buttons when the table is not being edited.
      * @param table 
      */
     private void setTableListeners(JTable table){
+        table.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // set save button enabled only when not editing the table
+                boolean b = !table.isEditing();
+                if(table.equals(tableServers)){
+                    btnSaveServers.setEnabled(b);
+                }
+                else{
+                    btnSaveDatabases.setEnabled(b);
+                }
+            }
+        });
         table.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 // set save button enabled only when not editing the table
