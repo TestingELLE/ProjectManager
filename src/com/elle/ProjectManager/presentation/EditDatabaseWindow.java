@@ -4,7 +4,6 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.Database;
 import com.elle.ProjectManager.database.Server;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
