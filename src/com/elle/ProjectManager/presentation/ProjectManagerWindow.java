@@ -621,6 +621,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuitemViewOneIssue = new javax.swing.JMenuItem();
         menuItemViewSplashScreen = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
+        menuItemReloadSelectedData = new javax.swing.JMenuItem();
         menuItemReloadData = new javax.swing.JMenuItem();
         menuItemReloadAllData = new javax.swing.JMenuItem();
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
@@ -1027,7 +1028,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 166, Short.MAX_VALUE))
+                .addGap(0, 96, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1199,6 +1200,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuBar.add(menuView);
 
         menuTools.setText("Tools");
+
+        menuItemReloadSelectedData.setText("Reload Selected data");
+        menuItemReloadSelectedData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemReloadSelectedDataActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemReloadSelectedData);
 
         menuItemReloadData.setText("Reload Tab data");
         menuItemReloadData.addActionListener(new java.awt.event.ActionListener() {
@@ -2363,6 +2372,23 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // no rows are selected
         }
     }//GEN-LAST:event_menuItemDeleteRecordActionPerformed
+
+    private void menuItemReloadSelectedDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadSelectedDataActionPerformed
+       int row = getSelectedTable().getSelectedRow();
+       if(row == -1){
+           
+       }
+       else{
+       Object ID = getSelectedTable().getValueAt(row, 0);
+       System.out.println(ID + "ohhhhh");
+        
+        
+        Issue issue = issueDAO.getSelectedRow(getSelectedTable().getName(), ID.toString());
+         
+        
+          updateTableRow(getSelectedTable(),issue);
+       }
+    }//GEN-LAST:event_menuItemReloadSelectedDataActionPerformed
 
     public void comboBoxForSearchEditorMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -4022,6 +4048,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemPrintGUI;
     private javax.swing.JMenuItem menuItemReloadAllData;
     private javax.swing.JMenuItem menuItemReloadData;
+    private javax.swing.JMenuItem menuItemReloadSelectedData;
     private javax.swing.JMenuItem menuItemRepBugSugg;
     private javax.swing.JCheckBoxMenuItem menuItemSQLCmdChkBx;
     private javax.swing.JMenuItem menuItemSaveFile;
