@@ -52,8 +52,6 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         
         // set the servers, cb, databases
         servers = DBConnection.readServers();
-        setServersTableListener();
-        setDatabasesTableListener();
         fillServersTable(tableServers);
         cbServer.setModel(getServerNamesCBModel());
         fillDatabasesTable(tableDatabases, servers.get(0).getName());
@@ -502,40 +500,6 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         timer.start();
     }
     
-    private void setServersTableListener() {
-        tableServers.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                int rows = tableServers.getRowCount();
-                int selectedRow = tableServers.rowAtPoint(e.getPoint());
-                int selectedCol = tableServers.columnAtPoint(e.getPoint());
-                boolean selectedDefault;
-                if(selectedCol == 0){ // this is the default checkbox column
-                    for(int row = 0; row < rows; row++){
-                        selectedDefault = (row == selectedRow)?true:false;
-                        tableServers.setValueAt(selectedDefault, row, 0);
-                    }
-                }
-            }
-        });
-    }
-
-    private void setDatabasesTableListener() {
-    tableDatabases.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                int rows = tableDatabases.getRowCount();
-                int selectedRow = tableDatabases.rowAtPoint(e.getPoint());
-                int selectedCol = tableDatabases.columnAtPoint(e.getPoint());
-                boolean selectedDefault;
-                if(selectedCol == 0){ // this is the default checkbox column
-                    for(int row = 0; row < rows; row++){
-                        selectedDefault = (row == selectedRow)?true:false;
-                        tableDatabases.setValueAt(selectedDefault, row, 0);
-                    }
-                }
-            }
-        });
-    }
-    
     /**
      * Sets the table listeners.
      * Currently used to listen for changes or mouse/key pressed to enable the 
@@ -565,6 +529,18 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
             }
         });
         table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int rows = table.getRowCount();
+                int selectedRow = table.rowAtPoint(e.getPoint());
+                int selectedCol = table.columnAtPoint(e.getPoint());
+                boolean selectedDefault;
+                if(selectedCol == 0){ // this is the default checkbox column
+                    for(int row = 0; row < rows; row++){
+                        selectedDefault = (row == selectedRow)?true:false;
+                        table.setValueAt(selectedDefault, row, 0);
+                    }
+                }
+            }
             public void mousePressed(MouseEvent e) {
                 // set save button enabled only when not editing the table
                 boolean b = !table.isEditing();
