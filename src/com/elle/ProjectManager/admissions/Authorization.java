@@ -51,13 +51,11 @@ public class Authorization {
         if(!map.get(DB_COLUMN_2).isEmpty()){
             accessLevel = map.get(DB_COLUMN_2).get(0).toString();
             setAdminComponentType(accessLevel);
-            System.out.println(accessLevel);
             return true;
         }
         else{
             accessLevel = USER; // defaults to user
             setAdminComponentType(accessLevel);
-            System.out.println(accessLevel);
             return false;
         }
     }
