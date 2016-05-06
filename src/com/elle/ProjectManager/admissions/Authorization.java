@@ -93,7 +93,7 @@ public class Authorization {
     }
     
     private static void setPermissions(Component c, IAdminComponent admin){
-
+        
         if(c instanceof BackupDBTablesDialog){
             admin.setComponent((BackupDBTablesDialog)c);
         }
