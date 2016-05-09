@@ -5,6 +5,7 @@ import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.LoggingAspect;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -335,5 +336,48 @@ public class IssueDAO {
         }
         
         return issues;
+    }
+    
+      public Issue getSelectedRow(String tableName, String row) {
+        
+       
+      
+        ResultSet rs = null;
+        String sql = "";
+        
+        
+            sql = "SELECT * FROM " + DB_TABLE_NAME + " WHERE ID = " + "'" 
+            + row + "'";
+        Issue issue = new Issue();
+        
+        try {
+
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while(rs.next()){
+                
+                issue.setId(rs.getInt(COL_PK_ID));
+                issue.setApp(rs.getString(COL_APP));
+                issue.setTitle(rs.getString(COL_TITLE));
+                issue.setDescription(rs.getString(COL_DESCRIPTION));
+                issue.setProgrammer(rs.getString(COL_PROGRAMMER));
+                issue.setDateOpened(rs.getString(COL_DATE_OPENED));
+                issue.setRk(rs.getString(COL_RK));
+                issue.setVersion(rs.getString(COL_VERSION));
+                issue.setDateClosed(rs.getString(COL_DATE_CLOSED));
+                issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
+                issue.setSubmitter(rs.getString(COL_SUBMITTER));
+                issue.setLocked(rs.getString(COL_LOCKED));
+                
+            }
+            
+            LoggingAspect.afterReturn("Loaded table " + tableName);
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return issue;
     }
 }
