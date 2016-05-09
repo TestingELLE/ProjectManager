@@ -3,7 +3,6 @@ package com.elle.ProjectManager.logic;
 
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import static com.elle.ProjectManager.presentation.ProjectManagerWindow.informationLabel;
-import static com.elle.ProjectManager.presentation.ProjectManagerWindow.searchInformationLabel;
 import com.elle.ProjectManager.presentation.LogWindow;
 
 /**

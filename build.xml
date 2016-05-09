@@ -6,46 +6,21 @@
     <!-- this is netbeans generated code -->
     <import file="nbproject/build-impl.xml"/>
     
-    <!-- set the version of ProjectManager here -->
-    <property name="version" value="ProjectManager-1.7.8"/>
+    <!-- set the date and version of here -->
+    <property name="creation-date" value="2016-05-09"/>
+    <property name="version" value="1.8.0"/>
     
-    <!-- this is used to allow the jar file to use customised
-     manifest files -->
-<target name="-pre-init">
-        <property name="project.name" value="ProjectManager"/>
-        <property name="version.num" value="1.7.0d"/>
-        <tstamp>
-            <format pattern="yyyy-MM-dd HH:mm:ss z" property="NOW"></format>
-        </tstamp>
+    <!-- this is the jar name when it is created -->
+    <property name="jarname" value="ProjectManager-${version}"/>
 
-    <!--
-    <exec outputproperty="svna.version" executable="svnversion">
-     <arg value="-c" />
-     <redirector>
-      <outputfilterchain>
-       <tokenfilter>
-        <replaceregex pattern="^[0-9]*:?" replace="" flags="g"/>
-        <replaceregex pattern="M" replace="" flags="g"/>
-       </tokenfilter>
-      </outputfilterchain>
-     </redirector>
-    </exec>
-    -->
-        <manifest file="MANIFEST.MF">
-            <attribute name="Codebase" value="*"/>           
-            <attribute name="Permission" value="all-permissions"/>
-            <attribute name="Application-Library-Allowable-Codebase" value="javaquery.com"/>
-            <attribute name="Caller-Allowable-Codebase" value="www.javaquery.com javaquery.com"/>
-            <attribute name="Application-Name" value="javaQuery"/>
-            <attribute name="Bundle-Name" value="${project.name}"/>           
-            <attribute name="Bundle-Version" value="${version.num}"/>
-            <attribute name="Bundle-Date" value="${NOW}"/>
-            <attribute name="Implementation-Title" value="${project.name}"/>
-            <attribute name="Implementation-Version" value="${version.num}"/>
-            <attribute name="Implementation-URL" value="http://www.javaquery.com"/>
-            <!--<attribute name="Bundle-Revision" value="${svna.version}" />-->
+    <!-- this creates a manifest to get the date and version of the jar -->
+    <target name="-post-init">
+        <manifest file="src/com/elle/ProjectManager/MANIFEST.MF">
+            <attribute name="creation-date" value="${creation-date}" />
+            <attribute name="version" value="${version}" />
         </manifest>
- </target>
+    </target>
+ 
     <!-- This creates the jar that we want with the included dependencies -->
     <!-- There should be no need to edit this code -->
     <!-- other than adding or removing dependancies-->
@@ -53,10 +28,9 @@
     <!-- The new jar will be in the target folder in Analyster --> 
     <target name="-post-jar"> 
       <delete dir="target"/>
-      <jar jarfile="target/${version}.jar">
+      <jar jarfile="target/${jarname}.jar">
         <zipfileset src="${dist.jar}" excludes="META-INF/*" />
-        <zipfileset src="lib/mysql-connector-java-5.1.23-bin.jar" excludes="META-INF/*" />
-        <zipfileset src="lib/swingx-all-1.6.4.jar" excludes="META-INF/*" />
+        <zipgroupfileset dir="lib" excludes="META-INF/*" />
         <manifest>
             <attribute name="Main-Class" value="com.elle.ProjectManager.ProjectManager"/>
             <attribute name="SplashScreen-Image" value="com/elle/ProjectManager/image.png"/>

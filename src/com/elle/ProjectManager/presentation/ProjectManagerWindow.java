@@ -55,6 +55,9 @@ import javax.imageio.ImageIO;
  */
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
+    public static String creationDate; // set automatically from manifest
+    public static String version;       // set automatically from manifest
+    
     // attributes
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
@@ -1298,8 +1301,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void menuItemVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemVersionActionPerformed
 
         JOptionPane.showMessageDialog(this, "Creation Date: "
-                + CREATION_DATE + "\n"
-                + "Version: " + VERSION);
+                + creationDate + "\n"
+                + "Version: " + version);
     }//GEN-LAST:event_menuItemVersionActionPerformed
 
     private Map loadingDropdownList() {
@@ -3513,10 +3516,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return jPanelEdit;
     }
 
-    public String getVersion() {
-        return this.VERSION;
-    }
-
     /**
      * initTotalRowCounts called once to initialize the total rowIndex counts of
      * each tabs tableSelected
@@ -4115,12 +4114,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.labelEditModeState;
     }
 
-    public String getCREATION_DATE() {
-        return CREATION_DATE;
+    public String getCreationDate() {
+        return creationDate;
     }
 
-    public String getVERSION() {
-        return VERSION;
+    public String getVersion() {
+        return version;
     }
 
     public Map<String, Map<Integer, ArrayList<Object>>> getComboBoxForSearchDropDown() {
