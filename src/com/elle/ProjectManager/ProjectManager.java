@@ -1,21 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.elle.ProjectManager;
 
 import com.elle.ProjectManager.logic.FilePathFormat;
-import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import com.elle.ProjectManager.presentation.LoginWindow;
-import com.elle.ProjectManager.logic.ITableConstants;
-import static com.elle.ProjectManager.logic.ITableConstants.CREATION_DATE;
-import static com.elle.ProjectManager.logic.ITableConstants.VERSION;
 import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
 import java.awt.geom.Rectangle2D;
@@ -24,12 +14,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import static com.elle.ProjectManager.presentation.ProjectManagerWindow.version;
+import static com.elle.ProjectManager.presentation.ProjectManagerWindow.creationDate;
 
 /**
  * Main This is the class that starts the application from the main method
@@ -52,11 +42,25 @@ public class ProjectManager {
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             LoggingAspect.afterThrown(ex);
+            JOptionPane.showMessageDialog(null, "error: " + ex.getMessage());
+        }
+        
+        // get the creation date and version from the manifest
+        Manifest mf = new Manifest();
+        Attributes atts;
+        String s = "MANIFEST.MF";
+        InputStream inputStream = ProjectManager.class.getResourceAsStream(s);
+        try {
+            mf.read(inputStream);
+            atts = mf.getMainAttributes();
+            creationDate = atts.getValue("creation-date");
+            version = atts.getValue("version");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
         }
 
         loadingMethod();
         mainMethod();
-
     }
 //}
 
@@ -96,8 +100,6 @@ public class ProjectManager {
 
     public static void loadingText(String string) {
         if (loadingScreen != null) {
-//            loadingGraphics.setPaint(Color.GRAY);
-//            loadingGraphics.fill(loadingTextArea);
 
             loadingGraphics.setPaint(Color.BLUE);
             g.setColor(Color.BLUE);
@@ -105,7 +107,7 @@ public class ProjectManager {
             loadingGraphics.setFont(font);
             g.setFont(font);
 
-            String information = "Version:" + VERSION + "        CreationDate: " + CREATION_DATE;
+            String information = "Version:" + version + "        CreationDate: " + creationDate;
             loadingGraphics.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
             g.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
 
@@ -144,16 +146,15 @@ public class ProjectManager {
     }
 
     public static void mainMethod() {
-//        final String[] comps = {"table PM", "table ELLEGUI", "table Analyster", "table Other", "table issue_files",};
         loadingMethod();
         for (int i = 1; i <= 5; i++) {
             loadingText("Loading...");
-//            + comps[i-1] + "...");
             loadingProgress(i * 20);
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
                 LoggingAspect.afterThrown(e);
+                JOptionPane.showMessageDialog(null, "error: " + e.getMessage());
             }
         }
 
@@ -181,6 +182,7 @@ public class ProjectManager {
         } catch (IOException ex) {
             LoggingAspect.addLogMsgWthDate("image save failed!" + " Due to: " + ex.getMessage());
             LoggingAspect.afterThrown(ex);
+            JOptionPane.showMessageDialog(null, "error: " + ex.getMessage());
         }
 
     }

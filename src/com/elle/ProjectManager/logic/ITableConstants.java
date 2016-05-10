@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.elle.ProjectManager.logic;
 
 /**
@@ -13,11 +8,7 @@ package com.elle.ProjectManager.logic;
  * @version 1.0.0
  */
 public interface ITableConstants {
-    
-    // Edit the version and date it was created for new archives and jars
-    public final String CREATION_DATE = "2016-05-09";
-    public final String VERSION = "1.7.8";
-    
+
     public static final String TASKS_TABLE_NAME = "issues";
     public static final String TASKFILES_TABLE_NAME = "issue_files";
 //    public static final String TASKNOTES_TABLE_NAME = "issue_notes";
