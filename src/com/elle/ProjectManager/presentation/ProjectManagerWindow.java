@@ -55,7 +55,7 @@ import javax.imageio.ImageIO;
  */
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
-    public static String creationDate; // set automatically from manifest
+    public static String creationDate;  // set automatically from manifest
     public static String version;       // set automatically from manifest
     
     // attributes
