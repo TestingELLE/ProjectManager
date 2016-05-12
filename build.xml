@@ -6,9 +6,9 @@
     <!-- this is netbeans generated code -->
     <import file="nbproject/build-impl.xml"/>
     
-    <!-- set the date and version of here -->
-    <property name="creation-date" value="2016-05-09"/>
-    <property name="version" value="1.8.0"/>
+    <!-- set the date and version here -->
+    <property name="creation-date" value="2016-05-12"/>
+    <property name="version" value="1.8.1"/>
     
     <!-- this is the jar name when it is created -->
     <property name="jarname" value="ProjectManager-${version}"/>
@@ -23,9 +23,9 @@
  
     <!-- This creates the jar that we want with the included dependencies -->
     <!-- There should be no need to edit this code -->
-    <!-- other than adding or removing dependancies-->
-    <!-- Dependancies are kept in the lib folder in Analyster-->
-    <!-- The new jar will be in the target folder in Analyster --> 
+    <!-- other than adding or removing dependencies-->
+    <!-- Dependencies are kept in the lib folder in ProjectManager -->
+    <!-- The new jar will be in the target folder in ProjectManager --> 
     <target name="-post-jar"> 
       <delete dir="target"/>
       <jar jarfile="target/${jarname}.jar">

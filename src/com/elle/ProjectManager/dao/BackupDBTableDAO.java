@@ -32,19 +32,10 @@ public class BackupDBTableDAO {
     private final String APPLICATION_NAME = "PM";
     
     // components
-    private SQL_Commands sql_commands;
     private Component parentComponent;
-    private Connection connection;
-    private Statement statement;
     
-    public BackupDBTableDAO(Connection connection, Component parentComponent){
-        this.sql_commands = new SQL_Commands(connection);
-        this.connection = connection;
-        try {
-            this.statement = connection.createStatement();
-        } catch (SQLException ex) {
-            Logger.getLogger(BackupDBTableDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public BackupDBTableDAO(Component parentComponent){
+
         this.parentComponent = parentComponent;
     }
     
@@ -60,9 +51,13 @@ public class BackupDBTableDAO {
                         COL_BACKUP_NAME + " VARCHAR(50) NOT NULL " +
                 ");";
 
-            if(!sql_commands.updateQuery(createTableQuery)){
+            try {
+                DBConnection.getStatement().executeUpdate(createTableQuery);
+                LoggingAspect.afterReturn("Created table " + DB_TABLE_NAME);
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(parentComponent, 
                         "unable to create table " + DB_TABLE_NAME);
+                LoggingAspect.afterThrown(ex);
             }
         }
         DBConnection.close();
@@ -82,11 +77,8 @@ public class BackupDBTableDAO {
             ResultSet result = null;
 
             try {
-                //Here we create our query
-                PreparedStatement statement = connection.prepareStatement(sql);
-
                 //Creating a variable to execute query
-                result = statement.executeQuery();
+                result = DBConnection.getStatement().executeQuery(sql);
 
             }
             catch (SQLException ex) {
@@ -94,7 +86,10 @@ public class BackupDBTableDAO {
                 // if table doesn't exist and needs to be created
                 if(ex.getMessage().endsWith("exist")){
                     createDBTableToStoreBackupsInfo();
-                    result = sql_commands.executeQuery(sql);
+                    try {
+                        result = DBConnection.getStatement().executeQuery(sql);
+                    } catch (SQLException ex1) {
+                    }
                 }
             }
             finally{
@@ -104,10 +99,10 @@ public class BackupDBTableDAO {
                         while(result.next())
                         {
                             BackupDBTableRecord record = new BackupDBTableRecord();
-                            record.setId(result.getInt(1));
-                            record.setApplicationName(result.getString(2));
-                            record.setTableName(result.getString(3));
-                            record.setBackupTableName(result.getString(4));
+                            record.setId(result.getInt(COL_PK_ID));
+                            record.setApplicationName(result.getString(COL_APPLICATION));
+                            record.setTableName(result.getString(COL_TABLE_NAME));
+                            record.setBackupTableName(result.getString(COL_BACKUP_NAME));
                             records.add(record);
                         }
                     } catch (SQLException ex) {
@@ -135,12 +130,12 @@ public class BackupDBTableDAO {
             try {
                 // drop table
                 sql = "DROP TABLE " + backupTableName + " ; ";
-                statement.executeUpdate(sql);
+                DBConnection.getStatement().executeUpdate(sql);
 
                 // delete record
                 sql = "DELETE FROM " + DB_TABLE_NAME +
                         " WHERE " + COL_PK_ID + " = " + id + ";";
-                statement.executeUpdate(sql);
+                DBConnection.getStatement().executeUpdate(sql);
 
                 LoggingAspect.afterReturn("Deleted backup " + backupTableName);
                 DBConnection.close();
@@ -170,12 +165,12 @@ public class BackupDBTableDAO {
             try {
                 // drop table
                 sql = "DROP TABLE " + backupTableName + " ; ";
-                statement.executeUpdate(sql);
+                DBConnection.getStatement().executeUpdate(sql);
 
                 // delete record
                 sql = "DELETE FROM " + DB_TABLE_NAME +
                         " WHERE " + COL_BACKUP_NAME + " = '" + backupTableName + "';";
-                statement.executeUpdate(sql);
+                DBConnection.getStatement().executeUpdate(sql);
 
                 LoggingAspect.afterReturn("Deleted backup " + backupTableName);
                 DBConnection.close();
@@ -204,17 +199,17 @@ public class BackupDBTableDAO {
                 // create the backup table
                 sql = "CREATE TABLE " + backupTableName
                         + " LIKE " + tableName + " ; ";
-                statement.executeUpdate(sql);
+                DBConnection.getStatement().executeUpdate(sql);
 
                 // backup the table data
                 sql =  "INSERT INTO " + backupTableName
                         + " SELECT * FROM " + tableName +  " ;";
-                statement.executeUpdate(sql);
+                DBConnection.getStatement().executeUpdate(sql);
 
                 // add record
                 sql = "INSERT INTO " + DB_TABLE_NAME + " ( " + COL_APPLICATION + ", " + COL_TABLE_NAME + ", " + COL_BACKUP_NAME + ")"
                         + " VALUES ('" + APPLICATION_NAME + "', '" +  tableName + "', '" +  backupTableName + "');";
-                statement.executeUpdate(sql);
+                DBConnection.getStatement().executeUpdate(sql);
 
                 LoggingAspect.afterReturn("Created backup " + backupTableName);
                 DBConnection.close();
@@ -248,9 +243,9 @@ public class BackupDBTableDAO {
             String rename = "RENAME TABLE " + oldTableName + 
                            " TO " + backupName;
             try {
-                statement.executeUpdate(rename);
+                DBConnection.getStatement().executeUpdate(rename);
                 LoggingAspect.afterReturn(update);
-                statement.executeUpdate(update);
+                DBConnection.getStatement().executeUpdate(update);
                 LoggingAspect.afterReturn(update);
                 DBConnection.close();
                 return true;
