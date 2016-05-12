@@ -2317,7 +2317,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // open new connection
         DBConnection.close(); // connection might be timed out on server
         if (DBConnection.open()) {  // open a new connection
-            BackupDBTablesDialog backupDBTables = new BackupDBTablesDialog(DBConnection.getConnection(), this);
+            BackupDBTablesDialog backupDBTables = new BackupDBTablesDialog(this);
         } else {
             JOptionPane.showMessageDialog(this, "Could not connect to Database");
         }
@@ -3657,7 +3657,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public JTable loadTableData(JTable table) {
         String tableName = table.getName();
         
-        System.out.println("table name = " + tableName);
         // set table model data
         if (tableName.equals(TASKFILES_TABLE_NAME)) {
             // this is for the issue_files tab/table

@@ -1,7 +1,6 @@
 package com.elle.ProjectManager.database;
 
 import com.elle.ProjectManager.logic.LoggingAspect;
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -11,9 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /**
  * Created by Carlos Igreja on 1/11/2016.

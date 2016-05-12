@@ -1,11 +1,9 @@
 package com.elle.ProjectManager.admissions;
 
+import com.elle.ProjectManager.dao.AccessLevelDAO;
 import com.elle.ProjectManager.database.DBConnection;
-import com.elle.ProjectManager.database.SQL_Commands;
 import com.elle.ProjectManager.presentation.*;
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * This class will simply override any original behavior depending on the 
@@ -16,12 +14,7 @@ import java.util.HashMap;
  * @author Carlos Igreja
  */
 public class Authorization {
-    
-    // database constants
-    private static final String DB_TABLE_NAME = "PM_accessLevel_tbl";
-    private static final String DB_COLUMN_1 = "user";
-    private static final String DB_COLUMN_2 = "accessLevel";
-    
+
     // constants
     private static final String ADMINISTRATOR = "administrator";
     private static final String DEVELOPER = "developer";
@@ -41,15 +34,9 @@ public class Authorization {
      */
     public static boolean getInfoFromDB(){
         userLogin = DBConnection.getUserName();
-        // use sql query to get the accesslevel from DB
-        SQL_Commands sql_commands 
-                = new SQL_Commands(DBConnection.getConnection());
-        String query = "SELECT * FROM " + DB_TABLE_NAME +
-                      " WHERE " + DB_COLUMN_1 + " = '" + userLogin +"';";
-        HashMap<String,ArrayList<Object>> map;
-        map = sql_commands.getTableData(sql_commands.executeQuery(query));
-        if(!map.get(DB_COLUMN_2).isEmpty()){
-            accessLevel = map.get(DB_COLUMN_2).get(0).toString();
+        accessLevel = AccessLevelDAO.get(userLogin);
+
+        if(accessLevel != null){
             setAdminComponentType(accessLevel);
             return true;
         }

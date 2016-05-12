@@ -5,7 +5,6 @@ import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.LoggingAspect;
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -338,7 +337,7 @@ public class IssueDAO {
         return issues;
     }
     
-      public Issue getSelectedRow(String tableName, String row) {
+    public Issue getSelectedRow(String tableName, String row) {
         
        
       
