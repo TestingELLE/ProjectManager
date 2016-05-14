@@ -24,6 +24,7 @@ public interface ITableConstants {
     // search fields for the comboBox for each table
     public static final String[] TASKS_SEARCH_FIELDS = {"programmer","title", "description", "dateOpened", "dateClosed", "rk", "version"};
     public static final String[] TASKFILES_SEARCH_FIELDS = {"submitter"};
+    public static final String[] TASKS_SEARCH_FIELDS_OTHERS = {"app","programmer","title", "description", "dateOpened", "dateClosed", "rk", "version"};
 //    public static final String[] TASKNOTES_SEARCH_FIELDS = {"submitter"};
     
     // batch edit combobox selections for each table
