@@ -139,12 +139,26 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
 
             if (!tableNames[tableName].equals(TASKFILES_TABLE_NAME)) {
+                
+                if(tableNames[tableName].equalsIgnoreCase("other")){
+                    // set the search fields for the comboBox for each tabName
+                tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS_OTHERS);
+                // set the search fields for the comboBox for each tabName
+                tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
+                // set column width percents to tables of the tabName objects
+                tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
+                    
+                }else{
+                
+                
+                
                 // set the search fields for the comboBox for each tabName
                 tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS);
                 // set the search fields for the comboBox for each tabName
                 tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
                 // set column width percents to tables of the tabName objects
                 tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
+            }
             } else {
                 tabs.get(tableNames[tableName]).setSearchFields(TASKFILES_SEARCH_FIELDS);
                 tabs.get(tableNames[tableName]).setBatchEditFields(TASKFILES_BATCHEDIT_CB_FIELDS);
@@ -1399,7 +1413,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                         dropDownList = list;
                     }
-                } else if (colName.equalsIgnoreCase("programmer")) {
+                } else if (colName.equalsIgnoreCase("programmer") || colName.equalsIgnoreCase("app")) {
                     Object nullValue = "";
 
                     Collections.sort(dropDownList, new Comparator<Object>() {
