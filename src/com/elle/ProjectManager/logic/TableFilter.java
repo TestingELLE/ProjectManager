@@ -42,6 +42,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
         color = Color.GREEN; // default color is green
 
         isFiltering = false;
+        
+        
     }
 
     /**
@@ -56,6 +58,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
         for (int i = 0; i < table.getColumnCount(); i++) {
             filterItems.put(i, new ArrayList<>());
         }
+        
+        
     }
 
     /**
@@ -117,6 +121,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
         }
     }
 
+ 
     public void addCustomIdListToFilterItem(CustomIDList customIdList) {
         this.customIdListFilter = customIdList;
         if (!customIdList.isEmpty()) {
@@ -362,17 +367,24 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
                     }
                 }
             }
+            
+            System.out.println("itemsFound = " + itemsFound);
+            System.out.println("numColsfiltered = "+ numColsfiltered);
             if (emptyFilterCols == model.getColumnCount()) {
                 isFiltering = false;
                 return true;
             } else if (itemsFound == numColsfiltered) {
+                
                 return true;
             } else {
-                if (!this.customIdListFilter.isEmpty()) {
+                
+                // if customIDListFilter exists, and its size > 0 , do the filter
+                if (this.customIdListFilter != null &&!this.customIdListFilter.isEmpty()) {
                     if (this.customIdListFilter.contains((Integer) model.getValueAt(row, 0))) {
                         return true;
                     }
                 }
+                
                 return false;
 
             }

@@ -24,6 +24,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -2512,14 +2513,20 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // this adds a mouselistener to the tableSelected header
         JTableHeader header = table.getTableHeader();
+        
+
+        //add customized mouselistener
+     
         if (header != null) {
             header.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-
+                    
                     if (e.getClickCount() == 2) {
                         clearFilterDoubleClick(e, table);
                     }
+                    
+                   
 //                    if (e.getClickCount() == 1) {
 //                        for (int j = 0; j < table.getColumnCount(); j++) {
 //                            // Locate columns under "ID"
@@ -2584,6 +2591,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                  */
                 @Override
                 public void mousePressed(MouseEvent e) {
+                 
                     if (e.isPopupTrigger()) {
                         // this calls the column popup menu
                         tabs.get(table.getName())
@@ -2593,6 +2601,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                 @Override
                 public void mouseReleased(MouseEvent e) {
+                   
                     if (e.isPopupTrigger()) {
                         // this calls the column popup menu
                         tabs.get(table.getName())
@@ -2600,6 +2609,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     }
                 }
             }
+               
             );
         }
 
@@ -2981,6 +2991,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String recordsLabel = tab.getRecordsLabel();
         labelRecords.setText(recordsLabel);
     }
+    
+    
 
     /**
      * setColumnFormat sets column format for each tableSelected
@@ -3634,7 +3646,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             loadTable(tab);
 
             LoggingAspect.afterReturn("Table loaded succesfully");
-            setTableListeners(table, this);
+            
+            //Yi 05-18-2016 commented out the duplicated mouse listener. 
+            //which was already added in loadTableData(table)
+            //setTableListeners(table, this);  
 
             boolean isColumnNameTheSame = ColumnNameConsistency.IsTableColumnNameTheSame(tab, table);
             if (!isColumnNameTheSame) {
