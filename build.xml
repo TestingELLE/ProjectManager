@@ -7,8 +7,8 @@
     <import file="nbproject/build-impl.xml"/>
     
     <!-- set the date and version here -->
-    <property name="creation-date" value="2016-05-18"/>
-    <property name="version" value="1.8.1a"/>
+    <property name="creation-date" value="2016-05-19"/>
+    <property name="version" value="1.8.1b"/>
     
     <!-- this is the jar name when it is created -->
     <property name="jarname" value="ProjectManager-${version}"/>

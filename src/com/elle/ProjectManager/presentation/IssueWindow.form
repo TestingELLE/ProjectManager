@@ -33,7 +33,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-              <Component id="scrollPane" pref="751" max="32767" attributes="0"/>
+              <Component id="scrollPane" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -63,7 +63,7 @@
                                   <Component id="id" min="-2" max="-2" attributes="0"/>
                                   <Component id="lock" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="idText" min="-2" max="-2" attributes="0"/>
@@ -72,7 +72,7 @@
                                   </Group>
                                   <Component id="lockCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="36" max="32767" attributes="0"/>
+                              <EmptySpace pref="53" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="submitterText" min="-2" pref="100" max="-2" attributes="0"/>
                                   <Component id="submitter" min="-2" pref="72" max="-2" attributes="0"/>
@@ -121,7 +121,7 @@
                                       <Component id="BtnNext" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -131,15 +131,6 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="dateOpenedText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="programmerComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="rkComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="submitterText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
@@ -155,11 +146,17 @@
                                   <Component id="lock" min="-2" pref="26" max="-2" attributes="0"/>
                                   <Component id="lockCheckBox" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="title" min="-2" pref="13" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="dateOpenedText" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="programmerComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="rkComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="submitterText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -170,11 +167,10 @@
                           <Component id="BtnPrevious" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="description" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="jScrollPane7" min="-2" pref="505" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane7" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
