@@ -274,13 +274,7 @@ public class IssueWindow extends JFrame {
         this.jPanel1 = jPanel1;
     }
 
-    public JPanel getjPanel2() {
-        return jPanel2;
-    }
 
-    public void setjPanel2(JPanel jPanel2) {
-        this.jPanel2 = jPanel2;
-    }
 
     public JScrollPane getjScrollPane7() {
         return jScrollPane7;
@@ -467,8 +461,8 @@ public class IssueWindow extends JFrame {
         }
         
        // set the minimum size, width 620, height 750 or 80% of screen size
-        int minHeight = (screenSize.height * 0.85 < 750) ? (int)(screenSize.height * 0.8) : 750; 
-        Dimension minSize = new Dimension(620, minHeight);
+        //int minHeight = (screenSize.height * 0.85 < 750) ? (int)(screenSize.height * 0.8) : 750; 
+        Dimension minSize = new Dimension(580, 400);
         
         this.setPreferredSize(frameSize);
         this.setMinimumSize(minSize);
@@ -547,7 +541,6 @@ public class IssueWindow extends JFrame {
         appComboBox = new javax.swing.JComboBox();
         titleText = new javax.swing.JTextField();
         description = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
         idText = new javax.swing.JLabel();
         BtnNext = new javax.swing.JButton();
         BtnPrevious = new javax.swing.JButton();
@@ -665,7 +658,7 @@ public class IssueWindow extends JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(app)
                     .addComponent(appComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(btnCloseIssue, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -704,7 +697,7 @@ public class IssueWindow extends JFrame {
                             .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(buttonConfirm)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(0, 0, 0)
                         .addComponent(appComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
         );
@@ -713,17 +706,6 @@ public class IssueWindow extends JFrame {
         titleText.setName("title"); // NOI18N
 
         description.setText(" description");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 38, Short.MAX_VALUE)
-        );
 
         idText.setText("jLabel1");
 
@@ -788,50 +770,46 @@ public class IssueWindow extends JFrame {
             .addGroup(formPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(id)
-                            .addComponent(lock))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addComponent(idText)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lockCheckBox))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dateOpened, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(programmer)
-                            .addComponent(programmerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addComponent(rkComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(formPaneLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())
-                    .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGap(177, 177, 177)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(6, 6, 6))
                     .addGroup(formPaneLayout.createSequentialGroup()
                         .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(titleText, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane7, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(formPaneLayout.createSequentialGroup()
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addComponent(lock)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lockCheckBox))
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addComponent(id)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(idText, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(dateOpened, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(programmerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(programmer))
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addGap(12, 12, 12)
+                                        .addComponent(rkComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(titleText)
+                            .addComponent(jScrollPane7)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
                                 .addComponent(description)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(BtnPrevious)
@@ -844,28 +822,30 @@ public class IssueWindow extends JFrame {
             .addGroup(formPaneLayout.createSequentialGroup()
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
-                        .addGap(9, 9, 9)
+                        .addGap(7, 7, 7)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(idText)
-                            .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dateOpened, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(programmer)
-                            .addComponent(rk)
+                            .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dateOpened, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(programmer, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(idText, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lockCheckBox))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lockCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lock, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5))
                     .addGroup(formPaneLayout.createSequentialGroup()
-                        .addGap(31, 31, 31)
+                        .addGap(30, 30, 30)
                         .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(programmerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(rkComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(2, 2, 2)
                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -875,8 +855,7 @@ public class IssueWindow extends JFrame {
                 .addComponent(jScrollPane7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         scrollPane.setViewportView(formPane);
@@ -885,13 +864,11 @@ public class IssueWindow extends JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(scrollPane))
+            .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
         );
 
         pack();
@@ -997,11 +974,211 @@ public class IssueWindow extends JFrame {
 //        System.out.println("window closing!");
     }//GEN-LAST:event_formWindowClosing
 
-    private void dateOpenedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateOpenedTextKeyReleased
-        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
-            this.FillItWithDate((JTextField) evt.getComponent());
+    private void rkComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rkComboBoxActionPerformed
+        if(rkComboBox.getSelectedItem().toString().equals(issue.getRk())){
+            checkForChangeAndSetBtnsEnabled();
         }
-    }//GEN-LAST:event_dateOpenedTextKeyReleased
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_rkComboBoxActionPerformed
+
+    private void programmerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programmerComboBoxActionPerformed
+        if(programmerComboBox.getSelectedItem().toString().equals(issue.getProgrammer())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_programmerComboBoxActionPerformed
+
+    /**
+     * Fires when IssueType ComboBox selection is changed
+     * @param evt action event for the IssueType ComboBox
+     */
+    private void comboBoxIssueTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxIssueTypeActionPerformed
+        // if the same then check for other changes
+        if(comboBoxIssueType.getSelectedItem().toString().equals(issue.getIssueType())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_comboBoxIssueTypeActionPerformed
+
+    /**
+     * Fires when Lock CheckBox selection is changed
+     * @param evt action event for the Lock CheckBox
+     */
+    private void lockCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockCheckBoxActionPerformed
+
+        // if the same then check for other changes
+        if((lockCheckBox.isSelected()?"Y":"").equals(issue.getLocked())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_lockCheckBoxActionPerformed
+
+    private void submitterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitterTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_submitterTextActionPerformed
+
+    /**
+     * Fired when the previous button is invoked.
+     * The previous button traverses the table to get the previous issue.
+     * @param evt 
+     */
+    private void BtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPreviousActionPerformed
+
+        /**
+        * If table has not changed then no need to execute this for loop.
+        * boolean found makes sure the issue is still in the table view.
+        */
+        boolean rowFound = true;
+        if (!table.getValueAt(row, 0).toString().equals(Integer.toString(issue.getId()))) {
+
+            rowFound = false;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
+                    row = i;
+                    rowFound = true;
+                }
+            }
+        }
+
+        // previous row
+        if(!rowFound){
+            JOptionPane.showMessageDialog(this, "This issue is no longer on the table!");
+        }
+        else if (row == 0) {
+            JOptionPane.showMessageDialog(this, "This issue is already the first row on the table!");
+        } else {
+            row--;
+            setIssueValuesFromTable(row,table);
+            setComponentValuesFromIssue();
+            table.setRowSelectionInterval(row, row);
+            updateCustomIdList(row);
+        }
+    }//GEN-LAST:event_BtnPreviousActionPerformed
+
+    /**
+     * Fired when the next button is invoked.
+     * The next button traverses the table to get the next issue.
+     * @param evt 
+     */
+    private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
+
+        /**
+        * If table has not changed then no need to execute this for loop.
+        * boolean rowFound makes sure the issue is still in the table view.
+        */
+        boolean rowFound = true;
+        if (!table.getValueAt(row, 0).toString().equals(Integer.toString(issue.getId()))) {
+            rowFound = false;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
+                    row = i;
+                    rowFound = true;
+                }
+            }
+        }
+
+        // next row
+        if(!rowFound){
+            JOptionPane.showMessageDialog(this, "This issue is no longer on the table!");
+        }
+        else if (row == table.getRowCount() - 1) {
+            JOptionPane.showMessageDialog(this, "This issue is already the last row on the table!");
+        } else {
+            row++;
+            setIssueValuesFromTable(row,table);
+            setComponentValuesFromIssue();
+            table.setRowSelectionInterval(row, row);
+            updateCustomIdList(row);
+        }
+    }//GEN-LAST:event_BtnNextActionPerformed
+
+    private void appComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appComboBoxActionPerformed
+        if(appComboBox.getSelectedItem().toString().equals(issue.getApp())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_appComboBoxActionPerformed
+
+    private void btnCloseIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseIssueActionPerformed
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String today = dateFormat.format(date);
+        String userName = projectManager.getUserName();
+        String value = descriptionText.getText();
+        if (btnCloseIssue.getText().equalsIgnoreCase("close issue")) {
+            // set dateClosed text field with date today
+            FillItWithDate(dateClosedText);
+            String temperaryVersion = "XXX";
+            versionText.setText(temperaryVersion);
+            btnCloseIssue.setText("Reopen Issue");
+            value = value + "\n--- Issue Closed by "
+            + userName + " on " + today + "\n";
+        } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
+            value = value + "\n \n--- Issue reopened by "
+            + userName + " on " + today + " (version " + versionText.getText() + ") \n";
+            versionText.setText("");
+            dateClosedText.setText("");
+            btnCloseIssue.setText("Close Issue");
+        }
+        descriptionText.setText(value);
+    }//GEN-LAST:event_btnCloseIssueActionPerformed
+
+    private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
+            FillItWithDate((JTextField) evt.getComponent());
+        }
+    }//GEN-LAST:event_dateClosedTextKeyReleased
+
+    /**
+     * This method is called when the confirm button is pressed.
+     * @param evt 
+     */
+    private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
+        setIssueValuesFromComponents();
+
+        if(dao.update(issue)){
+            projectManager.updateTableRow(table,issue);
+            projectManager.makeTableEditable(false);
+        }
+        issueWindowClosing();
+    }//GEN-LAST:event_buttonConfirmActionPerformed
+
+    /**
+     * This method is called when the submit button is pressed.
+     * @param evt 
+     */
+    private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
+        setIssueValuesFromComponents();
+
+        if(dao.insert(issue)){
+            projectManager.inserTableRow(table,issue);
+            projectManager.makeTableEditable(false);
+        }
+        issueWindowClosing();
+    }//GEN-LAST:event_buttonSubmitActionPerformed
+
+    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
+        //        System.out.println(selectedTable.getValueAt(0, 0));
+
+        //        projectManager.getOpeningIssuesList().remove(issue.getID(), this);
+        issueWindowClosing();
+    }//GEN-LAST:event_buttonCancelActionPerformed
 
     private void descriptionTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionTextKeyReleased
         JTextArea dateArea = (JTextArea) evt.getComponent();
@@ -1027,212 +1204,12 @@ public class IssueWindow extends JFrame {
         }
     }//GEN-LAST:event_descriptionTextKeyReleased
 
-    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        //        System.out.println(selectedTable.getValueAt(0, 0));
-
-//        projectManager.getOpeningIssuesList().remove(issue.getID(), this);
-        issueWindowClosing();
-    }//GEN-LAST:event_buttonCancelActionPerformed
-
-    /**
-     * This method is called when the submit button is pressed.
-     * @param evt 
-     */
-    private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
-        setIssueValuesFromComponents();
-        
-        if(dao.insert(issue)){
-            projectManager.inserTableRow(table,issue);
-            projectManager.makeTableEditable(false);
-        }
-        issueWindowClosing();
-    }//GEN-LAST:event_buttonSubmitActionPerformed
-
-    /**
-     * This method is called when the confirm button is pressed.
-     * @param evt 
-     */
-    private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
-        setIssueValuesFromComponents();
-
-        if(dao.update(issue)){
-            projectManager.updateTableRow(table,issue);
-            projectManager.makeTableEditable(false);
-        }
-        issueWindowClosing();
-    }//GEN-LAST:event_buttonConfirmActionPerformed
-
-
-    private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
+    private void dateOpenedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateOpenedTextKeyReleased
         if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
-            FillItWithDate((JTextField) evt.getComponent());
+            this.FillItWithDate((JTextField) evt.getComponent());
         }
-    }//GEN-LAST:event_dateClosedTextKeyReleased
+    }//GEN-LAST:event_dateOpenedTextKeyReleased
 
-    private void btnCloseIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseIssueActionPerformed
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        String today = dateFormat.format(date);
-        String userName = projectManager.getUserName();
-        String value = descriptionText.getText();
-        if (btnCloseIssue.getText().equalsIgnoreCase("close issue")) {
-            // set dateClosed text field with date today
-            FillItWithDate(dateClosedText);
-            String temperaryVersion = "XXX";
-            versionText.setText(temperaryVersion);
-            btnCloseIssue.setText("Reopen Issue");
-            value = value + "\n--- Issue Closed by "
-                    + userName + " on " + today + "\n";
-        } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
-            value = value + "\n \n--- Issue reopened by "
-                    + userName + " on " + today + " (version " + versionText.getText() + ") \n";
-            versionText.setText("");
-            dateClosedText.setText("");
-            btnCloseIssue.setText("Close Issue");
-        }
-        descriptionText.setText(value);
-    }//GEN-LAST:event_btnCloseIssueActionPerformed
-
-    /**
-     * Fired when the next button is invoked.
-     * The next button traverses the table to get the next issue.
-     * @param evt 
-     */
-    private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
-        
-        /**
-         * If table has not changed then no need to execute this for loop.
-         * boolean rowFound makes sure the issue is still in the table view.
-         */
-        boolean rowFound = true;
-        if (!table.getValueAt(row, 0).toString().equals(Integer.toString(issue.getId()))) {
-            rowFound = false;
-            for (int i = 0; i < table.getRowCount(); i++) {
-                if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
-                    row = i;
-                    rowFound = true;
-                }
-            }
-        }
-        
-        // next row
-        if(!rowFound){
-            JOptionPane.showMessageDialog(this, "This issue is no longer on the table!");
-        }
-        else if (row == table.getRowCount() - 1) {
-            JOptionPane.showMessageDialog(this, "This issue is already the last row on the table!");
-        } else {
-            row++;
-            setIssueValuesFromTable(row,table);
-            setComponentValuesFromIssue();
-            table.setRowSelectionInterval(row, row);
-            updateCustomIdList(row);
-        }
-    }//GEN-LAST:event_BtnNextActionPerformed
-
-    /**
-     * Fired when the previous button is invoked.
-     * The previous button traverses the table to get the previous issue.
-     * @param evt 
-     */
-    private void BtnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPreviousActionPerformed
-
-        /**
-         * If table has not changed then no need to execute this for loop.
-         * boolean found makes sure the issue is still in the table view.
-         */
-        boolean rowFound = true;
-        if (!table.getValueAt(row, 0).toString().equals(Integer.toString(issue.getId()))) {
-
-            rowFound = false;
-            for (int i = 0; i < table.getRowCount(); i++) {
-                if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
-                    row = i;
-                    rowFound = true;
-                }
-            }
-        }
-        
-        // previous row
-        if(!rowFound){
-            JOptionPane.showMessageDialog(this, "This issue is no longer on the table!");
-        }
-        else if (row == 0) {
-            JOptionPane.showMessageDialog(this, "This issue is already the first row on the table!");
-        } else {
-            row--;
-            setIssueValuesFromTable(row,table);
-            setComponentValuesFromIssue();
-            table.setRowSelectionInterval(row, row);
-            updateCustomIdList(row);
-        }
-    }//GEN-LAST:event_BtnPreviousActionPerformed
-
-    /**
-     * Fires when Lock CheckBox selection is changed
-     * @param evt action event for the Lock CheckBox
-     */
-    private void lockCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockCheckBoxActionPerformed
-
-        // if the same then check for other changes
-        if((lockCheckBox.isSelected()?"Y":"").equals(issue.getLocked())){
-            checkForChangeAndSetBtnsEnabled();
-        }
-        // we know right away there is a change so just set the button enabled
-        else{
-            setBtnsEnabled(true); // sets the submit or confirm button enabled
-        }
-    }//GEN-LAST:event_lockCheckBoxActionPerformed
-
-    /**
-     * Fires when IssueType ComboBox selection is changed
-     * @param evt action event for the IssueType ComboBox
-     */
-    private void comboBoxIssueTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxIssueTypeActionPerformed
-        // if the same then check for other changes
-        if(comboBoxIssueType.getSelectedItem().toString().equals(issue.getIssueType())){
-            checkForChangeAndSetBtnsEnabled();
-        }
-        // we know right away there is a change so just set the button enabled
-        else{
-            setBtnsEnabled(true); // sets the submit or confirm button enabled
-        }
-    }//GEN-LAST:event_comboBoxIssueTypeActionPerformed
-
-    private void submitterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitterTextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_submitterTextActionPerformed
-
-    private void programmerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programmerComboBoxActionPerformed
-        if(programmerComboBox.getSelectedItem().toString().equals(issue.getProgrammer())){
-            checkForChangeAndSetBtnsEnabled();
-        }
-        // we know right away there is a change so just set the button enabled
-        else{
-            setBtnsEnabled(true); // sets the submit or confirm button enabled
-        }
-    }//GEN-LAST:event_programmerComboBoxActionPerformed
-
-    private void rkComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rkComboBoxActionPerformed
-      if(rkComboBox.getSelectedItem().toString().equals(issue.getRk())){
-            checkForChangeAndSetBtnsEnabled();
-        }
-        // we know right away there is a change so just set the button enabled
-        else{
-            setBtnsEnabled(true); // sets the submit or confirm button enabled
-        }
-    }//GEN-LAST:event_rkComboBoxActionPerformed
-
-    private void appComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appComboBoxActionPerformed
-        if(appComboBox.getSelectedItem().toString().equals(issue.getApp())){
-            checkForChangeAndSetBtnsEnabled();
-        }
-        // we know right away there is a change so just set the button enabled
-        else{
-            setBtnsEnabled(true); // sets the submit or confirm button enabled
-        }
-    }//GEN-LAST:event_appComboBoxActionPerformed
 
     /**
      * Called to close the form
@@ -1603,7 +1580,6 @@ public class IssueWindow extends JFrame {
     private javax.swing.JLabel id;
     private javax.swing.JLabel idText;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JLabel lock;
     private javax.swing.JCheckBox lockCheckBox;
