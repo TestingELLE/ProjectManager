@@ -26,7 +26,11 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="scrollPane" alignment="1" pref="561" max="32767" attributes="0"/>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="scrollPane" pref="595" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -76,7 +80,7 @@
                                               <Component id="comboBoxIssueType" min="-2" pref="108" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <EmptySpace pref="28" max="32767" attributes="0"/>
+                                      <EmptySpace pref="48" max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="submitterText" min="-2" pref="100" max="-2" attributes="0"/>
                                           <Component id="submitter" min="-2" pref="72" max="-2" attributes="0"/>
@@ -137,20 +141,18 @@
                                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="id" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
-                                      <Component id="idText" alignment="3" min="-2" pref="17" max="-2" attributes="0"/>
-                                      <Component id="submitter" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                                      <Component id="id" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="idText" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="submitter" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="comboBoxIssueType" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="lockCheckBox" max="32767" attributes="0"/>
-                                  <Component id="lock" max="32767" attributes="0"/>
+                                  <Component id="lock" pref="16" max="32767" attributes="0"/>
+                                  <Component id="lockCheckBox" pref="0" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="title" min="-2" pref="13" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
@@ -178,7 +180,7 @@
                           </Group>
                       </Group>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="jScrollPane7" pref="105" max="32767" attributes="0"/>
+                      <Component id="jScrollPane7" pref="118" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>

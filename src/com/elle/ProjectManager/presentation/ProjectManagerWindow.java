@@ -2514,17 +2514,58 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // this adds a mouselistener to the tableSelected header
         JTableHeader header = table.getTableHeader();
         
+        
+        //disable default mouse listeners
+        MouseListener[] listeners = header.getMouseListeners();
+
+        for (MouseListener ml: listeners)
+        {
+            String className = ml.getClass().toString();
+
+            if (className.contains("BasicTableHeaderUI"))
+               
+                header.removeMouseListener(ml);
+                
+           
+        }
 
         //add customized mouselistener
      
         if (header != null) {
             header.addMouseListener(new MouseAdapter() {
+                
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    
+
                     if (e.getClickCount() == 2) {
+                        e.consume();
                         clearFilterDoubleClick(e, table);
+                        
+
                     }
+                    
+                    if (e.getClickCount() == 1 && !e.isConsumed() && e.isControlDown()) {
+                        e.consume();
+                        tabs.get(table.getName())
+                                .getColumnPopupMenu().showPopupMenu(e);
+                        
+                    }
+                    
+                    
+                    
+                    if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && !e.isConsumed()) {
+                        
+                        int columnIndex = header.columnAtPoint(e.getPoint());
+                        if (columnIndex != -1) {
+                                columnIndex = table.convertColumnIndexToModel(columnIndex);
+                                table.getRowSorter().toggleSortOrder(columnIndex);
+                                //System.out.println("clicked " + columnIndex);
+                                
+                        }
+                        e.consume();
+                    }
+                
+               
                     
                    
 //                    if (e.getClickCount() == 1) {
