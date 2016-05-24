@@ -462,7 +462,7 @@ public class IssueWindow extends JFrame {
         
        // set the minimum size, width 620, height 750 or 80% of screen size
         //int minHeight = (screenSize.height * 0.85 < 750) ? (int)(screenSize.height * 0.8) : 750; 
-        Dimension minSize = new Dimension(580, 400);
+        Dimension minSize = new Dimension(620, 400);
         
         this.setPreferredSize(frameSize);
         this.setMinimumSize(minSize);
