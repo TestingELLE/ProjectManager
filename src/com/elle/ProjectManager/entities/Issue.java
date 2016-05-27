@@ -1,12 +1,14 @@
 
 package com.elle.ProjectManager.entities;
 
+import java.io.Serializable;
+
 /**
  * Issue
  * @author Carlos Igreja
  * @since  Apr 5, 2016
  */
-public class Issue {
+public class Issue implements Serializable {
 
     private int id;
     private String app;
@@ -20,12 +22,13 @@ public class Issue {
     private String issueType;
     private String submitter;
     private String locked;
+    private String datetimeLastMod;
     
     public Issue(){
-        this(-1,"","","","","","","","","FEATURE","","");
+        this(-1,"","","","","","","","","FEATURE","","", "");
     }
 
-    public Issue(int id, String app, String title, String description, String programmer, String dateOpened, String rk, String version, String dateClosed, String issue_type, String submitter, String locked) {
+    public Issue(int id, String app, String title, String description, String programmer, String dateOpened, String rk, String version, String dateClosed, String issue_type, String submitter, String locked, String datetimeLastMod) {
         this.id = id;
         this.app = app;
         this.title = title;
@@ -38,6 +41,7 @@ public class Issue {
         this.issueType = issue_type;
         this.submitter = submitter;
         this.locked = locked;
+        this.datetimeLastMod = datetimeLastMod;
     }
 
     public int getId() {
@@ -135,4 +139,15 @@ public class Issue {
     public void setLocked(String locked) {
         this.locked = locked;
     }
+
+    public String getDatetimeLastMod() {
+        return datetimeLastMod;
+    }
+
+    public void setDatetimeLastMod(String datetimeLastMod) {
+        this.datetimeLastMod = datetimeLastMod;
+    }
+    
+    
+    
 }
