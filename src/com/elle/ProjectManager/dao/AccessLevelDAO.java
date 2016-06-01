@@ -15,12 +15,12 @@ import java.sql.SQLException;
 public class AccessLevelDAO {
 
     // database table information
-    public static final String DB_TABLE_NAME = "PM_accessLevel_tbl";
+    public static final String DB_ACCESS_LEVELS = "accessLevels";
     public static final String COL_USER = "user";
     public static final String COL_ACCESS_LEVEL = "accessLevel";
 
     public static String get(String user) {
-        String sql = "SELECT * FROM " + DB_TABLE_NAME +
+        String sql = "SELECT * FROM " + DB_ACCESS_LEVELS +
                       " WHERE " + COL_USER + " = '" + user +"';";
 
         ResultSet rs = null;
@@ -37,7 +37,7 @@ public class AccessLevelDAO {
                 accessLevel.setAccessLevel(rs.getString(COL_ACCESS_LEVEL));
             }
             
-            LoggingAspect.afterReturn("Loaded access level from " + DB_TABLE_NAME + " for " + accessLevel.getUser());
+            LoggingAspect.afterReturn("Loaded access level from " + DB_ACCESS_LEVELS + " for " + accessLevel.getUser());
         } 
         catch (SQLException e) {
             LoggingAspect.afterThrown(e);
