@@ -7,8 +7,8 @@
     <import file="nbproject/build-impl.xml"/>
     
     <!-- set the date and version here -->
-    <property name="creation-date" value="2016-05-19"/>
-    <property name="version" value="1.8.1b"/>
+    <property name="creation-date" value="2016-05-27"/>
+    <property name="version" value="1.8.1e"/>
     
     <!-- this is the jar name when it is created -->
     <property name="jarname" value="ProjectManager-${version}"/>
@@ -29,8 +29,9 @@
     <target name="-post-jar"> 
       <delete dir="target"/>
       <jar jarfile="target/${jarname}.jar">
-        <zipfileset src="${dist.jar}" excludes="META-INF/*" />
-        <zipgroupfileset dir="lib" excludes="META-INF/*" />
+          <zipfileset src="${dist.jar}" excludes="META-INF/*" />
+		
+        	<zipgroupfileset dir="lib" excludes="META-INF/*" />
         <manifest>
             <attribute name="Main-Class" value="com.elle.ProjectManager.ProjectManager"/>
             <attribute name="SplashScreen-Image" value="com/elle/ProjectManager/image.png"/>

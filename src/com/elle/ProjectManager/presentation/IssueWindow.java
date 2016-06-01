@@ -527,7 +527,7 @@ public class IssueWindow extends JFrame {
         rk = new javax.swing.JLabel();
         dateOpenedText = new javax.swing.JTextField();
         submitterText = new javax.swing.JTextField();
-        comboBoxIssueType = new javax.swing.JComboBox<String>();
+        comboBoxIssueType = new javax.swing.JComboBox<>();
         id = new javax.swing.JLabel();
         dateOpened = new javax.swing.JLabel();
         lockCheckBox = new javax.swing.JCheckBox();
@@ -667,7 +667,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
         jPanel3.add(submitterText, gridBagConstraints);
 
-        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE" }));
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
         comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxIssueTypeActionPerformed(evt);
