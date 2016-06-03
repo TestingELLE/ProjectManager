@@ -33,10 +33,7 @@ public class IssueDAO {
     private final String COL_ISSUE_TYPE = "issueType";
     private final String COL_SUBMITTER = "submitter";
     private final String COL_LOCKED = "locked";
-    
-    //added timestamp for last modification
-     private final String COL_DATETIME_LAST_MOD = "datetimeLastMod";
-
+  
     /**
      * get max id from issues table
      * @return max id from issues table
@@ -102,7 +99,6 @@ public class IssueDAO {
                 issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
                 issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
-                issue.setDatetimeLastMod(rs.getString(COL_DATETIME_LAST_MOD));
                 
             }
      
@@ -157,19 +153,19 @@ public class IssueDAO {
             String issueType = format(issue.getIssueType());
             String submitter = format(issue.getSubmitter());
             String locked = format(issue.getLocked());
-            String datetimeLastMod = format(issue.getDatetimeLastMod());
+            
 
             String sql = "INSERT INTO " + DB_TABLE_NAME + " (" + COL_PK_ID + ", " 
                     + COL_APP + ", " +  COL_TITLE + ", " +  COL_DESCRIPTION + ", " 
                     +  COL_PROGRAMMER + ", " +  COL_DATE_OPENED + ", " +  COL_RK 
                     + ", " +  COL_VERSION + ", " +  COL_DATE_CLOSED + ", " 
                     +  COL_ISSUE_TYPE + ", " +  COL_SUBMITTER + ", " 
-                    +  COL_LOCKED  + "," + COL_DATETIME_LAST_MOD + ") " 
+                    +  COL_LOCKED  +  ") " 
                     + "VALUES (" + id + ", " + app + ", " +  title + ", " 
                     +  description + ", " +  programmer + ", " +  dateOpened 
                     + ", " +  rk + ", " +  version + ", " +  dateClosed 
                     + ", " +  issueType + ", " +  submitter + ", " 
-                    +  locked  + "," + datetimeLastMod + ") ";
+                    +  locked  +  ") ";
             
             try {
                 Statement statement = DBConnection.getStatement();
@@ -218,8 +214,6 @@ public class IssueDAO {
             String issueType = format(issue.getIssueType());
             String submitter = format(issue.getSubmitter());
             String locked = format(issue.getLocked());
-            String datetimeLastMod = format(issue.getDatetimeLastMod());
-          
             
    
             
@@ -234,8 +228,7 @@ public class IssueDAO {
                     + COL_DATE_CLOSED + " = " + dateClosed + ", "
                     + COL_ISSUE_TYPE + " = " + issueType + ", "
                     + COL_SUBMITTER + " = " + submitter + ", "
-                    + COL_LOCKED + " = " + locked + ", "
-                    + COL_DATETIME_LAST_MOD + " = " + datetimeLastMod + " "
+                    + COL_LOCKED + " = " + locked + " "
                     + "WHERE " + COL_PK_ID + " = " + id + ";";
           System.out.println("update : " + sql );
             try {
@@ -400,7 +393,6 @@ public class IssueDAO {
                 issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
                 issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
-                issue.setDatetimeLastMod(rs.getString(COL_DATETIME_LAST_MOD));
                 issues.add(issue);
             }
             
@@ -444,7 +436,6 @@ public class IssueDAO {
                 issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
                 issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
-                issue.setDatetimeLastMod(rs.getString(COL_DATETIME_LAST_MOD));
                 
             }
             

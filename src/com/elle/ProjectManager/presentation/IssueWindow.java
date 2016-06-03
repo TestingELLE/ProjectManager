@@ -4,20 +4,13 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.entities.Issue;
-import com.elle.ProjectManager.logic.FilePathFormat;
+import com.elle.ProjectManager.logic.OfflineIssueManager;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
-import com.elle.ProjectManager.logic.offlineIssueManager;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.sql.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,7 +20,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.DefaultComboBoxModel;
@@ -44,7 +36,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
@@ -60,7 +51,7 @@ public class IssueWindow extends JFrame {
     private int row;
     private IssueDAO dao;
     private boolean addIssueMode;
-    private offlineIssueManager mgr;
+    private OfflineIssueManager mgr;
 
     public ProjectManagerWindow getProjectManager() {
         return projectManager;
@@ -553,8 +544,6 @@ public class IssueWindow extends JFrame {
         btnCloseIssue = new javax.swing.JButton();
         app = new javax.swing.JLabel();
         appComboBox = new javax.swing.JComboBox();
-        modTimeLabel = new javax.swing.JLabel();
-        lastModTime = new javax.swing.JLabel();
         titleText = new javax.swing.JTextField();
         description = new javax.swing.JLabel();
         idText = new javax.swing.JLabel();
@@ -671,10 +660,6 @@ public class IssueWindow extends JFrame {
             }
         });
 
-        modTimeLabel.setText("lastModTime");
-
-        lastModTime.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -683,7 +668,7 @@ public class IssueWindow extends JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(app)
                     .addComponent(appComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 175, Short.MAX_VALUE)
                 .addComponent(btnCloseIssue, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -694,10 +679,7 @@ public class IssueWindow extends JFrame {
                     .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(version)))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(modTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lastModTime, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(buttonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -724,10 +706,7 @@ public class IssueWindow extends JFrame {
                             .addComponent(buttonConfirm)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(appComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(modTimeLabel)
-                            .addComponent(lastModTime, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         titleText.setText("jTextField1");
@@ -933,9 +912,9 @@ public class IssueWindow extends JFrame {
     }
     
     // get current timestamp for datetimeLastMod
-    private String currentTimeStamp() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-    }
+//    private String currentTimeStamp() {
+//        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+//    }
     
 
     /**
@@ -1197,43 +1176,72 @@ public class IssueWindow extends JFrame {
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
         setIssueValuesFromComponents();
         int originalId = issue.getId();
-        boolean onlineUpdateSuccess =  issue.getId() > 0 ? dao.update(issue) :  dao.insert(issue);
         
-        if(onlineUpdateSuccess){
-            if (originalId < 0) {
-                projectManager.insertTableRow(table, issue);
-                //remove selected rows
-                projectManager.removeTableRow(table, originalId);
+        if (projectManager.isOnline()) {
+            boolean onlineUpdateSuccess =  issue.getId() > 0 ? dao.update(issue) :  dao.insert(issue);
+            if(onlineUpdateSuccess){
+                if (originalId < 0) {//for new issues
+                    projectManager.insertTableRow(table, issue);
+                 //remove selected rows
+                    projectManager.removeTableRow(table, originalId);
+                }
+                else //for old issues
+                    projectManager.updateTableRow(table,issue);
+               
+                //update offlineIssueMgr
+                projectManager.makeTableEditable(false);
+                mgr.removeIssue(mgr.getIssue(originalId));
             }
-            else
-                projectManager.updateTableRow(table,issue);
-            
-            projectManager.makeTableEditable(false);
-            mgr.removeIssue(mgr.getIssue(originalId));
-        }
-        else { //offline actions
-            JOptionPane.showMessageDialog(this,
+            else { //offline actions
+                JOptionPane.showMessageDialog(this,
                     "Fail to connect to server.\n Data will be saved saved locally.",
                     "Error Message",
                     JOptionPane.ERROR_MESSAGE);
             
-            //save the issue to local computer
-            if (mgr.updateIssue(issue)){
-                JOptionPane.showMessageDialog(this,
-                    "Data saved successfully.");
-                projectManager.updateTableRow(table,issue);
-                projectManager.makeTableEditable(false);
+                //save the issue to local computer
+                if (mgr.updateIssue(issue)){
+                    JOptionPane.showMessageDialog(this,
+                     "Data saved successfully.");
+                    projectManager.updateTableRow(table,issue);
+                    projectManager.makeTableEditable(false);
                
-            }
-            else {
-                JOptionPane.showMessageDialog(this,
-                    "Fail to save issue locally.",
-                    "I/O Error Message",
-                    JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    JOptionPane.showMessageDialog(this,
+                        "Fail to save issue locally.",
+                        "I/O Error Message",
+                        JOptionPane.ERROR_MESSAGE);
                 
-            }
+                }
            
+            }
+            
+            
         }
+        
+        else {
+            
+            JOptionPane.showMessageDialog(this,"Offline Mode : data is saved locally.");
+            if (mgr.updateIssue(issue)){
+                    JOptionPane.showMessageDialog(this,
+                     "Data saved successfully.");
+                    projectManager.updateTableRow(table,issue);
+                    projectManager.makeTableEditable(false);
+               
+                }
+                else {
+                    JOptionPane.showMessageDialog(this,
+                        "Fail to save issue locally.",
+                        "I/O Error Message",
+                        JOptionPane.ERROR_MESSAGE);
+                
+                }
+            
+            
+        }
+        
+        
+        
         issueWindowClosing();
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
@@ -1401,7 +1409,7 @@ public class IssueWindow extends JFrame {
         issue.setIssueType(getTableValueAt(row, 9).toString());
         issue.setSubmitter(getTableValueAt(row, 10).toString());
         issue.setLocked(getTableValueAt(row, 11).toString());
-        issue.setDatetimeLastMod(getTableValueAt(row, 12).toString());
+        
     }
     
     /**
@@ -1431,7 +1439,7 @@ public class IssueWindow extends JFrame {
         issue.setIssueType(comboBoxIssueType.getSelectedItem().toString());
         issue.setSubmitter(submitterText.getText());
         issue.setLocked((lockCheckBox.isSelected())?"Y":"");
-        issue.setDatetimeLastMod(currentTimeStamp());
+        
     }
 
     /**
@@ -1451,7 +1459,6 @@ public class IssueWindow extends JFrame {
         comboBoxIssueType.setSelectedItem(issue.getIssueType());
         submitterText.setText(issue.getSubmitter());
         lockCheckBox.setSelected(issue.getLocked().equals("Y")?true:false);
-        lastModTime.setText(issue.getDatetimeLastMod());
         
         
         setOpenCloseIssueBtnText(); // set button text to Open/Close issue
@@ -1763,10 +1770,8 @@ public class IssueWindow extends JFrame {
     private javax.swing.JLabel idText;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JLabel lastModTime;
     private javax.swing.JLabel lock;
     private javax.swing.JCheckBox lockCheckBox;
-    private javax.swing.JLabel modTimeLabel;
     private javax.swing.JLabel programmer;
     private javax.swing.JComboBox programmerComboBox;
     private javax.swing.JLabel rk;

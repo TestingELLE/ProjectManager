@@ -5,6 +5,7 @@
  */
 package com.elle.ProjectManager.logic;
 
+import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import java.io.File;
@@ -13,6 +14,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -24,18 +28,18 @@ import javax.swing.JTable;
  * @author Yi
  * It is the class to manage all offline issues
  */
-public class offlineIssueManager {
+public class OfflineIssueManager {
     private final ProjectManagerWindow projectManager;
     private final File dir;
     private Map<Issue, File> issuesList;
     private final String userName;
-    
+    private ArrayList<Integer> ids;
     //the id is for starting id of new issue, when offlineIssueManager instantiated, it has to set the number 
     //based on the current offline data folder
     
     private static int newIssueId;
     
-    public offlineIssueManager(String userName) {
+    public OfflineIssueManager(String userName) {
         //initialize the offline data folder
         projectManager = ProjectManagerWindow.getInstance();
         dir = FilePathFormat.localDataFilePath();
@@ -44,6 +48,8 @@ public class offlineIssueManager {
         newIssueId = initId();
         
         this.userName = userName;
+        //set the offline issues' ids
+        setIds();
     }
     
     private void readInLocalData(){
@@ -107,7 +113,7 @@ public class offlineIssueManager {
     //generate the filename
     private File generateFileName(Issue issue) {
         String status;
-        String timeStamp = issue.getDatetimeLastMod().replaceAll(":", "-");
+        String timeStamp = currentTimeStamp().replaceAll(":", "-");
         
         if (issue.getId() < 0) status = "new";
         else status = "update";
@@ -144,7 +150,8 @@ public class offlineIssueManager {
         
         if (saveIssueToFile(issue, filename)) {
             issuesList.put(issue, filename);
-            
+            //update the ids list
+            ids.add(issue.getId());
             return true;
         }
         else return false;
@@ -169,6 +176,10 @@ public class offlineIssueManager {
         File filename = issuesList.get(issue);
         filename.delete();
         issuesList.remove(issue);
+        
+        int index = ids.indexOf(issue.getId());
+        ids.remove(index);
+        
     }
     
     
@@ -206,5 +217,84 @@ public class offlineIssueManager {
         return null;
             
     }
+    
+    private String currentTimeStamp() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+    }
+
+    public ArrayList<Integer> getIds() {
+        return ids;
+    }
+
+    public void setIds() {
+        ids = new ArrayList<Integer>();
+        if (!issuesList.isEmpty()) {
+            for(Issue temp : issuesList.keySet()) {
+                ids.add(temp.getId());
+            }
+        }
+    }
+    
+    //for data sync
+    
+    public void syncLocalData() {
+        IssueDAO dao = new IssueDAO();  
+        int[] ids = new int[issuesList.size()];
+        int index = 0;
+        for (Issue issue : issuesList.keySet()) {
+            if (issue.getId() < 0 && syncIssueToDbFromFile(issuesList.get(issue),dao))
+                ids[index++] = issue.getId();
+        }
+        deleteIssues(ids);
+    }
+    
+    
+    
+    private boolean syncIssueToDbFromFile(File file, IssueDAO dao) {
+        LoggingAspect.addLogMsgWthDate("Now sync file: " + file.getName());
+        
+        try{
+            ObjectInputStream ois =
+                    new ObjectInputStream(new FileInputStream(file));
+            Issue temp = (Issue)ois.readObject();
+            
+            //record the offline id , later remove from table using the offline Id
+            int originalId = temp.getId();
+            ois.close();
+            
+            if (dao.insert(temp)) {
+               
+                for (Tab tab : projectManager.getTabs().values()) {
+                    if (tab.getTable().getName().equals(temp.getApp())){
+                      projectManager.insertTableRow(tab.getTable(),temp);
+                      projectManager.removeTableRow(tab.getTable(), originalId);
+                      projectManager.makeTableEditable(false);
+                      break;
+                    }
+                }
+                LoggingAspect.addLogMsg(file.getName() +" is updated to server successfully");
+                
+                return true;
+            }
+            
+            else{
+                LoggingAspect.addLogMsg(file.getName() + " failed to update to db server");    
+                return false;
+            }
+            
+        }  catch (IOException ex) {
+            LoggingAspect.afterThrown(ex);
+            return false;
+        } catch (ClassNotFoundException ex) {
+            LoggingAspect.afterThrown(ex);
+            return false;
+        }
+        
+        
+    }
+     
+    
+     
+    
 
 }

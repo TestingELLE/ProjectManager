@@ -115,7 +115,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     IssueFileDAO issueFileDAO;
     
     //offline data manager
-    public offlineIssueManager offlineIssueMgr;
+    public OfflineIssueManager offlineIssueMgr;
 
     /**
      * CONSTRUCTOR
@@ -135,7 +135,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         this.userName = userName;
         
-        offlineIssueMgr = new offlineIssueManager(userName);
+        offlineIssueMgr = new OfflineIssueManager(userName);
         online = mode;
 
         // initialize tabs
@@ -204,6 +204,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         initComponents(); // generated code
+        
+        //set the offline mode 
+        if (!online) menuItemOfflineMode.setEnabled(false);
+        menuItemOfflineMode.setSelected(!mode);
 
         // initialize the colors for the edit mode text
         editModeActiveTextColor = new Color(44, 122, 22); //dark green
@@ -309,14 +313,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         initTotalRowCounts(tabs);
 
         // set the cell renderers for each tabName
+        
         tabs.get(tableNames[0]).setCellRenderer(new JTableCellRenderer(PMTable));
         tabs.get(tableNames[1]).setCellRenderer(new JTableCellRenderer(ELLEGUITable));
         tabs.get(tableNames[2]).setCellRenderer(new JTableCellRenderer(AnalysterTable));
         tabs.get(tableNames[3]).setCellRenderer(new JTableCellRenderer(OtherTable));
 
         tabs.get(TASKFILES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_filesTable));
-//        tabs.get(TASKNOTES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_notesTable));
+    //    tabs.get(TASKNOTES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_notesTable));
 
+        
+        /*
+        JTableCellRenderer cellRender = tabs.get(tab).getCellRenderer();
+                        cellRender.getCells().get(col).add(row);
+                        table.getColumnModel().getColumn(col).setCellRenderer(cellRender);
+        
+        */
+        //start to set renderers for id columns, it uses singleton 
+        
+        IdColumnRenderer idRender = IdColumnRenderer.getInstance(offlineIssueMgr);
+        tabs.get(tableNames[0]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+        tabs.get(tableNames[1]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+        tabs.get(tableNames[2]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+        tabs.get(tableNames[3]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+        
+        
         // set the modified tableSelected data objects for each tabName
         tabs.get(tableNames[0]).setTableData(new ModifiedTableData(PMTable));
         tabs.get(tableNames[1]).setTableData(new ModifiedTableData(ELLEGUITable));
@@ -640,6 +661,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemPrintDisplay = new javax.swing.JMenuItem();
         menuItemSaveFile = new javax.swing.JMenuItem();
         menuItemLogOff = new javax.swing.JMenuItem();
+        menuItemOfflineMode = new javax.swing.JCheckBoxMenuItem();
         menuEdit = new javax.swing.JMenu();
         menuItemManageDBs = new javax.swing.JMenuItem();
         menuItemDeleteRecord = new javax.swing.JMenuItem();
@@ -684,14 +706,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "datetimeLastMod"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -715,14 +737,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "datetimeLastMod"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true, false
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -746,14 +768,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "datetimeLastMod"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true, false
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -777,14 +799,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "datetimeLastMod"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true, false
+                false, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1146,6 +1168,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuFile.add(menuItemLogOff);
+
+        menuItemOfflineMode.setText("Offline mode");
+        menuItemOfflineMode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemOfflineModeActionPerformed(evt);
+            }
+        });
+        menuFile.add(menuItemOfflineMode);
 
         menuBar.add(menuFile);
 
@@ -2445,96 +2475,109 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void menuItemSyncLocalDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSyncLocalDataActionPerformed
         // Sync local data
         logWindow.setVisible(true);
-        logWindow.addMessageWithDate("Preparing to sync local data to db server.....");
-        syncLocalData();
+        LoggingAspect.addLogMsgWthDate("Preparing to sync local data to db server.....");
+        offlineIssueMgr.syncLocalData();
         
     }//GEN-LAST:event_menuItemSyncLocalDataActionPerformed
 
-    
-    private void syncLocalData() {
-        
-        File issuesDir = FilePathFormat.localDataFilePath();
-        File[] listOfFiles = issuesDir.listFiles();
+    private void menuItemOfflineModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOfflineModeActionPerformed
+       if (menuItemOfflineMode.isSelected()) {
 
-        for (int i = 0; i < listOfFiles.length; i++) {
-            syncIssueToDbFromFile(listOfFiles[i]);
-            
-        } 
-    }
-    
-    //currently only finish the insert part
-    // update part will be added later
-    
-    private void syncIssueToDbFromFile(File file) {
-        logWindow.addMessage("Now sync file: " + file.getName());
-        try{
-            ObjectInputStream ois =
-                    new ObjectInputStream(new FileInputStream(file));
-            Issue temp = (Issue)ois.readObject();
-            ois.close();
-            boolean success = false;
-            String option = "new";
-            if (file.getName().startsWith("new")){
-                success = issueDAO.insert(temp);               
-            }
-            if (file.getName().startsWith("update")) {
-                Issue dbIssue = issueDAO.get(temp.getId());
-                if (dbIssue.getDatetimeLastMod()!= null &&
-                        dbIssue.getDatetimeLastMod().compareTo(temp.getDatetimeLastMod()) > 0) {
-                
-                    StringBuilder sb  = new StringBuilder(dbIssue.getDescription());
-                    sb.append(System.lineSeparator());
-                    sb.append("<Merged from local data>");
-                    sb.append(System.lineSeparator());
-                    sb.append(temp.getDescription());
-                    sb.append(System.lineSeparator());
-                    sb.append("</Merged from local data>");
-                    temp.setDescription(sb.toString());
-                  
-                }
-                
-                
-                success = issueDAO.update(temp);
-                option = "update";
-                
-            }
-            
-            if (success) {
-               
-                for (Tab tab : tabs.values()) {
-                    if (tab.getTable().getName().equals(temp.getApp())){
-                       if (option.equals("new"))
-                            insertTableRow(tab.getTable(),temp);
-                       if (option.equals("update"))
-                            updateTableRow(tab.getTable(),temp);
-                      makeTableEditable(false);
-                      break;
-                    }
-                }
-                logWindow.addMessage(file.getName() +" is updated to server successfully");
-                if (file.delete()) {
-                    logWindow.addMessage(file.getName() +" is deleted");
-                }
-                else {
-                    logWindow.addMessage(file.getName() +" failed to be deleted, please manually delete it");    
-                }
-            }
-            
-            else{
-                
-                logWindow.addMessage(file.getName() + " failed to update to db server");
-                     
-            }
-            
-        }  catch (IOException ex) {
-            System.out.println( "File I/O error ");
-        } catch (ClassNotFoundException ex) {
-            System.out.println("Issue class not found error");
+            // show sql panel
+            online = false;
+
+        } else {
+           
+            online = true;
         }
         
-        
-    }
-     
+    }//GEN-LAST:event_menuItemOfflineModeActionPerformed
+
+    
+//    private void syncLocalData() {
+//        
+//        File issuesDir = FilePathFormat.localDataFilePath();
+//        File[] listOfFiles = issuesDir.listFiles();
+//
+//        for (int i = 0; i < listOfFiles.length; i++) {
+//            syncIssueToDbFromFile(listOfFiles[i]);
+//            
+//        } 
+//    }
+//    
+//    //currently only finish the insert part
+//    // update part will be added later
+//    
+//    private void syncIssueToDbFromFile(File file) {
+//        logWindow.addMessage("Now sync file: " + file.getName());
+//        try{
+//            ObjectInputStream ois =
+//                    new ObjectInputStream(new FileInputStream(file));
+//            Issue temp = (Issue)ois.readObject();
+//            ois.close();
+//            boolean success = false;
+//            String option = "new";
+//            if (file.getName().startsWith("new")){
+//                success = issueDAO.insert(temp);               
+//            }
+////            if (file.getName().startsWith("update")) {
+////                Issue dbIssue = issueDAO.get(temp.getId());
+////                if (dbIssue.getDatetimeLastMod()!= null &&
+////                        dbIssue.getDatetimeLastMod().compareTo(temp.getDatetimeLastMod()) > 0) {
+////                
+////                    StringBuilder sb  = new StringBuilder(dbIssue.getDescription());
+////                    sb.append(System.lineSeparator());
+////                    sb.append("<Merged from local data>");
+////                    sb.append(System.lineSeparator());
+////                    sb.append(temp.getDescription());
+////                    sb.append(System.lineSeparator());
+////                    sb.append("</Merged from local data>");
+////                    temp.setDescription(sb.toString());
+////                  
+////                }
+//                
+////                
+////                success = issueDAO.update(temp);
+////                option = "update";
+////                
+////            }
+//            
+//            if (success) {
+//               
+//                for (Tab tab : tabs.values()) {
+//                    if (tab.getTable().getName().equals(temp.getApp())){
+//                       if (option.equals("new"))
+//                            insertTableRow(tab.getTable(),temp);
+//                       if (option.equals("update"))
+//                            updateTableRow(tab.getTable(),temp);
+//                      makeTableEditable(false);
+//                      break;
+//                    }
+//                }
+//                logWindow.addMessage(file.getName() +" is updated to server successfully");
+//                if (file.delete()) {
+//                    logWindow.addMessage(file.getName() +" is deleted");
+//                }
+//                else {
+//                    logWindow.addMessage(file.getName() +" failed to be deleted, please manually delete it");    
+//                }
+//            }
+//            
+//            else{
+//                
+//                logWindow.addMessage(file.getName() + " failed to update to db server");
+//                     
+//            }
+//            
+//        }  catch (IOException ex) {
+//            System.out.println( "File I/O error ");
+//        } catch (ClassNotFoundException ex) {
+//            System.out.println("Issue class not found error");
+//        }
+//        
+//        
+//    }
+//     
     
      
     
@@ -3849,6 +3892,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         detectOpenIssues(tab); // this puts an orange dot in tab title
         return table;
     }
+    
+   
 
     /**
      * This loads table data but does not update orange dot. Use loadTable(Tab
@@ -4251,6 +4296,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemLogOff;
     private javax.swing.JMenuItem menuItemManageDBs;
     private javax.swing.JMenuItem menuItemMoveSeletedRowsToEnd;
+    private javax.swing.JCheckBoxMenuItem menuItemOfflineMode;
     private javax.swing.JMenuItem menuItemPrintDisplay;
     private javax.swing.JMenuItem menuItemPrintGUI;
     private javax.swing.JMenuItem menuItemReloadAllData;
@@ -4718,7 +4764,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             model.setValueAt(issue.getIssueType(), row, 9);
             model.setValueAt(issue.getSubmitter(), row, 10);
             model.setValueAt(issue.getLocked(), row, 11);
-            model.setValueAt(issue.getDatetimeLastMod(), row, 12);
             
             // add back the table listeners
             for(int i = 0; i < listeners.length; i++){
@@ -4753,9 +4798,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         rowData[9] = issue.getIssueType();
         rowData[10] = issue.getSubmitter();
         rowData[11] = issue.getLocked();
-        rowData[12] = issue.getDatetimeLastMod();
         ((DefaultTableModel)table.getModel()).addRow(rowData);
     }
+    
+    
     
     /**
      * Inserts a new rowIndex in the table
@@ -4912,4 +4958,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
     }
+ 
+ 
+
 }
