@@ -122,7 +122,7 @@ public class IssueDAO {
             
             // set issue id
             int id = issue.getId();
-            if (id == -1) {
+            if (id < 0) {
                 String sql = "SELECT MAX(" + COL_PK_ID + ") "
                        + "FROM " + DB_TABLE_NAME + ";";
 
@@ -177,8 +177,9 @@ public class IssueDAO {
                 LoggingAspect.afterReturn("Upload Successful!");
                 successful = true;
                 //update the id after successful uploading
-                if (issue.getId() == -1)
+                if (issue.getId() < 0)
                     issue.setId(id);
+                     
             }
             catch (SQLException ex) {
                 LoggingAspect.afterThrown(ex);

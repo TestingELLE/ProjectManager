@@ -7,6 +7,7 @@ import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.FilePathFormat;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
+import com.elle.ProjectManager.logic.offlineIssueManager;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Point;
@@ -16,14 +17,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.sql.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.DefaultComboBoxModel;
@@ -40,6 +44,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
@@ -55,6 +60,7 @@ public class IssueWindow extends JFrame {
     private int row;
     private IssueDAO dao;
     private boolean addIssueMode;
+    private offlineIssueManager mgr;
 
     public ProjectManagerWindow getProjectManager() {
         return projectManager;
@@ -398,16 +404,16 @@ public class IssueWindow extends JFrame {
      */
     public IssueWindow(int row, JTable table) {
         projectManager = ProjectManagerWindow.getInstance();
-         tabs = projectManager.getTabs();
+        tabs = projectManager.getTabs();
         this.table = table;
         this.row = row;
         dao = new IssueDAO();
         issue = new Issue();
+        mgr = projectManager.offlineIssueMgr;
 
-        // new issue
+        // new issue initialization, including set app, dateopened and 
         if (this.row == -1) {
             addIssueMode = true;
-            //issue.setId(dao.getMaxId() + 1);
             issue.setId(-1);
             issue.setApp(projectManager.getSelectedTabName());
             issue.setDateOpened(todaysDate());
@@ -422,7 +428,7 @@ public class IssueWindow extends JFrame {
         initComponents();
         submitterText.setText(projectManager.getUserName());
 
-        setComponentValuesFromIssue();
+        //setComponentValuesFromIssue();
         
         /**
          * Add all JTextComponents to add document listener, input mappings,
@@ -442,9 +448,10 @@ public class IssueWindow extends JFrame {
         textComponentList.add(versionText);
         addDocumentListener(textComponentList);
         addInputMappingsAndShortcuts(textComponentList);
-         updateComboList("programmer", projectManager.getSelectedTabName());
+        updateComboList("programmer", projectManager.getSelectedTabName());
         updateComboList("rk", projectManager.getSelectedTabName());
         updateComboList("app", projectManager.getSelectedTabName());
+        
         setComponentValuesFromIssue();
         
         
@@ -1189,20 +1196,29 @@ public class IssueWindow extends JFrame {
      */
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
         setIssueValuesFromComponents();
-
-        if(dao.update(issue)){
-            projectManager.updateTableRow(table,issue);
+        int originalId = issue.getId();
+        boolean onlineUpdateSuccess =  issue.getId() > 0 ? dao.update(issue) :  dao.insert(issue);
+        
+        if(onlineUpdateSuccess){
+            if (originalId < 0) {
+                projectManager.insertTableRow(table, issue);
+                //remove selected rows
+                projectManager.removeTableRow(table, originalId);
+            }
+            else
+                projectManager.updateTableRow(table,issue);
+            
             projectManager.makeTableEditable(false);
+            mgr.removeIssue(mgr.getIssue(originalId));
         }
         else { //offline actions
             JOptionPane.showMessageDialog(this,
                     "Fail to connect to server.\n Data will be saved saved locally.",
                     "Error Message",
                     JOptionPane.ERROR_MESSAGE);
-            LogWindow.addMessageWithDate("Database server connection error");
             
             //save the issue to local computer
-            if (saveIssueToFile(issue)) {
+            if (mgr.updateIssue(issue)){
                 JOptionPane.showMessageDialog(this,
                     "Data saved successfully.");
                 projectManager.updateTableRow(table,issue);
@@ -1216,39 +1232,40 @@ public class IssueWindow extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
                 
             }
-            
-            System.out.println("update failed: no connecction");
+           
         }
         issueWindowClosing();
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
+    
+    
+    
     /**
      * This method is called when the submit button is pressed.
      * @param evt 
      */
     private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
         setIssueValuesFromComponents();
-
-        if(dao.insert(issue)){
-            projectManager.inserTableRow(table,issue);
-            projectManager.makeTableEditable(false);
+        
+        if (projectManager.isOnline() && dao.insert(issue)) {
             
+            projectManager.insertTableRow(table,issue);
+            projectManager.makeTableEditable(false); 
+        
         }
-        else {//offline actions
+        
+        else {
+            String msg = "Fail to connect to server.\nData will be saved saved locally.";
+            if (!projectManager.isOnline()) msg = "Offline Mode : data is saved locally.";
             
-            JOptionPane.showMessageDialog(this,
-                    "Fail to connect to server.\n Data will be saved saved locally.",
-                    "Error Message",
-                    JOptionPane.ERROR_MESSAGE);
-            LogWindow.addMessageWithDate("Database server connection error");
+            JOptionPane.showMessageDialog(this,msg);
             
             //save the issue to local computer
-            if (saveIssueToFile(issue)) {
+            if (mgr.addIssue(issue)) {
                 JOptionPane.showMessageDialog(this,
                     "Data saved successfully.");
-                projectManager.inserTableRow(table,issue);
-                projectManager.makeTableEditable(false);
-                
+                projectManager.insertTableRow(table,issue);
+                projectManager.makeTableEditable(false);  
             }
             else {
                 JOptionPane.showMessageDialog(this,
@@ -1257,63 +1274,45 @@ public class IssueWindow extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
                 
             }
+            
+            
+            
+            
         }
+        
+//        if(dao.insert(issue)){
+//            projectManager.inserTableRow(table,issue);
+//            projectManager.makeTableEditable(false);
+//            
+//        }
+//        else {//offline actions
+//            
+//            JOptionPane.showMessageDialog(this,
+//                    "Fail to connect to server.\nData will be saved saved locally.",
+//                    "Error Message",
+//                    JOptionPane.ERROR_MESSAGE);
+//            
+//            
+//            //save the issue to local computer
+//            if (mgr.addIssue(issue)) {
+//                JOptionPane.showMessageDialog(this,
+//                    "Data saved successfully.");
+//                projectManager.inserTableRow(table,issue);
+//                projectManager.makeTableEditable(false);
+//                
+//            }
+//            else {
+//                JOptionPane.showMessageDialog(this,
+//                    "Fail to save issue locally.",
+//                    "I/O Error Message",
+//                    JOptionPane.ERROR_MESSAGE);
+//                
+//            }
+//        }
         issueWindowClosing();
     }//GEN-LAST:event_buttonSubmitActionPerformed
     
-    /**  Yi : 
-     * This method is to save issue locally
-     */
     
-    private boolean saveIssueToFile(Issue issue) {
-        //get the localdata directory
-        File issuesDir =FilePathFormat.localDataFilePath() ;
-        //genereate the issuefile name.
-        File issuefile = issueFileAbsolutePath(issuesDir, issue);
-        
-        
-        try {
-            if (!issuefile.exists()) 
-                issuefile.createNewFile();
-	    FileOutputStream fos = new FileOutputStream(issuefile);	
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(issue);
-            oos.close();
-            LogWindow.addMessageWithDate("'" + issuefile.getName() +"' is saved successfully");
-            return true;
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } 
-    }
-    
-    /**
-     * Yi
-     * Create the absolute path for each file
-     * filename contains timestamp to make it unique
-     * @param issuesDir
-     * @param issue
-     * @return 
-     */
-    private File issueFileAbsolutePath(File dir, Issue issue) {
-        
-        String status ="";
-        String userName = projectManager.getUserName();
-        String timeStamp = currentTimeStamp().replaceAll(":", "-");
-        
-        switch(issue.getId()) {
-            case -1: status = "new";
-                     break;
-            default : status = "update";    
-        }
-        
-        String filename = status + "_"+ userName + "_" + "id_" + issue.getId() + "_" + timeStamp + ".ser";
-        return new File(dir, filename);
-      
-    }
-    
-   
     
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
         //        System.out.println(selectedTable.getValueAt(0, 0));
@@ -1596,7 +1595,11 @@ public class IssueWindow extends JFrame {
         return valueListMap;
 
     }
-        private void updateComboList(String colName, String tableName) {
+    
+    
+    //should update offline values
+   
+    private void updateComboList(String colName, String tableName) {
         //create a combo box model
         DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
         if (colName.equalsIgnoreCase("programmer")) {
@@ -1606,6 +1609,11 @@ public class IssueWindow extends JFrame {
         } else if (colName.equalsIgnoreCase("app")) {
             appComboBox.setModel(comboBoxSearchModel);
         }
+        
+        //offline values hard coded in
+        //[, 1, 2, 3, 4, 5]
+        //[, SKYPE, Analyster, Other, ELLEGUI, VBA, TOOLS, DOVISLEX, SQL, PM]
+        //[, Shenrui, Corinne, Azoacha, Youzhi, Ying, Bektur, Xiao, Anthea, Carlos, Professor, Yi, Wei, Yiqi]
 
 
         Map comboBoxForSearchValue = loadingDropdownList();
@@ -1624,9 +1632,9 @@ public class IssueWindow extends JFrame {
                         }
 
                     });
-
+                    
                 } else if (colName.equalsIgnoreCase("rk")) {
-                    if (dropDownList.get(0) == "") {
+                    if (projectManager.isOnline() && dropDownList.get(0) == "") {
                         ArrayList<Object> list = new ArrayList<Object>();
 
                         for (int i = 1; i < dropDownList.size(); i++) {
@@ -1636,9 +1644,33 @@ public class IssueWindow extends JFrame {
 
                         dropDownList = list;
                     }
+                    else {
+                      
+                       Object[] defaultArray = {"1","2","3","4","5",""};
+                       dropDownList.addAll(Arrays.asList(defaultArray));
+                       
+                        
+                    }
+                    
+                    
                 } else if (colName.equalsIgnoreCase("programmer") || colName.equalsIgnoreCase("app") ) {
                     Object nullValue = "";
-
+                    
+                    if (!projectManager.isOnline() && colName.equalsIgnoreCase("programmer") ) {
+                        
+                        Object[] defaultArray = {"", "Shenrui", "Corinne", "Azoacha", "Youzhi", "Ying", "Bektur", "Xiao", "Anthea", "Carlos", "Professor", "Yi", "Wei", "Yiqi"};
+                        dropDownList = new ArrayList<Object>();
+                        dropDownList.addAll(Arrays.asList(defaultArray));
+                        
+                    }
+                    
+                    if (!projectManager.isOnline() && colName.equalsIgnoreCase("app") ) {
+                        Object[] defaultArray = {"", "SKYPE", "Analyster", "Other", "ELLEGUI", "VBA", "TOOLS", "DOVISLEX", "SQL", "PM"};   
+                        dropDownList = new ArrayList<Object>();
+                        dropDownList.addAll(Arrays.asList(defaultArray));
+                   
+                    }
+                    
                     Collections.sort(dropDownList, new Comparator<Object>() {
                         public int compare(Object o1, Object o2) {
                             if (o1 == nullValue && o2 == nullValue) {

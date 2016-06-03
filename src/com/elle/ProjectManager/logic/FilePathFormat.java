@@ -79,7 +79,7 @@ public class FilePathFormat {
     public static File localDataFilePath(){
         String supportFilePath = supportFilePath();
         
-        File dir = new File(supportFilePath, "issues");
+        File dir = new File(supportFilePath, "offlineTempIssues");
         if (!dir.exists())
             dir.mkdir();
         return dir;

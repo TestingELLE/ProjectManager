@@ -354,8 +354,8 @@ public class LoginWindow extends JFrame {
             jLabel2.paintImmediately(jLabel2.getVisibleRect());
 
             // create an projectManager object
-            projectManager = new ProjectManagerWindow(userName);
-
+            projectManager = new ProjectManagerWindow(userName, true);
+           
     //        projectManager.setUserName(userName.substring(7));
             // pass the log window to projectManager
             projectManager.setLogWindow(logWindow);
@@ -377,11 +377,38 @@ public class LoginWindow extends JFrame {
         } else {
 
             JOptionPane.showMessageDialog(this,
-                    "There was an error.\n Please try again or contact support if you need further assistance.",
+                    "Cannot access remote db server.\n Now enter the offline mode.",
                     "Error Message",
                     JOptionPane.ERROR_MESSAGE);
        
-            passwordFieldPW.setText("");
+            //passwordFieldPW.setText("");
+            logWindow.addMessageWithDate("Entering offline mode..");
+            Authorization.setAdminComponentType("user");
+            userName = userName.substring(7);
+            
+            // create an projectManager object
+            projectManager = new ProjectManagerWindow(userName,false);
+           
+            // pass the log window to projectManager
+            projectManager.setLogWindow(logWindow);
+
+            // pass the selectedDB to projectManager
+            // it is used in sql statements
+            projectManager.setDatabase("Offline Mode");
+
+            // show the database name in menubar
+            projectManager.showDatabase();
+
+            // show projectManager
+            projectManager.setLocationRelativeTo(this);
+            projectManager.setVisible(true);
+
+            // terminate this object
+            this.dispose();// returns used resources
+            
+            
+            
+            
         }
         
 

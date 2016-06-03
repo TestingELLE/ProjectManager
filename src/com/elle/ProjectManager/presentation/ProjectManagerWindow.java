@@ -64,7 +64,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public static String creationDate;  // set automatically from manifest
     public static String version;       // set automatically from manifest
     
+    
     // attributes
+    private boolean online;
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
     private static Statement statement;
@@ -111,11 +113,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // Data Access Objects
     IssueDAO issueDAO;
     IssueFileDAO issueFileDAO;
+    
+    //offline data manager
+    public offlineIssueManager offlineIssueMgr;
 
     /**
      * CONSTRUCTOR
      */
-    public ProjectManagerWindow(String userName) {
+    public ProjectManagerWindow(String userName, boolean mode) {
 
         /**
          * Note: initComponents() executes the tabpaneChanged method. Thus, some
@@ -129,6 +134,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         instance = this;                         // this is used to call this instance of Analyster 
 
         this.userName = userName;
+        
+        offlineIssueMgr = new offlineIssueManager(userName);
+        online = mode;
 
         // initialize tabs
         tabs = new HashMap();
@@ -2387,9 +2395,22 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
             
             if (tableName.equals(TASKFILES_TABLE_NAME)) {
-                issueFileDAO.delete(table);
+                if (online) {
+                    issueFileDAO.delete(table);
+                }
+                else {
+                    System.out.println("Offline mode has not implemented actions for issueFile deletion");
+                }
+                
             } else {
-                issueDAO.delete(ids);
+                if (online) {
+                    issueDAO.delete(ids);
+                }
+                else {
+                    //offline delete records
+                    offlineIssueMgr.deleteIssues(ids);   
+                }
+                
             }
             
             removeSelectedRows(table);
@@ -2458,7 +2479,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
             if (file.getName().startsWith("update")) {
                 Issue dbIssue = issueDAO.get(temp.getId());
-                if (dbIssue.getDatetimeLastMod().compareTo(temp.getDatetimeLastMod()) > 0) {
+                if (dbIssue.getDatetimeLastMod()!= null &&
+                        dbIssue.getDatetimeLastMod().compareTo(temp.getDatetimeLastMod()) > 0) {
                 
                     StringBuilder sb  = new StringBuilder(dbIssue.getDescription());
                     sb.append(System.lineSeparator());
@@ -2482,7 +2504,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 for (Tab tab : tabs.values()) {
                     if (tab.getTable().getName().equals(temp.getApp())){
                        if (option.equals("new"))
-                            inserTableRow(tab.getTable(),temp);
+                            insertTableRow(tab.getTable(),temp);
                        if (option.equals("update"))
                             updateTableRow(tab.getTable(),temp);
                       makeTableEditable(false);
@@ -2651,8 +2673,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     if (e.getClickCount() == 2) {
                         e.consume();
                         clearFilterDoubleClick(e, table);
-                        
-
                     }
                     
                     if (e.getClickCount() == 1 && !e.isConsumed() && e.isControlDown()) {
@@ -3836,27 +3856,35 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param table
      */
     public JTable loadTableData(JTable table) {
+        
         String tableName = table.getName();
         
         // set table model data
-        if (tableName.equals(TASKFILES_TABLE_NAME)) {
+        if (tableName.equals(TASKFILES_TABLE_NAME) && online) {
             // this is for the issue_files tab/table
             ArrayList<IssueFile> issuesFiles = issueFileDAO.get(tableName);
             if(!issuesFiles.isEmpty() && issuesFiles != null){
                 for(IssueFile issueFile: issuesFiles){
-                    inserTableRow(table, issueFile);
+                    insertTableRow(table, issueFile);
                 }
             }
         }
         else{
             // this is for all other tabs which are all from the issues table
-            ArrayList<Issue> issues = issueDAO.get(tableName);
-            if(!issues.isEmpty() && issues != null){
-                for(Issue issue: issues){
-                    inserTableRow(table, issue);
-                }
+            if (online) {
+                ArrayList<Issue> issues = issueDAO.get(tableName);
+                if(!issues.isEmpty() && issues != null)
+                    for(Issue issue: issues){
+                        insertTableRow(table, issue);
+                    }
             }
+            
+            
         }
+        
+        //load offline data
+        offlineIssueMgr.loadTableData(table);
+        
         
         // set table model to the custom editable table model		
         addEditableTableModel(table);
@@ -4690,6 +4718,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             model.setValueAt(issue.getIssueType(), row, 9);
             model.setValueAt(issue.getSubmitter(), row, 10);
             model.setValueAt(issue.getLocked(), row, 11);
+            model.setValueAt(issue.getDatetimeLastMod(), row, 12);
             
             // add back the table listeners
             for(int i = 0; i < listeners.length; i++){
@@ -4709,7 +4738,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param table
      * @param issue 
      */
-    public void inserTableRow(JTable table, Issue issue) {
+    public void insertTableRow(JTable table, Issue issue) {
 
         Object[] rowData = new Object[13];
         rowData[0] = issue.getId();
@@ -4733,7 +4762,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param table
      * @param issue 
      */
-    public void inserTableRow(JTable table, IssueFile issueFile) {
+    public void insertTableRow(JTable table, IssueFile issueFile) {
 
         Object[] rowData = new Object[9];
         rowData[0] = issueFile.getFileID();
@@ -4790,7 +4819,30 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             return false;
         }
     }
+    
+    /**
+     * Yi
+     * for offline data, remove the offline data from table if it gets pushed to server.
+     */
 
+    public void removeTableRow(JTable table, int issueId) {
+
+        DefaultTableModel model = (DefaultTableModel)table.getModel();
+        int recordCnt = model.getRowCount();
+        
+        for (int i = recordCnt - 1; i >=0; i--) {
+            
+            System.out.println(model.getValueAt(i,0).toString());
+            System.out.println(model.getValueAt(i,1).toString());
+            
+            int id = Integer.parseInt(model.getValueAt(i, 0).toString());
+            if (id == issueId) {
+                model.removeRow(i);
+                break;
+            }
+        }
+ 
+    }
     /**
      * sets the table model with the custom editable table model
      * @param table 
@@ -4810,6 +4862,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         EditableTableModel etm = new EditableTableModel(data, columnNames, columnClasses);
         table.setModel(etm);
     }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+    
+    
+    
     
     /**
      * CLASS
