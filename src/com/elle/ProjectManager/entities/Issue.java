@@ -23,13 +23,14 @@ public class Issue implements Serializable {
     private String issueType;
     private String submitter;
     private String locked;
+    private String lastmodtime;
    
     
     public Issue(){
-        this(-1,"","","","","","","","","FEATURE","","");
+        this(-1,"","","","","","","","","FEATURE","","","");
     }
 
-    public Issue(int id, String app, String title, String description, String programmer, String dateOpened, String rk, String version, String dateClosed, String issue_type, String submitter, String locked) {
+    public Issue(int id, String app, String title, String description, String programmer, String dateOpened, String rk, String version, String dateClosed, String issue_type, String submitter, String locked, String lastmodtime) {
         this.id = id;
         this.app = app;
         this.title = title;
@@ -42,6 +43,7 @@ public class Issue implements Serializable {
         this.issueType = issue_type;
         this.submitter = submitter;
         this.locked = locked;
+        this.lastmodtime = lastmodtime;
         
     }
 
@@ -140,6 +142,16 @@ public class Issue implements Serializable {
     public void setLocked(String locked) {
         this.locked = locked;
     }
+
+    public String getLastmodtime() {
+        return lastmodtime;
+    }
+
+    public void setLastmodtime(String lastmodtime) {
+        this.lastmodtime = lastmodtime;
+    }
+    
+    
 
   
     

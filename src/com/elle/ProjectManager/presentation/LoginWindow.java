@@ -394,7 +394,7 @@ public class LoginWindow extends JFrame {
 
             // pass the selectedDB to projectManager
             // it is used in sql statements
-            projectManager.setDatabase("Offline Mode");
+            projectManager.setDatabase(selectedDB);
 
             // show the database name in menubar
             projectManager.showDatabase();

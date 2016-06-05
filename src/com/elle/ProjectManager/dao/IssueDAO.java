@@ -33,6 +33,7 @@ public class IssueDAO {
     private final String COL_ISSUE_TYPE = "issueType";
     private final String COL_SUBMITTER = "submitter";
     private final String COL_LOCKED = "locked";
+    private final String COL_LASTMODTIME = "lastmodtime";
   
     /**
      * get max id from issues table
@@ -99,6 +100,8 @@ public class IssueDAO {
                 issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
                 issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
+                issue.setLastmodtime(rs.getString(COL_LASTMODTIME));
+                
                 
             }
      
@@ -393,6 +396,7 @@ public class IssueDAO {
                 issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
                 issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
+                issue.setLastmodtime(rs.getString(COL_LASTMODTIME));
                 issues.add(issue);
             }
             
@@ -436,7 +440,7 @@ public class IssueDAO {
                 issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
                 issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
-                
+                issue.setLastmodtime(rs.getString(COL_LASTMODTIME));          
             }
             
             LoggingAspect.afterReturn("Loaded table " + tableName);

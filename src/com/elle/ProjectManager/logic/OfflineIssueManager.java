@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 /**
@@ -44,12 +45,20 @@ public class OfflineIssueManager {
         projectManager = ProjectManagerWindow.getInstance();
         dir = FilePathFormat.localDataFilePath();
         issuesList = new HashMap();
+        
+        //set up the offline issues' ids and map
         readInLocalData();
+        setIds();
+        
+        //sync local data
+        if (projectManager.isOnline())
+        syncLocalData();
+        
+        
         newIssueId = initId();
         
         this.userName = userName;
-        //set the offline issues' ids
-        setIds();
+        
     }
     
     private void readInLocalData(){
@@ -140,28 +149,59 @@ public class OfflineIssueManager {
         } 
     }
     
+    private Issue copyIssue(Issue issue) {
+        Issue temp = new Issue();
+        temp.setId(issue.getId());
+        temp.setApp(issue.getApp());
+        temp.setTitle(issue.getTitle());
+        temp.setDescription(issue.getDescription());
+        temp.setProgrammer(issue.getProgrammer());
+        temp.setDateOpened(issue.getDateOpened());
+        temp.setRk(issue.getRk());
+        temp.setVersion(issue.getVersion());
+        temp.setDateClosed(issue.getDateClosed());
+        temp.setIssueType(issue.getIssueType());
+        temp.setSubmitter(issue.getSubmitter());
+        temp.setLocked(issue.getLocked());
+        temp.setLastmodtime(issue.getLastmodtime());
+        return temp;
+    }
+    
     public boolean addIssue(Issue issue) { 
         if (issue.getId() == -1) {
             issue.setId(newIssueId);
             newIssueId --;  //need to update the newIssueId to use for next new issue
         }
+        Issue newIssue = copyIssue(issue);
         
-        File filename = generateFileName(issue);
         
-        if (saveIssueToFile(issue, filename)) {
-            issuesList.put(issue, filename);
+        File filename = generateFileName(newIssue);
+        
+        if (saveIssueToFile(newIssue, filename)) {
+            issuesList.put(newIssue, filename);
+            //System.out.println("new issue added : " + issue.getId());
             //update the ids list
-            ids.add(issue.getId());
+            ids.add(newIssue.getId());
+            
             return true;
         }
         else return false;
     }
     
     public boolean updateIssue(Issue issue) {
+        //check the offline mgr, if the issue is already in.
+        
+        if (issue.getId() < 9000 && issue.getId() > 0) 
+            issue.setId(issue.getId()+9000);
+            
         
         Issue foundIssue = getIssue(issue);
-        if (foundIssue == null) return addIssue(issue);
+        
+        if (foundIssue == null) {
+            return addIssue(issue);
+        }
         else {
+            
             removeIssue(foundIssue);
             return addIssue(issue);
         }
@@ -172,13 +212,19 @@ public class OfflineIssueManager {
     
     
     public void removeIssue(Issue issue) { 
-        //clean up local data
+       
+        
+        
+        
+         //clean up local data
         File filename = issuesList.get(issue);
+        System.out.println(filename.getName());
         filename.delete();
         issuesList.remove(issue);
         
         int index = ids.indexOf(issue.getId());
         ids.remove(index);
+        
         
     }
     
@@ -200,6 +246,7 @@ public class OfflineIssueManager {
     
     
     public Issue getIssue(Issue issue) {
+        
         for (Issue temp : issuesList.keySet()) 
             if (temp.getId() == issue.getId()) {
                 return temp;
@@ -210,10 +257,12 @@ public class OfflineIssueManager {
     }
     
     public Issue getIssue(int id) {
-        for (Issue temp : issuesList.keySet()) 
+        for (Issue temp : issuesList.keySet()) {
             if (temp.getId() == id) {
+                
                 return temp;
             }   
+        }
         return null;
             
     }
@@ -242,8 +291,10 @@ public class OfflineIssueManager {
         int[] ids = new int[issuesList.size()];
         int index = 0;
         for (Issue issue : issuesList.keySet()) {
-            if (issue.getId() < 0 && syncIssueToDbFromFile(issuesList.get(issue),dao))
+            if (syncIssueToDbFromFile(issuesList.get(issue),dao))
                 ids[index++] = issue.getId();
+            
+            
         }
         deleteIssues(ids);
     }
@@ -261,17 +312,40 @@ public class OfflineIssueManager {
             //record the offline id , later remove from table using the offline Id
             int originalId = temp.getId();
             ois.close();
+            //reset the update id
+            if (temp.getId() > 9000) temp.setId(temp.getId()-9000);
             
-            if (dao.insert(temp)) {
-               
-                for (Tab tab : projectManager.getTabs().values()) {
-                    if (tab.getTable().getName().equals(temp.getApp())){
-                      projectManager.insertTableRow(tab.getTable(),temp);
-                      projectManager.removeTableRow(tab.getTable(), originalId);
-                      projectManager.makeTableEditable(false);
-                      break;
-                    }
+            //check update time stamp, if it is older than db issue, pass for manual inspection.
+            if (temp.getId() > 0) {
+                Issue dbIssue = dao.get(temp.getId());
+                if (temp.getLastmodtime().compareTo(dbIssue.getLastmodtime()) < 0){
+                    String message = "Offline issue " + originalId + " has an older timestamp,\nplease update manually.";
+                    JOptionPane.showMessageDialog(projectManager, message);
+                    return false;
                 }
+                    
+            }
+            
+            
+            
+            boolean success = (originalId < 0) ? dao.insert(temp):dao.update(temp);
+            if (success) {
+                
+                
+                if (projectManager.getTabs() != null) {
+                   for (Tab tab : projectManager.getTabs().values()) {
+                        if (tab.getTable().getName().equals(temp.getApp())){
+                      
+                            projectManager.removeTableRow(tab.getTable(), originalId);
+                            projectManager.removeTableRow(tab.getTable(), temp.getId());
+                            projectManager.insertTableRow(tab.getTable(),temp);
+                            projectManager.makeTableEditable(false);
+                            break;
+                        }
+                    }
+                    
+                }
+
                 LoggingAspect.addLogMsg(file.getName() +" is updated to server successfully");
                 
                 return true;
@@ -293,6 +367,13 @@ public class OfflineIssueManager {
         
     }
      
+    
+    public void print(){
+        for (Issue temp : issuesList.keySet()) {
+            System.out.println(temp.getId());
+        }
+        
+    }
     
      
     

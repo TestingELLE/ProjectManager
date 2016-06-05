@@ -418,7 +418,7 @@ public class IssueWindow extends JFrame {
        
         initComponents();
         submitterText.setText(projectManager.getUserName());
-
+        
         //setComponentValuesFromIssue();
         
         /**
@@ -544,6 +544,8 @@ public class IssueWindow extends JFrame {
         btnCloseIssue = new javax.swing.JButton();
         app = new javax.swing.JLabel();
         appComboBox = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        lastmodTime = new javax.swing.JLabel();
         titleText = new javax.swing.JTextField();
         description = new javax.swing.JLabel();
         idText = new javax.swing.JLabel();
@@ -660,31 +662,39 @@ public class IssueWindow extends JFrame {
             }
         });
 
+        jLabel1.setText("lastModTime : ");
+
+        lastmodTime.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(app)
-                    .addComponent(appComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 175, Short.MAX_VALUE)
-                .addComponent(btnCloseIssue, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(app, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(appComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lastmodTime, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dateClosedText, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dateClosed))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(version)))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(buttonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(buttonCancel))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnCloseIssue, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dateClosedText, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dateClosed))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(version)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(buttonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buttonSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(buttonCancel))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -706,7 +716,11 @@ public class IssueWindow extends JFrame {
                             .addComponent(buttonConfirm)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(appComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lastmodTime))
+                        .addGap(6, 6, 6))))
         );
 
         titleText.setText("jTextField1");
@@ -794,7 +808,7 @@ public class IssueWindow extends JFrame {
                                         .addComponent(idText, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                                 .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1177,22 +1191,37 @@ public class IssueWindow extends JFrame {
         setIssueValuesFromComponents();
         int originalId = issue.getId();
         
+        
         if (projectManager.isOnline()) {
+            //if it is offline updated issue, reset id by -9000
+            if (originalId > 9000) issue.setId(originalId - 9000);
             boolean onlineUpdateSuccess =  issue.getId() > 0 ? dao.update(issue) :  dao.insert(issue);
             if(onlineUpdateSuccess){
                 if (originalId < 0) {//for new issues
                     projectManager.insertTableRow(table, issue);
-                 //remove selected rows
+                 //remove original row
                     projectManager.removeTableRow(table, originalId);
+                    
+                    mgr.removeIssue(mgr.getIssue(originalId));
+                    
                 }
-                else //for old issues
+                else {
+                    
+                    if (originalId > 9000) {
+                        projectManager.removeTableRow(table, originalId);
+                        mgr.removeIssue(mgr.getIssue(originalId));
+                    
+                    }
                     projectManager.updateTableRow(table,issue);
-               
+                    
+                }
+              
                 //update offlineIssueMgr
                 projectManager.makeTableEditable(false);
-                mgr.removeIssue(mgr.getIssue(originalId));
+                
             }
             else { //offline actions
+                
                 JOptionPane.showMessageDialog(this,
                     "Fail to connect to server.\n Data will be saved saved locally.",
                     "Error Message",
@@ -1202,6 +1231,7 @@ public class IssueWindow extends JFrame {
                 if (mgr.updateIssue(issue)){
                     JOptionPane.showMessageDialog(this,
                      "Data saved successfully.");
+                    
                     projectManager.updateTableRow(table,issue);
                     projectManager.makeTableEditable(false);
                
@@ -1222,10 +1252,19 @@ public class IssueWindow extends JFrame {
         else {
             
             JOptionPane.showMessageDialog(this,"Offline Mode : data is saved locally.");
+            
             if (mgr.updateIssue(issue)){
+                
                     JOptionPane.showMessageDialog(this,
                      "Data saved successfully.");
-                    projectManager.updateTableRow(table,issue);
+                    //if already in table, update, else insert
+                    int row = projectManager.findTableModelRow(table,issue);
+                    if (row != -1)
+                        projectManager.updateTableRow(table,issue);
+                    else
+                        projectManager.insertTableRow(table,issue);
+                    
+                        
                     projectManager.makeTableEditable(false);
                
                 }
@@ -1235,13 +1274,10 @@ public class IssueWindow extends JFrame {
                         "I/O Error Message",
                         JOptionPane.ERROR_MESSAGE);
                 
-                }
-            
-            
+                }      
         }
         
-        
-        
+        issue.setId(originalId);
         issueWindowClosing();
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
@@ -1254,6 +1290,7 @@ public class IssueWindow extends JFrame {
      */
     private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
         setIssueValuesFromComponents();
+        int originalId = issue.getId();
         
         if (projectManager.isOnline() && dao.insert(issue)) {
             
@@ -1317,6 +1354,8 @@ public class IssueWindow extends JFrame {
 //                
 //            }
 //        }
+        
+        issue.setId(originalId);
         issueWindowClosing();
     }//GEN-LAST:event_buttonSubmitActionPerformed
     
@@ -1409,6 +1448,7 @@ public class IssueWindow extends JFrame {
         issue.setIssueType(getTableValueAt(row, 9).toString());
         issue.setSubmitter(getTableValueAt(row, 10).toString());
         issue.setLocked(getTableValueAt(row, 11).toString());
+        issue.setLastmodtime(getTableValueAt(row, 12).toString());
         
     }
     
@@ -1459,7 +1499,7 @@ public class IssueWindow extends JFrame {
         comboBoxIssueType.setSelectedItem(issue.getIssueType());
         submitterText.setText(issue.getSubmitter());
         lockCheckBox.setSelected(issue.getLocked().equals("Y")?true:false);
-        
+        lastmodTime.setText(issue.getLastmodtime());
         
         setOpenCloseIssueBtnText(); // set button text to Open/Close issue
     }
@@ -1768,8 +1808,10 @@ public class IssueWindow extends JFrame {
     private javax.swing.JPanel formPane;
     private javax.swing.JLabel id;
     private javax.swing.JLabel idText;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JLabel lastmodTime;
     private javax.swing.JLabel lock;
     private javax.swing.JCheckBox lockCheckBox;
     private javax.swing.JLabel programmer;
