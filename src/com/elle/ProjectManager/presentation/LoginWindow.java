@@ -11,6 +11,7 @@ import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.Database;
 import com.elle.ProjectManager.database.Server;
 import static com.elle.ProjectManager.presentation.LogWindow.HYPHENS;
+import java.awt.Dimension;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -370,6 +371,8 @@ public class LoginWindow extends JFrame {
             // show projectManager
             projectManager.setLocationRelativeTo(this);
             projectManager.setVisible(true);
+            
+            
 
             // terminate this object
             this.dispose();// returns used resources
@@ -402,6 +405,8 @@ public class LoginWindow extends JFrame {
             // show projectManager
             projectManager.setLocationRelativeTo(this);
             projectManager.setVisible(true);
+            
+            
 
             // terminate this object
             this.dispose();// returns used resources

@@ -1206,6 +1206,7 @@ public class IssueWindow extends JFrame {
                     
                 }
                 else {
+                    // for updating issues, it could be >9000 or <9000, >9000 update requires extra removing the 9xxx table row
                     
                     if (originalId > 9000) {
                         projectManager.removeTableRow(table, originalId);
@@ -1232,7 +1233,12 @@ public class IssueWindow extends JFrame {
                     JOptionPane.showMessageDialog(this,
                      "Data saved successfully.");
                     
-                    projectManager.updateTableRow(table,issue);
+                    //if new offline issue or update offline issue, then update
+                    if (originalId < 0 || originalId > 9000) projectManager.updateTableRow(table, issue);
+                    
+                    //if update some online issue
+                    else
+                        projectManager.insertTableRow(table,issue);
                     projectManager.makeTableEditable(false);
                
                 }
@@ -1289,6 +1295,8 @@ public class IssueWindow extends JFrame {
      * @param evt 
      */
     private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
+        
+       
         setIssueValuesFromComponents();
         int originalId = issue.getId();
         

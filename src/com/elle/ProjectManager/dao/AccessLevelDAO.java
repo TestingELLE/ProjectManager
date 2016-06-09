@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class AccessLevelDAO {
 
     // database table information
-    public static final String DB_TABLE_NAME = "PM_accessLevel_tbl";
+    public static final String DB_TABLE_NAME = "accessLevels";
     public static final String COL_USER = "user";
     public static final String COL_ACCESS_LEVEL = "accessLevel";
 

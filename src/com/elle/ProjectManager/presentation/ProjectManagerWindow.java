@@ -85,6 +85,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private ShortCutSetting ShortCut;
     private ConsistencyOfTableColumnName ColumnNameConsistency;
     private SqlOutputWindow sqlOutputWindow;
+    private ReconcileWindow reconcileWindow;
 
     private Map<Integer, IssueWindow> openingIssuesList;
 
@@ -100,6 +101,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private boolean comboBoxStartToSearch;
 
     private boolean popupWindowShowInPM;
+    private boolean reconcileWindowShow;
 
     // create a jlabel to show the database used
     private JLabel databaseLabel;
@@ -134,9 +136,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         instance = this;                         // this is used to call this instance of Analyster 
 
         this.userName = userName;
-        
-        offlineIssueMgr = new OfflineIssueManager(userName);
         online = mode;
+        offlineIssueMgr = new OfflineIssueManager(userName);
+        
 
         // initialize tabs
         tabs = new HashMap();
@@ -205,7 +207,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         initComponents(); // generated code
         
-        ///set the status
+        ///set the offline status
         if (online) {
             status.setText("Online");
             status.setForeground(new Color(0, 153, 0));
@@ -214,12 +216,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             status.setText("Offline");
             status.setForeground(Color.RED);
             menuItemSyncLocalData.setEnabled(false);
+            menuItemReconcileConflict.setEnabled(false);
         }
         
         
         //set the offline mode 
         if (!online) menuItemOfflineMode.setEnabled(false);
-        menuItemOfflineMode.setSelected(!mode);
+        menuItemOfflineMode.setSelected(!online);
 
         // initialize the colors for the edit mode text
         editModeActiveTextColor = new Color(44, 122, 22); //dark green
@@ -406,6 +409,20 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // authorize user for this component
         Authorization.authorize(this);
+        
+        
+        //if there are conflicted issues and is in online mode
+        //open reconcile window in the dispatch thread , thus not delaying the main window
+        if (online && offlineIssueMgr.getConflictIssues().size() > 0)
+             SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                reconcileWindow = new ReconcileWindow();
+                reconcileWindow.setVisible(true);
+                reconcileWindowShow = true;
+                
+                }
+            });
     }
 
     /*
@@ -696,6 +713,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemCompIssues = new javax.swing.JMenuItem();
         menuItemBackup = new javax.swing.JMenuItem();
         menuItemSyncLocalData = new javax.swing.JMenuItem();
+        menuItemReconcileConflict = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemRepBugSugg = new javax.swing.JMenuItem();
 
@@ -1010,9 +1028,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1028,6 +1045,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         labelRecords.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         labelRecords.setText("labelRecords");
+        labelRecords.setPreferredSize(new java.awt.Dimension(61, 20));
 
         labelTimeLastUpdate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         labelTimeLastUpdate.setText("Last updated: ");
@@ -1054,8 +1072,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addGap(0, 0, 0)
                 .addComponent(labelTimeLastUpdate)
                 .addGap(0, 0, 0)
-                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         searchPanel.setPreferredSize(new java.awt.Dimension(584, 76));
@@ -1135,7 +1152,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 63, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
@@ -1344,6 +1361,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuTools.add(menuItemSyncLocalData);
 
+        menuItemReconcileConflict.setText("Reconcile Conflict Issue");
+        menuItemReconcileConflict.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemReconcileConflictActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemReconcileConflict);
+
         menuBar.add(menuTools);
 
         menuHelp.setText("Help");
@@ -1374,8 +1399,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addGap(0, 0, 0)
                 .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(35, 35, 35))
         );
 
         pack();
@@ -2450,6 +2475,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
              
              //delete issues from table , first separate online from offline, and perform actions accordingly.
              // in addition, online issues cannot be really deleted in offline mode, thought table seems delete the records.
+             
             } else {
                 
                 int[] onlineIds = new int[ids.length];
@@ -2510,11 +2536,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void menuItemOfflineModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOfflineModeActionPerformed
        if (menuItemOfflineMode.isSelected()) {
 
-            // show sql panel
+            
             online = false;
             status.setText("Offline");
             status.setForeground(Color.RED);
             menuItemSyncLocalData.setEnabled(false);
+            menuItemReconcileConflict.setEnabled(false);
             
         
 
@@ -2524,11 +2551,37 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             status.setText("Online");
             status.setForeground(new Color(0, 153, 0));
             menuItemSyncLocalData.setEnabled(true);
-            
+            menuItemReconcileConflict.setEnabled(true);
             
         }
         
     }//GEN-LAST:event_menuItemOfflineModeActionPerformed
+
+    private void menuItemReconcileConflictActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReconcileConflictActionPerformed
+        
+        if (reconcileWindowShow) {
+            reconcileWindow.toFront();
+        }
+        
+        else {
+            if (offlineIssueMgr.getConflictIssues().size() > 0){
+            
+                reconcileWindow = new ReconcileWindow();
+                reconcileWindow.setVisible(true);
+                reconcileWindowShow = true;
+                reconcileWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);        
+            }
+            else {
+                JOptionPane.showMessageDialog(this,
+                     "There are no conflicts issues to be resolved.");
+            }
+            
+        }
+            
+       
+        
+     
+    }//GEN-LAST:event_menuItemReconcileConflictActionPerformed
 
     
 //    private void syncLocalData() {
@@ -4336,6 +4389,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JCheckBoxMenuItem menuItemOfflineMode;
     private javax.swing.JMenuItem menuItemPrintDisplay;
     private javax.swing.JMenuItem menuItemPrintGUI;
+    private javax.swing.JMenuItem menuItemReconcileConflict;
     private javax.swing.JMenuItem menuItemReloadAllData;
     private javax.swing.JMenuItem menuItemReloadData;
     private javax.swing.JMenuItem menuItemReloadSelectedData;
@@ -4955,6 +5009,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public void setOnline(boolean online) {
         this.online = online;
     }
+
+    public boolean isReconcileWindowShow() {
+        return reconcileWindowShow;
+    }
+
+    public void setReconcileWindowShow(boolean reconcileWindowShow) {
+        this.reconcileWindowShow = reconcileWindowShow;
+    }
+    
+    
     
     
     

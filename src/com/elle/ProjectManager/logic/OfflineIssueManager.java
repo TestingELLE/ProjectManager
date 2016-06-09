@@ -6,14 +6,17 @@
 package com.elle.ProjectManager.logic;
 
 import com.elle.ProjectManager.dao.IssueDAO;
+import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
+import com.mysql.jdbc.CommunicationsException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,12 +32,23 @@ import javax.swing.JTable;
  * @author Yi
  * It is the class to manage all offline issues
  */
+
+
+/*
+For offline issues, id < 0 : new issue; id > 9000 : updated issue
+*/
 public class OfflineIssueManager {
     private final ProjectManagerWindow projectManager;
     private final File dir;
     private Map<Issue, File> issuesList;
+    private ArrayList<ConflictIssuePair> conflictIssues ; 
     private final String userName;
+    
+    
+    
+    //keep ids of offline issues for red id rendering
     private ArrayList<Integer> ids;
+    
     //the id is for starting id of new issue, when offlineIssueManager instantiated, it has to set the number 
     //based on the current offline data folder
     
@@ -45,6 +59,7 @@ public class OfflineIssueManager {
         projectManager = ProjectManagerWindow.getInstance();
         dir = FilePathFormat.localDataFilePath();
         issuesList = new HashMap();
+        conflictIssues = new ArrayList();
         
         //set up the offline issues' ids and map
         readInLocalData();
@@ -52,7 +67,7 @@ public class OfflineIssueManager {
         
         //sync local data
         if (projectManager.isOnline())
-        syncLocalData();
+            syncLocalData();
         
         
         newIssueId = initId();
@@ -291,54 +306,58 @@ public class OfflineIssueManager {
         int[] ids = new int[issuesList.size()];
         int index = 0;
         for (Issue issue : issuesList.keySet()) {
-            if (syncIssueToDbFromFile(issuesList.get(issue),dao))
+            if (syncIssueToDb(issue,dao))
                 ids[index++] = issue.getId();
             
             
         }
         deleteIssues(ids);
+        if (conflictIssues.size() > 0) {
+            String message = "Update issues have conflicts.\nPlease inspect manually";
+            JOptionPane.showMessageDialog(projectManager, message);
+        }
+        
+                    
     }
     
     
     
-    private boolean syncIssueToDbFromFile(File file, IssueDAO dao) {
-        LoggingAspect.addLogMsgWthDate("Now sync file: " + file.getName());
+    private boolean syncIssueToDb(Issue issue, IssueDAO dao) {
+        LoggingAspect.addLogMsgWthDate("Now sync offline issues : " + issue.getId());
         
-        try{
-            ObjectInputStream ois =
-                    new ObjectInputStream(new FileInputStream(file));
-            Issue temp = (Issue)ois.readObject();
-            
-            //record the offline id , later remove from table using the offline Id
-            int originalId = temp.getId();
-            ois.close();
-            //reset the update id
-            if (temp.getId() > 9000) temp.setId(temp.getId()-9000);
-            
-            //check update time stamp, if it is older than db issue, pass for manual inspection.
-            if (temp.getId() > 0) {
-                Issue dbIssue = dao.get(temp.getId());
-                if (temp.getLastmodtime().compareTo(dbIssue.getLastmodtime()) < 0){
-                    String message = "Offline issue " + originalId + " has an older timestamp,\nplease update manually.";
-                    JOptionPane.showMessageDialog(projectManager, message);
+            if(! DBConnection.open()) {
+                
+                return false;
+            }
+        
+            int originalId = issue.getId();
+            if (originalId > 9000) {
+                Issue dbIssue = dao.get(originalId - 9000);
+                if (issue.getLastmodtime().compareTo(dbIssue.getLastmodtime()) < 0){
+                    
+                    conflictIssues.add(new ConflictIssuePair(dbIssue, issue));
                     return false;
                 }
                     
             }
             
-            
-            
-            boolean success = (originalId < 0) ? dao.insert(temp):dao.update(temp);
+            //not touching the original offline issue, create a tempIssue for sync
+            Issue tempIssue = copyIssue(issue);
+            if (tempIssue.getId() > 9000) tempIssue.setId(tempIssue.getId() - 9000);
+                    
+            boolean success = (originalId < 0) ? dao.insert(tempIssue):dao.update(tempIssue);
             if (success) {
                 
                 
                 if (projectManager.getTabs() != null) {
                    for (Tab tab : projectManager.getTabs().values()) {
-                        if (tab.getTable().getName().equals(temp.getApp())){
-                      
+                        if (tab.getTable().getName().equals(tempIssue.getApp())){
+                           // since tablerow actions do not produce errors when could not find the row
+                            // the next 3 actions will garanttee for both insertion and updating
+                            //the table is updated correctly
                             projectManager.removeTableRow(tab.getTable(), originalId);
-                            projectManager.removeTableRow(tab.getTable(), temp.getId());
-                            projectManager.insertTableRow(tab.getTable(),temp);
+                            projectManager.removeTableRow(tab.getTable(), tempIssue.getId());
+                            projectManager.insertTableRow(tab.getTable(),tempIssue);
                             projectManager.makeTableEditable(false);
                             break;
                         }
@@ -346,23 +365,22 @@ public class OfflineIssueManager {
                     
                 }
 
-                LoggingAspect.addLogMsg(file.getName() +" is updated to server successfully");
+                LoggingAspect.addLogMsg("Offline issue " + originalId +" is updated to server successfully");
                 
                 return true;
             }
             
             else{
-                LoggingAspect.addLogMsg(file.getName() + " failed to update to db server");    
+                LoggingAspect.addLogMsg("Offline issue "+ originalId  + " failed to update to db server");    
                 return false;
             }
             
-        }  catch (IOException ex) {
-            LoggingAspect.afterThrown(ex);
-            return false;
-        } catch (ClassNotFoundException ex) {
-            LoggingAspect.afterThrown(ex);
-            return false;
-        }
+        
+       
+            
+            
+            
+        
         
         
     }
@@ -374,8 +392,77 @@ public class OfflineIssueManager {
         }
         
     }
+
+    public ArrayList<ConflictIssuePair> getConflictIssues() {
+        return conflictIssues;
+    }
+
+    public void setConflictIssues(ArrayList<ConflictIssuePair> conflictIssues) {
+        this.conflictIssues = conflictIssues;
+    }
+
     
-     
+    public void syncConflictIssuePair(ConflictIssuePair pair) {
+        IssueDAO dao = new IssueDAO();
+        int originalId = pair.getOfflineIssue().getId();
+        Issue chosen ;
+        if (pair.isChoice()) {
+            processIssue(pair.getDbIssue());
+            chosen = pair.getDbIssue();
+        }
+                
+        else {
+                Issue tempIssue = copyIssue(pair.getOfflineIssue());
+                tempIssue.setId(tempIssue.getId() - 9000);
+                chosen = tempIssue;
+            }
+        
+        if(dao.update(chosen)) {
+            //update the tables
+            if (projectManager.getTabs() != null) {
+                for (Tab tab : projectManager.getTabs().values()) {
+                    if (tab.getTable().getName().equals(chosen.getApp())){
+                           // since tablerow actions do not produce errors when could not find the row
+                            // the next 3 actions will garanttee for both insertion and updating
+                            //the table is updated correctly
+                        projectManager.removeTableRow(tab.getTable(), originalId);
+                        projectManager.removeTableRow(tab.getTable(), chosen.getId());
+                        projectManager.insertTableRow(tab.getTable(),chosen);
+                        projectManager.makeTableEditable(false);
+                        break;
+                    }
+                }
+                    
+            }
+            
+            //clean up data
+            conflictIssues.remove(pair);
+            removeIssue(pair.getOfflineIssue());
+            
+        }
+        
+        
+        
+    }
+    
+   
+    private void processIssue(Issue issue) {
+        //process the dao returned issue, if any field is null, change to "";
+        //private int id;
+        if (issue.getApp() == null) issue.setApp("");
+        if (issue.getTitle() == null) issue.setTitle("");
+        if (issue.getDescription() == null) issue.setDescription("");
+        if (issue.getProgrammer() == null) issue.setProgrammer("");
+        if (issue.getDateOpened() == null) issue.setDateOpened("");
+        if (issue.getRk() == null) issue.setRk("");
+        if (issue.getVersion() == null) issue.setVersion("");
+        if (issue.getDateClosed() == null) issue.setDateClosed("");
+        if (issue.getIssueType() == null) issue.setIssueType("");
+        if (issue.getSubmitter() == null) issue.setSubmitter("");
+        if (issue.getLocked() == null) issue.setLocked("");
+        
+
+    }
     
 
 }
