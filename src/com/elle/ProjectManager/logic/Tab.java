@@ -77,7 +77,7 @@ public class Tab implements ITableConstants {
         recordsShown = 0;
         filter = new TableFilter(table);
 //        ColumnPopupMenu = new ColumnPopupMenu(filter);
-
+        
         // store the column names for the table
         for (int i = 0; i < table.getColumnCount(); i++) {
             tableColNames[i] = table.getColumnName(i);
