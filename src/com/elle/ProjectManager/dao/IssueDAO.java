@@ -33,7 +33,8 @@ public class IssueDAO {
     private final String COL_ISSUE_TYPE = "issueType";
     private final String COL_SUBMITTER = "submitter";
     private final String COL_LOCKED = "locked";
-
+    private final String COL_LASTMODTIME = "lastmodtime";
+  
     /**
      * get max id from issues table
      * @return max id from issues table
@@ -70,14 +71,80 @@ public class IssueDAO {
      * Insert statement is used to add the issue to the database. 
      * @param sue 
      */
+    
+    public Issue get(int id) {
+        ResultSet rs = null;
+        String sql = "";
+        
+        
+            sql = "SELECT * FROM " + DB_TABLE_NAME + " WHERE ID = " + "'" 
+            + id + "'";
+        Issue issue = new Issue();
+        
+        try {
+
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while(rs.next()){
+                
+                issue.setId(rs.getInt(COL_PK_ID));
+                issue.setApp(rs.getString(COL_APP));
+                issue.setTitle(rs.getString(COL_TITLE));
+                issue.setDescription(rs.getString(COL_DESCRIPTION));
+                issue.setProgrammer(rs.getString(COL_PROGRAMMER));
+                issue.setDateOpened(rs.getString(COL_DATE_OPENED));
+                issue.setRk(rs.getString(COL_RK));
+                issue.setVersion(rs.getString(COL_VERSION));
+                issue.setDateClosed(rs.getString(COL_DATE_CLOSED));
+                issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
+                issue.setSubmitter(rs.getString(COL_SUBMITTER));
+                issue.setLocked(rs.getString(COL_LOCKED));
+                issue.setLastmodtime(rs.getString(COL_LASTMODTIME));
+                
+                
+            }
+     
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return issue;
+        
+    }
     public boolean insert(Issue issue) {
         
         boolean successful = false;
         DBConnection.close();
         if(DBConnection.open()){
             
-            // set issue values
+            // set issue id
             int id = issue.getId();
+            if (id < 0) {
+                String sql = "SELECT MAX(" + COL_PK_ID + ") "
+                       + "FROM " + DB_TABLE_NAME + ";";
+
+                ResultSet result = null;
+                int maxId = -1;
+
+                try {
+                    Connection con = DBConnection.getConnection();
+                    PreparedStatement statement = con.prepareStatement(sql);
+                    result = statement.executeQuery();
+                    if(result.next()){
+                        maxId = result.getInt(1);
+                    }
+                    id = maxId + 1;
+                    
+                }
+                catch (SQLException ex) {
+                    LoggingAspect.afterThrown(ex);
+                    return false;
+                }
+                
+                
+            }
             String app = format(issue.getApp());
             String title = format(issue.getTitle());
             String description = format(issue.getDescription());
@@ -89,24 +156,29 @@ public class IssueDAO {
             String issueType = format(issue.getIssueType());
             String submitter = format(issue.getSubmitter());
             String locked = format(issue.getLocked());
+            
 
             String sql = "INSERT INTO " + DB_TABLE_NAME + " (" + COL_PK_ID + ", " 
                     + COL_APP + ", " +  COL_TITLE + ", " +  COL_DESCRIPTION + ", " 
                     +  COL_PROGRAMMER + ", " +  COL_DATE_OPENED + ", " +  COL_RK 
                     + ", " +  COL_VERSION + ", " +  COL_DATE_CLOSED + ", " 
                     +  COL_ISSUE_TYPE + ", " +  COL_SUBMITTER + ", " 
-                    +  COL_LOCKED  + ") " 
+                    +  COL_LOCKED  +  ") " 
                     + "VALUES (" + id + ", " + app + ", " +  title + ", " 
                     +  description + ", " +  programmer + ", " +  dateOpened 
                     + ", " +  rk + ", " +  version + ", " +  dateClosed 
                     + ", " +  issueType + ", " +  submitter + ", " 
-                    +  locked  + ") ";
-
+                    +  locked  +  ") ";
+            
             try {
                 Statement statement = DBConnection.getStatement();
                 statement.executeUpdate(sql);
                 LoggingAspect.afterReturn("Upload Successful!");
                 successful = true;
+                //update the id after successful uploading
+                if (issue.getId() < 0)
+                    issue.setId(id);
+                     
             }
             catch (SQLException ex) {
                 LoggingAspect.afterThrown(ex);
@@ -145,7 +217,6 @@ public class IssueDAO {
             String issueType = format(issue.getIssueType());
             String submitter = format(issue.getSubmitter());
             String locked = format(issue.getLocked());
-          
             
    
             
@@ -325,6 +396,7 @@ public class IssueDAO {
                 issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
                 issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
+                issue.setLastmodtime(rs.getString(COL_LASTMODTIME));
                 issues.add(issue);
             }
             
@@ -368,7 +440,7 @@ public class IssueDAO {
                 issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
                 issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
-                
+                issue.setLastmodtime(rs.getString(COL_LASTMODTIME));          
             }
             
             LoggingAspect.afterReturn("Loaded table " + tableName);

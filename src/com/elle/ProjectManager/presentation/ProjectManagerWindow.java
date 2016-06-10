@@ -28,7 +28,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -45,6 +48,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
@@ -59,7 +64,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public static String creationDate;  // set automatically from manifest
     public static String version;       // set automatically from manifest
     
+    
     // attributes
+    private boolean online;
     private Map<String, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
     private static Statement statement;
@@ -78,6 +85,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private ShortCutSetting ShortCut;
     private ConsistencyOfTableColumnName ColumnNameConsistency;
     private SqlOutputWindow sqlOutputWindow;
+    private ReconcileWindow reconcileWindow;
 
     private Map<Integer, IssueWindow> openingIssuesList;
 
@@ -93,6 +101,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private boolean comboBoxStartToSearch;
 
     private boolean popupWindowShowInPM;
+    private boolean reconcileWindowShow;
 
     // create a jlabel to show the database used
     private JLabel databaseLabel;
@@ -106,11 +115,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // Data Access Objects
     IssueDAO issueDAO;
     IssueFileDAO issueFileDAO;
+    
+    //offline data manager
+    public OfflineIssueManager offlineIssueMgr;
 
     /**
      * CONSTRUCTOR
      */
-    public ProjectManagerWindow(String userName) {
+    public ProjectManagerWindow(String userName, boolean mode) {
 
         /**
          * Note: initComponents() executes the tabpaneChanged method. Thus, some
@@ -124,6 +136,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         instance = this;                         // this is used to call this instance of Analyster 
 
         this.userName = userName;
+        online = mode;
+        offlineIssueMgr = new OfflineIssueManager(userName);
+        
 
         // initialize tabs
         tabs = new HashMap();
@@ -191,6 +206,23 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         initComponents(); // generated code
+        
+        ///set the offline status
+        if (online) {
+            status.setText("Online");
+            status.setForeground(new Color(0, 153, 0));
+        }
+        else {
+            status.setText("Offline");
+            status.setForeground(Color.RED);
+            menuItemSyncLocalData.setEnabled(false);
+            menuItemReconcileConflict.setEnabled(false);
+        }
+        
+        
+        //set the offline mode 
+        if (!online) menuItemOfflineMode.setEnabled(false);
+        menuItemOfflineMode.setSelected(!online);
 
         // initialize the colors for the edit mode text
         editModeActiveTextColor = new Color(44, 122, 22); //dark green
@@ -296,14 +328,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         initTotalRowCounts(tabs);
 
         // set the cell renderers for each tabName
+        
         tabs.get(tableNames[0]).setCellRenderer(new JTableCellRenderer(PMTable));
         tabs.get(tableNames[1]).setCellRenderer(new JTableCellRenderer(ELLEGUITable));
         tabs.get(tableNames[2]).setCellRenderer(new JTableCellRenderer(AnalysterTable));
         tabs.get(tableNames[3]).setCellRenderer(new JTableCellRenderer(OtherTable));
 
         tabs.get(TASKFILES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_filesTable));
-//        tabs.get(TASKNOTES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_notesTable));
+    //    tabs.get(TASKNOTES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_notesTable));
 
+        
+        /*
+        JTableCellRenderer cellRender = tabs.get(tab).getCellRenderer();
+                        cellRender.getCells().get(col).add(row);
+                        table.getColumnModel().getColumn(col).setCellRenderer(cellRender);
+        
+        */
+        //start to set renderers for id columns, it uses singleton 
+        
+        IdColumnRenderer idRender = IdColumnRenderer.getInstance(offlineIssueMgr);
+        tabs.get(tableNames[0]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+        tabs.get(tableNames[1]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+        tabs.get(tableNames[2]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+        tabs.get(tableNames[3]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+        
+        
         // set the modified tableSelected data objects for each tabName
         tabs.get(tableNames[0]).setTableData(new ModifiedTableData(PMTable));
         tabs.get(tableNames[1]).setTableData(new ModifiedTableData(ELLEGUITable));
@@ -360,6 +409,20 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // authorize user for this component
         Authorization.authorize(this);
+        
+        
+        //if there are conflicted issues and is in online mode
+        //open reconcile window in the dispatch thread , thus not delaying the main window
+        if (online && offlineIssueMgr.getConflictIssues().size() > 0)
+             SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                reconcileWindow = new ReconcileWindow();
+                reconcileWindow.setVisible(true);
+                reconcileWindowShow = true;
+                
+                }
+            });
     }
 
     /*
@@ -609,6 +672,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnCloseSQL = new javax.swing.JButton();
         addPanel_control = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
+        status = new javax.swing.JLabel();
         labelRecords = new javax.swing.JLabel();
         labelTimeLastUpdate = new javax.swing.JLabel();
         searchPanel = new javax.swing.JPanel();
@@ -627,6 +691,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemPrintDisplay = new javax.swing.JMenuItem();
         menuItemSaveFile = new javax.swing.JMenuItem();
         menuItemLogOff = new javax.swing.JMenuItem();
+        menuItemOfflineMode = new javax.swing.JCheckBoxMenuItem();
         menuEdit = new javax.swing.JMenu();
         menuItemManageDBs = new javax.swing.JMenuItem();
         menuItemDeleteRecord = new javax.swing.JMenuItem();
@@ -647,6 +712,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemMoveSeletedRowsToEnd = new javax.swing.JMenuItem();
         menuItemCompIssues = new javax.swing.JMenuItem();
         menuItemBackup = new javax.swing.JMenuItem();
+        menuItemSyncLocalData = new javax.swing.JMenuItem();
+        menuItemReconcileConflict = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemRepBugSugg = new javax.swing.JMenuItem();
 
@@ -670,14 +737,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodTime"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -701,14 +768,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodTime"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -732,14 +799,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodtime"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -763,14 +830,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             },
             new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodTime"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -865,7 +932,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRevertChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
                         .addComponent(btnAddIssue)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnBatchEdit)
@@ -874,7 +941,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanelEditLayout.setVerticalGroup(
             jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelEditLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(12, Short.MAX_VALUE)
                 .addGroup(jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelEditMode)
                     .addComponent(labelEditModeState)
@@ -961,9 +1028,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -975,8 +1041,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         addPanel_control.setPreferredSize(new java.awt.Dimension(1045, 120));
 
+        status.setText("status");
+
         labelRecords.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         labelRecords.setText("labelRecords");
+        labelRecords.setPreferredSize(new java.awt.Dimension(61, 20));
 
         labelTimeLastUpdate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         labelTimeLastUpdate.setText("Last updated: ");
@@ -986,21 +1055,24 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
-                    .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(status)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                        .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(0, 0, 0))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(3, 3, 3)
+                .addComponent(status)
+                .addGap(0, 0, 0)
                 .addComponent(labelTimeLastUpdate)
                 .addGap(0, 0, 0)
-                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         searchPanel.setPreferredSize(new java.awt.Dimension(584, 76));
@@ -1047,7 +1119,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 96, Short.MAX_VALUE))
+                .addGap(0, 197, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1080,11 +1152,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addPanel_controlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 63, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         menuFile.setText("File");
@@ -1132,6 +1201,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuFile.add(menuItemLogOff);
+
+        menuItemOfflineMode.setText("Offline mode");
+        menuItemOfflineMode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemOfflineModeActionPerformed(evt);
+            }
+        });
+        menuFile.add(menuItemOfflineMode);
 
         menuBar.add(menuFile);
 
@@ -1276,6 +1353,22 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuTools.add(menuItemBackup);
 
+        menuItemSyncLocalData.setText("Sync Local Data");
+        menuItemSyncLocalData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSyncLocalDataActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemSyncLocalData);
+
+        menuItemReconcileConflict.setText("Reconcile Conflict Issue");
+        menuItemReconcileConflict.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemReconcileConflictActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemReconcileConflict);
+
         menuBar.add(menuTools);
 
         menuHelp.setText("Help");
@@ -1306,8 +1399,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addGap(0, 0, 0)
                 .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(35, 35, 35))
         );
 
         pack();
@@ -2373,9 +2466,35 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
             
             if (tableName.equals(TASKFILES_TABLE_NAME)) {
-                issueFileDAO.delete(table);
+                if (online) {
+                    issueFileDAO.delete(table);
+                }
+                else {
+                    System.out.println("Offline mode has not implemented actions for issueFile deletion");
+                }
+             
+             //delete issues from table , first separate online from offline, and perform actions accordingly.
+             // in addition, online issues cannot be really deleted in offline mode, thought table seems delete the records.
+             
             } else {
-                issueDAO.delete(ids);
+                
+                int[] onlineIds = new int[ids.length];
+                int[] offlineIds = new int[ids.length];
+                int i=0, j=0;
+                for(int id : ids) {
+                    if (id < 0 || id > 9000) offlineIds[j++] = id;
+                    else onlineIds[i++] = id;
+                }
+                if (online) {
+                    issueDAO.delete(onlineIds);
+                    offlineIssueMgr.deleteIssues(offlineIds);
+                }
+                else {
+                    //offline delete records
+                    offlineIssueMgr.deleteIssues(offlineIds);
+                    //optional: save the online Ids to a local file, next time, during sync, request db deletion. 
+                }
+                
             }
             
             removeSelectedRows(table);
@@ -2407,6 +2526,153 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
        }
     }//GEN-LAST:event_menuItemReloadSelectedDataActionPerformed
 
+    private void menuItemSyncLocalDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSyncLocalDataActionPerformed
+        // Sync local data
+        LoggingAspect.addLogMsgWthDate("Preparing to sync local data to db server.....");
+        offlineIssueMgr.syncLocalData();
+        
+    }//GEN-LAST:event_menuItemSyncLocalDataActionPerformed
+
+    private void menuItemOfflineModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOfflineModeActionPerformed
+       if (menuItemOfflineMode.isSelected()) {
+
+            
+            online = false;
+            status.setText("Offline");
+            status.setForeground(Color.RED);
+            menuItemSyncLocalData.setEnabled(false);
+            menuItemReconcileConflict.setEnabled(false);
+            
+        
+
+        } else {
+           
+            online = true;
+            status.setText("Online");
+            status.setForeground(new Color(0, 153, 0));
+            menuItemSyncLocalData.setEnabled(true);
+            menuItemReconcileConflict.setEnabled(true);
+            
+        }
+        
+    }//GEN-LAST:event_menuItemOfflineModeActionPerformed
+
+    private void menuItemReconcileConflictActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReconcileConflictActionPerformed
+        
+        if (reconcileWindowShow) {
+            reconcileWindow.toFront();
+        }
+        
+        else {
+            if (offlineIssueMgr.getConflictIssues().size() > 0){
+            
+                reconcileWindow = new ReconcileWindow();
+                reconcileWindow.setVisible(true);
+                reconcileWindowShow = true;
+                reconcileWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);        
+            }
+            else {
+                JOptionPane.showMessageDialog(this,
+                     "There are no conflicts issues to be resolved.");
+            }
+            
+        }
+            
+       
+        
+     
+    }//GEN-LAST:event_menuItemReconcileConflictActionPerformed
+
+    
+//    private void syncLocalData() {
+//        
+//        File issuesDir = FilePathFormat.localDataFilePath();
+//        File[] listOfFiles = issuesDir.listFiles();
+//
+//        for (int i = 0; i < listOfFiles.length; i++) {
+//            syncIssueToDbFromFile(listOfFiles[i]);
+//            
+//        } 
+//    }
+//    
+//    //currently only finish the insert part
+//    // update part will be added later
+//    
+//    private void syncIssueToDbFromFile(File file) {
+//        logWindow.addMessage("Now sync file: " + file.getName());
+//        try{
+//            ObjectInputStream ois =
+//                    new ObjectInputStream(new FileInputStream(file));
+//            Issue temp = (Issue)ois.readObject();
+//            ois.close();
+//            boolean success = false;
+//            String option = "new";
+//            if (file.getName().startsWith("new")){
+//                success = issueDAO.insert(temp);               
+//            }
+////            if (file.getName().startsWith("update")) {
+////                Issue dbIssue = issueDAO.get(temp.getId());
+////                if (dbIssue.getDatetimeLastMod()!= null &&
+////                        dbIssue.getDatetimeLastMod().compareTo(temp.getDatetimeLastMod()) > 0) {
+////                
+////                    StringBuilder sb  = new StringBuilder(dbIssue.getDescription());
+////                    sb.append(System.lineSeparator());
+////                    sb.append("<Merged from local data>");
+////                    sb.append(System.lineSeparator());
+////                    sb.append(temp.getDescription());
+////                    sb.append(System.lineSeparator());
+////                    sb.append("</Merged from local data>");
+////                    temp.setDescription(sb.toString());
+////                  
+////                }
+//                
+////                
+////                success = issueDAO.update(temp);
+////                option = "update";
+////                
+////            }
+//            
+//            if (success) {
+//               
+//                for (Tab tab : tabs.values()) {
+//                    if (tab.getTable().getName().equals(temp.getApp())){
+//                       if (option.equals("new"))
+//                            insertTableRow(tab.getTable(),temp);
+//                       if (option.equals("update"))
+//                            updateTableRow(tab.getTable(),temp);
+//                      makeTableEditable(false);
+//                      break;
+//                    }
+//                }
+//                logWindow.addMessage(file.getName() +" is updated to server successfully");
+//                if (file.delete()) {
+//                    logWindow.addMessage(file.getName() +" is deleted");
+//                }
+//                else {
+//                    logWindow.addMessage(file.getName() +" failed to be deleted, please manually delete it");    
+//                }
+//            }
+//            
+//            else{
+//                
+//                logWindow.addMessage(file.getName() + " failed to update to db server");
+//                     
+//            }
+//            
+//        }  catch (IOException ex) {
+//            System.out.println( "File I/O error ");
+//        } catch (ClassNotFoundException ex) {
+//            System.out.println("Issue class not found error");
+//        }
+//        
+//        
+//    }
+//     
+    
+     
+    
+   
+    
     public void comboBoxForSearchEditorMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
             comboBoxValue.getEditor().selectAll();
@@ -2514,17 +2780,56 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // this adds a mouselistener to the tableSelected header
         JTableHeader header = table.getTableHeader();
         
+        
+        //disable default mouse listeners
+        MouseListener[] listeners = header.getMouseListeners();
+
+        for (MouseListener ml: listeners)
+        {
+            String className = ml.getClass().toString();
+
+            if (className.contains("BasicTableHeaderUI"))
+               
+                header.removeMouseListener(ml);
+                
+           
+        }
 
         //add customized mouselistener
      
         if (header != null) {
             header.addMouseListener(new MouseAdapter() {
+                
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    
+
                     if (e.getClickCount() == 2) {
+                        e.consume();
                         clearFilterDoubleClick(e, table);
                     }
+                    
+                    if (e.getClickCount() == 1 && !e.isConsumed() && e.isControlDown()) {
+                        e.consume();
+                        tabs.get(table.getName())
+                                .getColumnPopupMenu().showPopupMenu(e);
+                        
+                    }
+                    
+                    
+                    
+                    if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && !e.isConsumed()) {
+                        
+                        int columnIndex = header.columnAtPoint(e.getPoint());
+                        if (columnIndex != -1) {
+                                columnIndex = table.convertColumnIndexToModel(columnIndex);
+                                table.getRowSorter().toggleSortOrder(columnIndex);
+                                //System.out.println("clicked " + columnIndex);
+                                
+                        }
+                        e.consume();
+                    }
+                
+               
                     
                    
 //                    if (e.getClickCount() == 1) {
@@ -3032,7 +3337,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     }
                     
                     // hide lock and submitter columns
-                    if(i == 10 || i == 11){
+                    if(i == 10 || i == 11|| i == 12){
                         TableColumn column = table.getColumnModel().getColumn(i);
                         column.setMinWidth(pWidth);
                         column.setMaxWidth(pWidth);
@@ -3677,6 +3982,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         detectOpenIssues(tab); // this puts an orange dot in tab title
         return table;
     }
+    
+   
 
     /**
      * This loads table data but does not update orange dot. Use loadTable(Tab
@@ -3684,27 +3991,35 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param table
      */
     public JTable loadTableData(JTable table) {
+        
         String tableName = table.getName();
         
         // set table model data
-        if (tableName.equals(TASKFILES_TABLE_NAME)) {
+        if (tableName.equals(TASKFILES_TABLE_NAME) && online) {
             // this is for the issue_files tab/table
             ArrayList<IssueFile> issuesFiles = issueFileDAO.get(tableName);
             if(!issuesFiles.isEmpty() && issuesFiles != null){
                 for(IssueFile issueFile: issuesFiles){
-                    inserTableRow(table, issueFile);
+                    insertTableRow(table, issueFile);
                 }
             }
         }
         else{
             // this is for all other tabs which are all from the issues table
-            ArrayList<Issue> issues = issueDAO.get(tableName);
-            if(!issues.isEmpty() && issues != null){
-                for(Issue issue: issues){
-                    inserTableRow(table, issue);
-                }
+            if (online) {
+                ArrayList<Issue> issues = issueDAO.get(tableName);
+                if(!issues.isEmpty() && issues != null)
+                    for(Issue issue: issues){
+                        insertTableRow(table, issue);
+                    }
             }
+            
+            
         }
+        
+        //load offline data
+        offlineIssueMgr.loadTableData(table);
+        
         
         // set table model to the custom editable table model		
         addEditableTableModel(table);
@@ -3776,6 +4091,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // Do not show "submitter" in "PM", "ELLEGUI", "Analyster" and "other" table
             if (!table.getName().equals("issue_files")) {
                 columns = metaData.getColumnCount();
+                //System.out.println(table.getName() + " has " + columns + " columns");
             } else {
                 columns = metaData.getColumnCount();
 
@@ -4070,14 +4386,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemLogOff;
     private javax.swing.JMenuItem menuItemManageDBs;
     private javax.swing.JMenuItem menuItemMoveSeletedRowsToEnd;
+    private javax.swing.JCheckBoxMenuItem menuItemOfflineMode;
     private javax.swing.JMenuItem menuItemPrintDisplay;
     private javax.swing.JMenuItem menuItemPrintGUI;
+    private javax.swing.JMenuItem menuItemReconcileConflict;
     private javax.swing.JMenuItem menuItemReloadAllData;
     private javax.swing.JMenuItem menuItemReloadData;
     private javax.swing.JMenuItem menuItemReloadSelectedData;
     private javax.swing.JMenuItem menuItemRepBugSugg;
     private javax.swing.JCheckBoxMenuItem menuItemSQLCmdChkBx;
     private javax.swing.JMenuItem menuItemSaveFile;
+    private javax.swing.JMenuItem menuItemSyncLocalData;
     private javax.swing.JMenuItem menuItemTurnEditModeOff;
     private javax.swing.JMenuItem menuItemVersion;
     private javax.swing.JMenuItem menuItemViewSplashScreen;
@@ -4089,6 +4408,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuitemViewOneIssue;
     public static javax.swing.JLabel searchInformationLabel;
     private javax.swing.JPanel searchPanel;
+    private javax.swing.JLabel status;
     private javax.swing.JTabbedPane tabbedPanel;
     // End of variables declaration//GEN-END:variables
     // @formatter:on
@@ -4555,9 +4875,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param table
      * @param issue 
      */
-    public void inserTableRow(JTable table, Issue issue) {
+    public void insertTableRow(JTable table, Issue issue) {
 
-        Object[] rowData = new Object[12];
+        Object[] rowData = new Object[13];
         rowData[0] = issue.getId();
         rowData[1] = issue.getApp();
         rowData[2] = issue.getTitle();
@@ -4570,15 +4890,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         rowData[9] = issue.getIssueType();
         rowData[10] = issue.getSubmitter();
         rowData[11] = issue.getLocked();
+        rowData[12] = issue.getLastmodtime();
         ((DefaultTableModel)table.getModel()).addRow(rowData);
     }
+    
+    
     
     /**
      * Inserts a new rowIndex in the table
      * @param table
      * @param issue 
      */
-    public void inserTableRow(JTable table, IssueFile issueFile) {
+    public void insertTableRow(JTable table, IssueFile issueFile) {
 
         Object[] rowData = new Object[9];
         rowData[0] = issueFile.getFileID();
@@ -4598,7 +4921,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param issue
      * @return int table model rowIndex
      */
-    private int findTableModelRow(JTable table, Issue issue) {
+    public int findTableModelRow(JTable table, Issue issue) {
         int rowCount = table.getModel().getRowCount();
         TableModel model = table.getModel();
         for(int rowIndex = 0; rowIndex < rowCount; rowIndex++){
@@ -4635,7 +4958,30 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             return false;
         }
     }
+    
+    /**
+     * Yi
+     * for offline data, remove the offline data from table if it gets pushed to server.
+     */
 
+    public void removeTableRow(JTable table, int issueId) {
+
+        DefaultTableModel model = (DefaultTableModel)table.getModel();
+        int recordCnt = model.getRowCount();
+        
+        for (int i = recordCnt - 1; i >=0; i--) {
+            
+            System.out.println(model.getValueAt(i,0).toString());
+            System.out.println(model.getValueAt(i,1).toString());
+            
+            int id = Integer.parseInt(model.getValueAt(i, 0).toString());
+            if (id == issueId) {
+                model.removeRow(i);
+                break;
+            }
+        }
+ 
+    }
     /**
      * sets the table model with the custom editable table model
      * @param table 
@@ -4655,6 +5001,27 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         EditableTableModel etm = new EditableTableModel(data, columnNames, columnClasses);
         table.setModel(etm);
     }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    public boolean isReconcileWindowShow() {
+        return reconcileWindowShow;
+    }
+
+    public void setReconcileWindowShow(boolean reconcileWindowShow) {
+        this.reconcileWindowShow = reconcileWindowShow;
+    }
+    
+    
+    
+    
+    
     
     /**
      * CLASS
@@ -4694,4 +5061,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
     }
+ 
+ 
+
 }

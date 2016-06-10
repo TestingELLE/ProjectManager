@@ -183,7 +183,6 @@ public class LogWindow extends JFrame {
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setPreferredSize(new Dimension(860, 540));
-
         this.pack();
         this.setVisible(false);
     }
