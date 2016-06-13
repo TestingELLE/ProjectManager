@@ -22,7 +22,7 @@ public class ModifiedTableData{
     private JTable table;                       // the table 
     private String oldData[][];                 // original data values
     private ArrayList<ModifiedData> newData;    // new data values
-
+    
     /**
      * CONSTRUCTOR
      * ModifiedTableData
@@ -63,4 +63,8 @@ public class ModifiedTableData{
     public ArrayList<ModifiedData> getNewData() {
         return newData;
     }
+
+   
+    
+    
 }

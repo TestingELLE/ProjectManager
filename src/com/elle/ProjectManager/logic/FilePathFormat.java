@@ -73,6 +73,19 @@ public class FilePathFormat {
     }
     
     /**
+     * This method will return the path of the offline issues.
+     * @supportFilePath string
+     */
+    public static File localDataFilePath(){
+        String supportFilePath = supportFilePath();
+        
+        File dir = new File(supportFilePath, "offlineTempIssues");
+        if (!dir.exists())
+            dir.mkdir();
+        return dir;
+    }
+    
+    /**
      * This method will return if the platform is windows or not.
      * @return boolean true if windows and false if not
      */

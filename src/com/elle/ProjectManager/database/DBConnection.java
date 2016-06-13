@@ -17,8 +17,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -81,10 +79,11 @@ public class DBConnection {
             statement = connection.createStatement();
             LoggingAspect.afterReturn("Connection successful");
             return true;
-        } catch (SQLException ex) {
-            LoggingAspect.afterThrown(ex);
+        } catch (Exception ex) {
+            //LoggingAspect.afterThrown(ex);
+            System.out.println(ex.toString());
             return false;
-        }
+        } 
              
     }
     

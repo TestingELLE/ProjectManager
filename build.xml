@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!-- You can set the version of Analyster here and then build the new jar.-->
 <project name="ProjectManager" default="dist" basedir=".">
     <description>Builds, tests, and runs the project ProjectManager.</description>
