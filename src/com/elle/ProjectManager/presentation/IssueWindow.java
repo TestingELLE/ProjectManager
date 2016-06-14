@@ -4,6 +4,7 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.entities.Issue;
+import com.elle.ProjectManager.logic.OfflineIssueManager;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
 import java.awt.Dimension;
@@ -13,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -49,6 +51,7 @@ public class IssueWindow extends JFrame {
     private int row;
     private IssueDAO dao;
     private boolean addIssueMode;
+    private OfflineIssueManager mgr;
 
     public ProjectManagerWindow getProjectManager() {
         return projectManager;
@@ -266,13 +269,15 @@ public class IssueWindow extends JFrame {
         this.idText = idText;
     }
 
-    public JPanel getjPanel2() {
-        return jPanel2;
+    public JPanel getjPanel1() {
+        return jPanel1;
     }
 
-    public void setjPanel2(JPanel jPanel2) {
-        this.jPanel2 = jPanel2;
+    public void setjPanel1(JPanel jPanel1) {
+        this.jPanel1 = jPanel1;
     }
+
+
 
     public JScrollPane getjScrollPane7() {
         return jScrollPane7;
@@ -390,16 +395,17 @@ public class IssueWindow extends JFrame {
      */
     public IssueWindow(int row, JTable table) {
         projectManager = ProjectManagerWindow.getInstance();
-         tabs = projectManager.getTabs();
+        tabs = projectManager.getTabs();
         this.table = table;
         this.row = row;
         dao = new IssueDAO();
         issue = new Issue();
+        mgr = projectManager.offlineIssueMgr;
 
-        // new issue
+        // new issue initialization, including set app, dateopened and 
         if (this.row == -1) {
             addIssueMode = true;
-            issue.setId(dao.getMaxId() + 1);
+            issue.setId(-1);
             issue.setApp(projectManager.getSelectedTabName());
             issue.setDateOpened(todaysDate());
             issue.setSubmitter(projectManager.getUserName());
@@ -412,8 +418,8 @@ public class IssueWindow extends JFrame {
        
         initComponents();
         submitterText.setText(projectManager.getUserName());
-
-        setComponentValuesFromIssue();
+        
+        //setComponentValuesFromIssue();
         
         /**
          * Add all JTextComponents to add document listener, input mappings,
@@ -433,9 +439,10 @@ public class IssueWindow extends JFrame {
         textComponentList.add(versionText);
         addDocumentListener(textComponentList);
         addInputMappingsAndShortcuts(textComponentList);
-         updateComboList("programmer", projectManager.getSelectedTabName());
+        updateComboList("programmer", projectManager.getSelectedTabName());
         updateComboList("rk", projectManager.getSelectedTabName());
         updateComboList("app", projectManager.getSelectedTabName());
+        
         setComponentValuesFromIssue();
         
         
@@ -459,8 +466,8 @@ public class IssueWindow extends JFrame {
         }
         
        // set the minimum size, width 620, height 750 or 80% of screen size
-        int minHeight = (screenSize.height * 0.85 < 750) ? (int)(screenSize.height * 0.8) : 750; 
-        Dimension minSize = new Dimension(620, minHeight);
+        //int minHeight = (screenSize.height * 0.85 < 750) ? (int)(screenSize.height * 0.8) : 750; 
+        Dimension minSize = new Dimension(620, 400);
         
         this.setPreferredSize(frameSize);
         this.setMinimumSize(minSize);
@@ -515,415 +522,79 @@ public class IssueWindow extends JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         scrollPane = new javax.swing.JScrollPane();
         formPane = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        programmerComboBox = new javax.swing.JComboBox();
-        programmer = new javax.swing.JLabel();
-        idText = new javax.swing.JLabel();
+        title = new javax.swing.JLabel();
+        id = new javax.swing.JLabel();
         rk = new javax.swing.JLabel();
         dateOpenedText = new javax.swing.JTextField();
-        submitterText = new javax.swing.JTextField();
-        comboBoxIssueType = new javax.swing.JComboBox<String>();
-        id = new javax.swing.JLabel();
+        programmer = new javax.swing.JLabel();
         dateOpened = new javax.swing.JLabel();
-        lockCheckBox = new javax.swing.JCheckBox();
-        rkComboBox = new javax.swing.JComboBox();
-        lock = new javax.swing.JLabel();
-        submitter = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
-        versionText = new javax.swing.JTextField();
-        buttonConfirm = new javax.swing.JButton();
-        btnCloseIssue = new javax.swing.JButton();
-        buttonCancel = new javax.swing.JButton();
-        appComboBox = new javax.swing.JComboBox();
-        dateClosed = new javax.swing.JLabel();
-        dateClosedText = new javax.swing.JTextField();
-        app = new javax.swing.JLabel();
-        buttonSubmit = new javax.swing.JButton();
-        version = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        description = new javax.swing.JLabel();
-        BtnPrevious = new javax.swing.JButton();
-        BtnNext = new javax.swing.JButton();
         jScrollPane7 = new javax.swing.JScrollPane();
         descriptionText = new javax.swing.JTextArea();
-        jPanel5 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        buttonCancel = new javax.swing.JButton();
+        buttonSubmit = new javax.swing.JButton();
+        dateClosed = new javax.swing.JLabel();
+        version = new javax.swing.JLabel();
+        buttonConfirm = new javax.swing.JButton();
+        dateClosedText = new javax.swing.JTextField();
+        versionText = new javax.swing.JTextField();
+        btnCloseIssue = new javax.swing.JButton();
+        app = new javax.swing.JLabel();
+        appComboBox = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        lastmodTime = new javax.swing.JLabel();
         titleText = new javax.swing.JTextField();
-        title = new javax.swing.JLabel();
+        description = new javax.swing.JLabel();
+        idText = new javax.swing.JLabel();
+        BtnNext = new javax.swing.JButton();
+        BtnPrevious = new javax.swing.JButton();
+        lock = new javax.swing.JLabel();
+        submitterText = new javax.swing.JTextField();
+        submitter = new javax.swing.JLabel();
+        lockCheckBox = new javax.swing.JCheckBox();
+        comboBoxIssueType = new javax.swing.JComboBox<String>();
+        programmerComboBox = new javax.swing.JComboBox();
+        rkComboBox = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(583, 307));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
-        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         scrollPane.setBorder(null);
         scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new java.awt.Dimension(583, 301));
 
-        formPane.setMinimumSize(new java.awt.Dimension(0, 0));
-        formPane.setPreferredSize(new java.awt.Dimension(523, 301));
-        formPane.setLayout(new java.awt.GridBagLayout());
+        title.setText(" title");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
-        formPane.add(jPanel2, gridBagConstraints);
-
-        jPanel3.setLayout(new java.awt.GridBagLayout());
-
-        programmerComboBox.setEditable(true);
-        programmerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        programmerComboBox.setMinimumSize(new java.awt.Dimension(90, 28));
-        programmerComboBox.setPreferredSize(new java.awt.Dimension(90, 28));
-        programmerComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                programmerComboBoxActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel3.add(programmerComboBox, gridBagConstraints);
-
-        programmer.setText(" programmer");
-        programmer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel3.add(programmer, gridBagConstraints);
-
-        idText.setText("jLabel1");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        jPanel3.add(idText, gridBagConstraints);
+        id.setText(" id");
 
         rk.setText(" rk");
-        rk.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 11;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel3.add(rk, gridBagConstraints);
 
         dateOpenedText.setText("jTextField1");
         dateOpenedText.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         dateOpenedText.setMargin(new java.awt.Insets(-1, -1, -1, -1));
-        dateOpenedText.setMinimumSize(new java.awt.Dimension(6, 20));
         dateOpenedText.setName("dateOpened"); // NOI18N
-        dateOpenedText.setPreferredSize(new java.awt.Dimension(90, 28));
+        dateOpenedText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateOpenedTextActionPerformed(evt);
+            }
+        });
         dateOpenedText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 dateOpenedTextKeyReleased(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel3.add(dateOpenedText, gridBagConstraints);
 
-        submitterText.setMinimumSize(new java.awt.Dimension(90, 20));
-        submitterText.setPreferredSize(new java.awt.Dimension(90, 28));
-        submitterText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                submitterTextActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel3.add(submitterText, gridBagConstraints);
-
-        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE" }));
-        comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboBoxIssueTypeActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel3.add(comboBoxIssueType, gridBagConstraints);
-
-        id.setText(" id");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        jPanel3.add(id, gridBagConstraints);
+        programmer.setText(" programmer");
 
         dateOpened.setText(" dateOpened");
-        dateOpened.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        dateOpened.setMaximumSize(new java.awt.Dimension(79, 14));
-        dateOpened.setMinimumSize(new java.awt.Dimension(79, 14));
-        dateOpened.setPreferredSize(new java.awt.Dimension(79, 14));
-        dateOpened.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel3.add(dateOpened, gridBagConstraints);
-
-        lockCheckBox.setBorder(null);
-        lockCheckBox.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lockCheckBox.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        lockCheckBox.setMaximumSize(new java.awt.Dimension(16, 16));
-        lockCheckBox.setMinimumSize(new java.awt.Dimension(16, 16));
-        lockCheckBox.setPreferredSize(new java.awt.Dimension(16, 16));
-        lockCheckBox.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
-        lockCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lockCheckBoxActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
-        jPanel3.add(lockCheckBox, gridBagConstraints);
-
-        rkComboBox.setEditable(true);
-        rkComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        rkComboBox.setMinimumSize(new java.awt.Dimension(38, 20));
-        rkComboBox.setPreferredSize(new java.awt.Dimension(38, 28));
-        rkComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rkComboBoxActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel3.add(rkComboBox, gridBagConstraints);
-
-        lock.setText(" lock");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-        jPanel3.add(lock, gridBagConstraints);
-
-        submitter.setText(" submitter");
-        submitter.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        submitter.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel3.add(submitter, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        formPane.add(jPanel3, gridBagConstraints);
-        jPanel3.getAccessibleContext().setAccessibleName("");
-
-        jPanel6.setLayout(new java.awt.GridBagLayout());
-
-        versionText.setText("jTextField1");
-        versionText.setName("version"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 56;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel6.add(versionText, gridBagConstraints);
-
-        buttonConfirm.setText("Confirm");
-        buttonConfirm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonConfirmActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-        jPanel6.add(buttonConfirm, gridBagConstraints);
-
-        btnCloseIssue.setText("Close Issue");
-        btnCloseIssue.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCloseIssueActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 39;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel6.add(btnCloseIssue, gridBagConstraints);
-
-        buttonCancel.setText("Cancel");
-        buttonCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonCancelActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        jPanel6.add(buttonCancel, gridBagConstraints);
-
-        appComboBox.setEditable(true);
-        appComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        appComboBox.setPreferredSize(new java.awt.Dimension(80, 28));
-        appComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                appComboBoxActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipady = 8;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        jPanel6.add(appComboBox, gridBagConstraints);
-
-        dateClosed.setText(" dateClosed");
-        dateClosed.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        jPanel6.add(dateClosed, gridBagConstraints);
-
-        dateClosedText.setText("jTextField2");
-        dateClosedText.setName("dateClosed"); // NOI18N
-        dateClosedText.setPreferredSize(new java.awt.Dimension(90, 28));
-        dateClosedText.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                dateClosedTextKeyReleased(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        jPanel6.add(dateClosedText, gridBagConstraints);
-
-        app.setText(" app");
-        app.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        jPanel6.add(app, gridBagConstraints);
-
-        buttonSubmit.setText("Submit");
-        buttonSubmit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonSubmitActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 23;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        jPanel6.add(buttonSubmit, gridBagConstraints);
-
-        version.setText(" version");
-        version.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel6.add(version, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        formPane.add(jPanel6, gridBagConstraints);
-
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-
-        description.setText(" description");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        jPanel1.add(description, gridBagConstraints);
-
-        BtnPrevious.setText("<");
-        BtnPrevious.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BtnPreviousActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel1.add(BtnPrevious, gridBagConstraints);
-
-        BtnNext.setText(">");
-        BtnNext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BtnNextActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        jPanel1.add(BtnNext, gridBagConstraints);
+        dateOpened.setPreferredSize(new java.awt.Dimension(79, 12));
 
         descriptionText.setColumns(20);
         descriptionText.setLineWrap(true);
@@ -937,67 +608,300 @@ public class IssueWindow extends JFrame {
         });
         jScrollPane7.setViewportView(descriptionText);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanel1.add(jScrollPane7, gridBagConstraints);
+        buttonCancel.setText("Cancel");
+        buttonCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonCancelActionPerformed(evt);
+            }
+        });
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
-        formPane.add(jPanel1, gridBagConstraints);
+        buttonSubmit.setText("Submit");
+        buttonSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSubmitActionPerformed(evt);
+            }
+        });
 
-        jPanel5.setLayout(new java.awt.GridBagLayout());
+        dateClosed.setText(" dateClosed");
+
+        version.setText(" version");
+
+        buttonConfirm.setText("Confirm");
+        buttonConfirm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonConfirmActionPerformed(evt);
+            }
+        });
+
+        dateClosedText.setText("jTextField2");
+        dateClosedText.setName("dateClosed"); // NOI18N
+        dateClosedText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                dateClosedTextKeyReleased(evt);
+            }
+        });
+
+        versionText.setText("jTextField1");
+        versionText.setName("version"); // NOI18N
+
+        btnCloseIssue.setText("Close Issue");
+        btnCloseIssue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseIssueActionPerformed(evt);
+            }
+        });
+
+        app.setText(" app");
+
+        appComboBox.setEditable(true);
+        appComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        appComboBox.setPreferredSize(new java.awt.Dimension(80, 28));
+        appComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                appComboBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("lastModTime : ");
+
+        lastmodTime.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(app, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(appComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lastmodTime, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnCloseIssue, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dateClosedText, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dateClosed))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(versionText, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(version)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(buttonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buttonSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(buttonCancel))))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(app)
+                    .addComponent(dateClosed)
+                    .addComponent(version))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnCloseIssue, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(dateClosedText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(versionText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(buttonSubmit)
+                            .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(buttonConfirm)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(appComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lastmodTime))
+                        .addGap(6, 6, 6))))
+        );
 
         titleText.setText("jTextField1");
         titleText.setName("title"); // NOI18N
-        titleText.addActionListener(new java.awt.event.ActionListener() {
+
+        description.setText(" description");
+
+        idText.setText("jLabel1");
+
+        BtnNext.setText(">");
+        BtnNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                titleTextActionPerformed(evt);
+                BtnNextActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel5.add(titleText, gridBagConstraints);
 
-        title.setText(" title");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel5.add(title, gridBagConstraints);
+        BtnPrevious.setText("<");
+        BtnPrevious.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnPreviousActionPerformed(evt);
+            }
+        });
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        formPane.add(jPanel5, gridBagConstraints);
+        lock.setText(" lock");
+
+        submitterText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                submitterTextActionPerformed(evt);
+            }
+        });
+
+        submitter.setText(" submitter");
+
+        lockCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lockCheckBoxActionPerformed(evt);
+            }
+        });
+
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE" }));
+        comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxIssueTypeActionPerformed(evt);
+            }
+        });
+
+        programmerComboBox.setEditable(true);
+        programmerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        programmerComboBox.setPreferredSize(new java.awt.Dimension(80, 28));
+        programmerComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                programmerComboBoxActionPerformed(evt);
+            }
+        });
+
+        rkComboBox.setEditable(true);
+        rkComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        rkComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rkComboBoxActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout formPaneLayout = new javax.swing.GroupLayout(formPane);
+        formPane.setLayout(formPaneLayout);
+        formPaneLayout.setHorizontalGroup(
+            formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(formPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addComponent(lock)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lockCheckBox))
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addComponent(id)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(idText, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(submitter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(dateOpened, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(programmerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(programmer))
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addGap(12, 12, 12)
+                                        .addComponent(rkComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(formPaneLayout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(titleText)
+                            .addComponent(jScrollPane7)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
+                                .addComponent(description)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(BtnPrevious)
+                                .addGap(0, 0, 0)
+                                .addComponent(BtnNext)))
+                        .addContainerGap())))
+        );
+        formPaneLayout.setVerticalGroup(
+            formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(formPaneLayout.createSequentialGroup()
+                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(formPaneLayout.createSequentialGroup()
+                                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(dateOpened, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(programmer, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(rk, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(2, 2, 2))
+                            .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(id)
+                                .addComponent(idText)
+                                .addComponent(submitter)
+                                .addComponent(comboBoxIssueType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lock, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE)
+                            .addComponent(lockCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(dateOpenedText, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(programmerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rkComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(submitterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addComponent(titleText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addGroup(formPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(BtnNext)
+                            .addComponent(BtnPrevious)))
+                    .addGroup(formPaneLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(description, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         scrollPane.setViewportView(formPane);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 20, 10, 20);
-        getContentPane().add(scrollPane, gridBagConstraints);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scrollPane)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1020,6 +924,12 @@ public class IssueWindow extends JFrame {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(new Date());
     }
+    
+    // get current timestamp for datetimeLastMod
+//    private String currentTimeStamp() {
+//        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+//    }
+    
 
     /**
      * This updates the custom id list when traversing the table
@@ -1102,146 +1012,60 @@ public class IssueWindow extends JFrame {
 //        System.out.println("window closing!");
     }//GEN-LAST:event_formWindowClosing
 
-    /**
-     * This method is called when the submit button is pressed.
-     * @param evt 
-     */
-    private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
-        setIssueValuesFromComponents();
-
-        if(dao.insert(issue)){
-            projectManager.inserTableRow(table,issue);
-            projectManager.makeTableEditable(false);
-        }
-        issueWindowClosing();
-    }//GEN-LAST:event_buttonSubmitActionPerformed
-
-    private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
-        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
-            FillItWithDate((JTextField) evt.getComponent());
-        }
-    }//GEN-LAST:event_dateClosedTextKeyReleased
-
-    private void appComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appComboBoxActionPerformed
-        if(appComboBox.getSelectedItem().toString().equals(issue.getApp())){
+    private void rkComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rkComboBoxActionPerformed
+        if(rkComboBox.getSelectedItem().toString().equals(issue.getRk())){
             checkForChangeAndSetBtnsEnabled();
         }
         // we know right away there is a change so just set the button enabled
         else{
             setBtnsEnabled(true); // sets the submit or confirm button enabled
         }
-    }//GEN-LAST:event_appComboBoxActionPerformed
+    }//GEN-LAST:event_rkComboBoxActionPerformed
 
-    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        //        System.out.println(selectedTable.getValueAt(0, 0));
-
-        //        projectManager.getOpeningIssuesList().remove(issue.getID(), this);
-        issueWindowClosing();
-    }//GEN-LAST:event_buttonCancelActionPerformed
-
-    private void btnCloseIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseIssueActionPerformed
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        String today = dateFormat.format(date);
-        String userName = projectManager.getUserName();
-        String value = descriptionText.getText();
-        if (btnCloseIssue.getText().equalsIgnoreCase("close issue")) {
-            // set dateClosed text field with date today
-            FillItWithDate(dateClosedText);
-            String temperaryVersion = "XXX";
-            versionText.setText(temperaryVersion);
-            btnCloseIssue.setText("Reopen Issue");
-            value = value + "\n--- Issue Closed by "
-            + userName + " on " + today + "\n";
-        } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
-            value = value + "\n \n--- Issue reopened by "
-            + userName + " on " + today + " (version " + versionText.getText() + ") \n";
-            versionText.setText("");
-            dateClosedText.setText("");
-            btnCloseIssue.setText("Close Issue");
+    private void programmerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programmerComboBoxActionPerformed
+        if(programmerComboBox.getSelectedItem().toString().equals(issue.getProgrammer())){
+            checkForChangeAndSetBtnsEnabled();
         }
-        descriptionText.setText(value);
-    }//GEN-LAST:event_btnCloseIssueActionPerformed
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_programmerComboBoxActionPerformed
 
     /**
-     * This method is called when the confirm button is pressed.
-     * @param evt 
+     * Fires when IssueType ComboBox selection is changed
+     * @param evt action event for the IssueType ComboBox
      */
-    private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
-        setIssueValuesFromComponents();
-
-        if(dao.update(issue)){
-            projectManager.updateTableRow(table,issue);
-            projectManager.makeTableEditable(false);
+    private void comboBoxIssueTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxIssueTypeActionPerformed
+        // if the same then check for other changes
+        if(comboBoxIssueType.getSelectedItem().toString().equals(issue.getIssueType())){
+            checkForChangeAndSetBtnsEnabled();
         }
-        issueWindowClosing();
-    }//GEN-LAST:event_buttonConfirmActionPerformed
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_comboBoxIssueTypeActionPerformed
 
-    private void titleTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titleTextActionPerformed
+    /**
+     * Fires when Lock CheckBox selection is changed
+     * @param evt action event for the Lock CheckBox
+     */
+    private void lockCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockCheckBoxActionPerformed
+
+        // if the same then check for other changes
+        if((lockCheckBox.isSelected()?"Y":"").equals(issue.getLocked())){
+            checkForChangeAndSetBtnsEnabled();
+        }
+        // we know right away there is a change so just set the button enabled
+        else{
+            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        }
+    }//GEN-LAST:event_lockCheckBoxActionPerformed
+
+    private void submitterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitterTextActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_titleTextActionPerformed
-
-    /**
-     * Fired when the next button is invoked.
-     * The next button traverses the table to get the next issue.
-     * @param evt 
-     */
-    private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
-
-        /**
-        * If table has not changed then no need to execute this for loop.
-        * boolean rowFound makes sure the issue is still in the table view.
-        */
-        boolean rowFound = true;
-        if (!table.getValueAt(row, 0).toString().equals(Integer.toString(issue.getId()))) {
-            rowFound = false;
-            for (int i = 0; i < table.getRowCount(); i++) {
-                if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
-                    row = i;
-                    rowFound = true;
-                }
-            }
-        }
-
-        // next row
-        if(!rowFound){
-            JOptionPane.showMessageDialog(this, "This issue is no longer on the table!");
-        }
-        else if (row == table.getRowCount() - 1) {
-            JOptionPane.showMessageDialog(this, "This issue is already the last row on the table!");
-        } else {
-            row++;
-            setIssueValuesFromTable(row,table);
-            setComponentValuesFromIssue();
-            table.setRowSelectionInterval(row, row);
-            updateCustomIdList(row);
-        }
-    }//GEN-LAST:event_BtnNextActionPerformed
-
-    private void descriptionTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionTextKeyReleased
-        JTextArea dateArea = (JTextArea) evt.getComponent();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        String today = dateFormat.format(date);
-        String value = dateArea.getText();
-        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
-            dateArea.requestFocusInWindow();
-            dateArea.selectAll();
-            value = value + " " + today;
-            dateArea.setText(value);
-        } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
-
-            int pos = dateArea.getCaretPosition();
-            String userName = projectManager.getUserName();
-            String message = "\n" + "-- by " + userName + " on " + today + "-- \n";
-            //String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
-            dateArea.insert(message, pos);
-
-            dateArea.setCaretPosition(pos + userName.length() + 25);
-
-        }
-    }//GEN-LAST:event_descriptionTextKeyReleased
+    }//GEN-LAST:event_submitterTextActionPerformed
 
     /**
      * Fired when the previous button is invoked.
@@ -1281,50 +1105,300 @@ public class IssueWindow extends JFrame {
         }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
-    private void rkComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rkComboBoxActionPerformed
-        if(rkComboBox.getSelectedItem().toString().equals(issue.getRk())){
+    /**
+     * Fired when the next button is invoked.
+     * The next button traverses the table to get the next issue.
+     * @param evt 
+     */
+    private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
+
+        /**
+        * If table has not changed then no need to execute this for loop.
+        * boolean rowFound makes sure the issue is still in the table view.
+        */
+        boolean rowFound = true;
+        if (!table.getValueAt(row, 0).toString().equals(Integer.toString(issue.getId()))) {
+            rowFound = false;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
+                    row = i;
+                    rowFound = true;
+                }
+            }
+        }
+
+        // next row
+        if(!rowFound){
+            JOptionPane.showMessageDialog(this, "This issue is no longer on the table!");
+        }
+        else if (row == table.getRowCount() - 1) {
+            JOptionPane.showMessageDialog(this, "This issue is already the last row on the table!");
+        } else {
+            row++;
+            setIssueValuesFromTable(row,table);
+            setComponentValuesFromIssue();
+            table.setRowSelectionInterval(row, row);
+            updateCustomIdList(row);
+        }
+    }//GEN-LAST:event_BtnNextActionPerformed
+
+    private void appComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appComboBoxActionPerformed
+        if(appComboBox.getSelectedItem().toString().equals(issue.getApp())){
             checkForChangeAndSetBtnsEnabled();
         }
         // we know right away there is a change so just set the button enabled
         else{
             setBtnsEnabled(true); // sets the submit or confirm button enabled
         }
-    }//GEN-LAST:event_rkComboBoxActionPerformed
+    }//GEN-LAST:event_appComboBoxActionPerformed
+
+    private void btnCloseIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseIssueActionPerformed
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String today = dateFormat.format(date);
+        String userName = projectManager.getUserName();
+        String value = descriptionText.getText();
+        if (btnCloseIssue.getText().equalsIgnoreCase("close issue")) {
+            // set dateClosed text field with date today
+            FillItWithDate(dateClosedText);
+            String temperaryVersion = "XXX";
+            versionText.setText(temperaryVersion);
+            btnCloseIssue.setText("Reopen Issue");
+            value = value + "\n--- Issue Closed by "
+            + userName + " on " + today + "\n";
+        } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
+            value = value + "\n \n--- Issue reopened by "
+            + userName + " on " + today + " (version " + versionText.getText() + ") \n";
+            versionText.setText("");
+            dateClosedText.setText("");
+            btnCloseIssue.setText("Close Issue");
+        }
+        descriptionText.setText(value);
+    }//GEN-LAST:event_btnCloseIssueActionPerformed
+
+    private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
+            FillItWithDate((JTextField) evt.getComponent());
+        }
+    }//GEN-LAST:event_dateClosedTextKeyReleased
 
     /**
-     * Fires when Lock CheckBox selection is changed
-     * @param evt action event for the Lock CheckBox
+     * This method is called when the confirm button is pressed.
+     * @param evt 
      */
-    private void lockCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockCheckBoxActionPerformed
-
-        // if the same then check for other changes
-        if((lockCheckBox.isSelected()?"Y":"").equals(issue.getLocked())){
-            checkForChangeAndSetBtnsEnabled();
+    private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
+        setIssueValuesFromComponents();
+        int originalId = issue.getId();
+        
+        
+        if (projectManager.isOnline()) {
+            //if it is offline updated issue, reset id by -9000
+            if (originalId > 9000) issue.setId(originalId - 9000);
+            boolean onlineUpdateSuccess =  issue.getId() > 0 ? dao.update(issue) :  dao.insert(issue);
+            if(onlineUpdateSuccess){
+                if (originalId < 0) {//for new issues
+                    projectManager.insertTableRow(table, issue);
+                 //remove original row
+                    projectManager.removeTableRow(table, originalId);
+                    
+                    mgr.removeIssue(mgr.getIssue(originalId));
+                    
+                }
+                else {
+                    // for updating issues, it could be >9000 or <9000, >9000 update requires extra removing the 9xxx table row
+                    
+                    if (originalId > 9000) {
+                        projectManager.removeTableRow(table, originalId);
+                        mgr.removeIssue(mgr.getIssue(originalId));
+                    
+                    }
+                    projectManager.updateTableRow(table,issue);
+                    
+                }
+              
+                //update offlineIssueMgr
+                projectManager.makeTableEditable(false);
+                
+            }
+            else { //offline actions
+                
+                JOptionPane.showMessageDialog(this,
+                    "Fail to connect to server.\n Data will be saved saved locally.",
+                    "Error Message",
+                    JOptionPane.ERROR_MESSAGE);
+            
+                //save the issue to local computer
+                if (mgr.updateIssue(issue)){
+                    JOptionPane.showMessageDialog(this,
+                     "Data saved successfully.");
+                    
+                    //if new offline issue or update offline issue, then update
+                    if (originalId < 0 || originalId > 9000) projectManager.updateTableRow(table, issue);
+                    
+                    //if update some online issue
+                    else
+                        projectManager.insertTableRow(table,issue);
+                    projectManager.makeTableEditable(false);
+               
+                }
+                else {
+                    JOptionPane.showMessageDialog(this,
+                        "Fail to save issue locally.",
+                        "I/O Error Message",
+                        JOptionPane.ERROR_MESSAGE);
+                
+                }
+           
+            }
+            
+            
         }
-        // we know right away there is a change so just set the button enabled
-        else{
-            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        
+        else {
+            
+            JOptionPane.showMessageDialog(this,"Offline Mode : data is saved locally.");
+            
+            if (mgr.updateIssue(issue)){
+                
+                    JOptionPane.showMessageDialog(this,
+                     "Data saved successfully.");
+                    //if already in table, update, else insert
+                    int row = projectManager.findTableModelRow(table,issue);
+                    if (row != -1)
+                        projectManager.updateTableRow(table,issue);
+                    else
+                        projectManager.insertTableRow(table,issue);
+                    
+                        
+                    projectManager.makeTableEditable(false);
+               
+                }
+                else {
+                    JOptionPane.showMessageDialog(this,
+                        "Fail to save issue locally.",
+                        "I/O Error Message",
+                        JOptionPane.ERROR_MESSAGE);
+                
+                }      
         }
-    }//GEN-LAST:event_lockCheckBoxActionPerformed
+        
+        issue.setId(originalId);
+        issueWindowClosing();
+    }//GEN-LAST:event_buttonConfirmActionPerformed
 
+    
+    
+    
     /**
-     * Fires when IssueType ComboBox selection is changed
-     * @param evt action event for the IssueType ComboBox
+     * This method is called when the submit button is pressed.
+     * @param evt 
      */
-    private void comboBoxIssueTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxIssueTypeActionPerformed
-        // if the same then check for other changes
-        if(comboBoxIssueType.getSelectedItem().toString().equals(issue.getIssueType())){
-            checkForChangeAndSetBtnsEnabled();
+    private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
+        
+       
+        setIssueValuesFromComponents();
+        int originalId = issue.getId();
+        
+        if (projectManager.isOnline() && dao.insert(issue)) {
+            
+            projectManager.insertTableRow(table,issue);
+            projectManager.makeTableEditable(false); 
+        
         }
-        // we know right away there is a change so just set the button enabled
-        else{
-            setBtnsEnabled(true); // sets the submit or confirm button enabled
+        
+        else {
+            String msg = "Fail to connect to server.\nData will be saved saved locally.";
+            if (!projectManager.isOnline()) msg = "Offline Mode : data is saved locally.";
+            
+            JOptionPane.showMessageDialog(this,msg);
+            
+            //save the issue to local computer
+            if (mgr.addIssue(issue)) {
+                JOptionPane.showMessageDialog(this,
+                    "Data saved successfully.");
+                projectManager.insertTableRow(table,issue);
+                projectManager.makeTableEditable(false);  
+            }
+            else {
+                JOptionPane.showMessageDialog(this,
+                    "Fail to save issue locally.",
+                    "I/O Error Message",
+                    JOptionPane.ERROR_MESSAGE);
+                
+            }
+            
+            
+            
+            
         }
-    }//GEN-LAST:event_comboBoxIssueTypeActionPerformed
+        
+//        if(dao.insert(issue)){
+//            projectManager.inserTableRow(table,issue);
+//            projectManager.makeTableEditable(false);
+//            
+//        }
+//        else {//offline actions
+//            
+//            JOptionPane.showMessageDialog(this,
+//                    "Fail to connect to server.\nData will be saved saved locally.",
+//                    "Error Message",
+//                    JOptionPane.ERROR_MESSAGE);
+//            
+//            
+//            //save the issue to local computer
+//            if (mgr.addIssue(issue)) {
+//                JOptionPane.showMessageDialog(this,
+//                    "Data saved successfully.");
+//                projectManager.inserTableRow(table,issue);
+//                projectManager.makeTableEditable(false);
+//                
+//            }
+//            else {
+//                JOptionPane.showMessageDialog(this,
+//                    "Fail to save issue locally.",
+//                    "I/O Error Message",
+//                    JOptionPane.ERROR_MESSAGE);
+//                
+//            }
+//        }
+        
+        issue.setId(originalId);
+        issueWindowClosing();
+    }//GEN-LAST:event_buttonSubmitActionPerformed
+    
+    
+    
+    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
+        //        System.out.println(selectedTable.getValueAt(0, 0));
 
-    private void submitterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitterTextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_submitterTextActionPerformed
+        //        projectManager.getOpeningIssuesList().remove(issue.getID(), this);
+        issueWindowClosing();
+    }//GEN-LAST:event_buttonCancelActionPerformed
+
+    private void descriptionTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionTextKeyReleased
+        JTextArea dateArea = (JTextArea) evt.getComponent();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String today = dateFormat.format(date);
+        String value = dateArea.getText();
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
+            dateArea.requestFocusInWindow();
+            dateArea.selectAll();
+            value = value + " " + today;
+            dateArea.setText(value);
+        } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
+
+            int pos = dateArea.getCaretPosition();
+            String userName = projectManager.getUserName();
+            String message = "\n" + "-- by " + userName + " on " + today + "-- \n";
+            //String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
+            dateArea.insert(message, pos);
+
+            dateArea.setCaretPosition(pos + userName.length() + 25);
+
+        }
+    }//GEN-LAST:event_descriptionTextKeyReleased
 
     private void dateOpenedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateOpenedTextKeyReleased
         if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
@@ -1332,15 +1406,9 @@ public class IssueWindow extends JFrame {
         }
     }//GEN-LAST:event_dateOpenedTextKeyReleased
 
-    private void programmerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_programmerComboBoxActionPerformed
-        if(programmerComboBox.getSelectedItem().toString().equals(issue.getProgrammer())){
-            checkForChangeAndSetBtnsEnabled();
-        }
-        // we know right away there is a change so just set the button enabled
-        else{
-            setBtnsEnabled(true); // sets the submit or confirm button enabled
-        }
-    }//GEN-LAST:event_programmerComboBoxActionPerformed
+    private void dateOpenedTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateOpenedTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dateOpenedTextActionPerformed
 
 
     /**
@@ -1388,6 +1456,8 @@ public class IssueWindow extends JFrame {
         issue.setIssueType(getTableValueAt(row, 9).toString());
         issue.setSubmitter(getTableValueAt(row, 10).toString());
         issue.setLocked(getTableValueAt(row, 11).toString());
+        issue.setLastmodtime(getTableValueAt(row, 12).toString());
+        
     }
     
     /**
@@ -1417,6 +1487,7 @@ public class IssueWindow extends JFrame {
         issue.setIssueType(comboBoxIssueType.getSelectedItem().toString());
         issue.setSubmitter(submitterText.getText());
         issue.setLocked((lockCheckBox.isSelected())?"Y":"");
+        
     }
 
     /**
@@ -1436,6 +1507,7 @@ public class IssueWindow extends JFrame {
         comboBoxIssueType.setSelectedItem(issue.getIssueType());
         submitterText.setText(issue.getSubmitter());
         lockCheckBox.setSelected(issue.getLocked().equals("Y")?true:false);
+        lastmodTime.setText(issue.getLastmodtime());
         
         setOpenCloseIssueBtnText(); // set button text to Open/Close issue
     }
@@ -1578,7 +1650,11 @@ public class IssueWindow extends JFrame {
         return valueListMap;
 
     }
-        private void updateComboList(String colName, String tableName) {
+    
+    
+    //should update offline values
+   
+    private void updateComboList(String colName, String tableName) {
         //create a combo box model
         DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
         if (colName.equalsIgnoreCase("programmer")) {
@@ -1588,6 +1664,11 @@ public class IssueWindow extends JFrame {
         } else if (colName.equalsIgnoreCase("app")) {
             appComboBox.setModel(comboBoxSearchModel);
         }
+        
+        //offline values hard coded in
+        //[, 1, 2, 3, 4, 5]
+        //[, SKYPE, Analyster, Other, ELLEGUI, VBA, TOOLS, DOVISLEX, SQL, PM]
+        //[, Shenrui, Corinne, Azoacha, Youzhi, Ying, Bektur, Xiao, Anthea, Carlos, Professor, Yi, Wei, Yiqi]
 
 
         Map comboBoxForSearchValue = loadingDropdownList();
@@ -1606,9 +1687,9 @@ public class IssueWindow extends JFrame {
                         }
 
                     });
-
+                    
                 } else if (colName.equalsIgnoreCase("rk")) {
-                    if (dropDownList.get(0) == "") {
+                    if (projectManager.isOnline() && dropDownList.get(0) == "") {
                         ArrayList<Object> list = new ArrayList<Object>();
 
                         for (int i = 1; i < dropDownList.size(); i++) {
@@ -1618,9 +1699,33 @@ public class IssueWindow extends JFrame {
 
                         dropDownList = list;
                     }
+                    else {
+                      
+                       Object[] defaultArray = {"1","2","3","4","5",""};
+                       dropDownList.addAll(Arrays.asList(defaultArray));
+                       
+                        
+                    }
+                    
+                    
                 } else if (colName.equalsIgnoreCase("programmer") || colName.equalsIgnoreCase("app") ) {
                     Object nullValue = "";
-
+                    
+                    if (!projectManager.isOnline() && colName.equalsIgnoreCase("programmer") ) {
+                        
+                        Object[] defaultArray = {"", "Shenrui", "Corinne", "Azoacha", "Youzhi", "Ying", "Bektur", "Xiao", "Anthea", "Carlos", "Professor", "Yi", "Wei", "Yiqi"};
+                        dropDownList = new ArrayList<Object>();
+                        dropDownList.addAll(Arrays.asList(defaultArray));
+                        
+                    }
+                    
+                    if (!projectManager.isOnline() && colName.equalsIgnoreCase("app") ) {
+                        Object[] defaultArray = {"", "SKYPE", "Analyster", "Other", "ELLEGUI", "VBA", "TOOLS", "DOVISLEX", "SQL", "PM"};   
+                        dropDownList = new ArrayList<Object>();
+                        dropDownList.addAll(Arrays.asList(defaultArray));
+                   
+                    }
+                    
                     Collections.sort(dropDownList, new Comparator<Object>() {
                         public int compare(Object o1, Object o2) {
                             if (o1 == nullValue && o2 == nullValue) {
@@ -1711,12 +1816,10 @@ public class IssueWindow extends JFrame {
     private javax.swing.JPanel formPane;
     private javax.swing.JLabel id;
     private javax.swing.JLabel idText;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JLabel lastmodTime;
     private javax.swing.JLabel lock;
     private javax.swing.JCheckBox lockCheckBox;
     private javax.swing.JLabel programmer;
