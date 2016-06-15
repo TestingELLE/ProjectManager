@@ -147,11 +147,12 @@ public class ProjectManager {
 
     public static void mainMethod() {
         loadingMethod();
+        
         for (int i = 1; i <= 5; i++) {
             loadingText("Loading...");
             loadingProgress(i * 20);
             try {
-                Thread.sleep(200);
+                Thread.sleep(800);
             } catch (InterruptedException e) {
                 LoggingAspect.afterThrown(e);
                 JOptionPane.showMessageDialog(null, "error: " + e.getMessage());

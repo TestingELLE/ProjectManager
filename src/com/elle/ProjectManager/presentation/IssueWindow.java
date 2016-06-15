@@ -52,7 +52,7 @@ public class IssueWindow extends JFrame {
     private IssueDAO dao;
     private boolean addIssueMode;
     private OfflineIssueManager mgr;
-
+    
     public ProjectManagerWindow getProjectManager() {
         return projectManager;
     }
@@ -1304,6 +1304,8 @@ public class IssueWindow extends JFrame {
                     
                     }
                     projectManager.updateTableRow(table,issue);
+                    //update the orange dot issue
+                    projectManager.detectOpenIssues(tabs.get(issue.getApp()));
                     
                 }
               

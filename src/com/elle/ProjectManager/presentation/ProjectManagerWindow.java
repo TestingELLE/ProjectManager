@@ -2039,8 +2039,25 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
 
     private void menuItemReloadDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadDataActionPerformed
-
+        
+        //remove current table data -Yi
+        String tab = getSelectedTabName();
+        System.out.println(tab);
+        JTable selectedTable = tabs.get(tab).getTable();
+        DefaultTableModel dm = (DefaultTableModel)selectedTable.getModel();
+        while (dm.getRowCount() > 0) {
+            dm.removeRow(0);
+        }
+        
+        
+        //if table is sorted, save the info -Yi
+         List<RowSorter.SortKey> keys = (List<RowSorter.SortKey>) selectedTable.getRowSorter().getSortKeys();
+     
         reloadData();
+        
+        //reset the sorter key -Yi
+        selectedTable.getRowSorter().setSortKeys(keys);
+        
         String searchColName = comboBoxField.getSelectedItem().toString();
 
         String tabName = getSelectedTabName();
@@ -3882,7 +3899,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      *
      * @param tab
      */
-    private void detectOpenIssues(Tab tab) {
+    public void detectOpenIssues(Tab tab) {
         JTable table = tab.getTable();
         boolean openIssue = false;
         for (int row = 0; row < table.getRowCount(); row++) {
@@ -3977,6 +3994,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @return
      */
     public JTable loadTable(Tab tab) {
+        
         JTable table = tab.getTable();
         table = loadTableData(table);
         detectOpenIssues(tab); // this puts an orange dot in tab title
