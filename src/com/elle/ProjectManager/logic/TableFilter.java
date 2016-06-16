@@ -47,7 +47,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
     }
 
     /**
-     * initFilterItems Initilizes the filter item arrays. This should be called
+     * initFilterItems Initializes the filter item arrays. This should be called
      * once at the startup of the application and after a table model has been
      * set to the table.
      */
@@ -298,8 +298,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
     }
 
     /**
-     * clearAllFilters clears filters for the specified column
-     *
+     * clearAllFilters
+     * clears filters for the specified column
      * @param columnIndex
      */
     public void clearColFilter(int columnIndex) {
