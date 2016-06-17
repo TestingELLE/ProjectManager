@@ -785,6 +785,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         PMTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        PMTable.setColumnSelectionAllowed(true);
         PMTable.setMinimumSize(new java.awt.Dimension(10, 240));
         PMTable.setName("PM"); // NOI18N
         jScrollPane1.setViewportView(PMTable);
@@ -1615,7 +1616,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     isValueInTable = checkValueInTableCell(col, searchBoxValue, table);
 
 
-                    filter.addCustomIdListToFilterItem(tab.getCustomIdList());
+                    //filter.addCustomIdListToFilterItem(tab.getCustomIdList());
                     filter.addFilterItem(col, searchBoxValue);
                     filter.applyFilter();
                     if (!isValueInTable) {
@@ -3333,7 +3334,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
 //            tab.getCustomIdList().printOutIDList();
             filter.addFilterItem(columnIndex, selectedField);
-            filter.addCustomIdListToFilterItem(tab.getCustomIdList());
+            //filter.addCustomIdListToFilterItem(tab.getCustomIdList());
             filter.applyFilter();
             String recordsLabel = tab.getRecordsLabel();
             labelRecords.setText(recordsLabel);
@@ -4201,12 +4202,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             LoggingAspect.afterThrown(ex);
         }
 
-        EditableTableModel model = new EditableTableModel(data, columnNames, columnClass);
+        //EditableTableModel model = new EditableTableModel(data, columnNames, columnClass);
 
         // this has to be set here or else I get errors
         // I tried passing the model to the filter and setting it there
         // but it caused errors
-        table.setModel(model);
+        //table.setModel(model);
 
         // check that the filter items are initialized
         String tabName = table.getName();
@@ -5096,18 +5097,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param table 
      */
     private void addEditableTableModel(JTable table) {
-        Vector data = new Vector();
-        Vector columnNames = new Vector();
-        Vector columnClasses = new Vector();
         
-        DefaultTableModel model = (DefaultTableModel)table.getModel();
-        data = model.getDataVector();
-        for(int i = 0; i < model.getColumnCount();i++){
-            columnNames.addElement(model.getColumnName(i));
-            columnClasses.addElement(model.getColumnClass(i).toString());
-        }
-        
-        EditableTableModel etm = new EditableTableModel(data, columnNames, columnClasses);
+        DefaultTableModel model = (DefaultTableModel)table.getModel();        
+        EditableTableModel etm = new EditableTableModel(model);
         table.setModel(etm);
     }
 
