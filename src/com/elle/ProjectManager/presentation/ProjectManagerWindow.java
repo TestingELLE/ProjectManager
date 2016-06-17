@@ -2505,7 +2505,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         int[] selectedRows = table.getSelectedRows(); // array of the rows selected
         
         int rowCount = selectedRows.length; // the number of rows selected
-        int[] authorizedRows = new int[rowCount];
+        ArrayList<Integer> authorizedRows = new ArrayList();
         if (rowCount != -1) {
             ids = new int[rowCount];
             for (int i = 0, j=0; i < rowCount; i++) {
@@ -2514,7 +2514,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 String type = (String) table.getValueAt(row, 9);
                 if (Authorization.getAccessLevel().equals("administrator") || type.equals("TEST ISSUE")) {
                     ids[j++] = selectedID;
-                    authorizedRows[j++] = selectedRows[i];
+                    authorizedRows.add(selectedRows[i]);
                 }
                      
                 else {
@@ -5047,25 +5047,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
     
     /*remove authorized rows - by Yi */
-    private boolean removeSelectedRows(JTable table, int[] rows) {
+    private void removeSelectedRows(JTable table, ArrayList<Integer> rows) {
         
        
 	DefaultTableModel model = (DefaultTableModel)table.getModel();
-
-        if(rows.length != -1){
-            while(rows.length>0)
-            {
-                int row = table.convertRowIndexToModel(rows[0]);
+        for(int i = 0; i< rows.size(); i++) {
+                int row = table.convertRowIndexToModel(rows.get(i)); 
                 model.removeRow(row);
-                rows = table.getSelectedRows();
-            }
-            table.getSelectionModel().clearSelection();
-            return true;
+                //the selection is automatically deleted after row removed from model.
+                 
         }
-        else{
-            // no rows selected
-            return false;
-        }
+        
     }
     
     
