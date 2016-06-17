@@ -551,7 +551,7 @@ public class IssueWindow extends JFrame {
         dateOpenedText = new javax.swing.JTextField();
         submitter = new javax.swing.JLabel();
         id = new javax.swing.JLabel();
-        comboBoxIssueType = new javax.swing.JComboBox<>();
+        comboBoxIssueType = new javax.swing.JComboBox<String>();
         programmer = new javax.swing.JLabel();
         rk = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
@@ -851,7 +851,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         jPanel3.add(id, gridBagConstraints);
 
-        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE", "TEST ISSUE" }));
         comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxIssueTypeActionPerformed(evt);
@@ -1812,7 +1812,7 @@ public class IssueWindow extends JFrame {
                     }
                     
                     if (!projectManager.isOnline() && colName.equalsIgnoreCase("app") ) {
-                        Object[] defaultArray = {"", "SKYPE", "Analyster", "Other", "ELLEGUI", "VBA", "TOOLS", "DOVISLEX", "SQL", "PM"};   
+                        Object[] defaultArray = {"", "SKYPE", "Analyster", "Other", "ELLEGUI", "VBA", "TOOLS", "DOVISLEX", "SQL", "PM", "TEST ISSUE"};   
                         dropDownList = new ArrayList<Object>();
                         dropDownList.addAll(Arrays.asList(defaultArray));
                    
