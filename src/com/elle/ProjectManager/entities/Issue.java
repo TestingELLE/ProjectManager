@@ -14,7 +14,7 @@ public class Issue implements Serializable {
     private int id;
     private String app;
     private String title;
-    private String description;
+    private byte[] description;
     private String programmer;
     private String dateOpened;
     private String rk; 
@@ -27,10 +27,10 @@ public class Issue implements Serializable {
    
     
     public Issue(){
-        this(-1,"","","","","","","","","FEATURE","","","");
+        this(-1,"","",new byte[0],"","","","","","FEATURE","","","");
     }
 
-    public Issue(int id, String app, String title, String description, String programmer, String dateOpened, String rk, String version, String dateClosed, String issue_type, String submitter, String locked, String lastmodtime) {
+    public Issue(int id, String app, String title, byte[] description, String programmer, String dateOpened, String rk, String version, String dateClosed, String issue_type, String submitter, String locked, String lastmodtime) {
         this.id = id;
         this.app = app;
         this.title = title;
@@ -56,7 +56,11 @@ public class Issue implements Serializable {
     }
 
     public String getApp() {
-        return app;
+        if (app == null) {
+            return "";
+        } else {
+            return app;  
+        }
     }
 
     public void setApp(String app) {
@@ -64,23 +68,35 @@ public class Issue implements Serializable {
     }
 
     public String getTitle() {
-        return title;
+        if (title == null) {
+            return "";
+        } else {
+            return title;  
+        }
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public byte[] getDescription() {
+        if (description == null) {
+            return new byte[0];
+        } else {
+            return description;  
+        }
     }
 
-    public void setDescription(String description) {
+    public void setDescription(byte[] description) {
         this.description = description;
     }
 
     public String getProgrammer() {
-        return programmer;
+        if (programmer == null) {
+            return "";
+        } else {
+            return programmer;  
+        }
     }
 
     public void setProgrammer(String programmer) {
@@ -88,7 +104,11 @@ public class Issue implements Serializable {
     }
 
     public String getDateOpened() {
-        return dateOpened;
+        if (dateOpened == null) {
+            return "";
+        } else {
+            return dateOpened;  
+        }
     }
 
     public void setDateOpened(String dateOpened) {
@@ -96,7 +116,11 @@ public class Issue implements Serializable {
     }
 
     public String getRk() {
-        return rk;
+        if (rk == null) {
+            return "";
+        } else {
+            return rk;  
+        }
     }
 
     public void setRk(String rk) {
@@ -104,7 +128,11 @@ public class Issue implements Serializable {
     }
 
     public String getVersion() {
-        return version;
+        if (version == null) {
+            return "";
+        } else {
+            return version;  
+        }
     }
 
     public void setVersion(String version) {
@@ -112,7 +140,11 @@ public class Issue implements Serializable {
     }
 
     public String getDateClosed() {
-        return dateClosed;
+        if (dateClosed == null) {
+            return "";
+        } else {
+            return dateClosed;  
+        }
     }
 
     public void setDateClosed(String dateClosed) {
@@ -120,7 +152,11 @@ public class Issue implements Serializable {
     }
 
     public String getIssueType() {
-        return issueType;
+        if (issueType == null) {
+            return "";
+        } else {
+            return issueType;  
+        }
     }
 
     public void setIssueType(String issueType) {
@@ -128,7 +164,11 @@ public class Issue implements Serializable {
     }
 
     public String getSubmitter() {
-        return submitter;
+        if (submitter == null) {
+            return "";
+        } else {
+            return submitter;  
+        }
     }
 
     public void setSubmitter(String submitter) {
@@ -136,7 +176,11 @@ public class Issue implements Serializable {
     }
 
     public String getLocked() {
-        return locked;
+        if (locked == null) {
+            return "";
+        } else {
+            return locked;  
+        }
     }
 
     public void setLocked(String locked) {
@@ -144,15 +188,15 @@ public class Issue implements Serializable {
     }
 
     public String getLastmodtime() {
-        return lastmodtime;
+        if (lastmodtime == null) {
+            return "";
+        } else {
+            return lastmodtime;  
+        }
     }
 
     public void setLastmodtime(String lastmodtime) {
         this.lastmodtime = lastmodtime;
     }
-    
-    
 
-  
-    
 }

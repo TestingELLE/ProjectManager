@@ -7,10 +7,26 @@ import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.OfflineIssueManager;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,10 +38,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,10 +56,23 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.StyledEditorKit;
+import javax.swing.text.StyledEditorKit.BoldAction;
+import javax.swing.text.StyledEditorKit.ForegroundAction;
+import javax.swing.text.StyledEditorKit.ItalicAction;
+import javax.swing.text.StyledEditorKit.UnderlineAction;
 
 /**
  *
@@ -52,6 +87,10 @@ public class IssueWindow extends JFrame {
     private IssueDAO dao;
     private boolean addIssueMode;
     private OfflineIssueManager mgr;
+
+    IssueWindow(int i, JTable selectedTable) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     public ProjectManagerWindow getProjectManager() {
         return projectManager;
@@ -237,12 +276,12 @@ public class IssueWindow extends JFrame {
         this.description = description;
     }
 
-    public JTextArea getDescriptionText() {
-        return descriptionText;
+    public JTextPane getDescriptionText() {
+        return rtftext;
     }
 
     public void setDescriptionText(JTextArea descriptionText) {
-        this.descriptionText = descriptionText;
+        this.rtftext = rtftext;
     }
 
     public JPanel getFormPane() {
@@ -277,14 +316,12 @@ public class IssueWindow extends JFrame {
         this.jPanel1 = jPanel1;
     }
 
-
-
-    public JScrollPane getjScrollPane7() {
-        return jScrollPane7;
+    public JScrollPane getjScrollPane1() {
+        return jScrollPane1;
     }
 
-    public void setjScrollPane7(JScrollPane jScrollPane7) {
-        this.jScrollPane7 = jScrollPane7;
+    public void setjScrollPane1(JScrollPane jScrollPane1) {
+        this.jScrollPane1 = jScrollPane1;
     }
 
     public JLabel getLock() {
@@ -393,7 +430,7 @@ public class IssueWindow extends JFrame {
     /**
      * Creates new form IssueWindow
      */
-    public IssueWindow(int row, JTable table) {
+    public IssueWindow(int row, JTable table, ArrayList<Issue> issues) throws IOException, BadLocationException {
         projectManager = ProjectManagerWindow.getInstance();
         tabs = projectManager.getTabs();
         this.table = table;
@@ -413,13 +450,34 @@ public class IssueWindow extends JFrame {
         // existing issue
         else {
             addIssueMode = false;
-            setIssueValuesFromTable(row,table);
+            int currentid = getcurrentissueid(row,table);
+            
+            if(!issues.isEmpty() && issues != null){
+                for(Issue issueindb: issues){
+                    if (issueindb.getId() == currentid) {
+                        issue.setId(issueindb.getId());
+                        issue.setApp(issueindb.getApp());
+                        issue.setTitle(issueindb.getTitle());
+                        issue.setDescription(issueindb.getDescription());
+                        issue.setProgrammer(issueindb.getProgrammer());
+                        System.out.println(issueindb.getProgrammer());
+                        issue.setDateOpened(issueindb.getDateOpened());
+                        issue.setRk(issueindb.getRk());
+                        issue.setVersion(issueindb.getVersion());
+                        issue.setDateClosed(issueindb.getDateClosed());
+                        issue.setIssueType(issueindb.getIssueType());
+                        issue.setSubmitter(issueindb.getSubmitter());
+                        issue.setLocked(issueindb.getLocked());
+                        System.out.println(issueindb.getLocked());
+                    }
+                }
+            }
         }
        
         initComponents();
         submitterText.setText(projectManager.getUserName());
         
-        //setComponentValuesFromIssue();
+        setComponentValuesFromIssue(this);
         
         /**
          * Add all JTextComponents to add document listener, input mappings,
@@ -433,7 +491,7 @@ public class IssueWindow extends JFrame {
         textComponentList.add(dateOpenedText);
         
         textComponentList.add(titleText);
-        textComponentList.add(descriptionText);
+        textComponentList.add(rtftext);
    
         textComponentList.add(dateClosedText);
         textComponentList.add(versionText);
@@ -443,10 +501,7 @@ public class IssueWindow extends JFrame {
         updateComboList("rk", projectManager.getSelectedTabName());
         updateComboList("app", projectManager.getSelectedTabName());
         
-        setComponentValuesFromIssue();
-        
-        
-        
+        setComponentValuesFromIssue(this);
         
         setOpenCloseIssueBtnText();
         setIssueWindowMode();
@@ -524,6 +579,7 @@ public class IssueWindow extends JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        jMenu1 = new javax.swing.JMenu();
         scrollPane = new javax.swing.JScrollPane();
         formPane = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -561,8 +617,16 @@ public class IssueWindow extends JFrame {
         BtnNext = new javax.swing.JButton();
         BtnPrevious = new javax.swing.JButton();
         description = new javax.swing.JLabel();
-        jScrollPane7 = new javax.swing.JScrollPane();
-        descriptionText = new javax.swing.JTextArea();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        rtftext = new javax.swing.JTextPane();
+        Fsize = new javax.swing.JButton();
+        Italic = new javax.swing.JButton();
+        StrikethroughBotton = new javax.swing.JButton();
+        UnderlineBotton = new javax.swing.JButton();
+        B_Bold = new javax.swing.JButton();
+        colorButton1 = new javax.swing.JButton();
+
+        jMenu1.setText("jMenu1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -916,19 +980,12 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         formPane.add(jPanel4, gridBagConstraints);
 
-        jPanel5.setLayout(new java.awt.GridBagLayout());
-
         BtnNext.setText(">");
         BtnNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnNextActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        jPanel5.add(BtnNext, gridBagConstraints);
 
         BtnPrevious.setText("<");
         BtnPrevious.addActionListener(new java.awt.event.ActionListener() {
@@ -936,41 +993,101 @@ public class IssueWindow extends JFrame {
                 BtnPreviousActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel5.add(BtnPrevious, gridBagConstraints);
 
         description.setText(" description");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        jPanel5.add(description, gridBagConstraints);
 
-        descriptionText.setColumns(20);
-        descriptionText.setLineWrap(true);
-        descriptionText.setRows(5);
-        descriptionText.setWrapStyleWord(true);
-        descriptionText.setName("description"); // NOI18N
-        descriptionText.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                descriptionTextKeyReleased(evt);
+        rtftext.setContentType("text/rtf"); // NOI18N
+        rtftext.setMinimumSize(new java.awt.Dimension(590, 80));
+        rtftext.setPreferredSize(new java.awt.Dimension(590, 80));
+        jScrollPane1.setViewportView(rtftext);
+
+        Fsize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Font3.png"))); // NOI18N
+        Fsize.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        Fsize.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FsizeActionPerformed(evt);
             }
         });
-        jScrollPane7.setViewportView(descriptionText);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanel5.add(jScrollPane7, gridBagConstraints);
+        Italic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Italic_os2.png"))); // NOI18N
+        Italic.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        Italic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ItalicActionPerformed(evt);
+            }
+        });
+
+        StrikethroughBotton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Strike_os2.png"))); // NOI18N
+        StrikethroughBotton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StrikethroughBottonActionPerformed(evt);
+            }
+        });
+
+        UnderlineBotton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Underline_os.png"))); // NOI18N
+        UnderlineBotton.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        UnderlineBotton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UnderlineBottonActionPerformed(evt);
+            }
+        });
+
+        B_Bold.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Bold_os.png"))); // NOI18N
+        B_Bold.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        B_Bold.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                B_BoldActionPerformed(evt);
+            }
+        });
+
+        colorButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Color3.png"))); // NOI18N
+        colorButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                colorButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(description)
+                .addGap(124, 124, 124)
+                .addComponent(colorButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(B_Bold, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(UnderlineBotton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(StrikethroughBotton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(Italic, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(Fsize, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(112, 112, 112)
+                .addComponent(BtnPrevious)
+                .addGap(3, 3, 3)
+                .addComponent(BtnNext))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(description)
+                    .addComponent(colorButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(B_Bold, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(UnderlineBotton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(StrikethroughBotton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Italic, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Fsize, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BtnPrevious)
+                    .addComponent(BtnNext))
+                .addGap(6, 6, 6)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1188,8 +1305,18 @@ public class IssueWindow extends JFrame {
             JOptionPane.showMessageDialog(this, "This issue is already the first row on the table!");
         } else {
             row--;
-            setIssueValuesFromTable(row,table);
-            setComponentValuesFromIssue();
+            try {
+                setIssueValuesFromTable(row,table);
+            } catch (IOException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                setComponentValuesFromIssue(this);
+            } catch (IOException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
             table.setRowSelectionInterval(row, row);
             updateCustomIdList(row);
         }
@@ -1225,8 +1352,18 @@ public class IssueWindow extends JFrame {
             JOptionPane.showMessageDialog(this, "This issue is already the last row on the table!");
         } else {
             row++;
-            setIssueValuesFromTable(row,table);
-            setComponentValuesFromIssue();
+            try {
+                setIssueValuesFromTable(row,table);
+            } catch (IOException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                setComponentValuesFromIssue(this);
+            } catch (IOException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
             table.setRowSelectionInterval(row, row);
             updateCustomIdList(row);
         }
@@ -1248,23 +1385,55 @@ public class IssueWindow extends JFrame {
         Date date = new Date();
         String today = dateFormat.format(date);
         String userName = projectManager.getUserName();
-        String value = descriptionText.getText();
+
+        //clean the text pane
+
+        ByteArrayOutputStream getcurrentdescriptiontext = new ByteArrayOutputStream();
+        try {
+            rtftext.getEditorKit().write(getcurrentdescriptiontext, rtftext.getDocument(), 0, rtftext.getDocument().getLength());
+        } catch (IOException | BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        byte[] getcurrentdescriptiontextbytearray = getcurrentdescriptiontext.toByteArray();
+        String rtfstring = getcurrentdescriptiontext.toString();
+        String newrtfstring = rtfstring.substring(0,rtfstring.length()-2);
+
+        System.out.println(newrtfstring);
+
         if (btnCloseIssue.getText().equalsIgnoreCase("close issue")) {
             // set dateClosed text field with date today
             FillItWithDate(dateClosedText);
             String temperaryVersion = "XXX";
             versionText.setText(temperaryVersion);
             btnCloseIssue.setText("Reopen Issue");
-            value = value + "\n--- Issue Closed by "
-            + userName + " on " + today + "\n";
+
+            newrtfstring = newrtfstring + "\n--- Issue Closed by "
+            + userName + " on " + today + "\\par";
+            newrtfstring = newrtfstring + "\n}";
+
         } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
-            value = value + "\n \n--- Issue reopened by "
-            + userName + " on " + today + " (version " + versionText.getText() + ") \n";
+
+            newrtfstring = newrtfstring + "\n \n--- Issue reopened by "
+            + userName + " on " + today + " (version " + versionText.getText() + ")\\par";
+            newrtfstring = newrtfstring + "\n}";
+
             versionText.setText("");
             dateClosedText.setText("");
             btnCloseIssue.setText("Close Issue");
         }
-        descriptionText.setText(value);
+
+        byte[] close_openrtfbytearray = newrtfstring.getBytes(Charset.forName("UTF-8"));
+        InputStream close_openrtfstream = new ByteArrayInputStream(close_openrtfbytearray);
+        try {
+            rtftext.setText("");
+            rtftext.getEditorKit().read(close_openrtfstream, rtftext.getDocument(), 0);
+            //descriptionText.setText(value);
+        } catch (IOException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnCloseIssueActionPerformed
 
     private void dateClosedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateClosedTextKeyReleased
@@ -1287,8 +1456,14 @@ public class IssueWindow extends JFrame {
             if (originalId > 9000) issue.setId(originalId - 9000);
             boolean onlineUpdateSuccess =  issue.getId() > 0 ? dao.update(issue) :  dao.insert(issue);
             if(onlineUpdateSuccess){
-                if (originalId < 0) {//for new issues
+                if (originalId < 0) {try {
+                    //for new issues
                     projectManager.insertTableRow(table, issue);
+                    } catch (IOException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                  //remove original row
                     projectManager.removeTableRow(table, originalId);
                     
@@ -1303,7 +1478,13 @@ public class IssueWindow extends JFrame {
                         mgr.removeIssue(mgr.getIssue(originalId));
                     
                     }
-                    projectManager.updateTableRow(table,issue);
+                    try {
+                        projectManager.updateTableRow(table,issue);
+                    } catch (IOException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     //update the orange dot issue
                     projectManager.detectOpenIssues(tabs.get(issue.getApp()));
                     
@@ -1326,11 +1507,23 @@ public class IssueWindow extends JFrame {
                      "Data saved successfully.");
                     
                     //if new offline issue or update offline issue, then update
-                    if (originalId < 0 || originalId > 9000) projectManager.updateTableRow(table, issue);
+                    if (originalId < 0 || originalId > 9000) try {
+                        projectManager.updateTableRow(table, issue);
+                    } catch (IOException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     
                     //if update some online issue
                     else
-                        projectManager.insertTableRow(table,issue);
+                        try {
+                            projectManager.insertTableRow(table,issue);
+                    } catch (IOException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     projectManager.makeTableEditable(false);
                
                 }
@@ -1358,9 +1551,21 @@ public class IssueWindow extends JFrame {
                     //if already in table, update, else insert
                     int row = projectManager.findTableModelRow(table,issue);
                     if (row != -1)
-                        projectManager.updateTableRow(table,issue);
+                        try {
+                            projectManager.updateTableRow(table,issue);
+                    } catch (IOException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     else
-                        projectManager.insertTableRow(table,issue);
+                        try {
+                            projectManager.insertTableRow(table,issue);
+                    } catch (IOException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     
                         
                     projectManager.makeTableEditable(false);
@@ -1394,7 +1599,13 @@ public class IssueWindow extends JFrame {
         
         if (projectManager.isOnline() && dao.insert(issue)) {
             
-            projectManager.insertTableRow(table,issue);
+            try {
+                projectManager.insertTableRow(table,issue);
+            } catch (IOException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
             projectManager.makeTableEditable(false); 
         
         }
@@ -1409,7 +1620,13 @@ public class IssueWindow extends JFrame {
             if (mgr.addIssue(issue)) {
                 JOptionPane.showMessageDialog(this,
                     "Data saved successfully.");
-                projectManager.insertTableRow(table,issue);
+                try {
+                    projectManager.insertTableRow(table,issue);
+                } catch (IOException ex) {
+                    Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 projectManager.makeTableEditable(false);  
             }
             else {
@@ -1468,30 +1685,6 @@ public class IssueWindow extends JFrame {
         issueWindowClosing();
     }//GEN-LAST:event_buttonCancelActionPerformed
 
-    private void descriptionTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionTextKeyReleased
-        JTextArea dateArea = (JTextArea) evt.getComponent();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        String today = dateFormat.format(date);
-        String value = dateArea.getText();
-        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
-            dateArea.requestFocusInWindow();
-            dateArea.selectAll();
-            value = value + " " + today;
-            dateArea.setText(value);
-        } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
-
-            int pos = dateArea.getCaretPosition();
-            String userName = projectManager.getUserName();
-            String message = "\n" + "-- by " + userName + " on " + today + "-- \n";
-            //String value1 = value.substring(0, pos) + message + value.substring(pos, value.length());
-            dateArea.insert(message, pos);
-
-            dateArea.setCaretPosition(pos + userName.length() + 25);
-
-        }
-    }//GEN-LAST:event_descriptionTextKeyReleased
-
     private void dateOpenedTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateOpenedTextKeyReleased
         if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
             this.FillItWithDate((JTextField) evt.getComponent());
@@ -1502,6 +1695,259 @@ public class IssueWindow extends JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_dateOpenedTextActionPerformed
 
+    private void FsizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FsizeActionPerformed
+        Action b = (Action) new FontAndSizeAction();
+        b.actionPerformed(evt);
+    }//GEN-LAST:event_FsizeActionPerformed
+
+    private void ItalicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ItalicActionPerformed
+        Action b = new ItalicAction();
+        b.actionPerformed(evt);
+    }//GEN-LAST:event_ItalicActionPerformed
+
+    private void StrikethroughBottonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StrikethroughBottonActionPerformed
+        Action b = (Action) new StrikethroughAction();
+        b.actionPerformed(evt);
+    }//GEN-LAST:event_StrikethroughBottonActionPerformed
+
+    private void UnderlineBottonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UnderlineBottonActionPerformed
+        Action b = new UnderlineAction();
+        b.actionPerformed(evt);
+    }//GEN-LAST:event_UnderlineBottonActionPerformed
+
+    private void B_BoldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_B_BoldActionPerformed
+        Action b = new BoldAction();
+        b.actionPerformed(evt);
+    }//GEN-LAST:event_B_BoldActionPerformed
+
+    private void colorButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorButton1ActionPerformed
+        Action b = new ForegroundAction();
+        b.actionPerformed(evt);
+    }//GEN-LAST:event_colorButton1ActionPerformed
+
+    public class StrikethroughAction extends StyledEditorKit.StyledTextAction {
+
+        private static final long serialVersionUID = 9174670038684056758L;
+
+        public StrikethroughAction() {
+            super("font-bold");
+        }
+
+        public String toString() {
+            return "Strikethrough";
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JEditorPane editor = getEditor(e);
+            if (editor != null) {
+                StyledEditorKit kit = getStyledEditorKit(editor);
+                MutableAttributeSet attr = kit.getInputAttributes();
+                boolean bold;
+                bold = !(StyleConstants.isStrikeThrough(attr));
+                SimpleAttributeSet sas = new SimpleAttributeSet();
+                StyleConstants.setStrikeThrough(sas, bold);
+                setCharacterAttributes(editor, sas, false);
+
+            }
+        }
+    }
+    
+    public class ForegroundAction extends StyledEditorKit.StyledTextAction {
+
+        private static final long serialVersionUID = 6384632651737400352L;
+
+        JColorChooser colorChooser = new JColorChooser();
+
+        JDialog dialog = new JDialog();
+
+        boolean noChange = false;
+
+        boolean cancelled = false;
+
+        public ForegroundAction() {
+            super("foreground");
+
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JTextPane editor = (JTextPane) getEditor(e);
+
+            if (editor == null) {
+                JOptionPane.showMessageDialog(null,
+                        "You need to select the editor pane before you can change the color.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int p0 = editor.getSelectionStart();
+            StyledDocument doc = getStyledDocument(editor);
+            Element paragraph = doc.getCharacterElement(p0);
+            AttributeSet as = paragraph.getAttributes();
+            fg = StyleConstants.getForeground(as);
+            if (fg == null) {
+                fg = Color.BLACK;
+            }
+            colorChooser.setColor(fg);
+
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    fg = colorChooser.getColor();
+                    dialog.dispose();
+                }
+            });
+
+            JButton cancel = new JButton("Cancel");
+            cancel.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    cancelled = true;
+                    dialog.dispose();
+                }
+            });
+
+            JButton none = new JButton("None");
+            none.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    noChange = true;
+                    dialog.dispose();
+                }
+            });
+
+            JPanel buttons = new JPanel();
+            buttons.add(accept);
+            buttons.add(none);
+            buttons.add(cancel);
+
+            dialog.getContentPane().setLayout(new BorderLayout());
+            dialog.getContentPane().add(colorChooser, BorderLayout.CENTER);
+            dialog.getContentPane().add(buttons, BorderLayout.SOUTH);
+            dialog.setModal(true);
+            dialog.pack();
+            dialog.setVisible(true);
+
+            if (!cancelled) {
+
+                MutableAttributeSet attr = null;
+                if (editor != null) {
+                    if (fg != null && !noChange) {
+                        attr = new SimpleAttributeSet();
+                        StyleConstants.setForeground(attr, fg);
+                        setCharacterAttributes(editor, attr, false);
+                    }
+                }
+            }// end if color != null
+            noChange = false;
+            cancelled = false;
+        }
+
+        private Color fg;
+    }
+    
+    public class FontAndSizeAction extends StyledEditorKit.StyledTextAction {
+
+        private static final long serialVersionUID = 584531387732416339L;
+
+        private String family;
+
+        private float fontSize;
+
+        JDialog formatText;
+
+        private boolean accept = false;
+
+        JComboBox fontFamilyChooser;
+
+        JComboBox fontSizeChooser;
+
+        public FontAndSizeAction() {
+            super("Font and Size");
+        }
+
+        public String toString() {
+            return "Font and Size";
+        }
+
+
+         
+        public void actionPerformed(ActionEvent e) {
+            
+            JTextPane editor = (JTextPane) getEditor(e);
+            int p0 = editor.getSelectionStart();
+            StyledDocument doc = getStyledDocument(editor);
+            Element paragraph = doc.getCharacterElement(p0);
+            AttributeSet as = paragraph.getAttributes();
+
+            family = StyleConstants.getFontFamily(as);
+            fontSize = StyleConstants.getFontSize(as);
+
+            formatText = new JDialog(new JFrame(), "Font and Size", true);
+            formatText.getContentPane().setLayout(new BorderLayout());
+
+            JPanel choosers = new JPanel();
+            choosers.setLayout(new GridLayout(2, 1));
+
+            JPanel fontFamilyPanel = new JPanel();
+            fontFamilyPanel.add(new JLabel("Font"));
+
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            String[] fontNames = ge.getAvailableFontFamilyNames();
+
+            fontFamilyChooser = new JComboBox();
+            for (int i = 0; i < fontNames.length; i++) {
+                fontFamilyChooser.addItem(fontNames[i]);
+            }
+            fontFamilyChooser.setSelectedItem(family);
+            fontFamilyPanel.add(fontFamilyChooser);
+            choosers.add(fontFamilyPanel);
+
+            JPanel fontSizePanel = new JPanel();
+            fontSizePanel.add(new JLabel("Size"));
+            fontSizeChooser = new JComboBox();
+            fontSizeChooser.setEditable(true);
+            fontSizeChooser.addItem(new Float(4));
+            fontSizeChooser.addItem(new Float(8));
+            fontSizeChooser.addItem(new Float(12));
+            fontSizeChooser.addItem(new Float(16));
+            fontSizeChooser.addItem(new Float(20));
+            fontSizeChooser.addItem(new Float(24));
+            fontSizeChooser.setSelectedItem(new Float(fontSize));
+            fontSizePanel.add(fontSizeChooser);
+            choosers.add(fontSizePanel);
+
+            JButton ok = new JButton("OK");
+            ok.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    accept = true;
+                    formatText.dispose();
+                    family = (String) fontFamilyChooser.getSelectedItem();
+                    fontSize = Float.parseFloat(fontSizeChooser.getSelectedItem().toString());
+                }
+            });
+
+            JButton cancel = new JButton("Cancel");
+            cancel.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    formatText.dispose();
+                }
+            });
+
+            JPanel buttons = new JPanel();
+            buttons.add(ok);
+            buttons.add(cancel);
+            formatText.getContentPane().add(choosers, BorderLayout.CENTER);
+            formatText.getContentPane().add(buttons, BorderLayout.SOUTH);
+            formatText.pack();
+            formatText.setVisible(true);
+
+            MutableAttributeSet attr = null;
+            if (editor != null && accept) {
+                attr = new SimpleAttributeSet();
+                StyleConstants.setFontFamily(attr, family);
+                StyleConstants.setFontSize(attr, (int) fontSize);
+                setCharacterAttributes(editor, attr, false);
+            }
+
+        }
+    }
 
     /**
      * Called to close the form
@@ -1534,12 +1980,15 @@ public class IssueWindow extends JFrame {
      * @param row the row index on table for issue to retrieve
      * @param table the table with the row/issue data
      */
-    private void setIssueValuesFromTable(int row, JTable table) {
+    private void setIssueValuesFromTable(int row, JTable table) throws IOException {
 
         issue.setId(Integer.parseInt(getTableValueAt(row, 0).toString()));
         issue.setApp(getTableValueAt(row, 1).toString());
         issue.setTitle(getTableValueAt(row, 2).toString());
-        issue.setDescription(getTableValueAt(row, 3).toString());
+        
+        
+        issue.setDescription(convertStringToBytearrary((String) getTableValueAt(row, 3)));
+        
         issue.setProgrammer(getTableValueAt(row, 4).toString());
         issue.setDateOpened(getTableValueAt(row, 5).toString());
         issue.setRk(getTableValueAt(row, 6).toString());
@@ -1548,8 +1997,23 @@ public class IssueWindow extends JFrame {
         issue.setIssueType(getTableValueAt(row, 9).toString());
         issue.setSubmitter(getTableValueAt(row, 10).toString());
         issue.setLocked(getTableValueAt(row, 11).toString());
-        issue.setLastmodtime(getTableValueAt(row, 12).toString());
+    }
+    
+    private int getcurrentissueid(int row, JTable table) throws IOException {
         
+        return (int) getTableValueAt(row, 0);
+    }
+    
+    public byte[] convertStringToBytearrary(String is) throws IOException {
+        // To convert the InputStream to String we use the
+        // Reader.read(char[] buffer) method. We iterate until the
+        // Reader return -1 which means there's no more data to
+        // read. We use the StringWriter class to produce the string.
+        if (is != null) {
+            byte[] b = is.getBytes(Charset.forName("UTF-8"));
+            return b;
+        }
+        return new byte[0];
     }
     
     /**
@@ -1567,30 +2031,128 @@ public class IssueWindow extends JFrame {
      * Sets the issue values from the components and fields from issue window.
      */
     private void setIssueValuesFromComponents() {
+
         issue.setId(Integer.parseInt(idText.getText()));
-        issue.setApp(appComboBox.getSelectedItem().toString());
-        issue.setTitle(titleText.getText());
-        issue.setDescription(descriptionText.getText());
-        issue.setProgrammer(programmerComboBox.getSelectedItem().toString());
-        issue.setDateOpened(dateOpenedText.getText());
-        issue.setRk(rkComboBox.getSelectedItem().toString());
-        issue.setVersion(versionText.getText());
-        issue.setDateClosed(dateClosedText.getText());
-        issue.setIssueType(comboBoxIssueType.getSelectedItem().toString());
-        issue.setSubmitter(submitterText.getText());
-        issue.setLocked((lockCheckBox.isSelected())?"Y":"");
         
+        if (appComboBox.getSelectedItem() == null) {
+            issue.setApp("");
+        } else {
+            issue.setApp(appComboBox.getSelectedItem().toString());
+        }
+        
+        if (titleText.getText() == null) {
+            issue.setTitle("");
+        } else {
+            issue.setTitle(titleText.getText());
+        }
+        
+        ByteArrayOutputStream setdescriptionoutputstream = new ByteArrayOutputStream();                   
+        try {
+            rtftext.getEditorKit().write(setdescriptionoutputstream, rtftext.getDocument(), 0, rtftext.getDocument().getLength());
+        } catch (IOException | BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        byte[] setdescriptionbytearray = setdescriptionoutputstream.toByteArray();
+        
+        if (setdescriptionbytearray == null) {
+            byte[] emptyarray = new byte[0];
+            issue.setDescription(emptyarray);
+        } else {
+            issue.setDescription(setdescriptionbytearray);
+        }
+        
+        if (programmerComboBox.getSelectedItem() == null) {
+            issue.setProgrammer("");
+        } else {
+            issue.setProgrammer(programmerComboBox.getSelectedItem().toString());
+        }
+        
+        if (dateOpenedText.getText() == null) {
+            issue.setDateOpened("");
+        } else {
+            issue.setDateOpened(dateOpenedText.getText());
+        }
+        
+        if (rkComboBox.getSelectedItem() == null) {
+            issue.setRk("");
+        } else {
+            issue.setRk(rkComboBox.getSelectedItem().toString());
+        }
+                
+        if (versionText.getText() == null) {
+            issue.setVersion("");
+        } else {
+            issue.setVersion(versionText.getText());
+        }
+        
+        if (dateClosedText.getText() == null) {
+            issue.setDateClosed("");
+        } else {
+            issue.setDateClosed(dateClosedText.getText());
+        }
+        
+        if (comboBoxIssueType.getSelectedItem() == null) {
+            issue.setIssueType("");
+        } else {
+            issue.setIssueType(comboBoxIssueType.getSelectedItem().toString());
+        }
+        
+        if (submitterText.getText() == null) {
+            issue.setSubmitter("");
+        } else {
+            issue.setSubmitter(submitterText.getText());
+        }
+        
+        if (lockCheckBox.isSelected()) {
+            issue.setLocked("");
+        } else {
+            issue.setLocked((lockCheckBox.isSelected())?"Y":"");
+        }
+
     }
 
     /**
      * Sets the components and fields on issue window from the issue object.
      */
-    private void setComponentValuesFromIssue() {
+    private void setComponentValuesFromIssue(IssueWindow aThis) throws IOException, BadLocationException {
 
         idText.setText(Integer.toString(issue.getId()));
         appComboBox.setSelectedItem(issue.getApp());
         titleText.setText(issue.getTitle());
-        descriptionText.setText(issue.getDescription());
+        
+        rtftext.setText("");
+        
+        byte[] descriptionbytesout;
+        if (issue.getDescription() == null) {
+            descriptionbytesout = new byte[0];
+        } else {
+            descriptionbytesout = issue.getDescription();
+        }
+
+        InputStream rtfstream = new ByteArrayInputStream(descriptionbytesout);
+        String convertedstrings = convertStreamToString(rtfstream);
+        String rtfsign = "{\\rtf1\\ansi";
+        boolean rtfornot = convertedstrings.contains(rtfsign);
+
+        if (rtfornot) {
+            byte[] descriptionbytesout2 = issue.getDescription();
+            InputStream rtfstream2 = new ByteArrayInputStream(descriptionbytesout2);
+            rtftext.getEditorKit().read(rtfstream2, rtftext.getDocument(), 0);
+        } else {
+            String displaystringinrtf = "{\\rtf1\\ansi\n" +
+                    "{\\fonttbl\\f0\\fnil Monospaced;\\f1\\fnil sansserif;}\n" +
+                    "{\\colortbl\\red0\\green0\\blue0;\\red0\\green0\\blue0;}\n" +
+                                                                            "\n" +
+                     "\\li0\\ri0\\fi0\\f1\\fs24\\i0\\b0\\cf1 " + convertedstrings + "\\par\n" +
+                    "}";
+            byte[] displaystringinrtfbyte = displaystringinrtf.getBytes(Charset.forName("UTF-8"));
+            InputStream displaystringinrtfintput = new ByteArrayInputStream(displaystringinrtfbyte);
+            rtftext.getEditorKit().read(displaystringinrtfintput, rtftext.getDocument(), 0);
+        }
+
+        //descriptionText.setText(issue.getDescription());
+        
         programmerComboBox.setSelectedItem(issue.getProgrammer());
         dateOpenedText.setText(issue.getDateOpened());
         rkComboBox.setSelectedItem(issue.getRk());
@@ -1598,10 +2160,34 @@ public class IssueWindow extends JFrame {
         dateClosedText.setText(issue.getDateClosed());
         comboBoxIssueType.setSelectedItem(issue.getIssueType());
         submitterText.setText(issue.getSubmitter());
-        lockCheckBox.setSelected(issue.getLocked().equals("Y")?true:false);
-        lastmodTime.setText(issue.getLastmodtime());
+        //lockCheckBox.setSelected(issue.getLocked().equals("Y"));
         
         setOpenCloseIssueBtnText(); // set button text to Open/Close issue
+    }
+    
+    public String convertStreamToString(InputStream is) throws IOException {
+        // To convert the InputStream to String we use the
+        // Reader.read(char[] buffer) method. We iterate until the
+        // Reader return -1 which means there's no more data to
+        // read. We use the StringWriter class to produce the string.
+        if (is != null) {
+            Writer writer = new StringWriter();
+
+            char[] buffer = new char[1024];
+            try {
+                Reader reader;
+                reader = new BufferedReader(
+                        new InputStreamReader(is, "UTF-8"));
+                int n;
+                while ((n = reader.read(buffer)) != -1) {
+                    writer.write(buffer, 0, n);
+                }
+            } finally {
+                is.close();
+            }
+            return writer.toString();
+        }
+        return "";
     }
     
     /**
@@ -1610,10 +2196,30 @@ public class IssueWindow extends JFrame {
      * @return boolean true if there is a change in any of the component values
      */
     private boolean hasChange(){
+        
+        ByteArrayOutputStream str = new ByteArrayOutputStream();                   
+        try {
+            rtftext.getEditorKit().write(str, rtftext.getDocument(), 0, rtftext.getDocument().getLength());
+        } catch (IOException | BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        byte[] bkey = str.toByteArray();
+        String rtfstring = new String(bkey);
+        
+        String rtfstringindb;
+        
+        if (issue.getDescription() == null) {
+            rtfstringindb = "";
+        } else {
+            byte[] bkey1 = issue.getDescription();
+            rtfstringindb = new String(bkey1);
+        }
 
+        
         return ( appComboBox.getSelectedItem().equals(issue.getApp())
                 &&titleText.getText().equals(issue.getTitle())
-            && descriptionText.getText().equals(issue.getDescription())
+            && rtfstring.equals(rtfstringindb)
             && programmerComboBox.getSelectedItem().equals(issue.getProgrammer())
             && dateOpenedText.getText().equals(issue.getDateOpened())
             && rkComboBox.getSelectedItem().equals(issue.getRk())
@@ -1649,7 +2255,7 @@ public class IssueWindow extends JFrame {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                // this does not get fired for plain text
+                checkForChangeAndSetBtnsEnabled();            
             }
         };
         
@@ -1890,31 +2496,37 @@ public class IssueWindow extends JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton B_Bold;
     private javax.swing.JButton BtnNext;
     private javax.swing.JButton BtnPrevious;
+    private javax.swing.JButton Fsize;
+    private javax.swing.JButton Italic;
+    private javax.swing.JButton StrikethroughBotton;
+    private javax.swing.JButton UnderlineBotton;
     private javax.swing.JLabel app;
     private javax.swing.JComboBox appComboBox;
     private javax.swing.JButton btnCloseIssue;
     private javax.swing.JButton buttonCancel;
     private javax.swing.JButton buttonConfirm;
     private javax.swing.JButton buttonSubmit;
+    private javax.swing.JButton colorButton1;
     private javax.swing.JComboBox<String> comboBoxIssueType;
     private javax.swing.JLabel dateClosed;
     private javax.swing.JTextField dateClosedText;
     private javax.swing.JLabel dateOpened;
     private javax.swing.JTextField dateOpenedText;
     private javax.swing.JLabel description;
-    private javax.swing.JTextArea descriptionText;
     private javax.swing.JPanel formPane;
     private javax.swing.JLabel id;
     private javax.swing.JLabel idText;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lastmodTime;
     private javax.swing.JLabel lock;
     private javax.swing.JCheckBox lockCheckBox;
@@ -1922,6 +2534,7 @@ public class IssueWindow extends JFrame {
     private javax.swing.JComboBox programmerComboBox;
     private javax.swing.JLabel rk;
     private javax.swing.JComboBox rkComboBox;
+    private javax.swing.JTextPane rtftext;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JLabel submitter;
     private javax.swing.JTextField submitterText;

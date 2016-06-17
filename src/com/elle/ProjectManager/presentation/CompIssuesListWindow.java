@@ -12,15 +12,21 @@ import java.awt.ScrollPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.text.Document;
+import javax.swing.text.rtf.RTFEditorKit;
+import org.apache.commons.lang3.SerializationUtils;
 
 /**
  *
@@ -64,7 +70,9 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
     private HashMap<String,ArrayList<Object>> map;
     private TextAreaList textAreaList;
     private ArrayList<CompIssuesItem> compIssueItems;
-    
+
+    Object currentdescriptionobject = null;
+
     /**
      * Creates new form CompIssuesWireFrame
      */
@@ -285,7 +293,7 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
 
     private void btnWriteToTextFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWriteToTextFileActionPerformed
         
-        fc.showOpenDialog(this); 
+        fc.showSaveDialog(this); 
         
         // file must be selected or null pointer is thrown
         try{
@@ -573,7 +581,41 @@ public class CompIssuesListWindow extends javax.swing.JFrame {
             if(map.get(COL_VERSION).get(i) != null)
                 version = COL_VERSION + ": " + map.get(COL_VERSION).get(i).toString() + " ";
             if(map.get(COL_DESCRIPTION).get(i) != null)
-                description = COL_DESCRIPTION + ": " + map.get(COL_DESCRIPTION).get(i).toString() + " ";
+                currentdescriptionobject = map.get(COL_DESCRIPTION).get(i);
+                byte[] data = SerializationUtils.serialize((Serializable) currentdescriptionobject);
+                String s = new String(data);
+                String h = null;
+                if (s.contains("\\par")){
+                    h = s.substring(138);
+                    h = h.replace("\\par", "");
+                } else {
+                    h = s;
+                };
+
+                description = COL_DESCRIPTION + ":" + h + " ";
+                
+                
+                /* alternative method to output string from object 
+                try {
+                    bos = new ByteArrayOutputStream();
+                    oos = new ObjectOutputStream(bos);
+                    oos.writeObject(currentdescriptionobject);
+                    oos.flush();
+                    bytes = bos.toByteArray();
+                    String s = new String(bytes);
+                    CharSequence cs = s;
+                    String cleaned_s = Normalizer.normalize(cs, NFC);
+                    description = COL_DESCRIPTION + ": " + cleaned_s + " ";
+                } finally {
+                    if (oos != null) {
+                    oos.close();
+                    }
+                    if (bos != null) {
+                    bos.close();
+                    }
+                }
+                */
+
             
             // only show if rk exists
             if(rk.equals(""))

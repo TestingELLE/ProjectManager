@@ -69,7 +69,7 @@ public class DBConnection {
             // load url for server
             for(Server server: servers){
                 if(server.getName().equals(selectedServer))
-                    url += server.getUrl();
+                    url = server.getUrl();
             }
             
             url += selectedDB;
