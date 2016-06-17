@@ -7,10 +7,17 @@ package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.logic.ConflictIssuePair;
 import com.elle.ProjectManager.logic.OfflineIssueManager;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.rtf.RTFEditorKit;
 
 /**
  *
@@ -28,7 +35,7 @@ public class ReconcileWindow extends javax.swing.JFrame {
     
 
     
-    public ReconcileWindow() {
+    public ReconcileWindow() throws IOException, BadLocationException {
         pm = ProjectManagerWindow.getInstance();
         offlineIssueMgr = pm.offlineIssueMgr;
         conflictIssues = offlineIssueMgr.getConflictIssues();
@@ -50,7 +57,7 @@ public class ReconcileWindow extends javax.swing.JFrame {
     }
     
     
-    private void setComponentsValues() {
+    private void setComponentsValues() throws IOException, BadLocationException {
         total = conflictIssues.size();
         currentIssuePair = conflictIssues.get(index);
         
@@ -80,15 +87,35 @@ public class ReconcileWindow extends javax.swing.JFrame {
         
         idLabel.setText(String.valueOf(currentIssuePair.getDbIssue().getId()));
         titleLabel.setText(currentIssuePair.getDbIssue().getTitle());
-        onlineTextArea.setText(currentIssuePair.getDbIssue().getDescription());
-        offlineTextArea.setText(currentIssuePair.getOfflineIssue().getDescription());
+        byte[] dbissue = currentIssuePair.getDbIssue().getDescription();
+        byte[] offlineissue = currentIssuePair.getOfflineIssue().getDescription();
+        onlineTextArea.setText(extracttextfrombyte(dbissue));
+        offlineTextArea.setText(extracttextfrombyte(offlineissue));
         
     }
     
+    private String extracttextfrombyte (byte[] inputbytes) throws IOException, BadLocationException {
+        byte[] descriptiontablebytesout;
+        
+        if (inputbytes == null) {
+            descriptiontablebytesout = new byte[0];
+        } else {
+            descriptiontablebytesout = inputbytes;
+        };
+        
+        RTFEditorKit rtfParser = new RTFEditorKit();
+        Document document = rtfParser.createDefaultDocument();
+        rtfParser.read(new ByteArrayInputStream(descriptiontablebytesout), document, 0);
+        String text = document.getText(0, document.getLength());
+        
+        return text;
+    }
+    
+    
     
     private void setIssuePairValuesFromComponents() {
-        currentIssuePair.getDbIssue().setDescription(onlineTextArea.getText());
-        currentIssuePair.getOfflineIssue().setDescription(offlineTextArea.getText());
+        currentIssuePair.getDbIssue().setDescription(onlineTextArea.getText().getBytes());
+        currentIssuePair.getOfflineIssue().setDescription(offlineTextArea.getText().getBytes());
         
      
     }
@@ -346,7 +373,13 @@ public class ReconcileWindow extends javax.swing.JFrame {
         
         index --;
         currentIssuePair = conflictIssues.get(index);
-        setComponentsValues();
+        try {
+            setComponentsValues();
+        } catch (IOException ex) {
+            Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_previousButtonActionPerformed
 
@@ -364,7 +397,13 @@ public class ReconcileWindow extends javax.swing.JFrame {
             if (index == offlineIssueMgr.getConflictIssues().size()) {
                 index --;
             }
-            setComponentsValues();
+            try {
+                setComponentsValues();
+            } catch (IOException ex) {
+                Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         else reconcileWindowClosing();
     }//GEN-LAST:event_updateOnlineBtnActionPerformed
@@ -372,13 +411,19 @@ public class ReconcileWindow extends javax.swing.JFrame {
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         
         
-        //save to current Issue
-        setIssuePairValuesFromComponents();
-
-        // TODO add your handling code here:
-        index ++; 
-        currentIssuePair = conflictIssues.get(index);
-        setComponentsValues();
+        try {
+            //save to current Issue
+            setIssuePairValuesFromComponents();
+            
+            // TODO add your handling code here:
+            index ++;
+            currentIssuePair = conflictIssues.get(index);
+            setComponentsValues();
+        } catch (IOException ex) {
+            Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void updateOfflineBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateOfflineBtnActionPerformed
@@ -395,7 +440,13 @@ public class ReconcileWindow extends javax.swing.JFrame {
             if (index == offlineIssueMgr.getConflictIssues().size()) {
                 index --;
             }
-            setComponentsValues();
+            try {
+                setComponentsValues();
+            } catch (IOException ex) {
+                Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         else reconcileWindowClosing();
     }//GEN-LAST:event_updateOfflineBtnActionPerformed

@@ -22,10 +22,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.text.BadLocationException;
 
 /**
  *
@@ -109,7 +112,13 @@ public class OfflineIssueManager {
             String app = issue.getApp();
             
             if (table.getName().equals(app))
-                projectManager.insertTableRow(table, issue);    
+                try {
+                    projectManager.insertTableRow(table, issue);
+            } catch (IOException ex) {
+                Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
+            }    
             
         }
         
@@ -357,7 +366,13 @@ public class OfflineIssueManager {
                             //the table is updated correctly
                             projectManager.removeTableRow(tab.getTable(), originalId);
                             projectManager.removeTableRow(tab.getTable(), tempIssue.getId());
-                            projectManager.insertTableRow(tab.getTable(),tempIssue);
+                            try {
+                                projectManager.insertTableRow(tab.getTable(),tempIssue);
+                            } catch (IOException ex) {
+                                Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (BadLocationException ex) {
+                                Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             projectManager.makeTableEditable(false);
                             break;
                         }
@@ -427,7 +442,13 @@ public class OfflineIssueManager {
                             //the table is updated correctly
                         projectManager.removeTableRow(tab.getTable(), originalId);
                         projectManager.removeTableRow(tab.getTable(), chosen.getId());
-                        projectManager.insertTableRow(tab.getTable(),chosen);
+                        try {
+                            projectManager.insertTableRow(tab.getTable(),chosen);
+                        } catch (IOException ex) {
+                            Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (BadLocationException ex) {
+                            Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         projectManager.makeTableEditable(false);
                         break;
                     }
@@ -451,7 +472,7 @@ public class OfflineIssueManager {
         //private int id;
         if (issue.getApp() == null) issue.setApp("");
         if (issue.getTitle() == null) issue.setTitle("");
-        if (issue.getDescription() == null) issue.setDescription("");
+        if (issue.getDescription() == null) issue.setDescription(new byte[0]);
         if (issue.getProgrammer() == null) issue.setProgrammer("");
         if (issue.getDateOpened() == null) issue.setDateOpened("");
         if (issue.getRk() == null) issue.setRk("");
