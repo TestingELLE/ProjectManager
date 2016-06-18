@@ -42,6 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -446,6 +447,7 @@ public class IssueWindow extends JFrame {
             issue.setApp(projectManager.getSelectedTabName());
             issue.setDateOpened(todaysDate());
             issue.setSubmitter(projectManager.getUserName());
+            issue.setIssueType("TEST ISSUE");
         } 
         // existing issue
         else {
@@ -473,11 +475,20 @@ public class IssueWindow extends JFrame {
                 }
             }
         }
-       
+        
+        
         initComponents();
         submitterText.setText(projectManager.getUserName());
         
         setComponentValuesFromIssue(this);
+        
+        //implement the logic for showing 'test issue' or not
+        //if not in new issue mode, if not admin, and not test issue, remove the "test issue".
+        if (!addIssueMode && !issue.getIssueType().equals(comboBoxIssueType.getItemAt(3)) &&
+                !Authorization.getAccessLevel().equals("administrator")) {
+            comboBoxIssueType.removeItemAt(3);
+        } 
+        
         
         /**
          * Add all JTextComponents to add document listener, input mappings,
@@ -497,6 +508,7 @@ public class IssueWindow extends JFrame {
         textComponentList.add(versionText);
         addDocumentListener(textComponentList);
         addInputMappingsAndShortcuts(textComponentList);
+        
         updateComboList("programmer", projectManager.getSelectedTabName());
         updateComboList("rk", projectManager.getSelectedTabName());
         updateComboList("app", projectManager.getSelectedTabName());
@@ -2158,8 +2170,11 @@ public class IssueWindow extends JFrame {
         rkComboBox.setSelectedItem(issue.getRk());
         versionText.setText(issue.getVersion());
         dateClosedText.setText(issue.getDateClosed());
-        comboBoxIssueType.setSelectedItem(issue.getIssueType());
         submitterText.setText(issue.getSubmitter());
+        
+        comboBoxIssueType.setSelectedItem(issue.getIssueType());
+        
+        
         //lockCheckBox.setSelected(issue.getLocked().equals("Y"));
         
         setOpenCloseIssueBtnText(); // set button text to Open/Close issue

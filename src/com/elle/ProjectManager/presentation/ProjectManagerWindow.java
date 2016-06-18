@@ -60,14 +60,11 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-<<<<<<< HEAD
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-=======
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.rtf.RTFEditorKit;
->>>>>>> masterorigin/master
 
 /**
  * ProjectManagerWindow
@@ -2644,11 +2641,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 
             }
             
-            
+            //delete particular rows from table - Yi
             removeSelectedRows(table, authorizedRows);
         
             // the update label for row count
-            tab.subtractFromTotalRowCount(rowCount); // update total rowIndex count
+            tab.subtractFromTotalRowCount(authorizedRows.size()); // update total rowIndex count
             String recordsLabel = tab.getRecordsLabel();
             labelRecords.setText(recordsLabel); // update label
         }
