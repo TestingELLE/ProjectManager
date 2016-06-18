@@ -312,6 +312,7 @@ public class ReconcileWindow extends javax.swing.JFrame {
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Online");
 
+        onlinertftext.setContentType("text/rtf"); // NOI18N
         onlinertftext.setPreferredSize(new java.awt.Dimension(240, 80));
         jScrollPane1.setViewportView(onlinertftext);
 
@@ -340,6 +341,7 @@ public class ReconcileWindow extends javax.swing.JFrame {
         jLabel7.setText("Offine");
         jLabel7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
+        offlinertftext.setContentType("text/rtf"); // NOI18N
         jScrollPane2.setViewportView(offlinertftext);
 
         javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
