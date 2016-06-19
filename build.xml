@@ -1,3 +1,4 @@
+
 <!-- You can set the version of Analyster here and then build the new jar.-->
 <project name="ProjectManager" default="dist" basedir=".">
     <description>Builds, tests, and runs the project ProjectManager.</description>
@@ -38,4 +39,5 @@
       </jar>
       <delete dir="dist"/>
     </target> 
+
 </project>

@@ -8,7 +8,9 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.logic.ConflictIssuePair;
 import com.elle.ProjectManager.logic.OfflineIssueManager;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,8 +47,8 @@ public class ReconcileWindow extends javax.swing.JFrame {
         jScrollPane2.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane2.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
         
-        jScrollPane4.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane4.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane1.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
         
         
         //populate table with currentIssuePair
@@ -88,9 +90,13 @@ public class ReconcileWindow extends javax.swing.JFrame {
         idLabel.setText(String.valueOf(currentIssuePair.getDbIssue().getId()));
         titleLabel.setText(currentIssuePair.getDbIssue().getTitle());
         byte[] dbissue = currentIssuePair.getDbIssue().getDescription();
+        InputStream dbissuestream = new ByteArrayInputStream(dbissue);
         byte[] offlineissue = currentIssuePair.getOfflineIssue().getDescription();
-        onlineTextArea.setText(extracttextfrombyte(dbissue));
-        offlineTextArea.setText(extracttextfrombyte(offlineissue));
+        InputStream offlinestream = new ByteArrayInputStream(offlineissue);
+        onlinertftext.setText("");
+        onlinertftext.getEditorKit().read(dbissuestream, onlinertftext.getDocument(), 0);
+        offlinertftext.setText("");
+        offlinertftext.getEditorKit().read(offlinestream, offlinertftext.getDocument(), 0);
         
     }
     
@@ -114,9 +120,31 @@ public class ReconcileWindow extends javax.swing.JFrame {
     
     
     private void setIssuePairValuesFromComponents() {
-        currentIssuePair.getDbIssue().setDescription(onlineTextArea.getText().getBytes());
-        currentIssuePair.getOfflineIssue().setDescription(offlineTextArea.getText().getBytes());
+        ByteArrayOutputStream dbissueoutputstream = new ByteArrayOutputStream(); 
+        ByteArrayOutputStream offlineissueoutputstream = new ByteArrayOutputStream(); 
         
+        try {
+            onlinertftext.getEditorKit().write(dbissueoutputstream, onlinertftext.getDocument(), 0, onlinertftext.getDocument().getLength());
+        } catch (IOException ex) {
+            Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        byte[] dbissuebyte = dbissueoutputstream.toByteArray();
+        
+        try {
+            offlinertftext.getEditorKit().write(offlineissueoutputstream, offlinertftext.getDocument(), 0, offlinertftext.getDocument().getLength());
+        } catch (IOException ex) {
+            Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(ReconcileWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        byte[] offlinebyte = offlineissueoutputstream.toByteArray();
+
+        currentIssuePair.getDbIssue().setDescription(dbissuebyte);
+        currentIssuePair.getOfflineIssue().setDescription(offlinebyte);
      
     }
     
@@ -144,13 +172,13 @@ public class ReconcileWindow extends javax.swing.JFrame {
         updateOnlineBtn = new javax.swing.JButton();
         updateOfflineBtn = new javax.swing.JButton();
         leftPanel = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        onlineTextArea = new javax.swing.JTextArea();
         jLabel6 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        onlinertftext = new javax.swing.JTextPane();
         rightPanel = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        offlineTextArea = new javax.swing.JTextArea();
         jLabel7 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        offlinertftext = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Reconcile Issues");
@@ -251,7 +279,7 @@ public class ReconcileWindow extends javax.swing.JFrame {
                 .addComponent(previousButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(83, 83, 83)
                 .addComponent(updateOnlineBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 270, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
                 .addComponent(updateOfflineBtn)
                 .addGap(81, 81, 81)
                 .addComponent(nextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -265,7 +293,7 @@ public class ReconcileWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nextButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(previousButton, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
+                    .addComponent(previousButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -279,58 +307,60 @@ public class ReconcileWindow extends javax.swing.JFrame {
         jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {updateOfflineBtn, updateOnlineBtn});
 
         leftPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jScrollPane2.setHorizontalScrollBar(null);
-
-        onlineTextArea.setColumns(20);
-        onlineTextArea.setLineWrap(true);
-        onlineTextArea.setRows(5);
-        onlineTextArea.setWrapStyleWord(true);
-        jScrollPane2.setViewportView(onlineTextArea);
+        leftPanel.setPreferredSize(new java.awt.Dimension(254, 333));
 
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Online");
+
+        onlinertftext.setContentType("text/rtf"); // NOI18N
+        onlinertftext.setPreferredSize(new java.awt.Dimension(240, 80));
+        jScrollPane1.setViewportView(onlinertftext);
 
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);
         leftPanelLayout.setHorizontalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2)
             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(leftPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftPanelLayout.createSequentialGroup()
                 .addComponent(jLabel6)
-                .addGap(0, 0, 0)
-                .addComponent(jScrollPane2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         rightPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        offlineTextArea.setColumns(20);
-        offlineTextArea.setLineWrap(true);
-        offlineTextArea.setRows(5);
-        offlineTextArea.setWrapStyleWord(true);
-        jScrollPane4.setViewportView(offlineTextArea);
 
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("Offine");
         jLabel7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
+        offlinertftext.setContentType("text/rtf"); // NOI18N
+        jScrollPane2.setViewportView(offlinertftext);
+
         javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
         rightPanel.setLayout(rightPanelLayout);
         rightPanelLayout.setHorizontalGroup(
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4)
-            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+            .addGroup(rightPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2)
+                .addContainerGap())
         );
         rightPanelLayout.setVerticalGroup(
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightPanelLayout.createSequentialGroup()
                 .addComponent(jLabel7)
-                .addGap(0, 0, 0)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -344,10 +374,10 @@ public class ReconcileWindow extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(rightPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(rightPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(5, 5, 5))))
         );
         layout.setVerticalGroup(
@@ -358,7 +388,7 @@ public class ReconcileWindow extends javax.swing.JFrame {
                     .addComponent(rightPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(2, 2, 2)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(4, 4, 4))
         );
 
@@ -472,12 +502,12 @@ public class ReconcileWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JButton nextButton;
-    private javax.swing.JTextArea offlineTextArea;
-    private javax.swing.JTextArea onlineTextArea;
+    private javax.swing.JTextPane offlinertftext;
+    private javax.swing.JTextPane onlinertftext;
     private javax.swing.JButton previousButton;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JLabel titleLabel;
