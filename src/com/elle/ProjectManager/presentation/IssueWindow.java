@@ -4,6 +4,7 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.entities.Issue;
+import com.elle.ProjectManager.logic.CustomComboBoxRenderer;
 import com.elle.ProjectManager.logic.OfflineIssueManager;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
@@ -482,12 +483,21 @@ public class IssueWindow extends JFrame {
         
         setComponentValuesFromIssue(this);
         
-        //implement the logic for showing 'test issue' or not
-        //if not in new issue mode, if not admin, and not test issue, remove the "test issue".
+        //implement the logic for disabling 'test issue' or not
+        //if not in new issue mode, if not admin, and not test issue, disable the "test issue".
         if (!addIssueMode && !issue.getIssueType().equals(comboBoxIssueType.getItemAt(3)) &&
                 !Authorization.getAccessLevel().equals("administrator")) {
-            comboBoxIssueType.removeItemAt(3);
+            CustomComboBoxRenderer customRenderer = new CustomComboBoxRenderer();
+            DefaultListSelectionModel model = new DefaultListSelectionModel();
+            model.addSelectionInterval(0, 2);
+            customRenderer.setEnabledItems(model);
+            comboBoxIssueType.setRenderer(customRenderer);
+            
         } 
+        
+        
+        
+        
         
         
         /**
