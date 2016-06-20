@@ -280,7 +280,7 @@ public class IssueWindow extends JFrame {
         return rtftext;
     }
 
-    public void setDescriptionText(JTextArea descriptionText) {
+    public void setDescriptionText(JTextPane descriptionText) {
         this.rtftext = rtftext;
     }
 
@@ -625,6 +625,7 @@ public class IssueWindow extends JFrame {
         UnderlineBotton = new javax.swing.JButton();
         B_Bold = new javax.swing.JButton();
         colorButton1 = new javax.swing.JButton();
+        Plain = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -999,9 +1000,15 @@ public class IssueWindow extends JFrame {
         rtftext.setContentType("text/rtf"); // NOI18N
         rtftext.setMinimumSize(new java.awt.Dimension(590, 80));
         rtftext.setPreferredSize(new java.awt.Dimension(590, 80));
+        rtftext.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                rtftextKeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(rtftext);
 
         Fsize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Font3.png"))); // NOI18N
+        Fsize.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         Fsize.setMargin(new java.awt.Insets(1, 2, 0, 2));
         Fsize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1010,6 +1017,7 @@ public class IssueWindow extends JFrame {
         });
 
         Italic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Italic_os2.png"))); // NOI18N
+        Italic.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         Italic.setMargin(new java.awt.Insets(1, 2, 0, 2));
         Italic.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1018,6 +1026,7 @@ public class IssueWindow extends JFrame {
         });
 
         StrikethroughBotton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Strike_os2.png"))); // NOI18N
+        StrikethroughBotton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         StrikethroughBotton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 StrikethroughBottonActionPerformed(evt);
@@ -1025,6 +1034,7 @@ public class IssueWindow extends JFrame {
         });
 
         UnderlineBotton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Underline_os.png"))); // NOI18N
+        UnderlineBotton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         UnderlineBotton.setMargin(new java.awt.Insets(1, 2, 0, 2));
         UnderlineBotton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1033,6 +1043,7 @@ public class IssueWindow extends JFrame {
         });
 
         B_Bold.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Bold_os.png"))); // NOI18N
+        B_Bold.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         B_Bold.setMargin(new java.awt.Insets(1, 2, 0, 2));
         B_Bold.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1041,9 +1052,19 @@ public class IssueWindow extends JFrame {
         });
 
         colorButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Color3.png"))); // NOI18N
+        colorButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         colorButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 colorButton1ActionPerformed(evt);
+            }
+        });
+
+        Plain.setText("P");
+        Plain.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Plain.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        Plain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PlainActionPerformed(evt);
             }
         });
 
@@ -1065,7 +1086,9 @@ public class IssueWindow extends JFrame {
                 .addComponent(Italic, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6)
                 .addComponent(Fsize, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(112, 112, 112)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Plain, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(91, 91, 91)
                 .addComponent(BtnPrevious)
                 .addGap(3, 3, 3)
                 .addComponent(BtnNext))
@@ -1084,7 +1107,8 @@ public class IssueWindow extends JFrame {
                     .addComponent(Italic, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Fsize, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BtnPrevious)
-                    .addComponent(BtnNext))
+                    .addComponent(BtnNext)
+                    .addComponent(Plain, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1399,7 +1423,7 @@ public class IssueWindow extends JFrame {
         String rtfstring = getcurrentdescriptiontext.toString();
         String newrtfstring = rtfstring.substring(0,rtfstring.length()-2);
 
-        System.out.println(newrtfstring);
+        //System.out.println(newrtfstring);
 
         if (btnCloseIssue.getText().equalsIgnoreCase("close issue")) {
             // set dateClosed text field with date today
@@ -1486,8 +1510,12 @@ public class IssueWindow extends JFrame {
                         Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     //update the orange dot issue
-                    projectManager.detectOpenIssues(tabs.get(issue.getApp()));
-                    
+                    if (tabs.get(issue.getApp()) == null) {
+                        projectManager.detectOpenIssues(tabs.get("Other"));
+                    } else {
+                        projectManager.detectOpenIssues(tabs.get(issue.getApp())); 
+                    }
+
                 }
               
                 //update offlineIssueMgr
@@ -1725,6 +1753,87 @@ public class IssueWindow extends JFrame {
         b.actionPerformed(evt);
     }//GEN-LAST:event_colorButton1ActionPerformed
 
+    private void rtftextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_rtftextKeyReleased
+        JTextPane rtftext = (JTextPane) evt.getComponent();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String today = dateFormat.format(date);
+        
+        ByteArrayOutputStream getcurrentdescriptiontext = new ByteArrayOutputStream();
+        try {
+            rtftext.getEditorKit().write(getcurrentdescriptiontext, rtftext.getDocument(), 0, rtftext.getDocument().getLength());
+        } catch (IOException | BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String rtfstring = getcurrentdescriptiontext.toString();
+        String value = rtfstring.substring(0,rtfstring.length()-2);
+        
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_D) {
+            String value1 = value + "\n" + today + "\\par";
+            value1 = value1 + "\n}";
+            byte[] value1bytearray = value1.getBytes(Charset.forName("UTF-8"));
+            InputStream value1rtfstream = new ByteArrayInputStream(value1bytearray);
+            try {
+                rtftext.setText("");
+                rtftext.getEditorKit().read(value1rtfstream, rtftext.getDocument(), 0);
+            } catch (IOException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_N) {
+
+            String userName = projectManager.getUserName();
+            String message1 = value + "\n" + "-- by " + userName + " on " + today + "-- \n";
+            message1 = message1 + "}";
+            byte[] messagertfbytearray = message1.getBytes(Charset.forName("UTF-8"));
+            InputStream messagertfinputstream = new ByteArrayInputStream(messagertfbytearray);
+            try {
+                rtftext.setText("");
+                rtftext.getEditorKit().read(messagertfinputstream, rtftext.getDocument(), 0);
+                //descriptionText.setText(value);
+            } catch (IOException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+
+        }      
+    }//GEN-LAST:event_rtftextKeyReleased
+
+    private void PlainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PlainActionPerformed
+        Action b = new getplaintext();
+        b.actionPerformed(evt);
+    }//GEN-LAST:event_PlainActionPerformed
+    
+    public class getplaintext extends StyledEditorKit.StyledTextAction {
+
+        private getplaintext() {
+            super("Clean the text!");        
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JEditorPane editor = getEditor(e);
+            if (editor != null) {
+                StyledEditorKit kit = getStyledEditorKit(editor);
+                MutableAttributeSet attr = kit.getInputAttributes();
+                SimpleAttributeSet sas = new SimpleAttributeSet();
+                StyleConstants.setStrikeThrough(sas, false);
+                StyleConstants.setUnderline(sas, false);
+                StyleConstants.setFontSize(sas, 12);
+                StyleConstants.setForeground(sas, Color.BLACK);
+                StyleConstants.setFontFamily(sas, "font-family-Monospaced");
+                StyleConstants.setItalic(sas, false);
+                StyleConstants.setBold(sas, false);
+                setCharacterAttributes(editor, sas, false);
+            }
+        }
+    
+    }
+    
     public class StrikethroughAction extends StyledEditorKit.StyledTextAction {
 
         private static final long serialVersionUID = 9174670038684056758L;
@@ -2459,7 +2568,9 @@ public class IssueWindow extends JFrame {
 //        comboBoxForSearch.setSelectedItem("Enter " + colName + " here");
 //        comboBoxStartToSearch = true;
     }
-            private void setComboBoxValue() {
+    
+    
+    private void setComboBoxValue() {
         int row = projectManager.getSelectedTable().getSelectedRow();
         String programmer = "";
         String rk = "";
@@ -2501,6 +2612,7 @@ public class IssueWindow extends JFrame {
     private javax.swing.JButton BtnPrevious;
     private javax.swing.JButton Fsize;
     private javax.swing.JButton Italic;
+    private javax.swing.JButton Plain;
     private javax.swing.JButton StrikethroughBotton;
     private javax.swing.JButton UnderlineBotton;
     private javax.swing.JLabel app;
