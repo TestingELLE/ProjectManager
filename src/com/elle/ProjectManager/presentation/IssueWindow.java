@@ -13,10 +13,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
+import java.awt.ItemSelectable;
 import java.awt.Toolkit;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -89,6 +92,9 @@ public class IssueWindow extends JFrame {
     private IssueDAO dao;
     private boolean addIssueMode;
     private OfflineIssueManager mgr;
+    
+    //this is for remembering the previously selected issue type
+    private String previousValue = "";
 
     IssueWindow(int i, JTable selectedTable) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -440,6 +446,7 @@ public class IssueWindow extends JFrame {
         dao = new IssueDAO();
         issue = new Issue();
         mgr = projectManager.offlineIssueMgr;
+        
 
         // new issue initialization, including set app, dateopened and 
         if (this.row == -1) {
@@ -483,6 +490,8 @@ public class IssueWindow extends JFrame {
         
         setComponentValuesFromIssue(this);
         
+        
+        
         //implement the logic for disabling 'test issue' or not
         //if not in new issue mode, if not admin, and not test issue, disable the "test issue".
         if (!addIssueMode && !issue.getIssueType().equals(comboBoxIssueType.getItemAt(3)) &&
@@ -492,6 +501,22 @@ public class IssueWindow extends JFrame {
             model.addSelectionInterval(0, 2);
             customRenderer.setEnabledItems(model);
             comboBoxIssueType.setRenderer(customRenderer);
+           //previousValue is defined as the issuewindow class data member, 
+            //thus it can stay as long as the issue window stays
+            //therefore be available to the comboBox all the time
+            //you can not define it as local variable
+            previousValue = (String)comboBoxIssueType.getSelectedItem();
+            comboBoxIssueType.addActionListener (new ActionListener () {
+                    public void actionPerformed(ActionEvent e) {
+                        if (comboBoxIssueType.getSelectedIndex() == 3) {
+                            comboBoxIssueType.setSelectedItem(previousValue);
+                        }
+                        else{
+                            previousValue = (String)comboBoxIssueType.getSelectedItem();
+                        }
+                            
+                    }
+            });
             
         } 
         
