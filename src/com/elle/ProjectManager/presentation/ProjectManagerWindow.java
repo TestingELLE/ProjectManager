@@ -60,6 +60,8 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.rtf.RTFEditorKit;
@@ -84,7 +86,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private static Statement statement;
     private String database;
 
-    //tables
+    //tables 
+    //added category 'test issue' - by Yi 
     private String[] tableNames = {"PM", "ELLEGUI", "Analyster", "Other", TASKFILES_TABLE_NAME};
 
     // components
@@ -168,7 +171,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             // set tableSelected names 
             tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
-            tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
+            //tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
 
             if (!tableNames[tableName].equals(TASKFILES_TABLE_NAME)) {
                 
@@ -179,7 +182,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
                 // set column width percents to tables of the tabName objects
                 tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
-                    
+                 
                 }else{
                 
                 
@@ -190,7 +193,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
                 // set column width percents to tables of the tabName objects
                 tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
-            }
+                
+                }
             } else {
                 tabs.get(tableNames[tableName]).setSearchFields(TASKFILES_SEARCH_FIELDS);
                 tabs.get(tableNames[tableName]).setBatchEditFields(TASKFILES_BATCHEDIT_CB_FIELDS);
@@ -251,6 +255,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         OtherTable.setName(tableNames[3]);
 
         issue_filesTable.setName(tableNames[4]);
+        
 //        issue_notesTable.setName(TASKNOTES_TABLE_NAME);
 
         // set tables to tabName objects
@@ -260,6 +265,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[3]).setTable(OtherTable);
 
         tabs.get(TASKFILES_TABLE_NAME).setTable(issue_filesTable);
+        
 //        tabs.get(TASKNOTES_TABLE_NAME).setTable(issue_notesTable);
 
         // set array variable of stored column names of the tables
@@ -272,6 +278,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[3]).setTableColNames(OtherTable);
 
         tabs.get(TASKFILES_TABLE_NAME).setTableColNames(issue_filesTable);
+        
 //        tabs.get(TASKNOTES_TABLE_NAME).setTableColNames(issue_notesTable);
 
         informationLabel.setText("");
@@ -308,6 +315,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setCustomIdList(new CustomIDList());
         tabs.get(tableNames[2]).setCustomIdList(new CustomIDList());
         tabs.get(tableNames[3]).setCustomIdList(new CustomIDList());
+       
 
         tabs.get(TASKFILES_TABLE_NAME).setFilter(new TableFilter(issue_filesTable));
 //        tabs.get(TASKNOTES_TABLE_NAME).setFilter(new TableFilter(issue_notesTable));
@@ -327,6 +335,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[3])
                 .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[3]).
                                 getFilter(), tabs.get(tableNames[3]).getCustomIdList()));
+        
+        
 
         tabs.get(TASKFILES_TABLE_NAME)
                 .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKFILES_TABLE_NAME).
@@ -355,6 +365,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setCellRenderer(new JTableCellRenderer(ELLEGUITable));
         tabs.get(tableNames[2]).setCellRenderer(new JTableCellRenderer(AnalysterTable));
         tabs.get(tableNames[3]).setCellRenderer(new JTableCellRenderer(OtherTable));
+       
 
         tabs.get(TASKFILES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_filesTable));
     //    tabs.get(TASKNOTES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_notesTable));
@@ -366,7 +377,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         table.getColumnModel().getColumn(col).setCellRenderer(cellRender);
         
         */
-        //start to set renderers for id columns, it uses singleton 
+        //start to set renderers for id columns, it uses singleton  - by Yi
         
         IdColumnRenderer idRender = IdColumnRenderer.getInstance(offlineIssueMgr);
         tabs.get(tableNames[0]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
@@ -380,6 +391,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setTableData(new ModifiedTableData(ELLEGUITable));
         tabs.get(tableNames[2]).setTableData(new ModifiedTableData(AnalysterTable));
         tabs.get(tableNames[3]).setTableData(new ModifiedTableData(OtherTable));
+        
 
         tabs.get(TASKFILES_TABLE_NAME).setTableData(new ModifiedTableData(issue_filesTable));
 //        tabs.get(TASKNOTES_TABLE_NAME).setTableData(new ModifiedTableData(issue_notesTable));
@@ -426,11 +438,27 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // set the size for project manager
         this.setPreferredSize(new Dimension(1014, 550));
         this.setMinimumSize(new Dimension(1000, 550));
+        
+        
+        
 
         this.pack();
 
         // authorize user for this component
         Authorization.authorize(this);
+        
+        // listen to the tab change, if selected to 'TEST ISSUE' , then enable for deletion for all
+        
+//        tabbedPanel.addChangeListener(new ChangeListener() {
+//            public void stateChanged(ChangeEvent e) {
+//                if (Authorization.getAccessLevel().equals("administrator") || tabbedPanel.getSelectedIndex() == 5) {
+//                    menuItemDeleteRecord.setEnabled(true);
+//                }
+//                else 
+//                    menuItemDeleteRecord.setEnabled(false);
+//                
+//            }
+//        });
         
         
         //if there are conflicted issues and is in online mode
@@ -451,6 +479,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 
                 }
             });
+        
     }
 
     /*
@@ -2557,13 +2586,27 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // get the ids
         int[] ids; // ids to delete from database
         int[] selectedRows = table.getSelectedRows(); // array of the rows selected
+        
         int rowCount = selectedRows.length; // the number of rows selected
+        ArrayList<Integer> authorizedRows = new ArrayList();
         if (rowCount != -1) {
             ids = new int[rowCount];
-            for (int i = 0; i < rowCount; i++) {
+            for (int i = 0, j=0; i < rowCount; i++) {
                 int row = selectedRows[i];
                 Integer selectedID = (Integer) table.getValueAt(row, 0); // Add Note to selected taskID
-                ids[i] = selectedID;
+                String type = (String) table.getValueAt(row, 9);
+                if (Authorization.getAccessLevel().equals("administrator") || type.equals("TEST ISSUE")) {
+                    ids[j++] = selectedID;
+                    authorizedRows.add(selectedRows[i]);
+                }
+                     
+                else {
+                    JOptionPane.showMessageDialog(this,
+                    "You are not authorized to delete Issue " + selectedID + " .",
+                    "Error Message",
+                    JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
             }
             
             if (tableName.equals(TASKFILES_TABLE_NAME)) {
@@ -2598,10 +2641,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 
             }
             
-            removeSelectedRows(table);
+            //delete particular rows from table - Yi
+            removeSelectedRows(table, authorizedRows);
         
             // the update label for row count
-            tab.subtractFromTotalRowCount(rowCount); // update total rowIndex count
+            tab.subtractFromTotalRowCount(authorizedRows.size()); // update total rowIndex count
             String recordsLabel = tab.getRecordsLabel();
             labelRecords.setText(recordsLabel); // update label
         }
@@ -3695,6 +3739,27 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
                 break;
             }
+            
+            case "TEST ISSUE": {
+                for (int i = 0; i < width.length; i++) {
+                    int pWidth = Math.round(width[i]);
+                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+                    if (i == 2 || i == 3) {
+                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
+                    } else {
+                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                    
+                    // hide lock and submitter columns
+                    if(i == 10 || i == 11|| i == 12){
+                        TableColumn column = table.getColumnModel().getColumn(i);
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                        column.setPreferredWidth(pWidth);
+                    }
+                }
+                break;
+            }
 
             // Set the format for tableSelected task_files
             case TASKFILES_TABLE_NAME: {
@@ -4300,11 +4365,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public JTable loadTableData(JTable table)throws IOException, BadLocationException {
         
         String tableName = table.getName();
+        System.out.println("now loading..." + tableName);
         
         // set table model data
         if (tableName.equals(TASKFILES_TABLE_NAME) && online) {
             // this is for the issue_files tab/table
             ArrayList<IssueFile> issuesFiles = issueFileDAO.get(tableName);
+            
             if(!issuesFiles.isEmpty() && issuesFiles != null){
                 for(IssueFile issueFile: issuesFiles){
                     insertTableRow(table, issueFile);
@@ -4368,6 +4435,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         scrollDown(jScrollPane5);
         scrollDown(jScrollPane6);
         scrollDown(jScrollPane7);
+        
         return table;
     }
 
@@ -5322,6 +5390,21 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             return false;
         }
     }
+    
+    /*remove authorized rows - by Yi */
+    private void removeSelectedRows(JTable table, ArrayList<Integer> rows) {
+        
+       
+	DefaultTableModel model = (DefaultTableModel)table.getModel();
+        for(int i = 0; i< rows.size(); i++) {
+                int row = table.convertRowIndexToModel(rows.get(i)); 
+                model.removeRow(row);
+                //the selection is automatically deleted after row removed from model.
+                 
+        }
+        
+    }
+    
     
     /**
      * Yi

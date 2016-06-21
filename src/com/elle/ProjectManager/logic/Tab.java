@@ -344,12 +344,12 @@ public class Tab implements ITableConstants {
                         + "<br/> Number of records in Reports: " + getTotalRecords()
                         + "</pre></html>";
                 break;
-//            case TASKNOTES_TABLE_NAME:
-//                output = "<html><pre>"
-//                        + "      Number of records shown: " + getRecordsShown()
-//                        + "<br/> Number of records in Archive: " + getTotalRecords()
-//                        + "</pre></html>";
-//                break;
+            case "TEST ISSUE":
+                output = "<html><pre>"
+                        + "      Number of records shown: " + getRecordsShown()
+                        + "<br/> Number of records in Issues: " + getTotalRecords()
+                        + "</pre></html>";
+                break;
             default:
                 // this means an invalid table name constant was passed
                 // this exception will be handled and thrown here
