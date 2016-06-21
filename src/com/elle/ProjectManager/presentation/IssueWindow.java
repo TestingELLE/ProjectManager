@@ -981,25 +981,52 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.weightx = 1.0;
         formPane.add(jPanel4, gridBagConstraints);
 
+        jPanel5.setLayout(new java.awt.GridBagLayout());
+
         BtnNext.setText(">");
+        BtnNext.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        BtnNext.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         BtnNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnNextActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 9;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        jPanel5.add(BtnNext, gridBagConstraints);
 
         BtnPrevious.setText("<");
+        BtnPrevious.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        BtnPrevious.setIconTextGap(0);
+        BtnPrevious.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        BtnPrevious.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         BtnPrevious.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnPreviousActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
+        jPanel5.add(BtnPrevious, gridBagConstraints);
 
         description.setText(" description");
+        description.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(description, gridBagConstraints);
 
         rtftext.setContentType("text/rtf"); // NOI18N
-        rtftext.setMinimumSize(new java.awt.Dimension(590, 80));
-        rtftext.setPreferredSize(new java.awt.Dimension(590, 80));
+        rtftext.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        rtftext.setMinimumSize(new java.awt.Dimension(104, 22));
+        rtftext.setPreferredSize(new java.awt.Dimension(164, 94));
         rtftext.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 rtftextKeyReleased(evt);
@@ -1007,111 +1034,139 @@ public class IssueWindow extends JFrame {
         });
         jScrollPane1.setViewportView(rtftext);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel5.add(jScrollPane1, gridBagConstraints);
+
         Fsize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Font3.png"))); // NOI18N
         Fsize.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         Fsize.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        Fsize.setMaximumSize(new java.awt.Dimension(16, 16));
+        Fsize.setMinimumSize(new java.awt.Dimension(16, 16));
+        Fsize.setPreferredSize(new java.awt.Dimension(16, 16));
         Fsize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 FsizeActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
+        jPanel5.add(Fsize, gridBagConstraints);
 
         Italic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Italic_os2.png"))); // NOI18N
         Italic.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         Italic.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        Italic.setMaximumSize(new java.awt.Dimension(16, 16));
+        Italic.setMinimumSize(new java.awt.Dimension(16, 16));
+        Italic.setPreferredSize(new java.awt.Dimension(16, 16));
         Italic.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ItalicActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
+        jPanel5.add(Italic, gridBagConstraints);
 
         StrikethroughBotton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Strike_os2.png"))); // NOI18N
         StrikethroughBotton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        StrikethroughBotton.setMaximumSize(new java.awt.Dimension(16, 16));
+        StrikethroughBotton.setMinimumSize(new java.awt.Dimension(16, 16));
+        StrikethroughBotton.setPreferredSize(new java.awt.Dimension(16, 16));
         StrikethroughBotton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 StrikethroughBottonActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
+        jPanel5.add(StrikethroughBotton, gridBagConstraints);
 
         UnderlineBotton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Underline_os.png"))); // NOI18N
         UnderlineBotton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         UnderlineBotton.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        UnderlineBotton.setMaximumSize(new java.awt.Dimension(16, 16));
+        UnderlineBotton.setMinimumSize(new java.awt.Dimension(16, 16));
+        UnderlineBotton.setPreferredSize(new java.awt.Dimension(16, 16));
         UnderlineBotton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 UnderlineBottonActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
+        jPanel5.add(UnderlineBotton, gridBagConstraints);
 
         B_Bold.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Bold_os.png"))); // NOI18N
         B_Bold.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         B_Bold.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        B_Bold.setMaximumSize(new java.awt.Dimension(16, 16));
+        B_Bold.setMinimumSize(new java.awt.Dimension(16, 16));
+        B_Bold.setPreferredSize(new java.awt.Dimension(16, 16));
         B_Bold.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 B_BoldActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
+        jPanel5.add(B_Bold, gridBagConstraints);
 
         colorButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Color3.png"))); // NOI18N
         colorButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        colorButton1.setMaximumSize(new java.awt.Dimension(16, 16));
+        colorButton1.setMinimumSize(new java.awt.Dimension(16, 16));
+        colorButton1.setPreferredSize(new java.awt.Dimension(16, 16));
         colorButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 colorButton1ActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
+        jPanel5.add(colorButton1, gridBagConstraints);
 
         Plain.setText("P");
         Plain.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         Plain.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        Plain.setMaximumSize(new java.awt.Dimension(16, 16));
+        Plain.setMinimumSize(new java.awt.Dimension(16, 16));
+        Plain.setPreferredSize(new java.awt.Dimension(16, 16));
         Plain.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PlainActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(description)
-                .addGap(124, 124, 124)
-                .addComponent(colorButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(B_Bold, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(UnderlineBotton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(StrikethroughBotton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(Italic, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(Fsize, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Plain, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(91, 91, 91)
-                .addComponent(BtnPrevious)
-                .addGap(3, 3, 3)
-                .addComponent(BtnNext))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(description)
-                    .addComponent(colorButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(B_Bold, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(UnderlineBotton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(StrikethroughBotton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Italic, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Fsize, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BtnPrevious)
-                    .addComponent(BtnNext)
-                    .addComponent(Plain, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(6, 6, 6)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
+        jPanel5.add(Plain, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
