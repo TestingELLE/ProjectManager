@@ -4,6 +4,7 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.entities.Issue;
+import com.elle.ProjectManager.logic.CustomComboBoxRenderer;
 import com.elle.ProjectManager.logic.OfflineIssueManager;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
@@ -42,6 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -87,6 +89,7 @@ public class IssueWindow extends JFrame {
     private IssueDAO dao;
     private boolean addIssueMode;
     private OfflineIssueManager mgr;
+    private String previousValue= "";
 
     IssueWindow(int i, JTable selectedTable) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -446,6 +449,7 @@ public class IssueWindow extends JFrame {
             issue.setApp(projectManager.getSelectedTabName());
             issue.setDateOpened(todaysDate());
             issue.setSubmitter(projectManager.getUserName());
+            issue.setIssueType("TEST ISSUE");
         } 
         // existing issue
         else {
@@ -478,6 +482,36 @@ public class IssueWindow extends JFrame {
         submitterText.setText(projectManager.getUserName());
         
         setComponentValuesFromIssue(this);
+        
+        //implement the logic for disabling 'test issue' or not
+        //if not in new issue mode, if not admin, and not test issue, disable the "test issue".
+        if (!addIssueMode && !issue.getIssueType().equals(comboBoxIssueType.getItemAt(3)) &&
+                !Authorization.getAccessLevel().equals("administrator")) {
+            CustomComboBoxRenderer customRenderer = new CustomComboBoxRenderer();
+            DefaultListSelectionModel model = new DefaultListSelectionModel();
+            model.addSelectionInterval(0, 2);
+            customRenderer.setEnabledItems(model);
+            comboBoxIssueType.setRenderer(customRenderer);
+           //previousValue is defined as the issuewindow class data member, 
+            //thus it can stay as long as the issue window stays
+            //therefore be available to the comboBox all the time
+            //you can not define it as local variable
+            previousValue = (String)comboBoxIssueType.getSelectedItem();
+            comboBoxIssueType.addActionListener (new ActionListener () {
+                    public void actionPerformed(ActionEvent e) {
+                        if (comboBoxIssueType.getSelectedIndex() == 3) {
+                            comboBoxIssueType.setSelectedItem(previousValue);
+                        }
+                        else{
+                            previousValue = (String)comboBoxIssueType.getSelectedItem();
+                        }
+                            
+                    }
+            });
+            
+        } 
+        
+
         
         /**
          * Add all JTextComponents to add document listener, input mappings,
@@ -607,7 +641,7 @@ public class IssueWindow extends JFrame {
         dateOpenedText = new javax.swing.JTextField();
         submitter = new javax.swing.JLabel();
         id = new javax.swing.JLabel();
-        comboBoxIssueType = new javax.swing.JComboBox<>();
+        comboBoxIssueType = new javax.swing.JComboBox<String>();
         programmer = new javax.swing.JLabel();
         rk = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
@@ -916,7 +950,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         jPanel3.add(id, gridBagConstraints);
 
-        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE", "TEST ISSUE" }));
         comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxIssueTypeActionPerformed(evt);
