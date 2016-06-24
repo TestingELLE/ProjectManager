@@ -1,4 +1,3 @@
-
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
@@ -580,6 +579,7 @@ public class IssueWindow extends JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jMenu1 = new javax.swing.JMenu();
+        jScrollBar1 = new javax.swing.JScrollBar();
         scrollPane = new javax.swing.JScrollPane();
         formPane = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -750,7 +750,7 @@ public class IssueWindow extends JFrame {
 
         appComboBox.setEditable(true);
         appComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        appComboBox.setPreferredSize(new java.awt.Dimension(80, 28));
+        appComboBox.setPreferredSize(new java.awt.Dimension(90, 28));
         appComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 appComboBoxActionPerformed(evt);
@@ -808,7 +808,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 0, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(14, 0, 0, 0);
         jPanel6.add(lock, gridBagConstraints);
 
         idText.setText("jLabel1");
@@ -826,7 +826,7 @@ public class IssueWindow extends JFrame {
         id.setText(" id");
         id.setMaximumSize(new java.awt.Dimension(13, 12));
         id.setMinimumSize(new java.awt.Dimension(13, 12));
-        id.setPreferredSize(new java.awt.Dimension(13, 12));
+        id.setPreferredSize(new java.awt.Dimension(15, 13));
         id.setRequestFocusEnabled(false);
         id.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -849,7 +849,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(15, 30, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(17, 30, 0, 0);
         jPanel6.add(lockCheckBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1062,10 +1062,15 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         jPanel5.add(description, gridBagConstraints);
 
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 100));
+        jScrollPane1.setVerticalScrollBar(jScrollBar1);
+
         rtftext.setContentType("text/rtf"); // NOI18N
+        rtftext.setDragEnabled(true);
         rtftext.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        rtftext.setMinimumSize(new java.awt.Dimension(104, 22));
-        rtftext.setPreferredSize(new java.awt.Dimension(164, 94));
+        rtftext.setMinimumSize(new java.awt.Dimension(25, 25));
+        rtftext.setPreferredSize(new java.awt.Dimension(100, 98));
+        rtftext.setRequestFocusEnabled(false);
         rtftext.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 rtftextKeyReleased(evt);
@@ -1225,7 +1230,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 20, 10, 20);
+        gridBagConstraints.insets = new java.awt.Insets(5, 15, 7, 15);
         getContentPane().add(scrollPane, gridBagConstraints);
 
         pack();
@@ -2734,6 +2739,7 @@ public class IssueWindow extends JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JScrollBar jScrollBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lastmodTime;
     private javax.swing.JLabel lock;
