@@ -106,4 +106,10 @@ public class Authorization {
             admin.setComponent((IssueWindow)c);
         }
     }
+
+    public static String getAccessLevel() {
+        return accessLevel;
+    }
+    
+    
 }
