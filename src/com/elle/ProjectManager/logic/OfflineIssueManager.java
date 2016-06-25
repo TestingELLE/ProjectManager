@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -103,19 +104,36 @@ public class OfflineIssueManager {
     }
 
     //populate the offline data
-    public void loadTableData(JTable table) {
+    public void loadTableData(JTable table) throws IOException, BadLocationException {
+       
         for (Issue issue : issuesList.keySet()) {
-            String app = issue.getApp();
-
-            if (table.getName().equals(app)) {
-                try {
-                    projectManager.insertTableRow(table, issue);
-                } catch (IOException ex) {
-                    Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
+           
+            switch(table.getName()) {
+                case "References" : {
+                    if (issue.getIssueType().equals("REFERENCE") && issue.getApp().isEmpty())
+                        projectManager.insertTableRow(table, issue);
+                    break;       
                 }
+                case "PM":
+                case "Analyster":
+                case "ELLEGUI" :{
+                    if (issue.getApp().equals(table.getName()))
+                        projectManager.insertTableRow(table, issue);
+                        break;       
+                }
+                case "Other" :{
+                    String[] apps = {"PM", "ELLEGUI", "Analyster"};
+                    if (!issue.getIssueType().equals("REFNERENCE")) {
+                        if(issue.getApp().isEmpty() || !Arrays.asList(apps).contains(issue.getApp())) 
+                            projectManager.insertTableRow(table, issue);
+                    }
+                }
+                
+                default: break;
+                    
+                
             }
+           
 
         }
 
@@ -320,7 +338,8 @@ public class OfflineIssueManager {
         if (conflictIssues.size() > 0) {
             String message = "Update issues have conflicts.\nPlease inspect manually";
             JOptionPane.showMessageDialog(projectManager, message);
-            projectManager.getMenuItemReconcileConflict().doClick();
+            
+            //projectManager.getMenuItemReconcileConflict().doClick();
         }
 
     }
@@ -352,41 +371,45 @@ public class OfflineIssueManager {
 
         boolean success = (originalId < 0) ? dao.insert(tempIssue) : dao.update(tempIssue);
         if (success) {
-            Tab tab;
-            if (issue.getIssueType().equals("REFERENCE")) {
-                tab = projectManager.getTabs().get("References");
-            } else {
-                switch (issue.getApp()) {
-                    case "PM": {
-                        tab = projectManager.getTabs().get("PM");
-                        break;
+            if (projectManager.getTabs() != null) {
+                Tab tab;
+                if (issue.getIssueType().equals("REFERENCE")) {
+                    tab = projectManager.getTabs().get("References");
+                } else {
+                    switch (issue.getApp()) {
+                        case "PM": {
+                            tab = projectManager.getTabs().get("PM");
+                            break;
+                        }
+                        case "Analyster": {
+                            tab = projectManager.getTabs().get("Analyster");
+                            break;
+                        }
+                        case "ELLEGUI": {
+                            tab = projectManager.getTabs().get("ELLEGUI");
+                            break;
+                        }
+                        default:
+                            tab = projectManager.getTabs().get("Other");
                     }
-                    case "Analyster": {
-                        tab = projectManager.getTabs().get("Analyster");
-                        break;
-                    }
-                    case "ELLEGUI": {
-                        tab = projectManager.getTabs().get("ELLEGUI");
-                        break;
-                    }
-                    default:
-                        tab = projectManager.getTabs().get("Other");
                 }
-            }
 
                 // since tablerow actions do not produce errors when could not find the row
-            // the next 3 actions will garanttee for both insertion and updating
-            projectManager.removeTableRow(tab.getTable(), originalId);
-            projectManager.removeTableRow(tab.getTable(), tempIssue.getId());
+                // the next 3 actions will garanttee for both insertion and updating
+                projectManager.removeTableRow(tab.getTable(), originalId);
+                projectManager.removeTableRow(tab.getTable(), tempIssue.getId());
 
-            try {
-                projectManager.insertTableRow(tab.getTable(), tempIssue);
-            } catch (IOException ex) {
-                Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (BadLocationException ex) {
-                Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
+                try {
+                    projectManager.insertTableRow(tab.getTable(), tempIssue);
+                } catch (IOException ex) {
+                    Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(OfflineIssueManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                projectManager.makeTableEditable(false);
+
             }
-            projectManager.makeTableEditable(false);
+
             return true;
         } else {
             LoggingAspect.addLogMsg("Offline issue " + originalId + " failed to update to db server");

@@ -549,7 +549,7 @@ public class IssueWindow extends JFrame {
     private void setUpIssueWindow() throws IOException, BadLocationException{
         //implement the logic for disabling 'test issue' or not
         //if not in new issue mode, if not admin, and not test issue, disable the "test issue".
-        if (!addIssueMode && !issue.getIssueType().equals(comboBoxIssueType.getItemAt(3)) &&
+        if (projectManager.isOnline() && !addIssueMode && !issue.getIssueType().equals(comboBoxIssueType.getItemAt(3)) &&
                 !Authorization.getAccessLevel().equals("administrator")) {
             CustomComboBoxRenderer customRenderer = new CustomComboBoxRenderer();
             DefaultListSelectionModel model = new DefaultListSelectionModel();
@@ -2285,7 +2285,7 @@ public class IssueWindow extends JFrame {
         if (addIssueMode) {
             projectManager.setAddIssueWindowShow(false);
         } else {
-            projectManager.getOpeningIssuesList().remove(issue.getId(), this);
+            projectManager.getOpeningIssuesList().remove(table.getName()+ issue.getId(), this);
             projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
             projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
         }

@@ -142,6 +142,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                  + "--------------------------------------------------------"
                                  + "------------";
 
+    private IdColumnRenderer idRender;
     /**
      * CONSTRUCTOR
      */
@@ -400,7 +401,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         */
         //start to set renderers for id columns, it uses singleton  - by Yi
         
-        IdColumnRenderer idRender = IdColumnRenderer.getInstance(offlineIssueMgr);
+        idRender = IdColumnRenderer.getInstance(offlineIssueMgr);
         tabs.get(tableNames[0]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
         tabs.get(tableNames[1]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
         tabs.get(tableNames[2]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
@@ -795,6 +796,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemSyncLocalData = new javax.swing.JMenuItem();
         menuItemReconcileConflict = new javax.swing.JMenuItem();
         menuItemLoadDataFromTXT = new javax.swing.JMenuItem();
+        menuItemExportIssueToReference = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemRepBugSugg = new javax.swing.JMenuItem();
 
@@ -1486,6 +1488,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuTools.add(menuItemLoadDataFromTXT);
 
+        menuItemExportIssueToReference.setText("Export Issue To Reference");
+        menuItemExportIssueToReference.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemExportIssueToReferenceActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemExportIssueToReference);
+
         menuBar.add(menuTools);
 
         menuHelp.setText("Help");
@@ -2175,8 +2185,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
 
     private void menuItemReloadDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadDataActionPerformed
+        //for testing
+        
         
         //remove current table data -Yi
+        
         String tab = getSelectedTabName();
         System.out.println(tab);
         JTable selectedTable = tabs.get(tab).getTable();
@@ -2184,6 +2197,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         while (dm.getRowCount() > 0) {
             dm.removeRow(0);
         }
+        tabs.get(tab).setTotalRecords(0);
+        
         
         
         //if table is sorted, save the info -Yi
@@ -2204,6 +2219,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         String tabName = getSelectedTabName();
         updateComboList(searchColName, tabName);
+        
+        tabs.get(tab).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
 
         LoggingAspect.afterReturn(tabName + " is reloading");
 
@@ -2239,6 +2256,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             
             Tab tab = tabs.get(entry.getKey());
             
+            
             //remove all current rows - Yi
             JTable table = tab.getTable();
             DefaultTableModel dm = (DefaultTableModel)table.getModel();
@@ -2246,6 +2264,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 dm.removeRow(0);
             }
             
+            tab.setTotalRecords(0);
             //if table is sorted, save the info -Yi
             List<RowSorter.SortKey> keys = (List<RowSorter.SortKey>) table.getRowSorter().getSortKeys();
             
@@ -2268,6 +2287,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // set label record information
             String recordsLabel = tab.getRecordsLabel();
             labelRecords.setText(recordsLabel);
+            //have to reset the id renderer
+
+            tab.getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
             LoggingAspect.afterReturn(tab.getTableName() + " is reloading");
         }
 
@@ -2472,7 +2494,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         boolean isIssueAlreadyOpened = false;
         //first ID field is Integer. 
         Integer openningIssueId = (Integer) table.getValueAt(row, 0);
-        String openningIssue = tabs.get(tabName) + table.getValueAt(row, 0).toString();
+        String openningIssue = table.getName() + table.getValueAt(row, 0).toString();
 
         for (String id : openingIssuesList.keySet()) {
             if (openningIssueId != null) {
@@ -2492,7 +2514,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             if (currentabname.equals("References")) dao = referenceDAO;
                 
             try {
-                ArrayList<Issue> issues = dao.get(currentabname);
+                ArrayList<Issue> issues =(online)? dao.get(currentabname): new ArrayList();
+                
                 //have to add offline issues 
                 ArrayList<Issue> offlineIssues = new ArrayList(offlineIssueMgr.getIssuesList().keySet());
                 issues.addAll(offlineIssues);
@@ -3008,6 +3031,59 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }        // TODO add your handling code here:
     }//GEN-LAST:event_menuItemLoadDataFromTXTActionPerformed
 
+    private void menuItemExportIssueToReferenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemExportIssueToReferenceActionPerformed
+        // get selected issues
+        int[] ids = getSelectedIssuesId();
+        
+        if (ids != null) {
+            //get issues
+            ArrayList<Issue> issues = new ArrayList();
+            for(int id : ids) {
+                issues.add(issueDAO.get(id));
+            }
+            
+            //insert into references
+            for(Issue issue: issues) {
+                issue.setId(-1);
+                try {
+                    referenceDAO.insert(issue);
+                    insertTableRow(referenceTable, issue);
+                }
+                catch (Exception ex) {
+                    LoggingAspect.afterThrown(ex);
+                }
+                
+            }
+                
+            
+        }
+        
+    }//GEN-LAST:event_menuItemExportIssueToReferenceActionPerformed
+
+    private int[] getSelectedIssuesId() {
+        String tabName = getSelectedTabName();
+        Tab tab = tabs.get(tabName);
+        JTable table = tab.getTable();
+        String tableName = table.getName(); // name of the tableSelected
+        int[] selectedRows = table.getSelectedRows(); // array of the rows selected
+        int rowCount = selectedRows.length;
+        int[] ids;
+        
+        if (rowCount > 0) {
+            ids = new int[rowCount];
+            for(int i =0 ; i < rowCount; i++) {
+                int row = selectedRows[i];
+                Integer selectedID = (Integer) table.getValueAt(row, 0);
+                ids[i] = selectedID;
+            }
+            
+            return ids;
+
+        }
+        return null;
+        
+    }
+    
     
 //    private void syncLocalData() {
 //        
@@ -3366,11 +3442,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 boolean isIssueAlreadyOpened = false;
 
                                 Integer openningIssueId = (Integer) table.getValueAt(row, 0);
-                                String openningIssue = getSelectedTabName() + table.getValueAt(row, 0).toString();
+                                String openningIssue = table.getName() + table.getValueAt(row, 0).toString();
 
                                 for (String id : openingIssuesList.keySet()) {
                                     if (openningIssueId != null) {
-                                        if (id.equals(openningIssueId)) {
+                                        if (id.equals(openningIssue)) {
                                             isIssueAlreadyOpened = true;
                                         }
                                     }
@@ -3389,7 +3465,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                             dao = referenceDAO;
                                     
                                         try {
-                                            ArrayList<Issue> issues = dao.get(currentabname);
+                                            
+                                            ArrayList<Issue> issues =(online)? dao.get(currentabname): new ArrayList();
                                             //have to add offline issues 
                                             ArrayList<Issue> offlineIssues = new ArrayList(offlineIssueMgr.getIssuesList().keySet());
                                             issues.addAll(offlineIssues);
@@ -4143,7 +4220,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 boolean isIssueAlreadyOpened = false;
 
                                 Integer openningIssueId = (Integer) table.getValueAt(row, 0);
-                                String openningIssue = getSelectedTabName() + table.getValueAt(row, 0).toString();
+                                String openningIssue = table.getName() + table.getValueAt(row, 0).toString();
 
                                 for (String id : openingIssuesList.keySet()) {
                                     if (openningIssueId != null) {
@@ -4162,7 +4239,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                         AbstractDAO dao = issueDAO;
                                         if(currentabname.equals("References")) dao = referenceDAO;
                                         try {
-                                            ArrayList<Issue> issues = dao.get(currentabname);
+                                            ArrayList<Issue> issues =(online)? dao.get(currentabname): new ArrayList();
                                             //have to add offline issues 
                                             ArrayList<Issue> offlineIssues = new ArrayList(offlineIssueMgr.getIssuesList().keySet());
                                             issues.addAll(offlineIssues);
@@ -4549,8 +4626,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         float[] colWidthPercent = tab.getColWidthPercent();
         setColumnFormat(colWidthPercent, table);
 
-        // set the listeners for the tableSelected
-        //setTableListeners(table, this);
+        
 
         // update last time the tableSelected was updated
         setLastUpdateTime();
@@ -4884,6 +4960,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemBackup;
     private javax.swing.JMenuItem menuItemCompIssues;
     private javax.swing.JMenuItem menuItemDeleteRecord;
+    private javax.swing.JMenuItem menuItemExportIssueToReference;
     private javax.swing.JMenuItem menuItemLoadDataFromTXT;
     private javax.swing.JCheckBoxMenuItem menuItemLogChkBx;
     private javax.swing.JMenuItem menuItemLogOff;
