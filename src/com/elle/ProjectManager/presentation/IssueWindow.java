@@ -3,7 +3,10 @@ package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.dao.IssueDAO;
+import com.elle.ProjectManager.dao.ReferenceDAO;
+import com.elle.ProjectManager.dao.AbstractDAO;
 import com.elle.ProjectManager.entities.Issue;
+import com.elle.ProjectManager.logic.CustomComboBoxRenderer;
 import com.elle.ProjectManager.logic.OfflineIssueManager;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
@@ -42,6 +45,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -85,8 +89,11 @@ public class IssueWindow extends JFrame {
     private JTable table;
     private int row;
     private IssueDAO dao;
+    private ReferenceDAO refDao;
     private boolean addIssueMode;
+    private boolean refIssueMode;
     private OfflineIssueManager mgr;
+    private String previousValue= "";
 
     IssueWindow(int i, JTable selectedTable) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -425,6 +432,7 @@ public class IssueWindow extends JFrame {
     }
     private ShortCutSetting ShortCutSetting;
     private String[] dropdownlist = {"app","title", "description","programmer", "dateOpened", "rk", "version", "dateClosed"};
+    private String[] refDropdownlist = {"title", "description","programmer", "dateOpened"};
     private Map<String, Tab> tabs;       // used to update the records label
 
     /**
@@ -436,16 +444,28 @@ public class IssueWindow extends JFrame {
         this.table = table;
         this.row = row;
         dao = new IssueDAO();
+        refDao = new ReferenceDAO();
         issue = new Issue();
         mgr = projectManager.offlineIssueMgr;
+        
+        if(table.getName().equals("References")) {
+            refIssueMode = true;
+        }
 
         // new issue initialization, including set app, dateopened and 
         if (this.row == -1) {
             addIssueMode = true;
             issue.setId(-1);
-            issue.setApp(projectManager.getSelectedTabName());
+            if(!refIssueMode) {
+                issue.setApp(projectManager.getSelectedTabName());
+                issue.setSubmitter(projectManager.getUserName());
+                issue.setIssueType("TEST ISSUE");
+                
+            }
+            else issue.setIssueType("REFERENCE");
             issue.setDateOpened(todaysDate());
-            issue.setSubmitter(projectManager.getUserName());
+            
+            
         } 
         // existing issue
         else {
@@ -468,6 +488,7 @@ public class IssueWindow extends JFrame {
                         issue.setIssueType(issueindb.getIssueType());
                         issue.setSubmitter(issueindb.getSubmitter());
                         issue.setLocked(issueindb.getLocked());
+                        issue.setLastmodtime(issueindb.getLastmodtime());
                         System.out.println(issueindb.getLocked());
                     }
                 }
@@ -475,39 +496,21 @@ public class IssueWindow extends JFrame {
         }
        
         initComponents();
-        submitterText.setText(projectManager.getUserName());
         
-        setComponentValuesFromIssue(this);
+        if(!refIssueMode) {
+            setUpIssueWindow();
+        }
         
-        /**
-         * Add all JTextComponents to add document listener, input mappings,
-         * and shortcuts.
-         * Note: ComboBox and CheckBox components can use the action event.
-         * You can double click it on the designer to create one for it.
-         * You can reference one that exists for help with the code if needed.
-         */
-        ArrayList<JTextComponent> textComponentList = new ArrayList<>();
-        textComponentList.add(submitterText);
-        textComponentList.add(dateOpenedText);
+        else{
+            setUpRefIssueWindow();
+        }
         
-        textComponentList.add(titleText);
-        textComponentList.add(rtftext);
-   
-        textComponentList.add(dateClosedText);
-        textComponentList.add(versionText);
-        addDocumentListener(textComponentList);
-        addInputMappingsAndShortcuts(textComponentList);
-        updateComboList("programmer", projectManager.getSelectedTabName());
-        updateComboList("rk", projectManager.getSelectedTabName());
-        updateComboList("app", projectManager.getSelectedTabName());
         
-        setComponentValuesFromIssue(this);
         
-        setOpenCloseIssueBtnText();
-        setIssueWindowMode();
        
-
         this.setTitle("Issue in " + table.getName());
+        
+        
         
         // get current monitor resolution.height
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -541,6 +544,109 @@ public class IssueWindow extends JFrame {
         
         Authorization.authorize(this);
     }
+    
+    
+    private void setUpIssueWindow() throws IOException, BadLocationException{
+        //implement the logic for disabling 'test issue' or not
+        //if not in new issue mode, if not admin, and not test issue, disable the "test issue".
+        if (!addIssueMode && !issue.getIssueType().equals(comboBoxIssueType.getItemAt(3)) &&
+                !Authorization.getAccessLevel().equals("administrator")) {
+            CustomComboBoxRenderer customRenderer = new CustomComboBoxRenderer();
+            DefaultListSelectionModel model = new DefaultListSelectionModel();
+            model.addSelectionInterval(0, 2);
+            customRenderer.setEnabledItems(model);
+            comboBoxIssueType.setRenderer(customRenderer);
+           //previousValue is defined as the issuewindow class data member, 
+            //thus it can stay as long as the issue window stays
+            //therefore be available to the comboBox all the time
+            //you can not define it as local variable
+            previousValue = (String)comboBoxIssueType.getSelectedItem();
+            comboBoxIssueType.addActionListener (new ActionListener () {
+                    public void actionPerformed(ActionEvent e) {
+                        if (comboBoxIssueType.getSelectedIndex() == 3) {
+                            comboBoxIssueType.setSelectedItem(previousValue);
+                        }
+                        else{
+                            previousValue = (String)comboBoxIssueType.getSelectedItem();
+                        }
+                            
+                    }
+            });
+            
+        } 
+        
+
+        
+        /**
+         * Add all JTextComponents to add document listener, input mappings,
+         * and shortcuts.
+         * Note: ComboBox and CheckBox components can use the action event.
+         * You can double click it on the designer to create one for it.
+         * You can reference one that exists for help with the code if needed.
+         */
+        ArrayList<JTextComponent> textComponentList = new ArrayList<>();
+        textComponentList.add(submitterText);
+        textComponentList.add(dateOpenedText);
+        
+        textComponentList.add(titleText);
+        textComponentList.add(rtftext);
+   
+        textComponentList.add(dateClosedText);
+        textComponentList.add(versionText);
+        addDocumentListener(textComponentList);
+        addInputMappingsAndShortcuts(textComponentList);
+        updateComboList("programmer", projectManager.getSelectedTabName());
+        updateComboList("rk", projectManager.getSelectedTabName());
+        updateComboList("app", projectManager.getSelectedTabName());
+        
+        setComponentValuesFromIssue(this);
+        submitterText.setText(projectManager.getUserName());
+        setOpenCloseIssueBtnText();
+        setIssueWindowMode();
+        
+    }
+    
+    private void setUpRefIssueWindow() throws IOException, BadLocationException{
+        
+        /**
+         * Add all JTextComponents to add document listener, input mappings,
+         * and shortcuts.
+         * Note: ComboBox and CheckBox components can use the action event.
+         * You can double click it on the designer to create one for it.
+         * You can reference one that exists for help with the code if needed.
+         */
+        ArrayList<JTextComponent> textComponentList = new ArrayList<>();
+        //textComponentList.add(submitterText);
+        textComponentList.add(dateOpenedText);
+        
+        textComponentList.add(titleText);
+        textComponentList.add(rtftext);
+   
+        //textComponentList.add(dateClosedText);
+        //textComponentList.add(versionText);
+        addDocumentListener(textComponentList);
+        addInputMappingsAndShortcuts(textComponentList);
+        updateComboList("programmer", projectManager.getSelectedTabName());
+        
+        setComponentValuesFromIssue(this);
+        
+        setIssueWindowMode();
+        //hide components
+        comboBoxIssueType.setVisible(false);
+        submitter.setVisible(false);
+        submitterText.setVisible(false);
+        rk.setVisible(false);
+        rkComboBox.setVisible(false);
+        app.setVisible(false);
+        appComboBox.setVisible(false);
+        btnCloseIssue.setVisible(false);
+        dateClosed.setVisible(false);
+        dateClosedText.setVisible(false);
+        version.setVisible(false);
+        versionText.setVisible(false);
+        
+    }
+    
 
     /**
      * Displays the components accordingly 
@@ -603,7 +709,7 @@ public class IssueWindow extends JFrame {
         id = new javax.swing.JLabel();
         lockCheckBox = new javax.swing.JCheckBox();
         jPanel7 = new javax.swing.JPanel();
-        comboBoxIssueType = new javax.swing.JComboBox<>();
+        comboBoxIssueType = new javax.swing.JComboBox<String>();
         submitter = new javax.swing.JLabel();
         submitterText = new javax.swing.JTextField();
         dateOpenedText = new javax.swing.JTextField();
@@ -859,7 +965,7 @@ public class IssueWindow extends JFrame {
 
         jPanel7.setLayout(new java.awt.GridBagLayout());
 
-        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE", "TEST ISSUE" }));
         comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxIssueTypeActionPerformed(evt);
@@ -1567,12 +1673,13 @@ public class IssueWindow extends JFrame {
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
         setIssueValuesFromComponents();
         int originalId = issue.getId();
+        AbstractDAO dbDAO = (issue.getIssueType().equals("REFERENCE"))?refDao:dao;
         
         
         if (projectManager.isOnline()) {
             //if it is offline updated issue, reset id by -9000
             if (originalId > 9000) issue.setId(originalId - 9000);
-            boolean onlineUpdateSuccess =  issue.getId() > 0 ? dao.update(issue) :  dao.insert(issue);
+            boolean onlineUpdateSuccess =  issue.getId() > 0 ? dbDAO.update(issue) :  dbDAO.insert(issue);
             if(onlineUpdateSuccess){
                 if (originalId < 0) {try {
                     //for new issues
@@ -1603,12 +1710,22 @@ public class IssueWindow extends JFrame {
                     } catch (BadLocationException ex) {
                         Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    //update the orange dot issue
-                    if (tabs.get(issue.getApp()) == null) {
-                        projectManager.detectOpenIssues(tabs.get("Other"));
-                    } else {
-                        projectManager.detectOpenIssues(tabs.get(issue.getApp())); 
+                    //update the orange dot issue 
+                    
+                    if(!issue.getIssueType().equals("REFERENCE")){
+                        ArrayList<String> apps = new ArrayList();
+                        apps.add("PM");
+                        apps.add("Analyster");
+                        apps.add("ELLE_GUI");
+                    
+                        if(apps.contains(issue.getApp())) {
+                            projectManager.detectOpenIssues(tabs.get(issue.getApp()));
+                        } else {
+                            projectManager.detectOpenIssues(tabs.get("Other"));
+                        }
+                        
                     }
+                    
 
                 }
               
@@ -1718,8 +1835,17 @@ public class IssueWindow extends JFrame {
        
         setIssueValuesFromComponents();
         int originalId = issue.getId();
+        AbstractDAO DAO = dao; 
         
-        if (projectManager.isOnline() && dao.insert(issue)) {
+        if(refIssueMode) {
+            DAO = refDao;
+            System.out.println("accessing refdao");
+                    
+        }
+            
+        
+        
+        if (projectManager.isOnline() && DAO.insert(issue)) {
             
             try {
                 projectManager.insertTableRow(table,issue);
@@ -2363,6 +2489,7 @@ public class IssueWindow extends JFrame {
         dateClosedText.setText(issue.getDateClosed());
         comboBoxIssueType.setSelectedItem(issue.getIssueType());
         submitterText.setText(issue.getSubmitter());
+        lastmodTime.setText(issue.getLastmodtime());
         //lockCheckBox.setSelected(issue.getLocked().equals("Y"));
         
         setOpenCloseIssueBtnText(); // set button text to Open/Close issue
@@ -2494,7 +2621,12 @@ public class IssueWindow extends JFrame {
    
         Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
         if (!selectedTabName.equalsIgnoreCase("issue_files")) {
-            for (String searchField : dropdownlist) {
+            String[] currList = dropdownlist;
+            if (selectedTabName.equalsIgnoreCase("references")) {
+                currList = refDropdownlist;
+            }
+            
+            for (String searchField : currList) {
 
                 for (int i = 0; i < tab.getTable().getColumnCount(); i++) {
                     if (tab.getTable().getColumnName(i).equalsIgnoreCase(searchField)) {

@@ -3,6 +3,8 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.dao.IssueFileDAO;
+import com.elle.ProjectManager.dao.ReferenceDAO;
+import com.elle.ProjectManager.dao.AbstractDAO;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
@@ -88,7 +90,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     //tables 
     //added category 'test issue' - by Yi 
-    private String[] tableNames = {"PM", "ELLEGUI", "Analyster", "Other", TASKFILES_TABLE_NAME};
+    private String[] tableNames = {"PM", "ELLEGUI", "Analyster", "Other", TASKFILES_TABLE_NAME, "References"};
 
     // components
     private static ProjectManagerWindow instance;
@@ -102,7 +104,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private SqlOutputWindow sqlOutputWindow;
     private ReconcileWindow reconcileWindow;
 
-    private Map<Integer, IssueWindow> openingIssuesList;
+    //private Map<Integer, IssueWindow> openingIssuesList;
+    private Map<String, IssueWindow> openingIssuesList;
 
     // colors - Edit mode labels
     private Color editModeDefaultTextColor;
@@ -130,6 +133,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // Data Access Objects
     IssueDAO issueDAO;
     IssueFileDAO issueFileDAO;
+    ReferenceDAO referenceDAO;
     
     //offline data manager
     public OfflineIssueManager offlineIssueMgr;
@@ -152,6 +156,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         statement = DBConnection.getStatement();
         issueDAO = new IssueDAO();
         issueFileDAO = new IssueFileDAO();
+        referenceDAO = new ReferenceDAO();
+        
         instance = this;                         // this is used to call this instance of Analyster 
 
         this.userName = userName;
@@ -184,15 +190,25 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
                  
                 }else{
+                    if(tableNames[tableName].equalsIgnoreCase("references")) {
+                        // set the search fields for the comboBox for each tabName
+                        tabs.get(tableNames[tableName]).setSearchFields(REFERENCES_SEARCH_FIELDS);
+                        // set the search fields for the comboBox for each tabName
+                        tabs.get(tableNames[tableName]).setBatchEditFields(REFERENCES_BATCHEDIT_CB_FIELDS);
+                        // set column width percents to tables of the tabName objects
+                        tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_REFERENCES);
+                        
+                    }
+                    else{
+                        // set the search fields for the comboBox for each tabName
+                        tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS);
+                        // set the search fields for the comboBox for each tabName
+                        tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
+                        // set column width percents to tables of the tabName objects
+                        tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
+                        
+                    }
                 
-                
-                
-                // set the search fields for the comboBox for each tabName
-                tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS);
-                // set the search fields for the comboBox for each tabName
-                tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
-                // set column width percents to tables of the tabName objects
-                tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
                 
                 }
             } else {
@@ -253,8 +269,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         ELLEGUITable.setName(tableNames[1]);
         AnalysterTable.setName(tableNames[2]);
         OtherTable.setName(tableNames[3]);
-
         issue_filesTable.setName(tableNames[4]);
+        referenceTable.setName(tableNames[5]);
         
 //        issue_notesTable.setName(TASKNOTES_TABLE_NAME);
 
@@ -263,8 +279,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setTable(ELLEGUITable);
         tabs.get(tableNames[2]).setTable(AnalysterTable);
         tabs.get(tableNames[3]).setTable(OtherTable);
-
         tabs.get(TASKFILES_TABLE_NAME).setTable(issue_filesTable);
+        tabs.get(tableNames[5]).setTable(referenceTable);
         
 //        tabs.get(TASKNOTES_TABLE_NAME).setTable(issue_notesTable);
 
@@ -276,8 +292,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setTableColNames(ELLEGUITable);
         tabs.get(tableNames[2]).setTableColNames(AnalysterTable);
         tabs.get(tableNames[3]).setTableColNames(OtherTable);
-
         tabs.get(TASKFILES_TABLE_NAME).setTableColNames(issue_filesTable);
+        tabs.get(tableNames[5]).setTableColNames(referenceTable);
         
 //        tabs.get(TASKNOTES_TABLE_NAME).setTableColNames(issue_notesTable);
 
@@ -309,12 +325,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setFilter(new TableFilter(ELLEGUITable));
         tabs.get(tableNames[2]).setFilter(new TableFilter(AnalysterTable));
         tabs.get(tableNames[3]).setFilter(new TableFilter(OtherTable));
+        tabs.get(tableNames[5]).setFilter(new TableFilter(referenceTable));
 
         //add custom id list for each tab
         tabs.get(tableNames[0]).setCustomIdList(new CustomIDList());
         tabs.get(tableNames[1]).setCustomIdList(new CustomIDList());
         tabs.get(tableNames[2]).setCustomIdList(new CustomIDList());
         tabs.get(tableNames[3]).setCustomIdList(new CustomIDList());
+        tabs.get(tableNames[5]).setCustomIdList(new CustomIDList());
        
 
         tabs.get(TASKFILES_TABLE_NAME).setFilter(new TableFilter(issue_filesTable));
@@ -335,7 +353,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[3])
                 .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[3]).
                                 getFilter(), tabs.get(tableNames[3]).getCustomIdList()));
-        
+        tabs.get(tableNames[5])
+                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[5]).
+                                getFilter(), tabs.get(tableNames[5]).getCustomIdList()));
         
 
         tabs.get(TASKFILES_TABLE_NAME)
@@ -365,6 +385,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setCellRenderer(new JTableCellRenderer(ELLEGUITable));
         tabs.get(tableNames[2]).setCellRenderer(new JTableCellRenderer(AnalysterTable));
         tabs.get(tableNames[3]).setCellRenderer(new JTableCellRenderer(OtherTable));
+        tabs.get(tableNames[5]).setCellRenderer(new JTableCellRenderer(OtherTable));
        
 
         tabs.get(TASKFILES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_filesTable));
@@ -384,14 +405,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
         tabs.get(tableNames[2]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
         tabs.get(tableNames[3]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-        
+        tabs.get(tableNames[5]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
         
         // set the modified tableSelected data objects for each tabName
         tabs.get(tableNames[0]).setTableData(new ModifiedTableData(PMTable));
         tabs.get(tableNames[1]).setTableData(new ModifiedTableData(ELLEGUITable));
         tabs.get(tableNames[2]).setTableData(new ModifiedTableData(AnalysterTable));
         tabs.get(tableNames[3]).setTableData(new ModifiedTableData(OtherTable));
-        
+        tabs.get(tableNames[5]).setTableData(new ModifiedTableData(referenceTable));
 
         tabs.get(TASKFILES_TABLE_NAME).setTableData(new ModifiedTableData(issue_filesTable));
 //        tabs.get(TASKNOTES_TABLE_NAME).setTableData(new ModifiedTableData(issue_notesTable));
@@ -403,7 +424,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         // initial openedIssuesList to manager all the openning issues
-        openingIssuesList = new HashMap<Integer, IssueWindow>();
+        openingIssuesList = new HashMap<String, IssueWindow>();
 //        tabs.get(TASKNOTES_TABLE_NAME).setEditing(false);
 
 //        // Call the initTableCellPopup method to initiate the Table Cell Popup window
@@ -713,6 +734,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         OtherTable = new javax.swing.JTable();
         jScrollPane4 = new javax.swing.JScrollPane();
         issue_filesTable = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        referenceTable = new javax.swing.JTable();
         jPanelEdit = new javax.swing.JPanel();
         btnBatchEdit = new javax.swing.JButton();
         btnAddIssue = new javax.swing.JButton();
@@ -814,7 +837,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         PMTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        PMTable.setColumnSelectionAllowed(true);
         PMTable.setMinimumSize(new java.awt.Dimension(10, 240));
         PMTable.setName("PM"); // NOI18N
         jScrollPane1.setViewportView(PMTable);
@@ -937,6 +959,34 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         tabbedPanel.addTab("issue_files", jScrollPane4);
 
+        referenceTable.setAutoCreateRowSorter(true);
+        referenceTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "submitter", "issueType", "locked", "lastmodTime"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, true, true, true, true, true, true, true, true, false, true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(referenceTable);
+
+        tabbedPanel.addTab("References", jScrollPane3);
+
         jPanelEdit.setPreferredSize(new java.awt.Dimension(636, 180));
 
         btnBatchEdit.setText("Batch Edit");
@@ -1000,7 +1050,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanelEditLayout.setVerticalGroup(
             jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelEditLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(12, Short.MAX_VALUE)
                 .addGroup(jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelEditMode)
                     .addComponent(labelEditModeState)
@@ -1178,7 +1228,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 96, Short.MAX_VALUE))
+                .addGap(0, 197, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1211,7 +1261,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+            .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 63, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
@@ -1499,7 +1549,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 ArrayList DropDownListValueForEachColumn = new ArrayList<Object>();
                 // load drop down for each table
                 for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-                    if (!entry.getKey().equalsIgnoreCase("issue_files")) {
+                    if (!entry.getKey().equalsIgnoreCase("issue_files") && !entry.getKey().equalsIgnoreCase("References")) {
                         tab = tabs.get(entry.getKey());
 
                         String[] columnNames = tab.getTableColNames();
@@ -2166,7 +2216,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         Tab tab = tabs.get(tabName);
         JTableCellRenderer cellRenderer = tab.getCellRenderer();
         ModifiedTableData data = tab.getTableData();
-
+        
         // reload tableSelected from database
         JTable table = tab.getTable();
         loadTable(tab);
@@ -2186,13 +2236,28 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void reloadAllData() throws IOException, BadLocationException {
 
         for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+            
             Tab tab = tabs.get(entry.getKey());
+            
+            //remove all current rows - Yi
+            JTable table = tab.getTable();
+            DefaultTableModel dm = (DefaultTableModel)table.getModel();
+            while (dm.getRowCount() > 0) {
+                dm.removeRow(0);
+            }
+            
+            //if table is sorted, save the info -Yi
+            List<RowSorter.SortKey> keys = (List<RowSorter.SortKey>) table.getRowSorter().getSortKeys();
+            
             JTableCellRenderer cellRenderer = tab.getCellRenderer();
             ModifiedTableData data = tab.getTableData();
 
             // reload tableSelected from database
-            JTable table = tab.getTable();
+            //JTable table = tab.getTable();
             loadTable(tab);
+            
+            //reset the sorting key
+            table.getRowSorter().setSortKeys(keys);
 
             // clear cellrenderer
             cellRenderer.clearCellRender();
@@ -2405,37 +2470,45 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         int col = table.getSelectedColumn();
 
         boolean isIssueAlreadyOpened = false;
-
+        //first ID field is Integer. 
         Integer openningIssueId = (Integer) table.getValueAt(row, 0);
+        String openningIssue = tabs.get(tabName) + table.getValueAt(row, 0).toString();
 
-        for (Integer id : openingIssuesList.keySet()) {
+        for (String id : openingIssuesList.keySet()) {
             if (openningIssueId != null) {
-                if (id == openningIssueId) {
+                if (id.equals(openningIssue)) {
                     isIssueAlreadyOpened = true;
                 }
             }
         }
 
         if (isIssueAlreadyOpened) {
-            openingIssuesList.get(openningIssueId).toFront();
+            openingIssuesList.get(openningIssue).toFront();
         } else {
             if (openingIssuesList.size() < 6) {
                 IssueWindow viewIssue = null;
-                String currentabname = getSelectedTabName();
-                try {
-                    ArrayList<Issue> issues = issueDAO.get(currentabname);
-                    viewIssue = new IssueWindow(row, table, issues);
+            String currentabname = getSelectedTabName();
+            AbstractDAO dao = issueDAO;
+            if (currentabname.equals("References")) dao = referenceDAO;
+                
+            try {
+                ArrayList<Issue> issues = dao.get(currentabname);
+                //have to add offline issues 
+                ArrayList<Issue> offlineIssues = new ArrayList(offlineIssueMgr.getIssuesList().keySet());
+                issues.addAll(offlineIssues);
+                viewIssue = new IssueWindow(row, table, issues);
                 } catch (IOException ex) {
                     Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (BadLocationException ex) {
                     Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                openingIssuesList.put(openningIssueId, viewIssue);
+                openingIssuesList.put(openningIssue, viewIssue);
                 tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                tab.getCustomIdList().printOutIDList();
 //                                    System.out.println("issue opened's id is: " + openningIssueId + 
 //                                            " and id in view issue is: " + selectedIssue.getID().toString());
                 viewIssue.setVisible(true);
+                
             } else {
                 JOptionPane.showMessageDialog(null,
                         "The number of view issue window "
@@ -2445,6 +2518,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }//GEN-LAST:event_menuitemViewOneIssueActionPerformed
 
+    
+    
     private void comboBoxFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxFieldActionPerformed
         System.out.println("here" + comboBoxStartToSearch);
         searchColName = comboBoxField.getSelectedItem().toString();
@@ -2582,6 +2657,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         Tab tab = tabs.get(tabName);
         JTable table = tab.getTable();
         String tableName = table.getName(); // name of the tableSelected
+        AbstractDAO dao = issueDAO;
+        if (tableName.equals("References")) dao = referenceDAO;
 
         // get the ids
         int[] ids; // ids to delete from database
@@ -2597,7 +2674,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 String type = (String) table.getValueAt(row, 9);
                 if (Authorization.getAccessLevel().equals("administrator") || type.equals("TEST ISSUE")) {
                     ids[j++] = selectedID;
-                    authorizedRows.add(selectedRows[i]);
+                    authorizedRows.add(row);
                 }
                      
                 else {
@@ -2622,22 +2699,36 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
              
             } else {
                 
-                int[] onlineIds = new int[ids.length];
-                int[] offlineIds = new int[ids.length];
-                int i=0, j=0;
-                for(int id : ids) {
-                    if (id < 0 || id > 9000) offlineIds[j++] = id;
-                    else onlineIds[i++] = id;
-                }
-                if (online) {
-                    issueDAO.delete(onlineIds);
-                    offlineIssueMgr.deleteIssues(offlineIds);
-                }
-                else {
-                    //offline delete records
-                    offlineIssueMgr.deleteIssues(offlineIds);
+                
+                    ArrayList<Integer> onlineIds = new ArrayList();
+                    ArrayList<Integer> offlineIds = new ArrayList();
+                
+                    for(int id : ids) {
+                        if (id < 0 || id > 9000) offlineIds.add(id); 
+                        else  if (id != 0) onlineIds.add(id);
+                    }
+                    if (online) {
+                        if(onlineIds.size() > 0) 
+                            dao.delete(convertToArray(onlineIds));
+                        if(offlineIds.size() > 0)
+                            offlineIssueMgr.deleteIssues(convertToArray(offlineIds));
+                    }
+                    else {
+                        //offline delete records
+                        if(offlineIds.size()>0)
+                            offlineIssueMgr.deleteIssues(convertToArray(offlineIds));
+                        
+                        //originially authorized rows have to move the onlineIds from them
+                        //otherwise, later on, these ids will be removed from table
+                        for(Integer id : onlineIds) {
+                            authorizedRows.remove(id);
+                        }
                     //optional: save the online Ids to a local file, next time, during sync, request db deletion. 
-                }
+                    }
+                    
+                
+                
+                
                 
             }
             
@@ -2654,6 +2745,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }//GEN-LAST:event_menuItemDeleteRecordActionPerformed
 
+    private int[] convertToArray(ArrayList<Integer> input) {
+        int[] result = new int[input.size()];
+        
+        for(int index = 0; index< input.size(); index++) {
+            result[index] = input.get(index);
+            
+        }
+        return result;
+        
+    }
     private void menuItemReloadSelectedDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadSelectedDataActionPerformed
        int row = getSelectedTable().getSelectedRow();
        if(row == -1){
@@ -2661,10 +2762,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
        }
        else{
        Object ID = getSelectedTable().getValueAt(row, 0);
-       System.out.println(ID + "ohhhhh");
-        
-        
-        Issue issue = issueDAO.getSelectedRow(getSelectedTable().getName(), ID.toString());
+       
+        AbstractDAO dao = (getSelectedTable().getName().equals("References"))? referenceDAO : issueDAO;  
+        Issue issue = dao.getSelectedRow(getSelectedTable().getName(), ID.toString());
          
         
            try {
@@ -2731,6 +2831,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             else {
                 JOptionPane.showMessageDialog(this,
                      "There are no conflicts issues to be resolved.");
+                
             }
             
         }
@@ -3169,7 +3270,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 //
 //                                    ID.add(Value);
 //                                }
-//                                TableRowSorter<DefaultTableModel> RowSorter = (TableRowSorter<DefaultTableModel>) table.getRowSorter();
+//                                TableRowr<DefaultTableModel> RowSorter = (TableRowSorter<DefaultTableModel>) table.getRowSorter();
 //                                RowSorter.setComparator(0, new Comparator<String>() {
 //
 //                                    @Override
@@ -3265,30 +3366,40 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 boolean isIssueAlreadyOpened = false;
 
                                 Integer openningIssueId = (Integer) table.getValueAt(row, 0);
+                                String openningIssue = getSelectedTabName() + table.getValueAt(row, 0).toString();
 
-                                for (Integer id : openingIssuesList.keySet()) {
+                                for (String id : openingIssuesList.keySet()) {
                                     if (openningIssueId != null) {
-                                        if (id == openningIssueId) {
+                                        if (id.equals(openningIssueId)) {
                                             isIssueAlreadyOpened = true;
                                         }
                                     }
                                 }
 
                                 if (isIssueAlreadyOpened) {
-                                    openingIssuesList.get(openningIssueId).toFront();
+                                    openingIssuesList.get(openningIssue).toFront();
                                 } else {
+                                    
                                     if (openingIssuesList.size() < 6) {
                                         IssueWindow viewIssue = null;
                                         String currentabname = getSelectedTabName();
+                                        
+                                        AbstractDAO dao = issueDAO;
+                                        if(currentabname.equals("References")) 
+                                            dao = referenceDAO;
+                                    
                                         try {
-                                            ArrayList<Issue> issues = issueDAO.get(currentabname);
+                                            ArrayList<Issue> issues = dao.get(currentabname);
+                                            //have to add offline issues 
+                                            ArrayList<Issue> offlineIssues = new ArrayList(offlineIssueMgr.getIssuesList().keySet());
+                                            issues.addAll(offlineIssues);
                                             viewIssue = new IssueWindow(row, table, issues);
                                         } catch (IOException ex) {
                                             Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
                                         } catch (BadLocationException ex) {
                                             Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
                                         }
-                                        openingIssuesList.put(openningIssueId, viewIssue);
+                                        openingIssuesList.put(openningIssue, viewIssue);
                                         tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                                        tabs.get(getSelectedTabName()).getCustomIdList().printOutIDList();
 //                                    System.out.println("issue opened's id is: " + openningIssueId + 
@@ -3740,7 +3851,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 break;
             }
             
-            case "TEST ISSUE": {
+            case "References": {
                 for (int i = 0; i < width.length; i++) {
                     int pWidth = Math.round(width[i]);
                     table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
@@ -3750,8 +3861,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
                     }
                     
-                    // hide lock and submitter columns
-                    if(i == 10 || i == 11|| i == 12){
+                    // hide columns
+                    Set<Integer> hideCols = new HashSet();
+                    hideCols.add(1);
+                    for(int temp = 6; temp<=12; temp++)
+                        hideCols.add(temp);
+                   
+                    
+                    if(hideCols.contains(i)){
                         TableColumn column = table.getColumnModel().getColumn(i);
                         column.setMinWidth(pWidth);
                         column.setMaxWidth(pWidth);
@@ -4026,30 +4143,36 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                 boolean isIssueAlreadyOpened = false;
 
                                 Integer openningIssueId = (Integer) table.getValueAt(row, 0);
+                                String openningIssue = getSelectedTabName() + table.getValueAt(row, 0).toString();
 
-                                for (Integer id : openingIssuesList.keySet()) {
+                                for (String id : openingIssuesList.keySet()) {
                                     if (openningIssueId != null) {
-                                        if (id == openningIssueId) {
+                                        if (id.equals(openningIssue)) {
                                             isIssueAlreadyOpened = true;
                                         }
                                     }
                                 }
 
                                 if (isIssueAlreadyOpened) {
-                                    openingIssuesList.get(openningIssueId).toFront();
+                                    openingIssuesList.get(openningIssue).toFront();
                                 } else {
                                     if (openingIssuesList.size() < 6) {
                                         IssueWindow viewIssue = null;
                                         String currentabname = getSelectedTabName();
+                                        AbstractDAO dao = issueDAO;
+                                        if(currentabname.equals("References")) dao = referenceDAO;
                                         try {
-                                            ArrayList<Issue> issues = issueDAO.get(currentabname);
+                                            ArrayList<Issue> issues = dao.get(currentabname);
+                                            //have to add offline issues 
+                                            ArrayList<Issue> offlineIssues = new ArrayList(offlineIssueMgr.getIssuesList().keySet());
+                                            issues.addAll(offlineIssues);
                                             viewIssue = new IssueWindow(row, table, issues);
                                         } catch (IOException ex) {
                                             Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
                                         } catch (BadLocationException ex) {
                                             Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
                                         }
-                                        openingIssuesList.put(openningIssueId, viewIssue);
+                                        openingIssuesList.put(openningIssue, viewIssue);
                                         tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
 //                                        tab.getCustomIdList().printOutIDList();
 //                                    System.out.println("issue opened's id is: " + openningIssueId + 
@@ -4255,6 +4378,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     public void detectOpenIssues(Tab tab) {
         JTable table = tab.getTable();
+        if (table.getName().equals("References")) return;
         boolean openIssue = false;
         for (int row = 0; row < table.getRowCount(); row++) {
             String tableCellValue = "";
@@ -4323,9 +4447,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             LoggingAspect.afterReturn("Table loaded succesfully");
             
-            //Yi 05-18-2016 commented out the duplicated mouse listener. 
-            //which was already added in loadTableData(table)
-            //setTableListeners(table, this);  
+            
+            //add table listener
+            setTableListeners(table, this);  
 
             boolean isColumnNameTheSame = ColumnNameConsistency.IsTableColumnNameTheSame(tab, table);
             if (!isColumnNameTheSame) {
@@ -4379,16 +4503,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         }
         else{
-            // this is for all other tabs which are all from the issues table
+            
+            AbstractDAO dao = issueDAO;
+            if (tableName.equals("References")) dao = referenceDAO;
+            // this is for all the tabs which are all from the issues table
             if (online) {
-                ArrayList<Issue> issues = issueDAO.get(tableName);
+                ArrayList<Issue> issues = dao.get(tableName);
                 if(!issues.isEmpty() && issues != null)
                     for(Issue issue: issues){
                         insertTableRow(table, issue);
                     }
             }
-            
-            
+         
         }
         
         //load offline data
@@ -4424,7 +4550,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         setColumnFormat(colWidthPercent, table);
 
         // set the listeners for the tableSelected
-        setTableListeners(table, this);
+        //setTableListeners(table, this);
 
         // update last time the tableSelected was updated
         setLastUpdateTime();
@@ -4737,6 +4863,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JPanel jPanelSQL;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
@@ -4782,6 +4909,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenu menuTools;
     private javax.swing.JMenu menuView;
     private javax.swing.JMenuItem menuitemViewOneIssue;
+    private javax.swing.JTable referenceTable;
     public static javax.swing.JLabel searchInformationLabel;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JLabel status;
@@ -5261,7 +5389,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param issue 
      */
     public void insertTableRow(JTable table, Issue issue) throws IOException, BadLocationException {
-
+        
+       
         Object[] rowData = new Object[13];
         rowData[0] = issue.getId();
         rowData[1] = issue.getApp();
@@ -5298,7 +5427,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         rowData[9] = issue.getIssueType();
         rowData[10] = issue.getSubmitter();
         rowData[11] = issue.getLocked();
+        rowData[12] = issue.getLastmodtime();
         ((DefaultTableModel)table.getModel()).addRow(rowData);
+        
+        tabs.get(table.getName()).addToTotalRowCount(1);
+        String recordsLabel = tabs.get(table.getName()).getRecordsLabel();
+        labelRecords.setText(recordsLabel);
+          
     }
    
     public String convertStreamToString(InputStream is) throws IOException {
@@ -5498,6 +5633,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         }
 
+    }
+
+    public JMenuItem getMenuItemReconcileConflict() {
+        return menuItemReconcileConflict;
+    }
+
+    public void setMenuItemReconcileConflict(JMenuItem menuItemReconcileConflict) {
+        this.menuItemReconcileConflict = menuItemReconcileConflict;
     }
  
  

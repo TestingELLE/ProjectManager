@@ -216,6 +216,7 @@ public class ColumnPopupMenu extends JPopupMenu {
         for (int row = 0; row < table.getRowCount(); row++) {
             if (idList.has(((Integer) table.getValueAt(row, 0))) != -1) {
                 idItems.add(table.getValueAt(row, col));
+                
             }
         }
 
@@ -265,11 +266,15 @@ public class ColumnPopupMenu extends JPopupMenu {
             for (row = 0; row < table.getModel().getRowCount(); row++) {
 
                 cellValue = table.getModel().getValueAt(row, col);
+                
+                
 
                 // handle null exceptions
                 if (cellValue == null) {
                     cellValue = "";
                 }
+                
+                
 
                 // cap the String length of list options
                 if (cellValue.toString().length() > cap) {
