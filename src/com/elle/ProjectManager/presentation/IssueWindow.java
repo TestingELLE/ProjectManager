@@ -1946,9 +1946,19 @@ public class IssueWindow extends JFrame {
             String currentstring = getcurrentrtf();
             String stringtosearch = "\\i\\ul\\cf2 " + selectedtext;
             boolean checkformat = currentstring.contains(stringtosearch);
+            
             if (!urlstring.contains("https")) {
-                urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + urlstring;
-                urlstring = urlstring.replace(" ","%20");
+                String urlstringcheck = System.getProperty("user.dir");
+                System.out.println(urlstringcheck);
+                
+                if (urlstringcheck.contains("ELLE Prog 2015")) {
+                    urlstring = "file://" + System.getProperty("user.dir") + urlstring;
+                    urlstring = urlstring.replace(" ","%20");
+                    System.out.println(urlstring);
+                } else {                   
+                    urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + urlstring;
+                    urlstring = urlstring.replace(" ","%20");
+                }
             }
             
             try {
