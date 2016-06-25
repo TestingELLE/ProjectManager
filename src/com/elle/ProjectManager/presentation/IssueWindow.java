@@ -9,23 +9,29 @@ import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.Point;
+import static java.awt.SystemColor.desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -40,21 +46,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
@@ -70,9 +78,9 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.StyledEditorKit.BoldAction;
-import javax.swing.text.StyledEditorKit.ForegroundAction;
 import javax.swing.text.StyledEditorKit.ItalicAction;
 import javax.swing.text.StyledEditorKit.UnderlineAction;
+import rtf.AdvancedRTFEditorKit;
 
 /**
  *
@@ -626,6 +634,7 @@ public class IssueWindow extends JFrame {
         B_Bold = new javax.swing.JButton();
         colorButton1 = new javax.swing.JButton();
         Plain = new javax.swing.JButton();
+        Hyperlink = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -1000,6 +1009,14 @@ public class IssueWindow extends JFrame {
         rtftext.setContentType("text/rtf"); // NOI18N
         rtftext.setMinimumSize(new java.awt.Dimension(590, 80));
         rtftext.setPreferredSize(new java.awt.Dimension(590, 80));
+        rtftext.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rtftextMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                rtftextMouseEntered(evt);
+            }
+        });
         rtftext.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 rtftextKeyReleased(evt);
@@ -1068,6 +1085,15 @@ public class IssueWindow extends JFrame {
             }
         });
 
+        Hyperlink.setText("H");
+        Hyperlink.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Hyperlink.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        Hyperlink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HyperlinkActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -1088,7 +1114,9 @@ public class IssueWindow extends JFrame {
                 .addComponent(Fsize, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Plain, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(91, 91, 91)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Hyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(70, 70, 70)
                 .addComponent(BtnPrevious)
                 .addGap(3, 3, 3)
                 .addComponent(BtnNext))
@@ -1108,7 +1136,9 @@ public class IssueWindow extends JFrame {
                     .addComponent(Fsize, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BtnPrevious)
                     .addComponent(BtnNext)
-                    .addComponent(Plain, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(Plain, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Hyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(6, 6, 6)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1807,6 +1837,125 @@ public class IssueWindow extends JFrame {
         Action b = new getplaintext();
         b.actionPerformed(evt);
     }//GEN-LAST:event_PlainActionPerformed
+
+    private void HyperlinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HyperlinkActionPerformed
+        Action b = new seturltextformat();
+        b.actionPerformed(evt);
+    }//GEN-LAST:event_HyperlinkActionPerformed
+
+    private void rtftextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rtftextMouseClicked
+        if (evt.isControlDown()) {
+
+            String selectedtext = getselectedtext();
+            String urlstring = selectedtext;
+            String currentstring = getcurrentrtf();
+            String stringtosearch = "\\i\\ul\\cf2 " + selectedtext;
+            boolean checkformat = currentstring.contains(stringtosearch);
+            if (!urlstring.contains("https")) {
+                urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + urlstring;
+                urlstring = urlstring.replace(" ","%20");
+            }
+            
+            try {
+                URI uri = new URI(urlstring);
+                System.out.println(uri);
+                
+                if (checkformat && uri != null) {
+                    openWebpage(uri);
+                } else {
+                    System.out.println("Not a link!");
+                }
+
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_rtftextMouseClicked
+
+    private void rtftextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rtftextMouseEntered
+
+    }//GEN-LAST:event_rtftextMouseEntered
+    
+    public static void openWebpage(URI uri) {
+        
+       if (!Desktop.isDesktopSupported()) return;
+
+	Desktop desktop = Desktop.getDesktop();
+
+	if (!desktop.isSupported(Desktop.Action.BROWSE)) return;
+
+	try {
+		desktop.browse(uri);
+	} catch (Exception e) {
+
+	}
+        
+    }
+    
+    public class seturltextformat extends StyledEditorKit.StyledTextAction {
+
+        private seturltextformat() {
+            super("Set the hyperlink format!");        
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JEditorPane editor = getEditor(e);
+            if (editor != null) {
+                SimpleAttributeSet sas = new SimpleAttributeSet();
+                StyleConstants.setUnderline(sas, true);
+                StyleConstants.setForeground(sas, Color.BLUE);
+                StyleConstants.setItalic(sas, true);
+                setCharacterAttributes(editor, sas, true);
+            }
+        }
+    }
+    
+    public String seturl() {
+        JFrame frame = new JFrame("URL/File Directory");
+        String urlorfiledirectory = JOptionPane.showInputDialog(frame, "URL/File Directory:");
+        return urlorfiledirectory;
+    }
+    
+    public String getselectedtext() {
+        String selectedtext = rtftext.getSelectedText();
+        return selectedtext;
+    }
+    
+    public String modifyrtfforhyperlink() {
+        
+        ByteArrayOutputStream getcurrentdescriptiontext = new ByteArrayOutputStream();
+        rtftext.setEditorKit(new AdvancedRTFEditorKit());
+
+        try {
+            rtftext.getEditorKit().write(getcurrentdescriptiontext, rtftext.getDocument(), 0, rtftext.getDocument().getLength());
+        } catch (IOException | BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String rtfstring = getcurrentdescriptiontext.toString();
+        /*
+        //String newrtfstringtoreplace = "{\\field {\\*\\fldinst HYPERLINK \\\\l \"" + urlstrings + "\"}{\\fldrslt " + selectedstring + "}}";
+        String newrtfstringtoreplace = "{\\*\\fldinst HYPERLINK " + selectedstring + "\"" + urlstrings + "\"} " + selectedstring;
+        String newrtfstring = rtfstring.replace(selectedstring, newrtfstringtoreplace);
+        */
+        return rtfstring;
+    }
+    
+    public String getcurrentrtf () {
+        
+        ByteArrayOutputStream getcurrentdescriptiontext = new ByteArrayOutputStream();
+        
+        try {
+            rtftext.getEditorKit().write(getcurrentdescriptiontext, rtftext.getDocument(), 0, rtftext.getDocument().getLength());
+        } catch (IOException | BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String rtfstring = getcurrentdescriptiontext.toString();
+
+        return rtfstring;
+    }
     
     public class getplaintext extends StyledEditorKit.StyledTextAction {
 
@@ -1818,8 +1967,6 @@ public class IssueWindow extends JFrame {
         public void actionPerformed(ActionEvent e) {
             JEditorPane editor = getEditor(e);
             if (editor != null) {
-                StyledEditorKit kit = getStyledEditorKit(editor);
-                MutableAttributeSet attr = kit.getInputAttributes();
                 SimpleAttributeSet sas = new SimpleAttributeSet();
                 StyleConstants.setStrikeThrough(sas, false);
                 StyleConstants.setUnderline(sas, false);
@@ -2270,7 +2417,7 @@ public class IssueWindow extends JFrame {
         comboBoxIssueType.setSelectedItem(issue.getIssueType());
         submitterText.setText(issue.getSubmitter());
         //lockCheckBox.setSelected(issue.getLocked().equals("Y"));
-        
+        System.out.println(dateClosedText.getText());
         setOpenCloseIssueBtnText(); // set button text to Open/Close issue
     }
     
@@ -2342,7 +2489,7 @@ public class IssueWindow extends JFrame {
 
     private void setOpenCloseIssueBtnText() {
         //set close issue btn property
-        if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
+        if (dateClosedText.getText().isEmpty() && versionText.getText().isEmpty()) {
             btnCloseIssue.setText("Close Issue");
         } else {
             btnCloseIssue.setText("Reopen Issue");
@@ -2611,6 +2758,7 @@ public class IssueWindow extends JFrame {
     private javax.swing.JButton BtnNext;
     private javax.swing.JButton BtnPrevious;
     private javax.swing.JButton Fsize;
+    private javax.swing.JButton Hyperlink;
     private javax.swing.JButton Italic;
     private javax.swing.JButton Plain;
     private javax.swing.JButton StrikethroughBotton;
