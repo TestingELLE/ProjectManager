@@ -1944,7 +1944,7 @@ public class IssueWindow extends JFrame {
             String selectedtext = getselectedtext();
             String urlstring = selectedtext;
             String currentstring = getcurrentrtf();
-            String stringtosearch = "\\i\\ul\\cf2 " + selectedtext;
+            String stringtosearch = "\\i\\ul\\cf2 " + selectedtext.substring(0,10);
             boolean checkformat = currentstring.contains(stringtosearch);
             
             if (!urlstring.contains("https") && !urlstring.contains("http")) {
@@ -1959,6 +1959,8 @@ public class IssueWindow extends JFrame {
                     urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + urlstring;
                     urlstring = urlstring.replace(" ","%20");
                 }
+            } else {
+                urlstring = urlstring.replaceAll("\\s","");
             }
             
             try {
