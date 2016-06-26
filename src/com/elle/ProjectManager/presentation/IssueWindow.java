@@ -1947,7 +1947,7 @@ public class IssueWindow extends JFrame {
             String stringtosearch = "\\i\\ul\\cf2 " + selectedtext;
             boolean checkformat = currentstring.contains(stringtosearch);
             
-            if (!urlstring.contains("https")) {
+            if (!urlstring.contains("https") && !urlstring.contains("http")) {
                 String urlstringcheck = System.getProperty("user.dir");
                 System.out.println(urlstringcheck);
                 
