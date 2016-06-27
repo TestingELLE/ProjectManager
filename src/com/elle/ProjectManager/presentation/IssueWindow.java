@@ -1,4 +1,3 @@
-
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
@@ -12,6 +11,7 @@ import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
@@ -23,12 +23,15 @@ import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -686,6 +689,7 @@ public class IssueWindow extends JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jMenu1 = new javax.swing.JMenu();
+        jScrollBar1 = new javax.swing.JScrollBar();
         scrollPane = new javax.swing.JScrollPane();
         formPane = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -734,6 +738,7 @@ public class IssueWindow extends JFrame {
         B_Bold = new javax.swing.JButton();
         colorButton1 = new javax.swing.JButton();
         Plain = new javax.swing.JButton();
+        Hyperlink = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -856,7 +861,7 @@ public class IssueWindow extends JFrame {
 
         appComboBox.setEditable(true);
         appComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        appComboBox.setPreferredSize(new java.awt.Dimension(80, 28));
+        appComboBox.setPreferredSize(new java.awt.Dimension(90, 28));
         appComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 appComboBoxActionPerformed(evt);
@@ -914,7 +919,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 0, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(14, 0, 0, 0);
         jPanel6.add(lock, gridBagConstraints);
 
         idText.setText("jLabel1");
@@ -932,7 +937,7 @@ public class IssueWindow extends JFrame {
         id.setText(" id");
         id.setMaximumSize(new java.awt.Dimension(13, 12));
         id.setMinimumSize(new java.awt.Dimension(13, 12));
-        id.setPreferredSize(new java.awt.Dimension(13, 12));
+        id.setPreferredSize(new java.awt.Dimension(15, 13));
         id.setRequestFocusEnabled(false);
         id.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -955,7 +960,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(15, 30, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(17, 30, 0, 0);
         jPanel6.add(lockCheckBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1134,7 +1139,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 9;
+        gridBagConstraints.gridx = 10;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         jPanel5.add(BtnNext, gridBagConstraints);
@@ -1151,7 +1156,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridx = 9;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
         gridBagConstraints.weightx = 1.0;
@@ -1168,10 +1173,18 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         jPanel5.add(description, gridBagConstraints);
 
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 100));
+        jScrollPane1.setVerticalScrollBar(jScrollBar1);
+
         rtftext.setContentType("text/rtf"); // NOI18N
-        rtftext.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        rtftext.setMinimumSize(new java.awt.Dimension(104, 22));
-        rtftext.setPreferredSize(new java.awt.Dimension(164, 94));
+        rtftext.setMinimumSize(new java.awt.Dimension(25, 25));
+        rtftext.setPreferredSize(new java.awt.Dimension(100, 98));
+        rtftext.setRequestFocusEnabled(true);
+        rtftext.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rtftextMouseClicked(evt);
+            }
+        });
         rtftext.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 rtftextKeyReleased(evt);
@@ -1182,7 +1195,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 10;
+        gridBagConstraints.gridwidth = 11;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -1307,11 +1320,29 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
         jPanel5.add(Plain, gridBagConstraints);
+
+        Hyperlink.setText("H");
+        Hyperlink.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Hyperlink.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        Hyperlink.setMaximumSize(new java.awt.Dimension(16, 16));
+        Hyperlink.setMinimumSize(new java.awt.Dimension(16, 16));
+        Hyperlink.setPreferredSize(new java.awt.Dimension(16, 16));
+        Hyperlink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HyperlinkActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
+        jPanel5.add(Hyperlink, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1331,7 +1362,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 20, 10, 20);
+        gridBagConstraints.insets = new java.awt.Insets(5, 15, 7, 15);
         getContentPane().add(scrollPane, gridBagConstraints);
 
         pack();
@@ -2027,7 +2058,133 @@ public class IssueWindow extends JFrame {
         Action b = new getplaintext();
         b.actionPerformed(evt);
     }//GEN-LAST:event_PlainActionPerformed
+
+    private void HyperlinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HyperlinkActionPerformed
+        Action b = new seturltextformat();
+        b.actionPerformed(evt);
+    }//GEN-LAST:event_HyperlinkActionPerformed
+
+    private void rtftextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rtftextMouseClicked
+        if (evt.isControlDown()) {
+
+            String selectedtext = getselectedtext();
+            String urlstring = selectedtext;
+            String currentstring = getcurrentrtf();
+            String stringtosearch = "\\i\\ul\\cf2 " + selectedtext.substring(0,10);
+            boolean checkformat = currentstring.contains(stringtosearch);
+            
+            if (!urlstring.contains("https") && !urlstring.contains("http")) {
+                String urlstringcheck = System.getProperty("user.dir");
+                System.out.println(urlstringcheck);
+                
+                if (urlstringcheck.contains("ELLE Prog 2015")) {
+                    urlstring = "file://" + System.getProperty("user.dir") + urlstring;
+                    urlstring = urlstring.replace(" ","%20");
+                    System.out.println(urlstring);
+                } else {                   
+                    urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + urlstring;
+                    urlstring = urlstring.replace(" ","%20");
+                }
+            } else {
+                urlstring = urlstring.replaceAll("\\s","");
+            }
+            
+            try {
+                URI uri = new URI(urlstring);
+                System.out.println(uri);
+                
+                if (checkformat && uri != null) {
+                    openWebpage(uri);
+                } else {
+                    System.out.println("Not a link!");
+                }
+
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_rtftextMouseClicked
+        
+    public static void openWebpage(URI uri) {
+        
+       if (!Desktop.isDesktopSupported()) return;
+
+	Desktop desktop = Desktop.getDesktop();
+
+	if (!desktop.isSupported(Desktop.Action.BROWSE)) return;
+
+	try {
+		desktop.browse(uri);
+	} catch (Exception e) {
+
+	}
+        
+    }
     
+    public class seturltextformat extends StyledEditorKit.StyledTextAction {
+
+        private seturltextformat() {
+            super("Set the hyperlink format!");        
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JEditorPane editor = getEditor(e);
+            if (editor != null) {
+                SimpleAttributeSet sas = new SimpleAttributeSet();
+                StyleConstants.setUnderline(sas, true);
+                StyleConstants.setForeground(sas, Color.BLUE);
+                StyleConstants.setItalic(sas, true);
+                setCharacterAttributes(editor, sas, true);
+            }
+        }
+    }
+    
+    public String seturl() {
+        JFrame frame = new JFrame("URL/File Directory");
+        String urlorfiledirectory = JOptionPane.showInputDialog(frame, "URL/File Directory:");
+        return urlorfiledirectory;
+    }
+    
+    public String getselectedtext() {
+        String selectedtext = rtftext.getSelectedText();
+        return selectedtext;
+    }
+    
+    public String modifyrtfforhyperlink() {
+        
+        ByteArrayOutputStream getcurrentdescriptiontext = new ByteArrayOutputStream();
+
+        try {
+            rtftext.getEditorKit().write(getcurrentdescriptiontext, rtftext.getDocument(), 0, rtftext.getDocument().getLength());
+        } catch (IOException | BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String rtfstring = getcurrentdescriptiontext.toString();
+        /*
+        //String newrtfstringtoreplace = "{\\field {\\*\\fldinst HYPERLINK \\\\l \"" + urlstrings + "\"}{\\fldrslt " + selectedstring + "}}";
+        String newrtfstringtoreplace = "{\\*\\fldinst HYPERLINK " + selectedstring + "\"" + urlstrings + "\"} " + selectedstring;
+        String newrtfstring = rtfstring.replace(selectedstring, newrtfstringtoreplace);
+        */
+        return rtfstring;
+    }
+    
+    public String getcurrentrtf () {
+        
+        ByteArrayOutputStream getcurrentdescriptiontext = new ByteArrayOutputStream();
+        
+        try {
+            rtftext.getEditorKit().write(getcurrentdescriptiontext, rtftext.getDocument(), 0, rtftext.getDocument().getLength());
+        } catch (IOException | BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String rtfstring = getcurrentdescriptiontext.toString();
+
+        return rtfstring;
+    }
+
     public class getplaintext extends StyledEditorKit.StyledTextAction {
 
         private getplaintext() {
@@ -2563,7 +2720,7 @@ public class IssueWindow extends JFrame {
 
     private void setOpenCloseIssueBtnText() {
         //set close issue btn property
-        if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
+        if (dateClosedText.getText().isEmpty() && versionText.getText().isEmpty()) {
             btnCloseIssue.setText("Close Issue");
         } else {
             btnCloseIssue.setText("Reopen Issue");
@@ -2837,6 +2994,7 @@ public class IssueWindow extends JFrame {
     private javax.swing.JButton BtnNext;
     private javax.swing.JButton BtnPrevious;
     private javax.swing.JButton Fsize;
+    private javax.swing.JButton Hyperlink;
     private javax.swing.JButton Italic;
     private javax.swing.JButton Plain;
     private javax.swing.JButton StrikethroughBotton;
@@ -2866,6 +3024,7 @@ public class IssueWindow extends JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JScrollBar jScrollBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lastmodTime;
     private javax.swing.JLabel lock;
