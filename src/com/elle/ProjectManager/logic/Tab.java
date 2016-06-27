@@ -338,12 +338,7 @@ public class Tab implements ITableConstants {
                         + "</pre></html>";
                 break;
 
-            case TASKFILES_TABLE_NAME:
-                output = "<html><pre>"
-                        + "      Number of records shown: " + getRecordsShown()
-                        + "<br/> Number of records in Reports: " + getTotalRecords()
-                        + "</pre></html>";
-                break;
+            
             case "References":
                 output = "<html><pre>"
                         + "      Number of records shown: " + getRecordsShown()

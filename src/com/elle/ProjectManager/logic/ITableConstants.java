@@ -10,7 +10,7 @@ package com.elle.ProjectManager.logic;
 public interface ITableConstants {
 
     public static final String TASKS_TABLE_NAME = "issues";
-    public static final String TASKFILES_TABLE_NAME = "issue_files";
+//    public static final String TASKFILES_TABLE_NAME = "issue_files";
 //    public static final String TASKNOTES_TABLE_NAME = "issue_notes";
     
     // column header name constants
@@ -26,13 +26,13 @@ public interface ITableConstants {
     // search fields for the comboBox for each table
     public static final String[] TASKS_SEARCH_FIELDS = {"programmer","title", "description", "dateOpened", "dateClosed", "rk", "version"};
     public static final String[] REFERENCES_SEARCH_FIELDS = {"programmer","title", "description", "dateOpened"};
-    public static final String[] TASKFILES_SEARCH_FIELDS = {"submitter"};
+ //   public static final String[] TASKFILES_SEARCH_FIELDS = {"submitter"};
     public static final String[] TASKS_SEARCH_FIELDS_OTHERS = {"app","programmer","title", "description", "dateOpened", "dateClosed", "rk", "version"};
 //    public static final String[] TASKNOTES_SEARCH_FIELDS = {"submitter"};
     
     // batch edit combobox selections for each table
     public static final String[] TASKS_BATCHEDIT_CB_FIELDS = {"programmer", "rk","dateOpened", "dateClosed", "version"};
-    public static final String[] TASKFILES_BATCHEDIT_CB_FIELDS = {"submitter", "date", "path", "notes"};
+//    public static final String[] TASKFILES_BATCHEDIT_CB_FIELDS = {"submitter", "date", "path", "notes"};
     public static final String[] REFERENCES_BATCHEDIT_CB_FIELDS = {"programmer", "dateOpened"};
 //    public static final String[] TASKNOTES_BATCHEDIT_CB_FIELDS = {"submitter", "status_notes", "date"};
 }
