@@ -416,10 +416,12 @@ public class ReconcileWindow extends javax.swing.JFrame {
 
     private void updateOnlineBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateOnlineBtnActionPerformed
        //confirm to continue
+        
+        
         int confirm = JOptionPane.showConfirmDialog(this, "Update action is final.Please confirm to continue.", "Confirm Update", JOptionPane.YES_NO_OPTION);
         if (confirm != 0) return;
       
-        
+        setIssuePairValuesFromComponents();
         //update the choice in the pair to indicate selection is online one
         currentIssuePair.setChoice(true);
         offlineIssueMgr.syncConflictIssuePair(currentIssuePair);
@@ -461,7 +463,7 @@ public class ReconcileWindow extends javax.swing.JFrame {
         //confirm to continue
         int confirm = JOptionPane.showConfirmDialog(this, "Update action is final.Please confirm to continue.", "Confirm Update", JOptionPane.YES_NO_OPTION);
         if (confirm != 0) return;
-        
+        setIssuePairValuesFromComponents();
         //update the choice in the pair to indicate selection is offline one
         currentIssuePair.setChoice(false);
         offlineIssueMgr.syncConflictIssuePair(currentIssuePair);
