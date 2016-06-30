@@ -603,7 +603,7 @@ public class IssueWindow extends JFrame {
         updateComboList("app", projectManager.getSelectedTabName());
         
         setComponentValuesFromIssue(this);
-        submitterText.setText(projectManager.getUserName());
+
         setOpenCloseIssueBtnText();
         setIssueWindowMode();
         
