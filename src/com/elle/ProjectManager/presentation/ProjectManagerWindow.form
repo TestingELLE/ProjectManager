@@ -263,6 +263,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemLoadDataFromTXTActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuItemExportIssueToReference">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export Issue To Reference"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemExportIssueToReferenceActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="menuHelp">
@@ -467,7 +475,6 @@
                         </Column>
                       </TableColumnModel>
                     </Property>
-                    <Property name="columnSelectionAllowed" type="boolean" value="true"/>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[10, 240]"/>
                     </Property>
@@ -827,36 +834,37 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JScrollPane" name="jScrollPane4">
-              <AuxValues>
-                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-              </AuxValues>
+            <Container class="javax.swing.JScrollPane" name="jScrollPane3">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="issue_files">
-                    <Property name="tabTitle" type="java.lang.String" value="issue_files"/>
+                  <JTabbedPaneConstraints tabName="References">
+                    <Property name="tabTitle" type="java.lang.String" value="References"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTable" name="issue_filesTable">
+                <Component class="javax.swing.JTable" name="referenceTable">
                   <Properties>
+                    <Property name="autoCreateRowSorter" type="boolean" value="true"/>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="9" rowCount="0">
-                        <Column editable="true" title="fileID" type="java.lang.Integer"/>
-                        <Column editable="true" title="taskID" type="java.lang.Integer"/>
-                        <Column editable="true" title="app" type="java.lang.String"/>
+                      <Table columnCount="13" rowCount="0">
+                        <Column editable="false" title="ID" type="java.lang.Integer"/>
+                        <Column editable="true" title="app" type="java.lang.Object"/>
+                        <Column editable="true" title="title" type="java.lang.Object"/>
+                        <Column editable="true" title="description" type="java.lang.Object"/>
+                        <Column editable="true" title="programmer" type="java.lang.Object"/>
+                        <Column editable="true" title="dateOpened" type="java.lang.Object"/>
+                        <Column editable="true" title="rk" type="java.lang.Object"/>
+                        <Column editable="true" title="version" type="java.lang.Object"/>
+                        <Column editable="true" title="dateClosed" type="java.lang.Object"/>
                         <Column editable="true" title="submitter" type="java.lang.Object"/>
-                        <Column editable="true" title="step" type="java.lang.Object"/>
-                        <Column editable="true" title="date_" type="java.lang.Object"/>
-                        <Column editable="true" title="files" type="java.lang.Object"/>
-                        <Column editable="true" title="path" type="java.lang.Object"/>
-                        <Column editable="true" title="notes" type="java.lang.Object"/>
+                        <Column editable="false" title="issueType" type="java.lang.Object"/>
+                        <Column editable="true" title="locked" type="java.lang.Object"/>
+                        <Column editable="false" title="lastmodTime" type="java.lang.Object"/>
                       </Table>
                     </Property>
-                    <Property name="autoResizeMode" type="int" value="4"/>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
@@ -904,12 +912,28 @@
                           <Editor/>
                           <Renderer/>
                         </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                       </TableColumnModel>
                     </Property>
-                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[10, 240]"/>
-                    </Property>
-                    <Property name="name" type="java.lang.String" value="issue_files" noResource="true"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
@@ -954,7 +978,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="12" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="labelEditMode" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="labelEditModeState" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -1146,7 +1170,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="searchPanel" pref="64" max="32767" attributes="0"/>
+              <Component id="searchPanel" pref="63" max="32767" attributes="0"/>
               <Component id="jPanel1" alignment="0" min="-2" max="-2" attributes="0"/>
           </Group>
         </DimensionLayout>
@@ -1226,7 +1250,7 @@
                       <Component id="comboBoxValue" min="-2" pref="173" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnSearch" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="96" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="197" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="32767" attributes="0"/>

@@ -1,4 +1,3 @@
-
 package com.elle.ProjectManager.dao;
 
 import com.elle.ProjectManager.database.DBConnection;
@@ -13,25 +12,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
- * IssueDAO
- * @author Carlos Igreja
- * @since  Apr 5, 2016
+ *
+ * @author Yi
  */
-public class IssueDAO implements AbstractDAO {
-
+public class ReferenceDAO implements AbstractDAO {
     // database table information
-    private final String DB_TABLE_NAME = "issues";
+    private final String DB_TABLE_NAME = "reference_issues";
     private final String COL_PK_ID = "ID";
-    private final String COL_APP = "app";
     private final String COL_TITLE = "title";
     private final String COL_DESCRIPTION = "description";
     private final String COL_PROGRAMMER = "programmer";
     private final String COL_DATE_OPENED = "dateOpened";
-    private final String COL_RK = "rk";
-    private final String COL_VERSION = "version";
-    private final String COL_DATE_CLOSED = "dateClosed";
-    private final String COL_ISSUE_TYPE = "issueType";
-    private final String COL_SUBMITTER = "submitter";
     private final String COL_LOCKED = "locked";
     private final String COL_LASTMODTIME = "lastmodtime";
   
@@ -89,21 +80,16 @@ public class IssueDAO implements AbstractDAO {
             while(rs.next()){
                 
                 issue.setId(rs.getInt(COL_PK_ID));
-                issue.setApp(rs.getString(COL_APP));
                 issue.setTitle(rs.getString(COL_TITLE));
                 issue.setDescription(rs.getBytes(COL_DESCRIPTION));
                 issue.setProgrammer(rs.getString(COL_PROGRAMMER));
                 issue.setDateOpened(rs.getString(COL_DATE_OPENED));
-                issue.setRk(rs.getString(COL_RK));
-                issue.setVersion(rs.getString(COL_VERSION));
-                issue.setDateClosed(rs.getString(COL_DATE_CLOSED));
-                issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
-                issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
                 issue.setLastmodtime(rs.getString(COL_LASTMODTIME));
                 
                 
             }
+            issue.setIssueType("REFERENCE");
      
         } 
         catch (SQLException e) {
@@ -145,32 +131,23 @@ public class IssueDAO implements AbstractDAO {
                 
                 
             }
-            String app = format(issue.getApp());
+            
             String title = format(issue.getTitle());
             byte[] description = issue.getDescription();
             String programmer = format(issue.getProgrammer());
             String dateOpened = format(issue.getDateOpened());
-            String rk = (issue.getRk().equals(""))?null:issue.getRk(); // no single quotes
-            String version = format(issue.getVersion());
-            String dateClosed = format(issue.getDateClosed());
-            String issueType = format(issue.getIssueType());
-            String submitter = format(issue.getSubmitter());
             String locked = format(issue.getLocked());
                 
             try {
                 
                 
             String sql = "INSERT INTO " + DB_TABLE_NAME + " (" + COL_PK_ID + ", " 
-                    + COL_APP + ", " +  COL_TITLE + ", " +  COL_DESCRIPTION + ", " 
-                    +  COL_PROGRAMMER + ", " +  COL_DATE_OPENED + ", " +  COL_RK 
-                    + ", " +  COL_VERSION + ", " +  COL_DATE_CLOSED + ", " 
-                    +  COL_ISSUE_TYPE + ", " +  COL_SUBMITTER + ", " 
+                    +  COL_TITLE + ", " +  COL_DESCRIPTION + ", " 
+                    +  COL_PROGRAMMER + ", " +  COL_DATE_OPENED + ", " 
                     +  COL_LOCKED  +  ") " 
-                    + "VALUES (" + id + ", " + app + ", " +  title + ", " 
+                    + "VALUES (" + id + ", " +  title + ", " 
                     +  "?" + ", " +  programmer + ", " +  dateOpened 
-                    + ", " +  rk + ", " +  version + ", " +  dateClosed 
-                    + ", " +  issueType + ", " +  submitter + ", " 
-                    +  locked  +  ") ";
+                    + ", " +    locked  +  ") ";
             
                 Connection con = DBConnection.getConnection();
                 PreparedStatement pstmt = con.prepareStatement(sql);
@@ -209,16 +186,11 @@ public class IssueDAO implements AbstractDAO {
             
             // set issue values
             int id = issue.getId();
-            String app = format(issue.getApp());
+            
             String title = format(issue.getTitle());
             byte[] description = issue.getDescription();
             String programmer = format(issue.getProgrammer());
             String dateOpened = format(issue.getDateOpened());
-            String rk = (issue.getRk().equals(""))?null:issue.getRk(); // no single quotes
-            String version = format(issue.getVersion());
-            String dateClosed = format(issue.getDateClosed());
-            String issueType = format(issue.getIssueType());
-            String submitter = format(issue.getSubmitter());
             String locked = format(issue.getLocked());
             
    
@@ -226,16 +198,11 @@ public class IssueDAO implements AbstractDAO {
 
             try {
                 String sql = "UPDATE " + DB_TABLE_NAME + " SET " 
-                    + COL_APP + " = " + app + ", "
+                   
                     + COL_TITLE + " = " + title + ", "
                     + COL_DESCRIPTION + " = " + "?" + ", "
                     + COL_PROGRAMMER + " = " + programmer + ", "
                     + COL_DATE_OPENED + " = " + dateOpened + ", "
-                    + COL_RK + " = " + rk + ", "
-                    + COL_VERSION + " = " + version + ", "
-                    + COL_DATE_CLOSED + " = " + dateClosed + ", "
-                    + COL_ISSUE_TYPE + " = " + issueType + ", "
-                    + COL_SUBMITTER + " = " + submitter + ", "
                     + COL_LOCKED + " = " + locked + " "
                     + "WHERE " + COL_PK_ID + " = " + id + ";";
                 
@@ -372,17 +339,17 @@ public class IssueDAO implements AbstractDAO {
         
         ArrayList<Issue> issues = new ArrayList<>();
         ResultSet rs = null;
-        String sql = "";
+        String sql = " SELECT * FROM " + DB_TABLE_NAME ;
         
-        if(tableName.equals("Other")){
-            sql = "SELECT * FROM " + DB_TABLE_NAME 
-               + " WHERE app != 'PM' and app != 'Analyster'"
-               + " AND app != 'ELLEGUI' or app IS NULL";
-        }
-        else{
-            sql = "SELECT * FROM " + DB_TABLE_NAME + " WHERE app = " + "'" 
-            + tableName + "' ORDER BY case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
-        }
+//        if(tableName.equals("Other")){
+//            sql = "SELECT * FROM " + DB_TABLE_NAME 
+//               + " WHERE app != 'PM' and app != 'Analyster'"
+//               + " AND app != 'ELLEGUI' or app IS NULL";
+//        }
+//        else{
+//            sql = "SELECT * FROM " + DB_TABLE_NAME + " WHERE app = " + "'" 
+//            + tableName + "' ORDER BY case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
+//        }
         
         try {
 
@@ -392,18 +359,13 @@ public class IssueDAO implements AbstractDAO {
             while(rs.next()){
                 Issue issue = new Issue();
                 issue.setId(rs.getInt(COL_PK_ID));
-                issue.setApp(rs.getString(COL_APP));
                 issue.setTitle(rs.getString(COL_TITLE));
                 issue.setDescription(rs.getBytes(COL_DESCRIPTION));
                 issue.setProgrammer(rs.getString(COL_PROGRAMMER));
                 issue.setDateOpened(rs.getString(COL_DATE_OPENED));
-                issue.setRk(rs.getString(COL_RK));
-                issue.setVersion(rs.getString(COL_VERSION));
-                issue.setDateClosed(rs.getString(COL_DATE_CLOSED));
-                issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
-                issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
                 issue.setLastmodtime(rs.getString(COL_LASTMODTIME));
+                issue.setIssueType("REFERENCE");
                 issues.add(issue);
             }
             
@@ -436,16 +398,10 @@ public class IssueDAO implements AbstractDAO {
             while(rs.next()){
                 
                 issue.setId(rs.getInt(COL_PK_ID));
-                issue.setApp(rs.getString(COL_APP));
                 issue.setTitle(rs.getString(COL_TITLE));
                 issue.setDescription(rs.getBytes(COL_DESCRIPTION));
                 issue.setProgrammer(rs.getString(COL_PROGRAMMER));
                 issue.setDateOpened(rs.getString(COL_DATE_OPENED));
-                issue.setRk(rs.getString(COL_RK));
-                issue.setVersion(rs.getString(COL_VERSION));
-                issue.setDateClosed(rs.getString(COL_DATE_CLOSED));
-                issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
-                issue.setSubmitter(rs.getString(COL_SUBMITTER));
                 issue.setLocked(rs.getString(COL_LOCKED));
                 issue.setLastmodtime(rs.getString(COL_LASTMODTIME));          
             }
@@ -458,4 +414,8 @@ public class IssueDAO implements AbstractDAO {
         
         return issue;
     }
+    
+    
+    
+    
 }
