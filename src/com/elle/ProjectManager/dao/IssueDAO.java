@@ -256,6 +256,9 @@ public class IssueDAO implements AbstractDAO {
         return successful;
     }
     
+    
+    
+    
     /**
      * delete
      * @param ids 

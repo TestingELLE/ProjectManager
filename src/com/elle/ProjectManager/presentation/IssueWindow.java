@@ -464,6 +464,7 @@ public class IssueWindow extends JFrame {
                 issue.setSubmitter(projectManager.getUserName());
                 issue.setIssueType("TEST ISSUE");
                 
+                
             }
             else issue.setIssueType("REFERENCE");
             issue.setDateOpened(todaysDate());
@@ -483,16 +484,16 @@ public class IssueWindow extends JFrame {
                         issue.setTitle(issueindb.getTitle());
                         issue.setDescription(issueindb.getDescription());
                         issue.setProgrammer(issueindb.getProgrammer());
-                        System.out.println(issueindb.getProgrammer());
                         issue.setDateOpened(issueindb.getDateOpened());
                         issue.setRk(issueindb.getRk());
                         issue.setVersion(issueindb.getVersion());
                         issue.setDateClosed(issueindb.getDateClosed());
                         issue.setIssueType(issueindb.getIssueType());
                         issue.setSubmitter(issueindb.getSubmitter());
+                        System.out.println(issueindb.getSubmitter());
                         issue.setLocked(issueindb.getLocked());
                         issue.setLastmodtime(issueindb.getLastmodtime());
-                        System.out.println(issueindb.getLocked());
+                        
                     }
                 }
             }
@@ -512,7 +513,6 @@ public class IssueWindow extends JFrame {
         
        
         this.setTitle("Issue in " + table.getName());
-        
         
         
         // get current monitor resolution.height
@@ -601,9 +601,8 @@ public class IssueWindow extends JFrame {
         updateComboList("programmer", projectManager.getSelectedTabName());
         updateComboList("rk", projectManager.getSelectedTabName());
         updateComboList("app", projectManager.getSelectedTabName());
-        
-        setComponentValuesFromIssue(this);
-        submitterText.setText(projectManager.getUserName());
+
+        setComponentValuesFromIssue(this); 
         setOpenCloseIssueBtnText();
         setIssueWindowMode();
         
@@ -1653,8 +1652,29 @@ public class IssueWindow extends JFrame {
         byte[] getcurrentdescriptiontextbytearray = getcurrentdescriptiontext.toByteArray();
         String rtfstring = getcurrentdescriptiontext.toString();
         String newrtfstring = rtfstring.substring(0,rtfstring.length()-2);
-
-        //System.out.println(newrtfstring);
+        
+       
+//        System.out.println(newrtfstring);
+//        int start = newrtfstring.indexOf("{\\colortbl");
+//        int stop = newrtfstring.indexOf("}", start);
+//        //find current color counts
+//        String colortable = newrtfstring.substring(start, stop);
+//        int index = 0 , count = 0;
+//        do {
+//            index  = colortable.indexOf("red", index);
+//            if ( index == -1 ) break;
+//            index += "red".length();
+//            count++;
+//        } while( true );
+//        
+//        if (colortable.indexOf("\\red0\\green51\\blue204") == -1){
+//            newrtfstring = newrtfstring.substring(0, stop) + "\\red0\\green51\\blue204;" + newrtfstring.substring(stop);
+//            
+//        }
+//       String newcolor = "\\cf" + count;     
+//        
+//        
+//        //System.out.println(newrtfstring);
 
         if (btnCloseIssue.getText().equalsIgnoreCase("close issue")) {
             // set dateClosed text field with date today
@@ -1663,20 +1683,23 @@ public class IssueWindow extends JFrame {
             versionText.setText(temperaryVersion);
             btnCloseIssue.setText("Reopen Issue");
 
-            newrtfstring = newrtfstring + "\n--- Issue Closed by "
-            + userName + " on " + today + "\\par";
+            newrtfstring = newrtfstring + "\n-- Issue Closed by "
+            + userName + " on " + today + " --\\par";
             newrtfstring = newrtfstring + "\n}";
 
         } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
-
-            newrtfstring = newrtfstring + "\n \n--- Issue reopened by "
-            + userName + " on " + today + " (version " + versionText.getText() + ")\\par";
-            newrtfstring = newrtfstring + "\n}";
+            
+            newrtfstring = newrtfstring + "\n \n-- Issue reopened by "
+                    
+            + userName + " on " + today + " (version " + versionText.getText() + ")" + " --\\par";
+            newrtfstring = newrtfstring + "\n}" ;
 
             versionText.setText("");
             dateClosedText.setText("");
             btnCloseIssue.setText("Close Issue");
         }
+        
+        System.out.println(newrtfstring);
 
         byte[] close_openrtfbytearray = newrtfstring.getBytes(Charset.forName("UTF-8"));
         InputStream close_openrtfstream = new ByteArrayInputStream(close_openrtfbytearray);
