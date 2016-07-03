@@ -1662,15 +1662,17 @@ public class IssueWindow extends JFrame {
             String temperaryVersion = "XXX";
             versionText.setText(temperaryVersion);
             btnCloseIssue.setText("Reopen Issue");
-
-            newrtfstring = newrtfstring + "\n--- Issue Closed by "
-            + userName + " on " + today + "\\par";
+            
+            System.out.println(newrtfstring);
+            
+            newrtfstring = newrtfstring + "\n -- \\cf1 Issue Closed by "
+            + userName + " on " + today + "\\cf0  --\\par";
             newrtfstring = newrtfstring + "\n}";
 
         } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
 
-            newrtfstring = newrtfstring + "\n \n--- Issue reopened by "
-            + userName + " on " + today + " (version " + versionText.getText() + ")\\par";
+            newrtfstring = newrtfstring + "\n \n -- \\cf1 Issue reopened by "
+            + userName + " on " + today + " (version " + versionText.getText() + ")\\cf0  --\\par";
             newrtfstring = newrtfstring + "\n}";
 
             versionText.setText("");
@@ -2070,12 +2072,14 @@ public class IssueWindow extends JFrame {
             String selectedtext = getselectedtext();
             String urlstring = selectedtext;
             String currentstring = getcurrentrtf();
+            
+            //System.out.println(currentstring);
+            
             String stringtosearch = "\\i\\ul\\cf2 " + selectedtext.substring(0,10);
             boolean checkformat = currentstring.contains(stringtosearch);
             
             if (!urlstring.contains("https") && !urlstring.contains("http")) {
                 String urlstringcheck = System.getProperty("user.dir");
-                System.out.println(urlstringcheck);
                 
                 if (urlstringcheck.contains("ELLE Prog 2015")) {
                     urlstring = "file://" + System.getProperty("user.dir") + urlstring;
@@ -2091,7 +2095,7 @@ public class IssueWindow extends JFrame {
             
             try {
                 URI uri = new URI(urlstring);
-                System.out.println(uri);
+                System.out.println("Opening " + uri);
                 
                 if (checkformat && uri != null) {
                     openWebpage(uri);
