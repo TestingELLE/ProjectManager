@@ -347,11 +347,11 @@ public class LoginWindow extends JFrame {
                                           + "\n Access denied!");
                 jLabel2.paintImmediately(jLabel2.getVisibleRect());
                 
-                JOptionPane.showMessageDialog(this, "You have not been authorized. Default as user.");
+                JOptionPane.showMessageDialog(this, "Logged in as default user.");
             }
             userName = userName.substring(7);
             System.out.println("userName: " + userName);
-            jLabel2.setText("Connect successfully!" + " userName: " + userName);
+            jLabel2.setText("connection successful!" + " userName: " + userName);
             jLabel2.paintImmediately(jLabel2.getVisibleRect());
 
             // create an projectManager object
