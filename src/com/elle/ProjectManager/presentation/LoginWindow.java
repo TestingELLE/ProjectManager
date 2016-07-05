@@ -336,7 +336,7 @@ public class LoginWindow extends JFrame {
         if(DBConnection.connect(selectedServer, selectedDB, userName, userPassword)){
             logWindow.addMessageWithDate("Connect successfully!");
             
-            jLabel2.setText("Connect successfully!");
+            jLabel2.setText("Connection successful!");
             jLabel2.paintImmediately(jLabel2.getVisibleRect());
             
             if(!Authorization.getInfoFromDB()){

@@ -706,12 +706,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemOfflineMode = new javax.swing.JCheckBoxMenuItem();
         menuEdit = new javax.swing.JMenu();
         menuItemManageDBs = new javax.swing.JMenuItem();
-        menuItemDeleteRecord = new javax.swing.JMenuItem();
-        menuItemArchiveRecord = new javax.swing.JMenuItem();
-        menuItemActivateRecord = new javax.swing.JMenuItem();
         menuItemManageALs = new javax.swing.JMenuItem();
-        menuFind = new javax.swing.JMenu();
-        menuReports = new javax.swing.JMenu();
+        menuItemDeleteRecord = new javax.swing.JMenuItem();
+        menuItemLoadDataFromTXT = new javax.swing.JMenuItem();
         menuView = new javax.swing.JMenu();
         menuItemLogChkBx = new javax.swing.JCheckBoxMenuItem();
         menuItemSQLCmdChkBx = new javax.swing.JCheckBoxMenuItem();
@@ -721,13 +718,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemReloadSelectedData = new javax.swing.JMenuItem();
         menuItemReloadData = new javax.swing.JMenuItem();
         menuItemReloadAllData = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
         menuItemMoveSeletedRowsToEnd = new javax.swing.JMenuItem();
         menuItemCompIssues = new javax.swing.JMenuItem();
         menuItemBackup = new javax.swing.JMenuItem();
         menuItemSyncLocalData = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         menuItemReconcileConflict = new javax.swing.JMenuItem();
-        menuItemLoadDataFromTXT = new javax.swing.JMenuItem();
         menuItemExportIssueToReference = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemRepBugSugg = new javax.swing.JMenuItem();
@@ -1242,32 +1240,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuEdit.add(menuItemManageDBs);
 
-        menuItemDeleteRecord.setText("Delete Record");
-        menuItemDeleteRecord.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemDeleteRecordActionPerformed(evt);
-            }
-        });
-        menuEdit.add(menuItemDeleteRecord);
-
-        menuItemArchiveRecord.setText("Archive Record");
-        menuItemArchiveRecord.setEnabled(false);
-        menuItemArchiveRecord.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemArchiveRecordActionPerformed(evt);
-            }
-        });
-        menuEdit.add(menuItemArchiveRecord);
-
-        menuItemActivateRecord.setText("Activate Record");
-        menuItemActivateRecord.setEnabled(false);
-        menuItemActivateRecord.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemActivateRecordActionPerformed(evt);
-            }
-        });
-        menuEdit.add(menuItemActivateRecord);
-
         menuItemManageALs.setText("Manage AccessLevels");
         menuItemManageALs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1276,14 +1248,23 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuEdit.add(menuItemManageALs);
 
+        menuItemDeleteRecord.setText("Delete Record");
+        menuItemDeleteRecord.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemDeleteRecordActionPerformed(evt);
+            }
+        });
+        menuEdit.add(menuItemDeleteRecord);
+
+        menuItemLoadDataFromTXT.setText("Import Data From TXT File");
+        menuItemLoadDataFromTXT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemLoadDataFromTXTActionPerformed(evt);
+            }
+        });
+        menuEdit.add(menuItemLoadDataFromTXT);
+
         menuBar.add(menuEdit);
-
-        menuFind.setText("Find");
-        menuBar.add(menuFind);
-
-        menuReports.setText("Reports");
-        menuReports.setEnabled(false);
-        menuBar.add(menuReports);
 
         menuView.setText("View");
 
@@ -1348,6 +1329,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemReloadAllData);
+        menuTools.add(jSeparator1);
 
         menuItemTurnEditModeOff.setText("Turn Edit Mode OFF");
         menuItemTurnEditModeOff.addActionListener(new java.awt.event.ActionListener() {
@@ -1388,6 +1370,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemSyncLocalData);
+        menuTools.add(jSeparator2);
 
         menuItemReconcileConflict.setText("Reconcile Conflict Issue");
         menuItemReconcileConflict.addActionListener(new java.awt.event.ActionListener() {
@@ -1396,14 +1379,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemReconcileConflict);
-
-        menuItemLoadDataFromTXT.setText("Import Data From TXT File");
-        menuItemLoadDataFromTXT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemLoadDataFromTXTActionPerformed(evt);
-            }
-        });
-        menuTools.add(menuItemLoadDataFromTXT);
 
         menuItemExportIssueToReference.setText("Export Issue To Reference");
         menuItemExportIssueToReference.addActionListener(new java.awt.event.ActionListener() {
@@ -2202,119 +2177,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
     }
-
-////    /**
-////     * jArchiveRecordActionPerformed
-////     *
-////     * @param evt
-////     */
-    private void menuItemArchiveRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemArchiveRecordActionPerformed
-
-//        int rowSelected = issuesTable.getSelectedRows().length;
-//        int[] rowsSelected = issuesTable.getSelectedRows();
-//        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//        Date date = new Date();
-//        String today = dateFormat.format(date);
-//
-//        // Delete Selected Records from Assignments
-//        if (rowSelected != -1) {
-//            for (int i = 0; i < rowSelected; i++) {
-//                String analyst = (String) issuesTable.getValueAt(rowsSelected[i], 2);
-//                Integer selectedTask = (Integer) issuesTable.getValueAt(rowsSelected[i], 0); // Add Note to selected taskID
-//                String sqlDelete = "UPDATE " + database + "." + issuesTable.getName() + " SET analyst = \"\",\n"
-//                        + " priority=null,\n"
-//                        + " dateAssigned= '" + today + "',"
-//                        + " dateDone=null,\n"
-//                        + " notes= \'Previous " + analyst + "' " + "where ID=" + selectedTask;
-//                try {
-//                    statement.executeUpdate(sqlDelete);
-//                } catch (SQLException e) {
-//                    LoggingAspect.afterThrown(ex);
-//                }
-//            }
-//        } else {
-//            JOptionPane.showMessageDialog(null, "Please, select one task!");
-//        }
-//        // Archive Selected Records in Assignments Archive
-//        if (rowSelected != -1) {
-//
-//            for (int i = 0; i < rowSelected; i++) {
-//                String sqlInsert = "INSERT INTO " + database + "." + issue_notesTable.getName() + " (symbol, analyst, priority, dateAssigned,dateDone,notes) VALUES (";
-//                int numRow = rowsSelected[i];
-//                for (int j = 1; j < issuesTable.getColumnCount() - 1; j++) {
-//                    if (issuesTable.getValueAt(numRow, j) == null) {
-//                        sqlInsert += null + ",";
-//                    } else {
-//                        sqlInsert += "'" + issuesTable.getValueAt(numRow, j) + "',";
-//                    }
-//                }
-//                if (issuesTable.getValueAt(numRow, issuesTable.getColumnCount() - 1) == null) {
-//                    sqlInsert += null + ")";
-//                } else {
-//                    sqlInsert += "'" + issuesTable.getValueAt(numRow, issuesTable.getColumnCount() - 1) + "')";
-//                }
-//                try {
-//                    statement.executeUpdate(sqlInsert);
-////                    logwind.addMessageWithDate(sqlInsert);
-//                } catch (SQLException e) {
-//                    LoggingAspect.afterThrown(ex);
-//                }
-//            }
-//            loadTableData(issuesTable);
-//            loadTableData(issue_notesTable);
-//            issuesTable.setRowSelectionInterval(rowsSelected[0], rowsSelected[rowSelected - 1]);
-//            JOptionPane.showMessageDialog(null, rowSelected + " Record(s) Archived!");
-//
-//        } else {
-//            JOptionPane.showMessageDialog(null, "Please, select one task!");
-//        }
-    }//GEN-LAST:event_menuItemArchiveRecordActionPerformed
-
-    /**
-     * jActivateRecordActionPerformed
-     *
-     * @param evt
-     */
-    private void menuItemActivateRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemActivateRecordActionPerformed
-
-//        int rowSelected = issue_notesTable.getSelectedRows().length;
-//        int[] rowsSelected = issue_notesTable.getSelectedRows();
-//        // Archive Selected Records in Assignments Archive
-//        if (rowSelected != -1) {
-//
-//            for (int i = 0; i < rowSelected; i++) {
-//                String sqlInsert = "INSERT INTO " + database + "." + issuesTable.getName() + "(symbol, analyst, priority, dateAssigned,dateDone,notes) VALUES ( ";
-//                int numRow = rowsSelected[i];
-//                for (int j = 1; j < issue_notesTable.getColumnCount() - 1; j++) {
-//                    if (issue_notesTable.getValueAt(numRow, j) == null) {
-//                        sqlInsert += null + ",";
-//                    } else {
-//                        sqlInsert += "'" + issue_notesTable.getValueAt(numRow, j) + "',";
-//                    }
-//                }
-//                if (issue_notesTable.getValueAt(numRow, issue_notesTable.getColumnCount() - 1) == null) {
-//                    sqlInsert += null + ")";
-//                } else {
-//                    sqlInsert += "'" + issue_notesTable.getValueAt(numRow, issue_notesTable.getColumnCount() - 1) + "')";
-//                }
-//                try {
-//                    statement.executeUpdate(sqlInsert);
-////                    ana.getLogWindow().addMessageWithDate(sqlInsert);
-//                } catch (SQLException e) {
-//                    LoggingAspect.afterThrown(ex);
-//                }
-//            }
-//
-//            issue_notesTable.setRowSelectionInterval(rowsSelected[0], rowsSelected[0]);
-//            loadTableData(issue_notesTable);
-//            loadTableData(issuesTable);
-//
-//            JOptionPane.showMessageDialog(null, rowSelected + " Record(s) Activated!");
-//
-//        } else {
-//            JOptionPane.showMessageDialog(null, "Please, select one task!");
-//        }
-    }//GEN-LAST:event_menuItemActivateRecordActionPerformed
 
     /**
      * jCheckBoxMenuItemViewLogActionPerformed
@@ -4198,11 +4060,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         comboBoxField.setEnabled(disable);
         menuEdit.setEnabled(disable);
         menuFile.setEnabled(disable);
-        menuFind.setEnabled(disable);
         menuHelp.setEnabled(disable);
         menuView.setEnabled(disable);
         menuTools.setEnabled(disable);
-        menuReports.setEnabled(disable);
         searchPanel.setEnabled(disable);
 
         String tabName = getSelectedTabName();
@@ -4840,6 +4700,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JTextArea jTextAreaSQL;
     private javax.swing.JLabel labelEditMode;
     private javax.swing.JLabel labelEditModeState;
@@ -4848,11 +4710,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuEdit;
     private javax.swing.JMenu menuFile;
-    private javax.swing.JMenu menuFind;
     private javax.swing.JMenu menuHelp;
     private javax.swing.JMenuItem menuItemAWSAssign;
-    private javax.swing.JMenuItem menuItemActivateRecord;
-    private javax.swing.JMenuItem menuItemArchiveRecord;
     private javax.swing.JMenuItem menuItemBackup;
     private javax.swing.JMenuItem menuItemCompIssues;
     private javax.swing.JMenuItem menuItemDeleteRecord;
@@ -4878,7 +4737,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemVersion;
     private javax.swing.JMenuItem menuItemViewSplashScreen;
     private javax.swing.JMenu menuPrint;
-    private javax.swing.JMenu menuReports;
     private javax.swing.JMenu menuSelectConn;
     private javax.swing.JMenu menuTools;
     private javax.swing.JMenu menuView;
@@ -5120,24 +4978,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return menuFile;
     }
 
-    public JMenu getMenuFind() {
-        return menuFind;
-    }
-
     public JMenu getMenuHelp() {
         return menuHelp;
     }
 
     public JMenuItem getMenuItemAWSAssign() {
         return menuItemAWSAssign;
-    }
-
-    public JMenuItem getMenuItemActivateRecord() {
-        return menuItemActivateRecord;
-    }
-
-    public JMenuItem getMenuItemArchiveRecord() {
-        return menuItemArchiveRecord;
     }
 
     public JMenuItem getMenuItemCompIssues() {
@@ -5202,10 +5048,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public JMenu getMenuPrint() {
         return menuPrint;
-    }
-
-    public JMenu getMenuReports() {
-        return menuReports;
     }
 
     public JMenu getMenuSelectConn() {
