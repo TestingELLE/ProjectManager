@@ -351,7 +351,7 @@ public class LoginWindow extends JFrame {
             }
             userName = userName.substring(7);
             System.out.println("userName: " + userName);
-            jLabel2.setText("Connect successfully!" + " userName: " + userName);
+            jLabel2.setText("connection successful!" + " userName: " + userName);
             jLabel2.paintImmediately(jLabel2.getVisibleRect());
 
             // create an projectManager object

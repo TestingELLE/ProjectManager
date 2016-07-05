@@ -406,8 +406,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.setMinimumSize(new Dimension(1000, 550));
         
         
+        //set up the menuItem for manage accessLevels
+        if (!Authorization.getAccessLevel().equals("administrator")) menuItemManageALs.setEnabled(false);
+        else menuItemManageALs.setEnabled(true);
         
-
         this.pack();
 
         // authorize user for this component
@@ -704,6 +706,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemOfflineMode = new javax.swing.JCheckBoxMenuItem();
         menuEdit = new javax.swing.JMenu();
         menuItemManageDBs = new javax.swing.JMenuItem();
+        menuItemManageALs = new javax.swing.JMenuItem();
         menuItemDeleteRecord = new javax.swing.JMenuItem();
         menuItemLoadDataFromTXT = new javax.swing.JMenuItem();
         menuView = new javax.swing.JMenu();
@@ -956,7 +959,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanelEditLayout.setVerticalGroup(
             jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelEditLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(12, Short.MAX_VALUE)
                 .addGroup(jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelEditMode)
                     .addComponent(labelEditModeState)
@@ -1134,7 +1137,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch)
-                .addGap(0, 96, Short.MAX_VALUE))
+                .addGap(0, 197, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1167,7 +1170,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+            .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 63, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
@@ -1236,6 +1239,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuEdit.add(menuItemManageDBs);
+
+        menuItemManageALs.setText("Manage AccessLevels");
+        menuItemManageALs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemManageALsActionPerformed(evt);
+            }
+        });
+        menuEdit.add(menuItemManageALs);
 
         menuItemDeleteRecord.setText("Delete Record");
         menuItemDeleteRecord.addActionListener(new java.awt.event.ActionListener() {
@@ -2447,12 +2458,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         int[] selectedRows = table.getSelectedRows(); // array of the rows selected
         
         int rowCount = selectedRows.length; // the number of rows selected
-        ArrayList<Integer> authorizedRows = new ArrayList();
+        ArrayList<Integer> authorizedRows = new ArrayList(); //rows eligible for deletion
+        ArrayList<Integer> activeIssues = new ArrayList(); //selected issues which are opened already (have a issuewindow)
         if (rowCount != -1) {
             ids = new int[rowCount];
             for (int i = 0, j=0; i < rowCount; i++) {
                 int row = selectedRows[i];
                 Integer selectedID = (Integer) table.getValueAt(row, 0); // Add Note to selected taskID
+                //check if selected issues are opened, if yes, prevent from removal
+                if(openingIssuesList.keySet().contains(table.getName()+selectedID.toString())) {
+                    activeIssues.add(selectedID);
+                    continue;
+                }
+                
                 String type = (String) table.getValueAt(row, 9);
                 if (Authorization.getAccessLevel().equals("administrator") || type.equals("TEST ISSUE")) {
                     ids[j++] = selectedID;
@@ -2517,6 +2535,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         else{
             // no rows are selected
         }
+        
+        if (activeIssues.size() >0) {
+            String msg = activeIssues.size() > 1 ? "Issues " + activeIssues.toString() +" are currently active . " :
+                                                   "Issue " + activeIssues.toString() +" is currently active .";
+            JOptionPane.showMessageDialog(this,
+                    msg + "\nPlease close the issue window before deletion",
+                    "Error Message",
+                    JOptionPane.ERROR_MESSAGE);
+            
+            openingIssuesList.get(table.getName() + activeIssues.get(0).toString()).toFront();
+        }
+        
     }//GEN-LAST:event_menuItemDeleteRecordActionPerformed
 
     private int[] convertToArray(ArrayList<Integer> input) {
@@ -2810,6 +2840,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
         
     }//GEN-LAST:event_menuItemExportIssueToReferenceActionPerformed
+
+    private void menuItemManageALsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemManageALsActionPerformed
+        // TODO add your handling code here:
+        EditAccessLevelsWindow alWindow = new EditAccessLevelsWindow();
+        alWindow.setLocation(200,200);
+        alWindow.setVisible(true);
+    }//GEN-LAST:event_menuItemManageALsActionPerformed
 
     private int[] getSelectedIssuesId() {
         String tabName = getSelectedTabName();
@@ -4682,6 +4719,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemLoadDataFromTXT;
     private javax.swing.JCheckBoxMenuItem menuItemLogChkBx;
     private javax.swing.JMenuItem menuItemLogOff;
+    private javax.swing.JMenuItem menuItemManageALs;
     private javax.swing.JMenuItem menuItemManageDBs;
     private javax.swing.JMenuItem menuItemMoveSeletedRowsToEnd;
     private javax.swing.JCheckBoxMenuItem menuItemOfflineMode;
@@ -5305,7 +5343,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         
        
 	DefaultTableModel model = (DefaultTableModel)table.getModel();
-        for(int i = 0; i< rows.size(); i++) {
+        for(int i = rows.size()-1; i>=0; i--) {
                 int row = table.convertRowIndexToModel(rows.get(i)); 
                 model.removeRow(row);
                 //the selection is automatically deleted after row removed from model.
