@@ -7,9 +7,19 @@ package com.elle.ProjectManager.entities;
  * @since  May 12, 2016
  */
 public class AccessLevel {
-
+    private int id;
     private String user;
     private String accessLevel;
+    
+    public AccessLevel(){
+        
+    }
+    
+    public AccessLevel(int id, String user, String accessLevel) {
+        this.id = id;
+        this.user = user;
+        this.accessLevel = accessLevel;
+    }
 
     public String getUser() {
         return user;
@@ -25,6 +35,14 @@ public class AccessLevel {
 
     public void setAccessLevel(String accessLevel) {
         this.accessLevel = accessLevel;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
     
     
