@@ -2,12 +2,16 @@ package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.dao.IssueDAO;
+import com.elle.ProjectManager.dao.ReferenceDAO;
+import com.elle.ProjectManager.dao.AbstractDAO;
 import com.elle.ProjectManager.entities.Issue;
+import com.elle.ProjectManager.logic.CustomComboBoxRenderer;
 import com.elle.ProjectManager.logic.OfflineIssueManager;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
@@ -19,12 +23,15 @@ import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,6 +48,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -84,8 +92,11 @@ public class IssueWindow extends JFrame {
     private JTable table;
     private int row;
     private IssueDAO dao;
+    private ReferenceDAO refDao;
     private boolean addIssueMode;
+    private boolean refIssueMode;
     private OfflineIssueManager mgr;
+    private String previousValue= "";
 
     IssueWindow(int i, JTable selectedTable) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -424,6 +435,7 @@ public class IssueWindow extends JFrame {
     }
     private ShortCutSetting ShortCutSetting;
     private String[] dropdownlist = {"app","title", "description","programmer", "dateOpened", "rk", "version", "dateClosed"};
+    private String[] refDropdownlist = {"title", "description","programmer", "dateOpened"};
     private Map<String, Tab> tabs;       // used to update the records label
 
     /**
@@ -435,16 +447,28 @@ public class IssueWindow extends JFrame {
         this.table = table;
         this.row = row;
         dao = new IssueDAO();
+        refDao = new ReferenceDAO();
         issue = new Issue();
         mgr = projectManager.offlineIssueMgr;
+        
+        if(table.getName().equals("References")) {
+            refIssueMode = true;
+        }
 
         // new issue initialization, including set app, dateopened and 
         if (this.row == -1) {
             addIssueMode = true;
             issue.setId(-1);
-            issue.setApp(projectManager.getSelectedTabName());
+            if(!refIssueMode) {
+                issue.setApp(projectManager.getSelectedTabName());
+                issue.setSubmitter(projectManager.getUserName());
+                issue.setIssueType("TEST ISSUE");
+                
+            }
+            else issue.setIssueType("REFERENCE");
             issue.setDateOpened(todaysDate());
-            issue.setSubmitter(projectManager.getUserName());
+            
+            
         } 
         // existing issue
         else {
@@ -467,6 +491,7 @@ public class IssueWindow extends JFrame {
                         issue.setIssueType(issueindb.getIssueType());
                         issue.setSubmitter(issueindb.getSubmitter());
                         issue.setLocked(issueindb.getLocked());
+                        issue.setLastmodtime(issueindb.getLastmodtime());
                         System.out.println(issueindb.getLocked());
                     }
                 }
@@ -474,39 +499,21 @@ public class IssueWindow extends JFrame {
         }
        
         initComponents();
-        submitterText.setText(projectManager.getUserName());
         
-        setComponentValuesFromIssue(this);
+        if(!refIssueMode) {
+            setUpIssueWindow();
+        }
         
-        /**
-         * Add all JTextComponents to add document listener, input mappings,
-         * and shortcuts.
-         * Note: ComboBox and CheckBox components can use the action event.
-         * You can double click it on the designer to create one for it.
-         * You can reference one that exists for help with the code if needed.
-         */
-        ArrayList<JTextComponent> textComponentList = new ArrayList<>();
-        textComponentList.add(submitterText);
-        textComponentList.add(dateOpenedText);
+        else{
+            setUpRefIssueWindow();
+        }
         
-        textComponentList.add(titleText);
-        textComponentList.add(rtftext);
-   
-        textComponentList.add(dateClosedText);
-        textComponentList.add(versionText);
-        addDocumentListener(textComponentList);
-        addInputMappingsAndShortcuts(textComponentList);
-        updateComboList("programmer", projectManager.getSelectedTabName());
-        updateComboList("rk", projectManager.getSelectedTabName());
-        updateComboList("app", projectManager.getSelectedTabName());
         
-        setComponentValuesFromIssue(this);
         
-        setOpenCloseIssueBtnText();
-        setIssueWindowMode();
        
-
         this.setTitle("Issue in " + table.getName());
+        
+        
         
         // get current monitor resolution.height
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -540,6 +547,109 @@ public class IssueWindow extends JFrame {
         
         Authorization.authorize(this);
     }
+    
+    
+    private void setUpIssueWindow() throws IOException, BadLocationException{
+        //implement the logic for disabling 'test issue' or not
+        //if not in new issue mode, if not admin, and not test issue, disable the "test issue".
+        if (projectManager.isOnline() && !addIssueMode && !issue.getIssueType().equals(comboBoxIssueType.getItemAt(3)) &&
+                !Authorization.getAccessLevel().equals("administrator")) {
+            CustomComboBoxRenderer customRenderer = new CustomComboBoxRenderer();
+            DefaultListSelectionModel model = new DefaultListSelectionModel();
+            model.addSelectionInterval(0, 2);
+            customRenderer.setEnabledItems(model);
+            comboBoxIssueType.setRenderer(customRenderer);
+           //previousValue is defined as the issuewindow class data member, 
+            //thus it can stay as long as the issue window stays
+            //therefore be available to the comboBox all the time
+            //you can not define it as local variable
+            previousValue = (String)comboBoxIssueType.getSelectedItem();
+            comboBoxIssueType.addActionListener (new ActionListener () {
+                    public void actionPerformed(ActionEvent e) {
+                        if (comboBoxIssueType.getSelectedIndex() == 3) {
+                            comboBoxIssueType.setSelectedItem(previousValue);
+                        }
+                        else{
+                            previousValue = (String)comboBoxIssueType.getSelectedItem();
+                        }
+                            
+                    }
+            });
+            
+        } 
+        
+
+        
+        /**
+         * Add all JTextComponents to add document listener, input mappings,
+         * and shortcuts.
+         * Note: ComboBox and CheckBox components can use the action event.
+         * You can double click it on the designer to create one for it.
+         * You can reference one that exists for help with the code if needed.
+         */
+        ArrayList<JTextComponent> textComponentList = new ArrayList<>();
+        textComponentList.add(submitterText);
+        textComponentList.add(dateOpenedText);
+        
+        textComponentList.add(titleText);
+        textComponentList.add(rtftext);
+   
+        textComponentList.add(dateClosedText);
+        textComponentList.add(versionText);
+        addDocumentListener(textComponentList);
+        addInputMappingsAndShortcuts(textComponentList);
+        updateComboList("programmer", projectManager.getSelectedTabName());
+        updateComboList("rk", projectManager.getSelectedTabName());
+        updateComboList("app", projectManager.getSelectedTabName());
+        
+        setComponentValuesFromIssue(this);
+
+        setOpenCloseIssueBtnText();
+        setIssueWindowMode();
+        
+    }
+    
+    private void setUpRefIssueWindow() throws IOException, BadLocationException{
+        
+        /**
+         * Add all JTextComponents to add document listener, input mappings,
+         * and shortcuts.
+         * Note: ComboBox and CheckBox components can use the action event.
+         * You can double click it on the designer to create one for it.
+         * You can reference one that exists for help with the code if needed.
+         */
+        ArrayList<JTextComponent> textComponentList = new ArrayList<>();
+        //textComponentList.add(submitterText);
+        textComponentList.add(dateOpenedText);
+        
+        textComponentList.add(titleText);
+        textComponentList.add(rtftext);
+   
+        //textComponentList.add(dateClosedText);
+        //textComponentList.add(versionText);
+        addDocumentListener(textComponentList);
+        addInputMappingsAndShortcuts(textComponentList);
+        updateComboList("programmer", projectManager.getSelectedTabName());
+        
+        setComponentValuesFromIssue(this);
+        
+        setIssueWindowMode();
+        //hide components
+        comboBoxIssueType.setVisible(false);
+        submitter.setVisible(false);
+        submitterText.setVisible(false);
+        rk.setVisible(false);
+        rkComboBox.setVisible(false);
+        app.setVisible(false);
+        appComboBox.setVisible(false);
+        btnCloseIssue.setVisible(false);
+        dateClosed.setVisible(false);
+        dateClosedText.setVisible(false);
+        version.setVisible(false);
+        versionText.setVisible(false);
+        
+    }
+    
 
     /**
      * Displays the components accordingly 
@@ -603,7 +713,7 @@ public class IssueWindow extends JFrame {
         id = new javax.swing.JLabel();
         lockCheckBox = new javax.swing.JCheckBox();
         jPanel7 = new javax.swing.JPanel();
-        comboBoxIssueType = new javax.swing.JComboBox<>();
+        comboBoxIssueType = new javax.swing.JComboBox<String>();
         submitter = new javax.swing.JLabel();
         submitterText = new javax.swing.JTextField();
         dateOpenedText = new javax.swing.JTextField();
@@ -628,6 +738,7 @@ public class IssueWindow extends JFrame {
         B_Bold = new javax.swing.JButton();
         colorButton1 = new javax.swing.JButton();
         Plain = new javax.swing.JButton();
+        Hyperlink = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -859,7 +970,7 @@ public class IssueWindow extends JFrame {
 
         jPanel7.setLayout(new java.awt.GridBagLayout());
 
-        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE" }));
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE", "TEST ISSUE" }));
         comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxIssueTypeActionPerformed(evt);
@@ -1028,7 +1139,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 9;
+        gridBagConstraints.gridx = 10;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         jPanel5.add(BtnNext, gridBagConstraints);
@@ -1045,7 +1156,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridx = 9;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
         gridBagConstraints.weightx = 1.0;
@@ -1066,11 +1177,14 @@ public class IssueWindow extends JFrame {
         jScrollPane1.setVerticalScrollBar(jScrollBar1);
 
         rtftext.setContentType("text/rtf"); // NOI18N
-        rtftext.setDragEnabled(true);
-        rtftext.setMargin(new java.awt.Insets(0, 0, 0, 0));
         rtftext.setMinimumSize(new java.awt.Dimension(25, 25));
         rtftext.setPreferredSize(new java.awt.Dimension(100, 98));
-        rtftext.setRequestFocusEnabled(false);
+        rtftext.setRequestFocusEnabled(true);
+        rtftext.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rtftextMouseClicked(evt);
+            }
+        });
         rtftext.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 rtftextKeyReleased(evt);
@@ -1081,7 +1195,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 10;
+        gridBagConstraints.gridwidth = 11;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -1206,11 +1320,29 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
         jPanel5.add(Plain, gridBagConstraints);
+
+        Hyperlink.setText("H");
+        Hyperlink.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Hyperlink.setMargin(new java.awt.Insets(1, 2, 0, 2));
+        Hyperlink.setMaximumSize(new java.awt.Dimension(16, 16));
+        Hyperlink.setMinimumSize(new java.awt.Dimension(16, 16));
+        Hyperlink.setPreferredSize(new java.awt.Dimension(16, 16));
+        Hyperlink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HyperlinkActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
+        jPanel5.add(Hyperlink, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1530,15 +1662,17 @@ public class IssueWindow extends JFrame {
             String temperaryVersion = "XXX";
             versionText.setText(temperaryVersion);
             btnCloseIssue.setText("Reopen Issue");
-
-            newrtfstring = newrtfstring + "\n--- Issue Closed by "
-            + userName + " on " + today + "\\par";
+            
+            System.out.println(newrtfstring);
+            
+            newrtfstring = newrtfstring + "\n -- \\cf1 Issue Closed by "
+            + userName + " on " + today + "\\cf0  --\\par";
             newrtfstring = newrtfstring + "\n}";
 
         } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
 
-            newrtfstring = newrtfstring + "\n \n--- Issue reopened by "
-            + userName + " on " + today + " (version " + versionText.getText() + ")\\par";
+            newrtfstring = newrtfstring + "\n \n -- \\cf1 Issue reopened by "
+            + userName + " on " + today + " (version " + versionText.getText() + ")\\cf0  --\\par";
             newrtfstring = newrtfstring + "\n}";
 
             versionText.setText("");
@@ -1572,12 +1706,13 @@ public class IssueWindow extends JFrame {
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
         setIssueValuesFromComponents();
         int originalId = issue.getId();
+        AbstractDAO dbDAO = (issue.getIssueType().equals("REFERENCE"))?refDao:dao;
         
         
         if (projectManager.isOnline()) {
             //if it is offline updated issue, reset id by -9000
             if (originalId > 9000) issue.setId(originalId - 9000);
-            boolean onlineUpdateSuccess =  issue.getId() > 0 ? dao.update(issue) :  dao.insert(issue);
+            boolean onlineUpdateSuccess =  issue.getId() > 0 ? dbDAO.update(issue) :  dbDAO.insert(issue);
             if(onlineUpdateSuccess){
                 if (originalId < 0) {try {
                     //for new issues
@@ -1608,12 +1743,22 @@ public class IssueWindow extends JFrame {
                     } catch (BadLocationException ex) {
                         Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    //update the orange dot issue
-                    if (tabs.get(issue.getApp()) == null) {
-                        projectManager.detectOpenIssues(tabs.get("Other"));
-                    } else {
-                        projectManager.detectOpenIssues(tabs.get(issue.getApp())); 
+                    //update the orange dot issue 
+                    
+                    if(!issue.getIssueType().equals("REFERENCE")){
+                        ArrayList<String> apps = new ArrayList();
+                        apps.add("PM");
+                        apps.add("Analyster");
+                        apps.add("ELLE_GUI");
+                    
+                        if(apps.contains(issue.getApp())) {
+                            projectManager.detectOpenIssues(tabs.get(issue.getApp()));
+                        } else {
+                            projectManager.detectOpenIssues(tabs.get("Other"));
+                        }
+                        
                     }
+                    
 
                 }
               
@@ -1723,8 +1868,17 @@ public class IssueWindow extends JFrame {
        
         setIssueValuesFromComponents();
         int originalId = issue.getId();
+        AbstractDAO DAO = dao; 
         
-        if (projectManager.isOnline() && dao.insert(issue)) {
+        if(refIssueMode) {
+            DAO = refDao;
+            System.out.println("accessing refdao");
+                    
+        }
+            
+        
+        
+        if (projectManager.isOnline() && DAO.insert(issue)) {
             
             try {
                 projectManager.insertTableRow(table,issue);
@@ -1906,7 +2060,135 @@ public class IssueWindow extends JFrame {
         Action b = new getplaintext();
         b.actionPerformed(evt);
     }//GEN-LAST:event_PlainActionPerformed
+
+    private void HyperlinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HyperlinkActionPerformed
+        Action b = new seturltextformat();
+        b.actionPerformed(evt);
+    }//GEN-LAST:event_HyperlinkActionPerformed
+
+    private void rtftextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rtftextMouseClicked
+        if (evt.isControlDown()) {
+
+            String selectedtext = getselectedtext();
+            String urlstring = selectedtext;
+            String currentstring = getcurrentrtf();
+            
+            //System.out.println(currentstring);
+            
+            String stringtosearch = "\\i\\ul\\cf2 " + selectedtext.substring(0,10);
+            boolean checkformat = currentstring.contains(stringtosearch);
+            
+            if (!urlstring.contains("https") && !urlstring.contains("http")) {
+                String urlstringcheck = System.getProperty("user.dir");
+                
+                if (urlstringcheck.contains("ELLE Prog 2015")) {
+                    urlstring = "file://" + System.getProperty("user.dir") + urlstring;
+                    urlstring = urlstring.replace(" ","%20");
+                    System.out.println(urlstring);
+                } else {                   
+                    urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + urlstring;
+                    urlstring = urlstring.replace(" ","%20");
+                }
+            } else {
+                urlstring = urlstring.replaceAll("\\s","");
+            }
+            
+            try {
+                URI uri = new URI(urlstring);
+                System.out.println("Opening " + uri);
+                
+                if (checkformat && uri != null) {
+                    openWebpage(uri);
+                } else {
+                    System.out.println("Not a link!");
+                }
+
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_rtftextMouseClicked
+        
+    public static void openWebpage(URI uri) {
+        
+       if (!Desktop.isDesktopSupported()) return;
+
+	Desktop desktop = Desktop.getDesktop();
+
+	if (!desktop.isSupported(Desktop.Action.BROWSE)) return;
+
+	try {
+		desktop.browse(uri);
+	} catch (Exception e) {
+
+	}
+        
+    }
     
+    public class seturltextformat extends StyledEditorKit.StyledTextAction {
+
+        private seturltextformat() {
+            super("Set the hyperlink format!");        
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JEditorPane editor = getEditor(e);
+            if (editor != null) {
+                SimpleAttributeSet sas = new SimpleAttributeSet();
+                StyleConstants.setUnderline(sas, true);
+                StyleConstants.setForeground(sas, Color.BLUE);
+                StyleConstants.setItalic(sas, true);
+                setCharacterAttributes(editor, sas, true);
+            }
+        }
+    }
+    
+    public String seturl() {
+        JFrame frame = new JFrame("URL/File Directory");
+        String urlorfiledirectory = JOptionPane.showInputDialog(frame, "URL/File Directory:");
+        return urlorfiledirectory;
+    }
+    
+    public String getselectedtext() {
+        String selectedtext = rtftext.getSelectedText();
+        return selectedtext;
+    }
+    
+    public String modifyrtfforhyperlink() {
+        
+        ByteArrayOutputStream getcurrentdescriptiontext = new ByteArrayOutputStream();
+
+        try {
+            rtftext.getEditorKit().write(getcurrentdescriptiontext, rtftext.getDocument(), 0, rtftext.getDocument().getLength());
+        } catch (IOException | BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String rtfstring = getcurrentdescriptiontext.toString();
+        /*
+        //String newrtfstringtoreplace = "{\\field {\\*\\fldinst HYPERLINK \\\\l \"" + urlstrings + "\"}{\\fldrslt " + selectedstring + "}}";
+        String newrtfstringtoreplace = "{\\*\\fldinst HYPERLINK " + selectedstring + "\"" + urlstrings + "\"} " + selectedstring;
+        String newrtfstring = rtfstring.replace(selectedstring, newrtfstringtoreplace);
+        */
+        return rtfstring;
+    }
+    
+    public String getcurrentrtf () {
+        
+        ByteArrayOutputStream getcurrentdescriptiontext = new ByteArrayOutputStream();
+        
+        try {
+            rtftext.getEditorKit().write(getcurrentdescriptiontext, rtftext.getDocument(), 0, rtftext.getDocument().getLength());
+        } catch (IOException | BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String rtfstring = getcurrentdescriptiontext.toString();
+
+        return rtfstring;
+    }
+
     public class getplaintext extends StyledEditorKit.StyledTextAction {
 
         private getplaintext() {
@@ -2164,7 +2446,7 @@ public class IssueWindow extends JFrame {
         if (addIssueMode) {
             projectManager.setAddIssueWindowShow(false);
         } else {
-            projectManager.getOpeningIssuesList().remove(issue.getId(), this);
+            projectManager.getOpeningIssuesList().remove(table.getName()+ issue.getId(), this);
             projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
             projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
         }
@@ -2368,6 +2650,7 @@ public class IssueWindow extends JFrame {
         dateClosedText.setText(issue.getDateClosed());
         comboBoxIssueType.setSelectedItem(issue.getIssueType());
         submitterText.setText(issue.getSubmitter());
+        lastmodTime.setText(issue.getLastmodtime());
         //lockCheckBox.setSelected(issue.getLocked().equals("Y"));
         
         setOpenCloseIssueBtnText(); // set button text to Open/Close issue
@@ -2441,7 +2724,7 @@ public class IssueWindow extends JFrame {
 
     private void setOpenCloseIssueBtnText() {
         //set close issue btn property
-        if (dateClosedText.getText().isEmpty() || versionText.getText().isEmpty()) {
+        if (dateClosedText.getText().isEmpty() && versionText.getText().isEmpty()) {
             btnCloseIssue.setText("Close Issue");
         } else {
             btnCloseIssue.setText("Reopen Issue");
@@ -2499,7 +2782,12 @@ public class IssueWindow extends JFrame {
    
         Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
         if (!selectedTabName.equalsIgnoreCase("issue_files")) {
-            for (String searchField : dropdownlist) {
+            String[] currList = dropdownlist;
+            if (selectedTabName.equalsIgnoreCase("references")) {
+                currList = refDropdownlist;
+            }
+            
+            for (String searchField : currList) {
 
                 for (int i = 0; i < tab.getTable().getColumnCount(); i++) {
                     if (tab.getTable().getColumnName(i).equalsIgnoreCase(searchField)) {
@@ -2710,6 +2998,7 @@ public class IssueWindow extends JFrame {
     private javax.swing.JButton BtnNext;
     private javax.swing.JButton BtnPrevious;
     private javax.swing.JButton Fsize;
+    private javax.swing.JButton Hyperlink;
     private javax.swing.JButton Italic;
     private javax.swing.JButton Plain;
     private javax.swing.JButton StrikethroughBotton;

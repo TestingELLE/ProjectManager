@@ -89,7 +89,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     //tables 
     //added category 'test issue' - by Yi 
-    private String[] tableNames = {"PM", "ELLEGUI", "Analyster", "Other", TASKFILES_TABLE_NAME};
+    private String[] tableNames = {"PM", "ELLEGUI", "Analyster", "Other", TASKS_TABLE_NAME};
 
     // components
     private static ProjectManagerWindow instance;
@@ -180,7 +180,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
             //tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
 
-            if (!tableNames[tableName].equals(TASKFILES_TABLE_NAME)) {
+            if (!tableNames[tableName].equals(TASKS_TABLE_NAME)) {
                 
                 if(tableNames[tableName].equalsIgnoreCase("other")){
                     // set the search fields for the comboBox for each tabName
@@ -203,8 +203,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 
                 }
             } else {
-                tabs.get(tableNames[tableName]).setSearchFields(TASKFILES_SEARCH_FIELDS);
-                tabs.get(tableNames[tableName]).setBatchEditFields(TASKFILES_BATCHEDIT_CB_FIELDS);
+                tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS);
+                tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
                 tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_REPORTS);
             }
 //        tabs.get(TASKNOTES_TABLE_NAME).setSearchFields(TASKNOTES_SEARCH_FIELDS);
@@ -274,7 +274,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[2]).setTable(AnalysterTable);
         tabs.get(tableNames[3]).setTable(OtherTable);
 
-        tabs.get(TASKFILES_TABLE_NAME).setTable(issue_filesTable);
+        tabs.get(TASKS_TABLE_NAME).setTable(issue_filesTable);
         
 //        tabs.get(TASKNOTES_TABLE_NAME).setTable(issue_notesTable);
 
@@ -287,7 +287,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[2]).setTableColNames(AnalysterTable);
         tabs.get(tableNames[3]).setTableColNames(OtherTable);
 
-        tabs.get(TASKFILES_TABLE_NAME).setTableColNames(issue_filesTable);
+        tabs.get(TASKS_TABLE_NAME).setTableColNames(issue_filesTable);
         
 //        tabs.get(TASKNOTES_TABLE_NAME).setTableColNames(issue_notesTable);
 
@@ -295,7 +295,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         // this sets the KeyboardFocusManger
         setKeyboardFocusManager(this);
-        if (!getSelectedTabName().equals(TASKFILES_TABLE_NAME)) {
+        if (!getSelectedTabName().equals(TASKS_TABLE_NAME)) {
             btnAddIssue.setText("Add issue to " + getSelectedTabName());
         } else {
             btnAddIssue.setText("Add " + getSelectedTabName());
@@ -327,7 +327,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[3]).setCustomIdList(new CustomIDList());
        
 
-        tabs.get(TASKFILES_TABLE_NAME).setFilter(new TableFilter(issue_filesTable));
+        tabs.get(TASKS_TABLE_NAME).setFilter(new TableFilter(issue_filesTable));
 //        tabs.get(TASKNOTES_TABLE_NAME).setFilter(new TableFilter(issue_notesTable));
 
         // initialize columnPopupMenu 
@@ -348,9 +348,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         
         
 
-        tabs.get(TASKFILES_TABLE_NAME)
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKFILES_TABLE_NAME).
-                                getFilter(), tabs.get(TASKFILES_TABLE_NAME).getCustomIdList()));
+        tabs.get(TASKS_TABLE_NAME)
+                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKS_TABLE_NAME).
+                                getFilter(), tabs.get(TASKS_TABLE_NAME).getCustomIdList()));
 //        tabs.get(TASKNOTES_TABLE_NAME)
 //                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKNOTES_TABLE_NAME).getFilter()));
         comboBoxStartToSearch = false;
@@ -377,7 +377,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[3]).setCellRenderer(new JTableCellRenderer(OtherTable));
        
 
-        tabs.get(TASKFILES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_filesTable));
+        tabs.get(TASKS_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_filesTable));
     //    tabs.get(TASKNOTES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_notesTable));
 
         
@@ -403,7 +403,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[3]).setTableData(new ModifiedTableData(OtherTable));
         
 
-        tabs.get(TASKFILES_TABLE_NAME).setTableData(new ModifiedTableData(issue_filesTable));
+        tabs.get(TASKS_TABLE_NAME).setTableData(new ModifiedTableData(issue_filesTable));
 //        tabs.get(TASKNOTES_TABLE_NAME).setTableData(new ModifiedTableData(issue_notesTable));
 
         // set all the tabs initially not in editing mode
@@ -2009,7 +2009,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
  * COMMENTED THIS OUT BECAUSE THIS BEHAVIOR MAY NO LONGER BE USED FOR THE
  * TASKFILES_TABLE
  */
-//        if (tabName.equals(TASKFILES_TABLE_NAME)) {
+//        if (tabName.equals(TASKS_TABLE_NAME)) {
 //            String str = tabName;
 //            if (currentTabName.equals("PM") || currentTabName.equals("ELLEGUI") || currentTabName.equals("Analyster")) {
 //                str = str + " WHERE app = " + "'" + currentTabName + "'";
@@ -2107,7 +2107,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             labelEditModeState.setVisible(false);
             editModeTextColor(true);
         }
-        if (!getSelectedTabName().equals(TASKFILES_TABLE_NAME)) {
+        if (!getSelectedTabName().equals(TASKS_TABLE_NAME)) {
             btnAddIssue.setText("Add issue to " + getSelectedTabName());
         } else {
             btnAddIssue.setText("Add " + getSelectedTabName());
@@ -2729,7 +2729,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
             }
             
-            if (tableName.equals(TASKFILES_TABLE_NAME)) {
+            if (tableName.equals(TASKS_TABLE_NAME)) {
                 if (online) {
                     issueFileDAO.delete(table);
                 }
@@ -3620,7 +3620,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     ////            } else {
     ////                tableCellPopupWindow.windowClose();
     //            }
-    //        } else if (selectedTable.getName().equals(TASKFILES_TABLE_NAME)) {
+    //        } else if (selectedTable.getName().equals(TASKS_TABLE_NAME)) {
     //            if (selectedTable.getColumnName(selectedColumn).equals("files")
     //                    || selectedTable.getColumnName(selectedColumn).equals("notes")
     //                    || selectedTable.getColumnName(selectedColumn).equals("path")) {
@@ -3673,7 +3673,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         DBConnection.open();
         statement = DBConnection.getStatement();
         String sql;
-        if (!table.getName().equals(TASKFILES_TABLE_NAME)) {
+        if (!table.getName().equals(TASKS_TABLE_NAME)) {
             sql = "SELECT * FROM " + str
                     + "CASE WHEN dateClosed IS NULL THEN 1 ELSE 0 END END, dateClosed asc, taskID ASC";
         } else {
@@ -3882,7 +3882,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
 
             // Set the format for tableSelected task_files
-            case TASKFILES_TABLE_NAME: {
+            case TASKS_TABLE_NAME: {
                 for (int i = 0; i < width.length; i++) {
                     int pWidth = Math.round(width[i]);
                     table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
@@ -3917,7 +3917,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         //loop the modified data list
         for (ModifiedData modifiedData : modifiedDataList) {
             String tableName = modifiedData.getTableName();
-            if (!tableName.equals(TASKFILES_TABLE_NAME)) {
+            if (!tableName.equals(TASKS_TABLE_NAME)) {
                 tableName = TASKS_TABLE_NAME;
                 updateSuccessful = issueDAO.update(tableName,modifiedData);
             }
@@ -4488,7 +4488,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         System.out.println("now loading..." + tableName);
         
         // set table model data
-        if (tableName.equals(TASKFILES_TABLE_NAME) && online) {
+        if (tableName.equals(TASKS_TABLE_NAME) && online) {
             // this is for the issue_files tab/table
             ArrayList<IssueFile> issuesFiles = issueFileDAO.get(tableName);
             
@@ -5602,7 +5602,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 boolean isSelected, boolean hasFocus, int row, int column) {
             wrappedRenderer.getTableCellRendererComponent(table, value,
                     isSelected, hasFocus, row, column);
-            if (table.getName().equals(TASKFILES_TABLE_NAME)) {
+            if (table.getName().equals(TASKS_TABLE_NAME)) {
 
                 if (column < table.getColumnCount() - 4) {
                     label.setHorizontalAlignment(JLabel.CENTER);
