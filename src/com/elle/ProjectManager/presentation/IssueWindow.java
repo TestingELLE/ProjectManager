@@ -2094,11 +2094,11 @@ public class IssueWindow extends JFrame {
                     }
                 } else {
                     if (urlstringcheck.contains("ELLE Prog 2015")) {
-                        urlstring = "file://" + System.getProperty("user.dir") + urlstring;
+                        urlstring = "file:///" + System.getProperty("user.dir") + urlstring;
                         urlstring = urlstring.replace(" ","%20");
 
                     } else {                   
-                        urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + "/ELLE Prog 2015" +urlstring;
+                        urlstring = "file:///" + System.getProperty("user.home")+File.separator+"Dropbox" + "/ELLE Prog 2015" +urlstring;
                         urlstring = urlstring.replace(" ","%20");
 
                     }
