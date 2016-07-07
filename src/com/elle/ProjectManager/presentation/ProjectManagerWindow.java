@@ -62,6 +62,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.rtf.RTFEditorKit;
@@ -117,6 +118,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private boolean popupWindowShowInPM;
     private boolean reconcileWindowShow;
+    
+    //Separator line place holder
+    public final static String SEPARATOR = "SEPARATOR";
+    
+    // creates a array list to store a list of inactive programmers retrieved from the database
+    List<Object> inactiveProgrammers = new ArrayList<Object>();
 
     // create a jlabel to show the database used
     private JLabel databaseLabel;
@@ -226,6 +233,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
 
         initComponents(); // generated code
+        
+        // initialized with a list of inactive programmers from the database
+         inactiveProgrammers = getInactiveProgrammers();
         
         ///set the offline status
         if (online) {
@@ -1547,6 +1557,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
         comboBoxValue.setModel(comboBoxSearchModel);
         Map comboBoxForSearchValue = loadingDropdownList();
+        
+        
 
         JTable table = tabs.get(tableName).getTable();
 
@@ -1554,11 +1566,29 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             if (table.getColumnName(col).equalsIgnoreCase(colName)) {
                 ArrayList<Object> dropDownList = (ArrayList<Object>) comboBoxForSearchValue.get(col);
+                
+                if (colName.equalsIgnoreCase("programmer")){
+                    Collections.sort(dropDownList, new ProgrammerComparator());
+                    int listLength = dropDownList.size();
+                    for (int i = 0; i < listLength; i++)
+                    { 
+                        if (dropDownList.get(i) != null){
+                        String currentProgrammer = dropDownList.get(i).toString();
+                            if(inactiveProgrammers.contains(currentProgrammer))
+                            {
+                              dropDownList.add(i, SEPARATOR);
+                               break;
+                            }
+                        }
+                    } 
+                comboBoxValue.setRenderer(new ComboBoxRenderer());
+                comboBoxValue.addActionListener(new BlockComboListener(comboBoxValue));
+                } 
 
-                if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed")) {
+                if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed") || colName.equalsIgnoreCase("app") ) {
                     Collections.sort(dropDownList, new Comparator<Object>() {
                         public int compare(Object o1, Object o2) {
-                            return o2.toString().compareTo(o1.toString());
+                            return o2.toString().toLowerCase().compareTo(o1.toString().toLowerCase());
                         }
 
                     });
@@ -1574,31 +1604,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                         dropDownList = list;
                     }
-                } else if (colName.equalsIgnoreCase("programmer") || colName.equalsIgnoreCase("app")) {
-                    Object nullValue = "";
-
-                    Collections.sort(dropDownList, new Comparator<Object>() {
-                        public int compare(Object o1, Object o2) {
-                            if (o1 == nullValue && o2 == nullValue) {
-                                return 0;
-                            }
-
-                            if (o1 == nullValue) {
-
-                                return 1;
-                            }
-
-                            if (o2 == nullValue) {
-
-                                return -1;
-                            }
-
-                            return o1.toString().toLowerCase().compareTo(o2.toString().toLowerCase());
+                }
+                if (colName.equalsIgnoreCase("app") || colName.equalsIgnoreCase("programmer")) {
+                    
+                           Collections.sort(dropDownList, new NullComparator()); 
                         }
 
-                    });
-
-                }
 //                System.out.println(dropDownList);
                 comboBoxStartToSearch = false;
                 for (Object item : dropDownList) {
@@ -1608,11 +1619,120 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 }
 
             }
-        }
 //        comboBoxForSearch.setSelectedItem("Enter " + colName + " here");
 //        comboBoxStartToSearch = true;
+        }
+    }
+    
+    public ArrayList getInactiveProgrammers(){
+        String sql = "SELECT * FROM programmers WHERE status = 'INACTIVE'";
+        ResultSet rs = null;
+        ArrayList <Object> inactiveProgrammers = new ArrayList<Object>();
+        try {
+
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            
+            while(rs.next()){
+                inactiveProgrammers.add(rs.getObject("name"));
+            }          
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return inactiveProgrammers;
     }
 
+    private class NullComparator implements Comparator<Object>{
+        Object nullValue = "";
+        public int compare(Object o1, Object o2) {
+            int comparisonResult = 0;
+            if (o1 == nullValue && o2 == nullValue) {
+                comparisonResult = 0;
+            }
+
+            if (o1 == nullValue && o2 != nullValue ) {
+
+                comparisonResult= 1;
+            }
+
+            if (o1 != nullValue && o2 == nullValue) {
+
+                comparisonResult = -1;
+            }
+            return comparisonResult;
+        }
+    }
+
+    public class ProgrammerComparator implements Comparator<Object>{                
+        public int compare(Object programmer1, Object programmer2) {
+            int statusComparisonResult = 0;
+            if (inactiveProgrammers.contains(programmer1) && inactiveProgrammers.contains(programmer2)){
+                statusComparisonResult = 0;
+            }
+            else if (!inactiveProgrammers.contains(programmer1) && inactiveProgrammers.contains(programmer2)){
+                statusComparisonResult = -1;
+            }
+            else if (inactiveProgrammers.contains(programmer1) && !inactiveProgrammers.contains(programmer2)){
+                statusComparisonResult = 1;
+            }
+                        
+            if(0 == statusComparisonResult && programmer1 != null && programmer2 != null){
+                     return programmer1.toString().compareTo(programmer2.toString());
+            }else{
+                return statusComparisonResult;  
+            }
+        }
+    }
+    
+    //Custom renderer used to render the list of programmers in comboBoxValue with a seperator line
+    //by Corinne Martus on July 5, 2016
+    class ComboBoxRenderer extends BasicComboBoxRenderer implements ListCellRenderer {
+    JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
+    
+    final ListCellRenderer<? super Object> original = new JComboBox<Object>()
+            .getRenderer();
+
+    public Component getListCellRendererComponent(JList list, Object value,
+        int index, boolean isSelected, boolean cellHasFocus) { 
+      Component renderComponent = null;
+       String str = (value == null) ? "" : value.toString();
+        if (SEPARATOR.equals(str)) {
+          renderComponent = separator;
+       }
+      else{
+        renderComponent = original.getListCellRendererComponent(list,
+                    str, index, isSelected, cellHasFocus);
+        }
+      return renderComponent;      
+    }
+    }
+    
+     //custom combo box listener applied to the list of analysts in comboBoxValue 
+    // prevents the seperator line from being selected
+    //by Corinne Martus
+    class BlockComboListener implements ActionListener {
+    JComboBox comboBoxValue;
+
+    Object currentItem;
+
+    BlockComboListener(JComboBox comboBoxValue) {
+      this.comboBoxValue = comboBoxValue;
+      currentItem = comboBoxValue.getSelectedItem();
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      //String tempItem = (String) comboBoxValue.getSelectedItem();
+      String tempItem = String.valueOf(comboBoxValue.getSelectedItem());
+      if (SEPARATOR.equals(tempItem)) {
+        comboBoxValue.setSelectedItem(currentItem);
+      } else {
+        currentItem = tempItem;
+      }
+    }
+    }
     /**
      * This method is called when the search button is pressed
      *
@@ -3112,7 +3232,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         {
             String className = ml.getClass().toString();
 
-            if (className.contains("BasicTableHeaderUI"))
+            if (className.contains("BasicTableHeaderUI.MouseInputHandler"))
                
                 header.removeMouseListener(ml);
                 

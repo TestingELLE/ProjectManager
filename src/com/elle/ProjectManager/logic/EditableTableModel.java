@@ -77,12 +77,13 @@ public class EditableTableModel extends DefaultTableModel {
      * Override getColumnClass() in DefaultTableModel     *
      * @param columnIndex
      */
-    @Override
+    
     public Class getColumnClass(int columnIndex){
         Class columnClassType;
         columnClassType = colClassTypes[columnIndex];
         return columnClassType;
     }
+    
     private void copyColumnClasses(DefaultTableModel sourceModel) {
         {
             colClassTypes = new Class[sourceModel.getColumnCount()];
