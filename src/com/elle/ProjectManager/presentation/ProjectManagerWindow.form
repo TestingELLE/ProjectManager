@@ -708,7 +708,7 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[10, 240]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="Analyster" noResource="true"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
@@ -934,6 +934,7 @@
                         </Column>
                       </TableColumnModel>
                     </Property>
+                    <Property name="name" type="java.lang.String" value="References" noResource="true"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>

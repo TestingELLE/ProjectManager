@@ -166,11 +166,11 @@ public class IssueWindow extends JFrame {
         this.dropdownlist = dropdownlist;
     }
 
-    public Map<String, Tab> getTabs() {
+    public Map<Integer, Tab> getTabs() {
         return tabs;
     }
 
-    public void setTabs(Map<String, Tab> tabs) {
+    public void setTabs(Map<Integer, Tab> tabs) {
         this.tabs = tabs;
     }
 
@@ -436,7 +436,7 @@ public class IssueWindow extends JFrame {
     private ShortCutSetting ShortCutSetting;
     private String[] dropdownlist = {"app","title", "description","programmer", "dateOpened", "rk", "version", "dateClosed"};
     private String[] refDropdownlist = {"title", "description","programmer", "dateOpened"};
-    private Map<String, Tab> tabs;       // used to update the records label
+    private Map<Integer, Tab> tabs;       // used to update the records label
 
     /**
      * Creates new form IssueWindow
@@ -1772,11 +1772,11 @@ public class IssueWindow extends JFrame {
                         apps.add("Analyster");
                         apps.add("ELLE_GUI");
                     
-                        if(apps.contains(issue.getApp())) {
-                            projectManager.detectOpenIssues(tabs.get(issue.getApp()));
-                        } else {
-                            projectManager.detectOpenIssues(tabs.get("Other"));
-                        }
+//                        if(apps.contains(issue.getApp())) {
+//                            projectManager.detectOpenIssues(tabs.get(issue.getApp()));
+//                        } else {
+//                            projectManager.detectOpenIssues(tabs.get("Other"));
+//                        }
                         
                     }
                     
@@ -2818,8 +2818,8 @@ public class IssueWindow extends JFrame {
                 //for each search item, create a new drop down list
                 ArrayList DropDownListValueForEachColumn = new ArrayList<Object>();
                 // load drop down for each table
-                for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-                    if (!entry.getKey().equalsIgnoreCase("issue_files")) {
+                for (Map.Entry<Integer, Tab> entry : tabs.entrySet()) {
+                    if (entry.getKey() != 6) {
                         tab = tabs.get(entry.getKey());
 
                         String[] columnNames = tab.getTableColNames();
