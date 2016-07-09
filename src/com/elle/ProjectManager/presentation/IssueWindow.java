@@ -533,7 +533,8 @@ public class IssueWindow extends JFrame {
         this.setPreferredSize(frameSize);
         this.setMinimumSize(minSize);
         
- 
+        //setup tooltips
+        Hyperlink.setToolTipText("hyperlink examples: https://www.google.com or /REFERENCE MATERIALS/Build New Jar Reference.docx");
 
         // set view issue window location in screen
         // check x and y , if beyond the boarder, set to default 10 and 5
@@ -2072,22 +2073,36 @@ public class IssueWindow extends JFrame {
             String selectedtext = getselectedtext();
             String urlstring = selectedtext;
             String currentstring = getcurrentrtf();
+                        
+            //String stringtosearch = "\\i\\ul\\cf2 " + selectedtext.substring(0,10);
+            //boolean checkformat = currentstring.contains(stringtosearch);
             
-            //System.out.println(currentstring);
-            
-            String stringtosearch = "\\i\\ul\\cf2 " + selectedtext.substring(0,10);
-            boolean checkformat = currentstring.contains(stringtosearch);
+            String osname = System.getProperty("os.name");
             
             if (!urlstring.contains("https") && !urlstring.contains("http")) {
                 String urlstringcheck = System.getProperty("user.dir");
                 
-                if (urlstringcheck.contains("ELLE Prog 2015")) {
-                    urlstring = "file://" + System.getProperty("user.dir") + urlstring;
-                    urlstring = urlstring.replace(" ","%20");
-                    System.out.println(urlstring);
-                } else {                   
-                    urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + urlstring;
-                    urlstring = urlstring.replace(" ","%20");
+                if (osname == "Mac OS X") {
+                    if (urlstringcheck.contains("ELLE Prog 2015")) {
+                        urlstring = "file://" + System.getProperty("user.dir") + urlstring;
+                        urlstring = urlstring.replace(" ","%20");
+
+                    } else {                   
+                        urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + "/ELLE Prog 2015" +urlstring;
+                        urlstring = urlstring.replace(" ","%20");
+
+                    }
+                } else {
+                    if (urlstringcheck.contains("ELLE Prog 2015")) {
+                        urlstring = "file:///" + System.getProperty("user.dir") + urlstring;
+                        urlstring = urlstring.replace(" ","%20");
+
+                    } else {                   
+                        urlstring = "file:///" + System.getProperty("user.home")+File.separator+"Dropbox" + "/ELLE Prog 2015" +urlstring;
+                        urlstring = urlstring.replace(" ","%20");
+
+                    }
+                    
                 }
             } else {
                 urlstring = urlstring.replaceAll("\\s","");
@@ -2097,7 +2112,7 @@ public class IssueWindow extends JFrame {
                 URI uri = new URI(urlstring);
                 System.out.println("Opening " + uri);
                 
-                if (checkformat && uri != null) {
+                if (uri != null) {
                     openWebpage(uri);
                 } else {
                     System.out.println("Not a link!");
