@@ -86,6 +86,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
     private static Statement statement;
     private String database;
+    private String server;
 
     //tables 
     //added category 'test issue' - by Yi 
@@ -125,7 +126,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // creates a array list to store a list of inactive programmers retrieved from the database
     List<Object> inactiveProgrammers = new ArrayList<Object>();
 
-    // create a jlabel to show the database used
+    // create a jlabel to show the database and server used
     private JLabel databaseLabel;
     private String currentTabName;
     private String userName;
@@ -1517,7 +1518,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         TableModel tableModel = table.getModel();
                         String colName;
                         colName = columnNames[col].toLowerCase();
-
+                        System.out.println(entry.getValue().getTableName() + "." + colName);
                         switch (colName) {
                             case "title":
                             case "description":
@@ -1536,6 +1537,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                         DropDownListValueForEachColumn.add("");
                                     }
                                 }
+                                System.out.println(DropDownListValueForEachColumn);
                                 break;
                         }
                     }
@@ -1544,7 +1546,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 //make every item in drop down list unique
                 Set<Object> uniqueValue = new HashSet<Object>(DropDownListValueForEachColumn);
                 ArrayList uniqueList = new ArrayList<Object>(uniqueValue);
-//                System.out.println(col + " " + uniqueList);
+              //System.out.println(col + ": " + uniqueList);
                 valueListMap.put(col, uniqueList);
             }
         }
@@ -4252,11 +4254,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public void setDatabase(String database) {
         this.database = database;
     }
+    
+    public void setServer(String server){
+        this.server = server;
+    }
 
     public void showDatabase() {
         databaseLabel = new JLabel("                                          "
                 + "                                                             "
-                + "                                                             " + database);
+                + "                                                                            " 
+                + "Connected to: " + server + "." + database);
 
         menuBar.add(databaseLabel);
     }

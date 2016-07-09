@@ -364,6 +364,10 @@ public class LoginWindow extends JFrame {
             // pass the selectedDB to projectManager
             // it is used in sql statements
             projectManager.setDatabase(selectedDB);
+            
+            //pass the selectedServer to project Manager
+            //used to show the server in the menubar
+            projectManager.setServer(selectedServer);
 
             // show the database name in menubar
             projectManager.showDatabase();
