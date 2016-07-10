@@ -1400,14 +1400,14 @@ public class IssueWindow extends JFrame {
         
         // remove this id from the openIssuesList and CustomIdList
         projectManager.getOpeningIssuesList().remove(issue.getId(), this);
-        projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
+        //projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
 
         String newID = table.getValueAt(newRow, 0).toString();
 
         // if issue is not open
         if (!projectManager.getOpeningIssuesList().containsKey(newID)) {
             projectManager.getOpeningIssuesList().put(issue.getId(), this);
-            projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getId());
+            //projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getId());
 
         } 
         // use the window with this issue already open
@@ -2466,8 +2466,8 @@ public class IssueWindow extends JFrame {
             projectManager.setAddIssueWindowShow(false);
         } else {
             projectManager.getOpeningIssuesList().remove(table.getName()+ issue.getId(), this);
-            projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
-            projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
+            //projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
+            //projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
         }
         this.dispose();
     }

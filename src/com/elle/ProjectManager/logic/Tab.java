@@ -5,7 +5,6 @@ import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.dao.ReferenceDAO;
 import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.entities.Issue;
-import com.elle.ProjectManager.presentation.IssueWindow;
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
@@ -24,12 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -59,7 +55,6 @@ public class Tab implements ITableConstants {
     ProjectManagerWindow pmWindow;
 
     // attributes
-    private String tableName;                    // name of the JTable
     private JTable table;                        // the JTable on the tab
     
     // for pm window display
@@ -100,7 +95,7 @@ public class Tab implements ITableConstants {
      * initComponents of a frame.
      */
     public Tab() {
-        tableName = "";
+        
         table = new JTable();
         totalRecords = 0;
         recordsShown = 0;
@@ -126,7 +121,6 @@ public class Tab implements ITableConstants {
         
         //set up table
         this.table = table;
-        tableName = table.getName();
         
         //setup tab data
         setUpTabData();
@@ -137,7 +131,7 @@ public class Tab implements ITableConstants {
     private void setUpTabData() throws IOException, BadLocationException {
         //set up data array
         
-        if (tableName.equals("References")) {
+        if (table.getName().equals("References")) {
             setSearchFields(REFERENCES_SEARCH_FIELDS);
             setBatchEditFields(REFERENCES_BATCHEDIT_CB_FIELDS);
             setColWidthPercent(COL_WIDTH_PER_REFERENCES);
@@ -176,27 +170,25 @@ public class Tab implements ITableConstants {
         //set up table listeners
         setTableListeners();
         
-        //detect open issues
-        
-        //Editing false 
+        // set editing false 
         Editing = false;
         
     }
     
     
     private void loadTableData() throws IOException, BadLocationException {
-         System.out.println("now loading..." + tableName);
+         System.out.println("now loading..." + table.getName());
         
         // set table model data
         
         AbstractDAO dao;
-        if (tableName.equals("References")) {
+        if (table.getName().equals("References")) {
             dao = new  ReferenceDAO();
         }
         else dao = new IssueDAO();
         // this is for all the tabs which are all from the issues table
        
-        ArrayList<Issue> issues = dao.get(tableName);
+        ArrayList<Issue> issues = dao.get(table.getName());
        
         for (Issue issue : issues) {
             insertRow(issue);
@@ -413,8 +405,7 @@ public class Tab implements ITableConstants {
                 // if left mouse clicks
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     if (e.getClickCount() == 2) {
-                        
-                        //ctrl + double click  : filter
+                        //select a row, then ctrl + double click  : filter based on selected value
                         if (e.isControlDown()) {
                             filterByDoubleClick();
                         } else {
@@ -422,6 +413,7 @@ public class Tab implements ITableConstants {
                             if (e.getComponent() instanceof JTable) {     
                                 int row = table.getSelectedRow();
                                 int col = table.getSelectedColumn();
+                                //logics for openning issue
 
                                 boolean isIssueAlreadyOpened = false;
                             }
@@ -434,12 +426,10 @@ public class Tab implements ITableConstants {
                                 int[] rows = table.getSelectedRows();
 
                                 if (rows.length >= 2) {
+                                    toggleBatchEditMode(true);
 
-                                //btnBatchEdit.setEnabled(true);
-                                //btnBatchEdit.setVisible(true);
                                 } else {
-                                //btnBatchEdit.setEnabled(false);
-                                //btnBatchEdit.setVisible(false);
+                                    toggleBatchEditMode(false);
                                 }
                             }
                         }
@@ -455,7 +445,7 @@ public class Tab implements ITableConstants {
                           if (Editing) {
 
                             // set the states for this tab
-                           // makeTableEditable(true);
+                             pmWindow.makeTableEditable(true);
                         //    setEnabledEditingButtons(true, true, true);
                         //    setBatchEditButtonStates(tab);
 
@@ -486,6 +476,39 @@ public class Tab implements ITableConstants {
         });
     }
     
+    
+    
+    
+    
+    /*detect open issues*/
+    public boolean detectOpenIssues() {
+        //reference table do not need to detect open issues
+        if (table.getName().equals("References")) return false;
+        
+        String userName = pmWindow.getUserName();
+        boolean openIssue = false;
+        for (int row = 0; row < table.getRowCount(); row++) {
+            String tableCellValue = "";
+            if (table.getValueAt(row, 4) != null) {
+                tableCellValue = table.getValueAt(row, 4).toString();
+            }
+            if (userName.equals(tableCellValue)) {
+                if (table.getValueAt(row, 8) == null || table.getValueAt(row, 8).toString().equals("")) {
+
+                    openIssue = true;
+                }
+            }
+        }
+        return openIssue;
+      
+    }
+
+    
+    
+    
+    
+    
+    /*fliter methods */
     private void clearColumnFilter(int columnIndex) {
         
         filter.clearColFilter(columnIndex);
@@ -525,6 +548,13 @@ public class Tab implements ITableConstants {
         pmWindow.getLabelRecords().setText(getRecordsLabel());
     } 
     
+    private void toggleBatchEditMode(boolean set) {
+        pmWindow.getBtnBatchEdit().setEnabled(set);
+        pmWindow.getBtnBatchEdit().setVisible(set);   
+    }
+    
+    
+    /*table-related helper functions */
             
     private int findTableModelRow(Issue issue) {
         int rowCount = table.getModel().getRowCount();
@@ -560,7 +590,7 @@ public class Tab implements ITableConstants {
 
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        switch (tableName) {
+        switch (table.getName()) {
 
             // Set the format for tableSelected task.
             case "PM": 
@@ -688,32 +718,11 @@ public class Tab implements ITableConstants {
 
         String output;
 
-        switch (getTableName()) {
-//            case TASKS_TABLE_NAME:
-//                output = "<html><pre>"
-//                        + "     Number of records shown: " + getRecordsShown()
-//                        + "<br/> Number of records in Issues: " + getTotalRecords()
-//                        + "</pre></html>";
-//                System.out.println(output);
-//                break;
+        switch (table.getName()) {
+
             case "PM":
-                output = "<html><pre>"
-                        + "     Number of records shown: " + getRecordsShown()
-                        + "<br/> Number of records in Issues: " + getTotalRecords()
-                        + "</pre></html>";
-                break;
             case "ELLEGUI":
-                output = "<html><pre>"
-                        + "     Number of records shown: " + getRecordsShown()
-                        + "<br/> Number of records in Issues: " + getTotalRecords()
-                        + "</pre></html>";
-                break;
             case "Analyster":
-                output = "<html><pre>"
-                        + "     Number of records shown: " + getRecordsShown()
-                        + "<br/> Number of records in Issues: " + getTotalRecords()
-                        + "</pre></html>";
-                break;
             case "Other":
                 output = "<html><pre>"
                         + "     Number of records shown: " + getRecordsShown()
@@ -725,7 +734,7 @@ public class Tab implements ITableConstants {
             case "References":
                 output = "<html><pre>"
                         + "      Number of records shown: " + getRecordsShown()
-                        + "<br/> Number of records in Issues: " + getTotalRecords()
+                        + "<br/> Number of records in References: " + getTotalRecords()
                         + "</pre></html>";
                 break;
             default:
@@ -796,14 +805,7 @@ public class Tab implements ITableConstants {
         return getTable().getRowCount();
     }
 
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
+   
     public boolean isActivateRecordMenuItemEnabled() {
         return activateRecordMenuItemEnabled;
     }

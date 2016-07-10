@@ -173,9 +173,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             JViewport viewport = scrollPane.getViewport();
             JTable table = (JTable)viewport.getView();
             Tab tab = new Tab(table);
+            
             tabs.put(i, tab);
         }
         
+        updateTabOrangeDot();
         
         //initialize recordsLabel
         Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
@@ -1474,7 +1476,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     public void makeTableEditable(boolean makeTableEditable) {
         String selectedTabName = this.getSelectedTabName();
-        Tab tab = tabs.get(selectedTabName);
+        Tab tab = tabs.get(tabbedPanel.getSelectedIndex());
         boolean isAddRecordsBtnVisible = tab.isAddRecordsBtnVisible();
         boolean isBatchEditBtnVisible = tab.isBatchEditBtnVisible();
 
@@ -1873,7 +1875,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             //have to reset the id renderer
 
             tab.getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-            LoggingAspect.afterReturn(tab.getTableName() + " is reloading");
+            LoggingAspect.afterReturn(tab.getTable().getName() + " is reloading");
         }
 
     }
@@ -3087,9 +3089,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         boolean thisTabIsEditing = tab.isEditing();
                         //boolean noTabIsEditing = !isTabEditing();
 
-                       // if (thisTabIsEditing || noTabIsEditing) {
-                          if (thisTabIsEditing) {
-
+//                        if (thisTabIsEditing || noTabIsEditing) {
+                          
+                        if (thisTabIsEditing) {
                             // set the states for this tab
                             makeTableEditable(true);
                             setEnabledEditingButtons(true, true, true);
@@ -4051,7 +4053,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param title
      * @return
      */
-    protected JLabel getTabLabelWithOrangeDot(String title) {
+    public JLabel getTabLabelWithOrangeDot(String title) {
         ImageIcon imcon = new ImageIcon(getClass().getResource("orange-dot.png"));
 
 //        ImageIcon icon = new ImageIcon(getClass().getResource("splashImage.png"));
@@ -5244,6 +5246,27 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.menuItemReconcileConflict = menuItemReconcileConflict;
     }
  
+    /***************************************************************************************************
+     * Newly added functions
+    ****************************************************************************************************/
+     
+    /*
+    **added by Yi
+    **update orange dot issues
+    */
+    
+    private void updateTabOrangeDot(){
+        for(int i: tabs.keySet()) {
+            //check detect issue
+            Tab tab = tabs.get(i);
+            if (tab.detectOpenIssues()){
+                String title = tab.getTable().getName();
+                JLabel titleWithDot = getTabLabelWithOrangeDot(title);
+                tabbedPanel.setTabComponentAt(i, titleWithDot);
+            };
+        }
+    }
+  
  
 
 }
