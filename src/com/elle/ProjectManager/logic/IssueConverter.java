@@ -36,13 +36,14 @@ public class IssueConverter implements Converter<Issue> {
     }
 
     //table row description cannot be changed as it does not contain style info
-    //this conversion only incorporates incorporate the rest columns
+    //this conversion only incorporates the changes from the rest columns
     @Override
     public Issue convertFromRow(Object[] rowData) {
         Issue item = new Issue();
         item.setId((int) rowData[0]);
         item.setApp((String) rowData[1]);
         item.setTitle((String) rowData[2]);
+        item.setDescription(null);
         item.setProgrammer((String) rowData[4]);
         item.setDateOpened((String) rowData[5]);
         item.setRk((String) rowData[6]);

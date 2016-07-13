@@ -1,11 +1,8 @@
 package com.elle.ProjectManager.logic;
 
 import com.elle.ProjectManager.controller.PMDataManager;
-import com.elle.ProjectManager.dao.IssueDAO;
-import com.elle.ProjectManager.dao.ReferenceDAO;
 import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
-import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import java.awt.Component;
 import java.awt.event.KeyAdapter;
@@ -86,9 +83,7 @@ public class Tab implements ITableConstants {
     //Storing Jcomponents states
     private ButtonsState state;
     
-    //dao
-    IssueDAO issueDao = new IssueDAO();
-    ReferenceDAO refDao = new ReferenceDAO();
+   
     
 
     /**
@@ -97,11 +92,6 @@ public class Tab implements ITableConstants {
      */
     public Tab() {
         
-        table = new JTable();
-        totalRecords = 0;
-        recordsShown = 0;
-
-       
     }
 
     /**
@@ -174,7 +164,6 @@ public class Tab implements ITableConstants {
     }
     
     //update table, reload table, load table functions
-    //############dao access
     private void loadTableData()  {
          System.out.println("now loading..." + table.getName());
         
@@ -217,11 +206,39 @@ public class Tab implements ITableConstants {
      
     }
     
+    
+    //the batch upload does not include description field
     public void uploadChanges() {
-        // this updates database and should be replaced with dao
-        boolean uploaded = uploadChangesToDb();
+        //get changed rows
+        ArrayList<Object[]> changedRowsData = new ArrayList();
+        List<ModifiedData> modifiedDataList = modTableData.getNewData();
         
-        if (uploaded) {
+        //loop the modified data list
+        for (ModifiedData modifiedData : modifiedDataList) {
+            int id = modifiedData.getId();
+            
+            //get the row data
+            if (getRowIndex(id) != -1) {
+                Object[] rowData = new Object[table.getColumnCount()];
+                for (int i = 0; i < table.getColumnCount(); i++) {
+                    //set null to description field
+                    if( i == 3) rowData[i] = null;
+                    else
+                        rowData[i] = table.getValueAt(0, i);
+                }
+                changedRowsData.add(rowData);
+            }
+        }
+        
+        //upload changes   
+        String tableName = table.getName();
+        if (!tableName.equals("References")) {
+            dataManager.updateIssues(changedRowsData);
+        }
+        else{
+            dataManager.updateReferences(changedRowsData);
+        }
+         
             int[] rows = table.getSelectedRows();
  
             ListSelectionModel model = table.getSelectionModel();
@@ -244,11 +261,21 @@ public class Tab implements ITableConstants {
             state.enableEdit(false);
             pmWindow.changeTabbedPanelState(this);
 
-        }
-        
     }
     
-    public void revertChanges() throws IOException, BadLocationException{
+    //get rowIndex for a particular issue id
+    private int getRowIndex(int id) {
+        int tableRowsCnt = table.getRowCount();
+        for(int i = 0; i < tableRowsCnt; i++) {
+            int field0 = (int) table.getValueAt(i, 0);
+            if (field0 == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    public void revertChanges() {
        
         
         modTableData.getNewData().clear();  // clear any stored changes (new data)
@@ -293,29 +320,8 @@ public class Tab implements ITableConstants {
 
     }
     
-    //###########dao access
-    private boolean uploadChangesToDb() {
-        boolean updateSuccessful = true;
-        
-        List<ModifiedData> modifiedDataList = modTableData.getNewData();
-        
-        //loop the modified data list
-        for (ModifiedData modifiedData : modifiedDataList) {
-            String tableName = modifiedData.getTableName();
-            if (!tableName.equals("References")) {
-                tableName = TASKS_TABLE_NAME;
-                updateSuccessful = issueDao.update(tableName,modifiedData);
-            }
-            else{
-                updateSuccessful = refDao.update(tableName,modifiedData);
-            }
-           
-        }
-
-        return updateSuccessful;
-    }
     
-    //##########dao access
+    //reload selected data
     public void reloadSelectedData() {
         int row = table.getSelectedRow();
         if(row == -1){
@@ -323,7 +329,7 @@ public class Tab implements ITableConstants {
         }
         else{
             int id = (int)table.getValueAt(row, 0);
-            Object[] rowData ;
+            Object[] rowData = null;
             if (table.getName().equals("References")) {
                 rowData = dataManager.getReference(id);
             }
@@ -332,8 +338,12 @@ public class Tab implements ITableConstants {
             }
             
             updateRow(rowData);
+            LoggingAspect.afterReturn("Selected record #" + id + " is reloading");
           
        }
+        
+        
+        
     }
     
     
@@ -411,6 +421,12 @@ public class Tab implements ITableConstants {
         }
     }
 
+    public void deleteRow(int rowIndex){
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.removeRow(rowIndex);
+        subtractFromTotalRowCount(1);
+        
+    }
     
     
     
@@ -510,10 +526,7 @@ public class Tab implements ITableConstants {
                             //double click : open issue window
                             if (e.getComponent() instanceof JTable) {                                
                                 int row = table.getSelectedRow();
-                                int col = table.getSelectedColumn();
-                                //logics for openning issue
-
-                                boolean isIssueAlreadyOpened = false;
+                                pmWindow.openIssueWindow(row, localTab);
                             }
                         }
                     } else {
@@ -582,9 +595,7 @@ public class Tab implements ITableConstants {
             
         
         });
-            
   
-        
         //drag to select multiple rows 
         table.addMouseMotionListener(new MouseAdapter() {
             @Override

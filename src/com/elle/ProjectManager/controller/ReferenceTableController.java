@@ -23,6 +23,11 @@ public class ReferenceTableController extends DBTableController<Issue> {
         getAll();
     }
 
+    public void updatePartial(Issue issue) {
+        Issue stored = getAllItems().get(issue.getId());
+        issue.setDescription(stored.getDescription());
+        update(issue);
+    }
     
     
 } 

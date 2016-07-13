@@ -465,7 +465,22 @@ public class IssueDAO implements AbstractDAO<Issue> {
 
     @Override
     public boolean delete(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sqlDelete = "DELETE FROM " + DB_TABLE_NAME
+                + " WHERE " + COL_PK_ID + " =" + id + ";";
+
+        try {
+
+            // delete records from database
+            DBConnection.close();
+            DBConnection.open();
+            DBConnection.getStatement().executeUpdate(sqlDelete);
+            LoggingAspect.afterReturn("Record #" + id + " is Deleted");
+            return true;
+
+        } catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+            return false;
+        }
     }
 
     @Override

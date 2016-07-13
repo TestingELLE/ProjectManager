@@ -6,14 +6,9 @@
 package com.elle.ProjectManager.controller;
 
 import com.elle.ProjectManager.entities.Issue;
-import com.elle.ProjectManager.logic.Converter;
-import com.elle.ProjectManager.logic.ITableConstants;
-import com.elle.ProjectManager.logic.IdColumnRenderer;
 import com.elle.ProjectManager.logic.IssueConverter;
-import com.elle.ProjectManager.logic.OfflineIssueManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -24,13 +19,13 @@ public class PMDataManager{
     private static PMDataManager instance = null;
     IssueTableController issueController;
     ReferenceTableController refController;
-    private Converter issueConverter;
+    private IssueConverter issueConverter;
     
     public PMDataManager(){
         //adding controllers
         issueController = new IssueTableController();
         refController = new ReferenceTableController();
-       
+        //adding converters
         issueConverter = new IssueConverter();
     }
     
@@ -41,7 +36,7 @@ public class PMDataManager{
       return instance;
    }
 
-   
+   /* Issues related data operations */
     //get issues based on app name
     public List<Object[]> getIssues(String appType) {
         ArrayList<String> apps = new ArrayList();
@@ -75,6 +70,48 @@ public class PMDataManager{
        
     }
     
+    //get issue rowdata by entity
+    public Object[] getIssue(Issue issue) {
+      return (issueConverter.convertToRow(issue));   
+    }
+    
+    //update issue
+    public void updateIssue(Issue issue) {
+        issueController.update(issue);
+    }
+    
+    //insert issue
+    public void insertIssue(Issue issue) {
+        issueController.create(issue);
+    }
+    
+    
+    //get issue entity by id
+    public Issue getIssueEntity(int id) {
+      
+        return issueController.get(id);
+    }
+    
+    
+    //this is for batch update, which does not include the description field
+    public void updateIssues(List<Object[]> rowsData) {
+        ArrayList<Issue> changedIssues = new ArrayList();
+        for(Object[] rowData : rowsData) {
+            changedIssues.add(issueConverter.convertFromRow(rowData));
+        }
+        for(Issue changedIssue : changedIssues) {
+            issueController.updatePartial(changedIssue);
+        }
+    }
+    
+    //delete issues
+    public void deleteIssues(List<Integer> ids) {
+        for(Integer id: ids) {
+            issueController.delete(id);
+        }
+    }
+    
+    /*reference related data operations */
     //get references
     public List<Object[]> getReferences() {
                
@@ -88,14 +125,54 @@ public class PMDataManager{
       
     }
     
-    //get reference by id
+    //get reference rowdata by id
     public Object[] getReference(int id) {
       
         Issue reference = refController.get(id);
         return (issueConverter.convertToRow(reference));
        
     }
-            
+    
+    //get reference rowdata by entity
+    public Object[] getReference(Issue ref) {
+      
+        return (issueConverter.convertToRow(ref));
+       
+    }
     
     
+    //get reference by id
+    public Issue getReferenceEntity(int id) {
+      
+        return refController.get(id);
+       
+    }
+    
+    //this is for batch update, which does not include the description field
+    public void updateReferences(List<Object[]> rowsData) {
+        ArrayList<Issue> changedIssues = new ArrayList();
+        for(Object[] rowData : rowsData) {
+            changedIssues.add(issueConverter.convertFromRow(rowData));
+        }
+        for(Issue changedIssue : changedIssues) {
+            refController.updatePartial(changedIssue);
+        }
+    }
+    
+    //update reference
+    public void updateReference(Issue reference) {
+        refController.update(reference);
+    }
+    
+    //insert reference
+    public void insertReference(Issue reference) {
+        refController.create(reference);
+    }
+    
+    //delete references
+    public void deleteReferences(List<Integer> ids) {
+        for(Integer id: ids) {
+            refController.delete(id);
+        }
+    }
 }

@@ -23,7 +23,15 @@ public class IssueTableController extends DBTableController<Issue> {
         getAll();
     }
     
-    
+    //this update will exclude the description field
+    //the issue is collected directly from table
+    //descirption is not editable
+    public void updatePartial(Issue issue) {
+        Issue stored = getAllItems().get(issue.getId());
+        issue.setDescription(stored.getDescription());
+        update(issue);
+        
+    }
     
 
 } 

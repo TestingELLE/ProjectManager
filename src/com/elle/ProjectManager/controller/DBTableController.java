@@ -8,7 +8,6 @@ package com.elle.ProjectManager.controller;
 import com.elle.ProjectManager.dao.AbstractDAO;
 import com.elle.ProjectManager.entities.DbEntity;
 import com.elle.ProjectManager.logic.ITableConstants;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,6 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
         return false;
     }
 
-   
     public void getAll() {
         List<T> items =  onlineDAO.getAll();
         for(T item: items) {
@@ -70,7 +68,6 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     }
     
    
-
     public T get(int id) {
         return (T) getAllItems().get(id);
     };

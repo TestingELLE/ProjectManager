@@ -5,8 +5,6 @@
  */
 package com.elle.ProjectManager.dao;
 
-import com.elle.ProjectManager.entities.Issue;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
