@@ -5,7 +5,7 @@
  */
 package com.elle.ProjectManager.controller;
 
-import com.elle.ProjectManager.dao.IssueDAO;
+import com.elle.ProjectManager.dao.ReferenceDAO;
 import com.elle.ProjectManager.entities.Issue;
 import java.util.List;
 
@@ -13,18 +13,17 @@ import java.util.List;
  *
  * @author Yi
  */
-public class IssueTableController extends DBTableController<Issue> {
+public class ReferenceTableController extends DBTableController<Issue> {
     
-    public IssueTableController(){
+    public ReferenceTableController(){
         super();
-        tableName = TASKS_TABLE_NAME;
-        onlineDAO = new IssueDAO();
+        tableName = REF_TABLE_NAME;
+        onlineDAO = new ReferenceDAO();
         //load issues from db to map
         getAll();
     }
-    
-    
-    
 
+    
+    
 } 
 

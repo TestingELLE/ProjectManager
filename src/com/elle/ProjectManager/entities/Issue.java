@@ -8,10 +8,9 @@ import java.io.Serializable;
  * @author Carlos Igreja
  * @since  Apr 5, 2016
  */
-public class Issue implements Serializable {
+public class Issue extends DbEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private int id;
     private String app;
     private String title;
     private byte[] description;
@@ -47,14 +46,7 @@ public class Issue implements Serializable {
         
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
+  
     public String getApp() {
         if (app == null) {
             return "";

@@ -11,13 +11,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * IssueDAO
  * @author Carlos Igreja
  * @since  Apr 5, 2016
  */
-public class IssueDAO implements AbstractDAO {
+public class IssueDAO implements AbstractDAO<Issue> {
 
     // database table information
     private final String DB_TABLE_NAME = "issues";
@@ -460,5 +461,50 @@ public class IssueDAO implements AbstractDAO {
         }
         
         return issue;
+    }
+
+    @Override
+    public boolean delete(int id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Issue> getAll() {
+        
+        ArrayList<Issue> issues = new ArrayList<>();
+        ResultSet rs = null;
+        String sql = " SELECT * FROM " + DB_TABLE_NAME ;
+        
+        
+        try {
+
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while(rs.next()){
+                Issue issue = new Issue();
+                issue.setId(rs.getInt(COL_PK_ID));
+                issue.setApp(rs.getString(COL_APP));
+                issue.setTitle(rs.getString(COL_TITLE));
+                issue.setDescription(rs.getBytes(COL_DESCRIPTION));
+                issue.setProgrammer(rs.getString(COL_PROGRAMMER));
+                issue.setDateOpened(rs.getString(COL_DATE_OPENED));
+                issue.setRk(rs.getString(COL_RK));
+                issue.setVersion(rs.getString(COL_VERSION));
+                issue.setDateClosed(rs.getString(COL_DATE_CLOSED));
+                issue.setIssueType(rs.getString(COL_ISSUE_TYPE));
+                issue.setSubmitter(rs.getString(COL_SUBMITTER));
+                issue.setLocked(rs.getString(COL_LOCKED));
+                issue.setLastmodtime(rs.getString(COL_LASTMODTIME));
+                issues.add(issue);
+            }
+            
+            LoggingAspect.afterReturn("Loaded table " + DB_TABLE_NAME);
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return issues;
     }
 }

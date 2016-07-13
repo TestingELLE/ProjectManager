@@ -41,9 +41,5 @@ public class Administrator extends AdminComponent{
         super.setComponent(window);
     }
 
-    @Override
-    public void setComponent(ProjectManagerWindow window) {
-        super.setComponent(window);
-        window.getMenuReports().setEnabled(false);
-    }
+    
 }

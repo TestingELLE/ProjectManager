@@ -10,6 +10,7 @@ package com.elle.ProjectManager.logic;
 public interface ITableConstants {
 
     public static final String TASKS_TABLE_NAME = "issues";
+    public static final String REF_TABLE_NAME = "references";
 //    public static final String TASKFILES_TABLE_NAME = "issue_files";
 //    public static final String TASKNOTES_TABLE_NAME = "issue_notes";
     

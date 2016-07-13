@@ -1,17 +1,19 @@
 package com.elle.ProjectManager.logic;
 
-import com.elle.ProjectManager.dao.AbstractDAO;
+import com.elle.ProjectManager.controller.PMDataManager;
 import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.dao.ReferenceDAO;
+import com.elle.ProjectManager.database.ModifiedData;
 import com.elle.ProjectManager.database.ModifiedTableData;
-import com.elle.ProjectManager.entities.Issue;
+import static com.elle.ProjectManager.logic.ITableConstants.TASKS_TABLE_NAME;
 import com.elle.ProjectManager.presentation.ProjectManagerWindow;
 import java.awt.Component;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,13 +24,21 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -37,8 +47,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.rtf.RTFEditorKit;
 
 /**
  * Tab This class is used to create a tab object. This object contains all the
@@ -53,6 +61,7 @@ public class Tab implements ITableConstants {
     
     //reference to PMwindow
     ProjectManagerWindow pmWindow;
+    PMDataManager dataManager;
 
     // attributes
     private JTable table;                        // the JTable on the tab
@@ -73,22 +82,14 @@ public class Tab implements ITableConstants {
     private JTableCellRenderer cellRenderer;     // table cell renderer
     private ModifiedTableData modTableData;         // modified table data object
                  
-
-    // these items are enabled differently for each tab
-    private boolean activateRecordMenuItemEnabled; // enables activate record menu item
-    private boolean archiveRecordMenuItemEnabled;  // enables archive record menu item
-    private boolean addRecordsBtnVisible;          // sets the add records button visible
-    private boolean batchEditBtnVisible;           // sets the batch edit button visible
-    private boolean batchEditBtnEnabled;           // sets the batch edit button enabled
-    private boolean AddRecordsBtnEnabled;          // sets the Add Records button enabled
+ 
+    //Storing Jcomponents states
+    private ButtonsState state;
     
+    //dao
+    IssueDAO issueDao = new IssueDAO();
+    ReferenceDAO refDao = new ReferenceDAO();
     
-    // each tab can either be editing or not
-    private boolean Editing;
-
-    // batch edit window states
-    private boolean batchEditWindowOpen;
-    private boolean batchEditWindowVisible;
 
     /**
      * CONSTRUCTOR Tab This is used if no table is ready such as before
@@ -99,13 +100,8 @@ public class Tab implements ITableConstants {
         table = new JTable();
         totalRecords = 0;
         recordsShown = 0;
-        activateRecordMenuItemEnabled = false;
-        archiveRecordMenuItemEnabled = false;
-        addRecordsBtnVisible = false;
-        batchEditBtnVisible = false;
-        batchEditBtnEnabled = true;
-        batchEditWindowOpen = false;
-        batchEditWindowVisible = false;
+
+       
     }
 
     /**
@@ -118,10 +114,9 @@ public class Tab implements ITableConstants {
     public Tab(JTable table) throws IOException, BadLocationException {
         //set up reference to main window
         pmWindow = ProjectManagerWindow.getInstance();
-        
+        dataManager = PMDataManager.getInstance();
         //set up table
-        this.table = table;
-        
+        this.table = table;  
         //setup tab data
         setUpTabData();
         
@@ -145,20 +140,21 @@ public class Tab implements ITableConstants {
        
         setTableColNames(table);
         
-        // set up boolean values
-        activateRecordMenuItemEnabled = false;
-        archiveRecordMenuItemEnabled = true;
-        addRecordsBtnVisible = true;
-        batchEditBtnVisible = true;
-        batchEditBtnEnabled = true;
-        batchEditWindowOpen = false;
-        batchEditWindowVisible = false;
+ 
+        /*set up inital components state*/
+        /* addButton visible, 
+           batchEdit invisible,  
+           uploadchangebtn invisible, 
+           revertchangebtn invisible,
+           editmode false
+        */
+        state = new ButtonsState(true, false, false, false, false);
         
-        //set up objects
+         //set up objects
         filter = new TableFilter(this);
         columnPopupMenu = new ColumnPopupMenu(this);
         cellRenderer = new JTableCellRenderer(table);
-        modTableData = new ModifiedTableData(table);
+        
         
         //initialize counts
         totalRecords = 0;
@@ -167,33 +163,39 @@ public class Tab implements ITableConstants {
         //load table data
         loadTableData();
         
+        //after loading table data, set up modeTableData
+        modTableData = new ModifiedTableData(table);
+        
         //set up table listeners
         setTableListeners();
         
-        // set editing false 
-        Editing = false;
-        
+       
+     
     }
     
-    
-    private void loadTableData() throws IOException, BadLocationException {
+    //update table, reload table, load table functions
+    //############dao access
+    private void loadTableData()  {
          System.out.println("now loading..." + table.getName());
         
+         List<Object[]> tableData;
         // set table model data
         
-        AbstractDAO dao;
         if (table.getName().equals("References")) {
-            dao = new  ReferenceDAO();
+            tableData = dataManager.getReferences();
+            
         }
-        else dao = new IssueDAO();
-        // this is for all the tabs which are all from the issues table
-       
-        ArrayList<Issue> issues = dao.get(table.getName());
-       
-        for (Issue issue : issues) {
-            insertRow(issue);
+        else {
+            tableData = dataManager.getIssues(table.getName());
+            
         }
         
+       
+        for (Object[] rowData : tableData) {
+            insertRow(rowData);
+        }
+        
+        //make table editable 
         addEditableTableModel(table);
         
          // apply filter
@@ -215,58 +217,161 @@ public class Tab implements ITableConstants {
      
     }
     
-    /*
-    ** insert, update, and delete row
-    */
-    public void insertRow(Issue issue) throws IOException, BadLocationException {
+    public void uploadChanges() {
+        // this updates database and should be replaced with dao
+        boolean uploaded = uploadChangesToDb();
         
-       
-        Object[] rowData = new Object[13];
-        rowData[0] = issue.getId();
-        rowData[1] = issue.getApp();
-        rowData[2] = issue.getTitle();
-        byte[] descriptiontablebytesout;
+        if (uploaded) {
+            int[] rows = table.getSelectedRows();
+ 
+            ListSelectionModel model = table.getSelectionModel();
+            model.clearSelection();
+            for (int r = 0; r < rows.length; r++) {
+                model.addSelectionInterval(rows[r], rows[r]);
+            }
 
-        if (issue.getDescription() == null) {
-            descriptiontablebytesout = new byte[0];
-        } else {
-            descriptiontablebytesout = issue.getDescription();
-        }
-        
-        InputStream descriptiontablestream = new ByteArrayInputStream(descriptiontablebytesout);
-        String convertedstrings = convertStreamToString(descriptiontablestream);
-        
-        String rtfsign = "\\par";
-        boolean rtfornot = convertedstrings.contains(rtfsign);
-        
-        if (rtfornot) {
-            RTFEditorKit rtfParser = new RTFEditorKit();
-            Document document = rtfParser.createDefaultDocument();
-            rtfParser.read(new ByteArrayInputStream(descriptiontablebytesout), document, 0);
-            String text = document.getText(0, document.getLength());
-            rowData[3] = text;
-        } else {
-            rowData[3] = convertedstrings;
-        }
+            // clear cellrenderer
+            cellRenderer.clearCellRender();
 
-        rowData[4] = issue.getProgrammer();
-        rowData[5] = issue.getDateOpened();
-        rowData[6] = issue.getRk();
-        rowData[7] = issue.getVersion();
-        rowData[8] = issue.getDateClosed();
-        rowData[9] = issue.getIssueType();
-        rowData[10] = issue.getSubmitter();
-        rowData[11] = issue.getLocked();
-        rowData[12] = issue.getLastmodtime();
-        ((DefaultTableModel)table.getModel()).addRow(rowData);
-        
-        addToTotalRowCount(1);
+            // reload modified tableSelected data with current tableSelected model
+            modTableData.reloadData();
+
+            //makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false);
+            modTableData.getNewData().clear();    // reset the arraylist to record future changes
+            setLastUpdateTime();          // update time
+            
+            //set up btton state
+            state.enableEdit(false);
+            pmWindow.changeTabbedPanelState(this);
+
+        }
         
     }
     
-    public void updateRow(Issue issue) throws IOException, BadLocationException {
-        int row = findTableModelRow(issue);
-        if(row != -1){
+    public void revertChanges() throws IOException, BadLocationException{
+       
+        
+        modTableData.getNewData().clear();  // clear any stored changes (new data)
+        loadTableData(); // reverts the model back
+
+        LoggingAspect.afterReturn("Nothing has been Changed!");
+
+        modTableData.reloadData();  // reloads data of new table (old data) to compare with new changes (new data)
+
+    
+    }
+    
+    public void reloadTable(){
+        
+        DefaultTableModel dm = (DefaultTableModel)table.getModel();
+        //clear all current rows
+        while (dm.getRowCount() > 0) {
+            dm.removeRow(0);
+        }
+        //reset the total records count to 0
+        setTotalRecords(0);
+        
+        
+        //if table is sorted, save the info -Yi
+        List<RowSorter.SortKey> keys = (List<RowSorter.SortKey>)table.getRowSorter().getSortKeys();
+     
+        try {
+            reloadData();
+        } catch (IOException ex) {
+            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        //reset the sorter key -Yi
+        table.getRowSorter().setSortKeys(keys);
+        
+        
+       // tabs.get(tab).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+
+        LoggingAspect.afterReturn(table.getName() + " is reloading");
+
+    }
+    
+    //###########dao access
+    private boolean uploadChangesToDb() {
+        boolean updateSuccessful = true;
+        
+        List<ModifiedData> modifiedDataList = modTableData.getNewData();
+        
+        //loop the modified data list
+        for (ModifiedData modifiedData : modifiedDataList) {
+            String tableName = modifiedData.getTableName();
+            if (!tableName.equals("References")) {
+                tableName = TASKS_TABLE_NAME;
+                updateSuccessful = issueDao.update(tableName,modifiedData);
+            }
+            else{
+                updateSuccessful = refDao.update(tableName,modifiedData);
+            }
+           
+        }
+
+        return updateSuccessful;
+    }
+    
+    //##########dao access
+    public void reloadSelectedData() {
+        int row = table.getSelectedRow();
+        if(row == -1){
+           
+        }
+        else{
+            int id = (int)table.getValueAt(row, 0);
+            Object[] rowData ;
+            if (table.getName().equals("References")) {
+                rowData = dataManager.getReference(id);
+            }
+            else{
+               rowData = dataManager.getIssue(id);
+            }
+            
+            updateRow(rowData);
+          
+       }
+    }
+    
+    
+    //reload the current tab data in table
+    private void reloadData() throws IOException, BadLocationException {
+        
+        
+        // reload tableSelected from database
+        loadTableData();
+
+        // clear cellrenderer
+        cellRenderer.clearCellRender();
+
+        // reload modified tableSelected data with current tableSelected model
+        modTableData.reloadData();
+
+        // set label record information
+        setLabelRecords();
+
+    }
+    
+    /*
+    ** insert, update, and delete row
+    */
+    public void insertRow(Object[] rowData) {
+        
+        if (rowData != null) {
+            ((DefaultTableModel)table.getModel()).addRow(rowData);
+            addToTotalRowCount(1);
+        
+        }
+   
+        
+    }
+    
+    public void updateRow(Object[] rowData) {
+        int row = findTableModelRow(rowData);
+        if(row != -1 && rowData != null){
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             
             // remove table listeners because this listens for changes in 
@@ -278,26 +383,20 @@ public class Tab implements ITableConstants {
             }
 
             // update -> no need for id
-            model.setValueAt(issue.getApp(), row, 1);
-            model.setValueAt(issue.getTitle(), row, 2);
+            model.setValueAt(rowData[1], row, 1);
+            model.setValueAt(rowData[2], row, 2);
             
-            byte[] descriptiontablebytesout = issue.getDescription();
-            InputStream descriptiontablestream = new ByteArrayInputStream(descriptiontablebytesout);
-            RTFEditorKit rtfParser = new RTFEditorKit();
-            Document document = rtfParser.createDefaultDocument();
-            rtfParser.read(descriptiontablestream, document, 0);
-            String text = document.getText(0, document.getLength());
-            model.setValueAt(text, row, 3);
+            model.setValueAt(rowData[3], row, 3);
             
-            
-            model.setValueAt(issue.getProgrammer(), row, 4);
-            model.setValueAt(issue.getDateOpened(), row, 5);
-            model.setValueAt(issue.getRk(), row, 6);
-            model.setValueAt(issue.getVersion(), row, 7);
-            model.setValueAt(issue.getDateClosed(), row, 8);
-            model.setValueAt(issue.getIssueType(), row, 9);
-            model.setValueAt(issue.getSubmitter(), row, 10);
-            model.setValueAt(issue.getLocked(), row, 11);
+            model.setValueAt(rowData[4], row, 4);
+            model.setValueAt(rowData[5], row, 5);
+            model.setValueAt(rowData[6], row, 6);
+            model.setValueAt(rowData[7], row, 7);
+            model.setValueAt(rowData[8], row, 8);
+            model.setValueAt(rowData[9], row, 9);
+            model.setValueAt(rowData[10], row, 10);
+            model.setValueAt(rowData[11], row, 11);
+            model.setValueAt(rowData[12], row, 12);
             
             // add back the table listeners
             for(int i = 0; i < listeners.length; i++){
@@ -323,6 +422,7 @@ public class Tab implements ITableConstants {
 
         setTableHeaderListeners();
         setTableBodyListeners();
+        setTableModelListener();
     }
        
     private void setTableHeaderListeners() {
@@ -394,11 +494,9 @@ public class Tab implements ITableConstants {
     }
     
     private void setTableBodyListeners() {
+        Tab localTab = this;
         table.addMouseListener(new MouseAdapter() {
-
-            boolean isClickOnce, doubleClick;
-            long theFirstClick = 0, theSecondClick = 0;
-
+        
             @Override
             public void mouseClicked(MouseEvent e) {
 
@@ -409,8 +507,8 @@ public class Tab implements ITableConstants {
                         if (e.isControlDown()) {
                             filterByDoubleClick();
                         } else {
-                             //double click : open issue window
-                            if (e.getComponent() instanceof JTable) {     
+                            //double click : open issue window
+                            if (e.getComponent() instanceof JTable) {                                
                                 int row = table.getSelectedRow();
                                 int col = table.getSelectedColumn();
                                 //logics for openning issue
@@ -418,69 +516,158 @@ public class Tab implements ITableConstants {
                                 boolean isIssueAlreadyOpened = false;
                             }
                         }
-                    }
-                    else {
+                    } else {
                         if (e.getClickCount() == 1) {
                             if (e.getComponent() instanceof JTable) {
                                 JTable table = (JTable) e.getSource();
                                 int[] rows = table.getSelectedRows();
-
+                                
                                 if (rows.length >= 2) {
-                                    toggleBatchEditMode(true);
-
+                                    state.setBatchEditBtnVisible(true);
+                                    pmWindow.changeTabbedPanelState(localTab);
+                                    
                                 } else {
-                                    toggleBatchEditMode(false);
+                                    state.setBatchEditBtnVisible(false);
+                                    pmWindow.changeTabbedPanelState(localTab);
                                 }
                             }
                         }
                         
                     }
-                }
-
-                // end if left mouse clicks
+                } // end if left mouse clicks
                 // if right mouse clicks
                 else if (SwingUtilities.isRightMouseButton(e)) {
                     if (e.getClickCount() == 2) {
+                        
+                        state.enableEdit(true);
+                        
+                        pmWindow.changeTabbedPanelState(localTab);
+                        
+                        EditableTableModel model = ((EditableTableModel) table.getModel());
+                        
+                        // get selected cell for editing
+                        int columnIndex = table.columnAtPoint(e.getPoint()); // this returns the column index
+                        int rowIndex = table.rowAtPoint(e.getPoint()); // this returns the rowIndex index
+                        
+                        //column 3 : description column cannot be edited
+                        if (rowIndex != -1 && columnIndex != -1 && columnIndex != 3) {
+                            // make it the active editing cell
+                            
+                            table.changeSelection(rowIndex, columnIndex, false, false);
+                            model.setCellEditable(true);
+                            selectAllText(e);
+                            
+                        } // end not null condition
 
-                          if (Editing) {
+                    } // end of is tab editing conditions
 
-                            // set the states for this tab
-                             pmWindow.makeTableEditable(true);
-                        //    setEnabledEditingButtons(true, true, true);
-                        //    setBatchEditButtonStates(tab);
+                } // end if 2 clicks 
+            } // end if right mouse clicks
+        
+        private void selectAllText(MouseEvent e) {// Select all text inside jTextField
 
-                            // set the color of the edit mode text
-                        //    editModeTextColor(tab.isEditing());
+            int row = table.getSelectedRow();
+            int column = table.getSelectedColumn();
+            if (column != 0) {
+                table.getComponentAt(row, column).requestFocus();
+                table.editCellAt(row, column);
+                JTextField selectCom = (JTextField) table.getEditorComponent();
+                if (selectCom != null) {
+                    selectCom.requestFocusInWindow();
+                    selectCom.selectAll();
+                }
+            }
 
-                            // get selected cell for editing
-                            int columnIndex = table.columnAtPoint(e.getPoint()); // this returns the column index
-                            int rowIndex = table.rowAtPoint(e.getPoint()); // this returns the rowIndex index
-                            if (rowIndex != -1 && columnIndex != -1) {
+        }
+            
+        
+        });
+            
+  
+        
+        //drag to select multiple rows 
+        table.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (e.getComponent() instanceof JTable) {
+                    int[] rows = table.getSelectedRows();
+                    if (rows.length >= 2) {
+                        state.setBatchEditBtnVisible(true);
+                        pmWindow.changeTabbedPanelState(localTab);
 
-                                // make it the active editing cell
-                                table.changeSelection(rowIndex, columnIndex, false, false);
+                    } else {
+                        state.setBatchEditBtnVisible(true);
+                        pmWindow.changeTabbedPanelState(localTab);
+                    }
+                }
+            }
+        });
+       
 
-                                //selectAllText(e);
+        // add keyListener to the tableSelected
+        table.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                if (ke.getKeyCode() == KeyEvent.VK_F2) {
 
-                                // if cell is being edited
-                                // cannot cancel or upload or revert
-                               // setEnabledEditingButtons(false, false, false);
+                    // I believe this is meant to toggle edit mode
+                    // so I passed the conditional
+                    state.setAddBtnVisible(false);
+                    state.setEditMode(true);
+                    state.setRevertChangesBtnVisible(true);
+                    state.setUploadChangesBtnVisible(true);
+                    pmWindow.changeTabbedPanelState(localTab);
+                    
+                }
+            }
+        });
+        
+        
+    }
+    
+    private void setTableModelListener() {
+        
+        table.getModel().addTableModelListener(new TableModelListener() {  // add tableSelected model listener every time the tableSelected model reloaded
+            @Override
+            public void tableChanged(TableModelEvent e) {
 
-                            } // end not null condition
+                System.out.println("table changed called");
+                int row = e.getFirstRow();
+                int col = e.getColumn();
 
-                        } // end of is tab editing conditions
+                ModifiedTableData data = modTableData;
 
-                    } // end if 2 clicks 
-                } // end if right mouse clicks
+                if (col != -1) {
+                    Object oldValue = data.getOldData()[row][col];
+                    Object newValue = table.getModel().getValueAt(row, col);
+
+                    // check that data is different
+                    if (!newValue.equals(oldValue)) {
+
+                        String tableName = table.getName();
+                        String columnName = table.getColumnName(col);
+                        int id = (Integer) table.getModel().getValueAt(row, 0);
+
+                        data.getNewData().add(new ModifiedData(tableName, columnName, newValue, id));
+
+                        // color the cell
+                        cellRenderer.getCells().get(col).add(row);
+                        table.getColumnModel().getColumn(col).setCellRenderer(cellRenderer);
+
+                    } 
+                    
+                }
             }
         });
     }
     
     
+    /*end of registering table listeners*/
     
     
-    
-    /*detect open issues*/
+    /*
+    **detect open issues 
+    */
     public boolean detectOpenIssues() {
         //reference table do not need to detect open issues
         if (table.getName().equals("References")) return false;
@@ -505,10 +692,8 @@ public class Tab implements ITableConstants {
 
     
     
-    
-    
-    
-    /*fliter methods */
+    /* flitering related methods */
+    //clear filter for a column
     private void clearColumnFilter(int columnIndex) {
         
         filter.clearColFilter(columnIndex);
@@ -517,6 +702,7 @@ public class Tab implements ITableConstants {
         setLabelRecords();
     }
     
+    //filter a cell value by double click
     private void filterByDoubleClick() {
 
         int columnIndex = table.getSelectedColumn(); // this returns the column index
@@ -538,30 +724,32 @@ public class Tab implements ITableConstants {
     ** updating main window jcomponents elements
     */
     
+    //set up table last update time
     private void setLastUpdateTime() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time = dateFormat.format(new Date());
         pmWindow.getLabelTimeLastUpdate().setText("Last updated: " + time);
     }
     
+    //set up labelRecoreds
     public void setLabelRecords() {
         pmWindow.getLabelRecords().setText(getRecordsLabel());
     } 
     
-    private void toggleBatchEditMode(boolean set) {
-        pmWindow.getBtnBatchEdit().setEnabled(set);
-        pmWindow.getBtnBatchEdit().setVisible(set);   
-    }
     
     
-    /*table-related helper functions */
-            
-    private int findTableModelRow(Issue issue) {
+    
+    /*
+    **table-related helper functions 
+    */
+    
+    //find issue in table
+    private int findTableModelRow(Object[] rowData) {
         int rowCount = table.getModel().getRowCount();
         TableModel model = table.getModel();
         for(int rowIndex = 0; rowIndex < rowCount; rowIndex++){
             int rowId = Integer.parseInt(model.getValueAt(rowIndex, 0).toString());
-            if(rowId == issue.getId()){
+            if(rowId == (int)rowData[0]){
                 return rowIndex;
             }
         }
@@ -569,9 +757,10 @@ public class Tab implements ITableConstants {
     }
     
     
-    
-    
-    
+    /*
+    ** table layout
+    */
+    //set up table column layout
     private void setColumnFormat() {
 
         // Center column content
@@ -683,11 +872,7 @@ public class Tab implements ITableConstants {
         table.setModel(etm);
     }
 
-    /**
-     * ************************************************************************
-     *************************** Methods **************************************
-     * ************************************************************************
-     */
+   
     /**
      * This method subtracts an amount from the totalRecords value This is used
      * when records are deleted to update the totalRecords value
@@ -760,8 +945,59 @@ public class Tab implements ITableConstants {
         return output;
     }
     
-    
-    
+    //get the unique values for search columns
+    public Map loadingDropdownList() {
+
+        Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
+
+        for (String searchField : searchFields) {
+
+            for (int i = 0; i < table.getColumnCount(); i++) {
+                if (table.getColumnName(i).equalsIgnoreCase(searchField)) {
+                    valueListMap.put(i, new ArrayList<Object>());
+                }
+            }
+        }
+        for (int col : valueListMap.keySet()) {
+            //for each search item, create a new drop down list
+            ArrayList DropDownListValueForEachColumn = new ArrayList<Object>();
+
+            String[] columnNames = tableColNames;
+            TableModel tableModel = table.getModel();
+            String colName = columnNames[col].toLowerCase();
+
+            switch (colName) {
+                case "title":
+                case "description":
+                case "version":
+                    DropDownListValueForEachColumn.add("");
+                    break;
+                default:
+                    Object valueAddToDropDownList;
+                    for (int row = 0; row < tableModel.getRowCount(); row++) {
+                        valueAddToDropDownList = tableModel.getValueAt(row, col);
+
+                        if (valueAddToDropDownList != null) {
+                            // add to drop down list
+                            DropDownListValueForEachColumn.add(valueAddToDropDownList);
+                        } else {
+                            DropDownListValueForEachColumn.add("");
+                        }
+                    }
+                    break;
+            }
+
+            //make every item in drop down list unique
+            Set<Object> uniqueValue = new HashSet<Object>(DropDownListValueForEachColumn);
+            ArrayList uniqueList = new ArrayList<Object>(uniqueValue);
+//                System.out.println(col + " " + uniqueList);
+            valueListMap.put(col, uniqueList);
+        }
+
+        return valueListMap;
+
+    }
+
     /**
      * ************************************************************************
      ********************** Setters & Getters *********************************
@@ -805,23 +1041,6 @@ public class Tab implements ITableConstants {
         return getTable().getRowCount();
     }
 
-   
-    public boolean isActivateRecordMenuItemEnabled() {
-        return activateRecordMenuItemEnabled;
-    }
-
-    public void setActivateRecordMenuItemEnabled(boolean activateRecordMenuItemEnabled) {
-        this.activateRecordMenuItemEnabled = activateRecordMenuItemEnabled;
-    }
-
-    public boolean isArchiveRecordMenuItemEnabled() {
-        return archiveRecordMenuItemEnabled;
-    }
-
-    public void setArchiveRecordMenuItemEnabled(boolean archiveRecordMenuItemEnabled) {
-        this.archiveRecordMenuItemEnabled = archiveRecordMenuItemEnabled;
-    }
-
     public String[] getTableColNames() {
         return tableColNames;
     }
@@ -844,14 +1063,8 @@ public class Tab implements ITableConstants {
     public void setSearchFields(String[] searchFields) {
         this.searchFields = searchFields;
     }
-
-    public boolean isAddRecordsBtnVisible() {
-        return addRecordsBtnVisible;
-    }
-
-    public void setAddRecordsBtnVisible(boolean addRecordsBtnVisible) {
-        this.addRecordsBtnVisible = addRecordsBtnVisible;
-    }
+    
+    
 
     public ColumnPopupMenu getColumnPopupMenu() {
         return columnPopupMenu;
@@ -869,13 +1082,7 @@ public class Tab implements ITableConstants {
         this.batchEditFields = batchEditFields;
     }
 
-    public boolean isBatchEditBtnVisible() {
-        return batchEditBtnVisible;
-    }
-
-    public void setBatchEditBtnVisible(boolean batchEditBtnVisible) {
-        this.batchEditBtnVisible = batchEditBtnVisible;
-    }
+    
 
     public JTableCellRenderer getCellRenderer() {
         return cellRenderer;
@@ -893,45 +1100,15 @@ public class Tab implements ITableConstants {
         this.modTableData = tableData;
     }
 
-    public boolean isEditing() {
-        return Editing;
+    public ButtonsState getState() {
+        return state;
     }
 
-    public void setEditing(boolean Editing) {
-        this.Editing = Editing;
+    public void setState(ButtonsState state) {
+        this.state = state;
     }
-
-    public boolean isBatchEditBtnEnabled() {
-        return batchEditBtnEnabled;
-    }
-
-    public void setBatchEditBtnEnabled(boolean batchEditBtnEnabled) {
-        this.batchEditBtnEnabled = batchEditBtnEnabled;
-    }
-
-    public boolean isBatchEditWindowOpen() {
-        return batchEditWindowOpen;
-    }
-
-    public void setBatchEditWindowOpen(boolean batchEditWindowOpen) {
-        this.batchEditWindowOpen = batchEditWindowOpen;
-    }
-
-    public boolean isBatchEditWindowVisible() {
-        return batchEditWindowVisible;
-    }
-
-    public void setBatchEditWindowVisible(boolean batchEditWindowVisible) {
-        this.batchEditWindowVisible = batchEditWindowVisible;
-    }
-
-    public boolean isAddRecordsBtnEnabled() {
-        return AddRecordsBtnEnabled;
-    }
-
-    public void setAddRecordsBtnEnabled(boolean AddRecordsBtnEnabled) {
-        this.AddRecordsBtnEnabled = AddRecordsBtnEnabled;
-    }
+    
+    
 
 }// end Tab
 
@@ -966,4 +1143,6 @@ public class Tab implements ITableConstants {
         }
 
     }
+
+
 

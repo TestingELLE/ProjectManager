@@ -50,7 +50,7 @@ public class EditableTableModel extends DefaultTableModel {
      */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return cellEditable;
+        return cellEditable;
     }
     
     /**

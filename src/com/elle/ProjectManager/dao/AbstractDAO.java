@@ -7,17 +7,17 @@ package com.elle.ProjectManager.dao;
 
 import com.elle.ProjectManager.entities.Issue;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Yi
  */
-public interface AbstractDAO {
-    public boolean insert(Issue issue);
-    public boolean update(Issue issue);
-    public Issue getSelectedRow(String tableName, String row);
-    public ArrayList<Issue> get(String tableName);
-    public Issue get(int id);
-    public boolean delete(int[] ids);
-    
+public interface AbstractDAO<T> {
+    public boolean insert(T item);
+    public boolean update(T item);
+    public abstract boolean delete(int id);
+    public abstract List<T> getAll();
+    public abstract T get(int id);
+ 
 }
