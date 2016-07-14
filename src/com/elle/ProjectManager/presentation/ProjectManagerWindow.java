@@ -90,7 +90,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     //tables 
     //added category 'test issue' - by Yi 
-    private String[] tableNames = {"PM", "ELLEGUI", "Analyster", "Other", TASKS_TABLE_NAME};
+    private String[] tableNames = {"PM", "ELLEGUI", "Analyster", "Other", "References"};
 
     // components
     private static ProjectManagerWindow instance;
@@ -185,25 +185,26 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 
                 if(tableNames[tableName].equalsIgnoreCase("other")){
                     // set the search fields for the comboBox for each tabName
-                tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS_OTHERS);
-                // set the search fields for the comboBox for each tabName
-                tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
-                // set column width percents to tables of the tabName objects
-                tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
-                 
-                }else{
-                
-                
-                
-                // set the search fields for the comboBox for each tabName
-                tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS);
-                // set the search fields for the comboBox for each tabName
-                tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
-                // set column width percents to tables of the tabName objects
-                tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
-                
+                tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS_OTHERS);                 
                 }
-            } else {
+                else{
+                    // set the search fields for the comboBox for each tabName
+                tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS);
+                }               
+                
+                // set column width percents to tables of the tabName objects
+                if (tableNames[tableName].equalsIgnoreCase("References")){
+                tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_REFERENCES);
+                 }
+                
+                else{
+                // set column width percents to tables of the tabName objects
+                tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
+                }
+               
+                // set the search fields for the comboBox for each tabName
+                tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
+            }else {
                 tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS);
                 tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
                 tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_REPORTS);
@@ -265,7 +266,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         AnalysterTable.setName(tableNames[2]);
         OtherTable.setName(tableNames[3]);
 
-        issue_filesTable.setName(tableNames[4]);
+        referenceTable.setName(tableNames[4]);
         
 //        issue_notesTable.setName(TASKNOTES_TABLE_NAME);
 
@@ -274,8 +275,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setTable(ELLEGUITable);
         tabs.get(tableNames[2]).setTable(AnalysterTable);
         tabs.get(tableNames[3]).setTable(OtherTable);
-
-        tabs.get(TASKS_TABLE_NAME).setTable(issue_filesTable);
+        tabs.get(tableNames[4]).setTable(referenceTable);
+        
+//        tabs.get(TASKS_TABLE_NAME).setTable(issue_filesTable);
         
 //        tabs.get(TASKNOTES_TABLE_NAME).setTable(issue_notesTable);
 
@@ -287,8 +289,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setTableColNames(ELLEGUITable);
         tabs.get(tableNames[2]).setTableColNames(AnalysterTable);
         tabs.get(tableNames[3]).setTableColNames(OtherTable);
+        tabs.get(tableNames[4]).setTableColNames(referenceTable);
 
-        tabs.get(TASKS_TABLE_NAME).setTableColNames(issue_filesTable);
+        //tabs.get(TASKS_TABLE_NAME).setTableColNames(issue_filesTable);
         
 //        tabs.get(TASKNOTES_TABLE_NAME).setTableColNames(issue_notesTable);
 
@@ -320,15 +323,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setFilter(new TableFilter(ELLEGUITable));
         tabs.get(tableNames[2]).setFilter(new TableFilter(AnalysterTable));
         tabs.get(tableNames[3]).setFilter(new TableFilter(OtherTable));
+        tabs.get(tableNames[4]).setFilter(new TableFilter(OtherTable));
 
         //add custom id list for each tab
         tabs.get(tableNames[0]).setCustomIdList(new CustomIDList());
         tabs.get(tableNames[1]).setCustomIdList(new CustomIDList());
         tabs.get(tableNames[2]).setCustomIdList(new CustomIDList());
         tabs.get(tableNames[3]).setCustomIdList(new CustomIDList());
+        tabs.get(tableNames[4]).setCustomIdList(new CustomIDList());
        
 
-        tabs.get(TASKS_TABLE_NAME).setFilter(new TableFilter(issue_filesTable));
+  //      tabs.get(TASKS_TABLE_NAME).setFilter(new TableFilter(issue_filesTable));
 //        tabs.get(TASKNOTES_TABLE_NAME).setFilter(new TableFilter(issue_notesTable));
 
         // initialize columnPopupMenu 
@@ -346,12 +351,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[3])
                 .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[3]).
                                 getFilter(), tabs.get(tableNames[3]).getCustomIdList()));
+        tabs.get(tableNames[4])
+                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[4]).
+                                getFilter(), tabs.get(tableNames[4]).getCustomIdList()));
         
         
 
-        tabs.get(TASKS_TABLE_NAME)
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKS_TABLE_NAME).
-                                getFilter(), tabs.get(TASKS_TABLE_NAME).getCustomIdList()));
+//        tabs.get(TASKS_TABLE_NAME)
+//                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKS_TABLE_NAME).
+//                                getFilter(), tabs.get(TASKS_TABLE_NAME).getCustomIdList()));
 //        tabs.get(TASKNOTES_TABLE_NAME)
 //                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKNOTES_TABLE_NAME).getFilter()));
         comboBoxStartToSearch = false;
@@ -376,9 +384,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setCellRenderer(new JTableCellRenderer(ELLEGUITable));
         tabs.get(tableNames[2]).setCellRenderer(new JTableCellRenderer(AnalysterTable));
         tabs.get(tableNames[3]).setCellRenderer(new JTableCellRenderer(OtherTable));
+        tabs.get(tableNames[3]).setCellRenderer(new JTableCellRenderer(referenceTable));
        
 
-        tabs.get(TASKS_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_filesTable));
+       // tabs.get(TASKS_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_filesTable));
     //    tabs.get(TASKNOTES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_notesTable));
 
         
@@ -395,6 +404,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
         tabs.get(tableNames[2]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
         tabs.get(tableNames[3]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+        tabs.get(tableNames[4]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
         
         
         // set the modified tableSelected data objects for each tabName
@@ -402,9 +412,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         tabs.get(tableNames[1]).setTableData(new ModifiedTableData(ELLEGUITable));
         tabs.get(tableNames[2]).setTableData(new ModifiedTableData(AnalysterTable));
         tabs.get(tableNames[3]).setTableData(new ModifiedTableData(OtherTable));
-        
+         tabs.get(tableNames[4]).setTableData(new ModifiedTableData(referenceTable));
 
-        tabs.get(TASKS_TABLE_NAME).setTableData(new ModifiedTableData(issue_filesTable));
+  //      tabs.get(TASKS_TABLE_NAME).setTableData(new ModifiedTableData(issue_filesTable));
 //        tabs.get(TASKNOTES_TABLE_NAME).setTableData(new ModifiedTableData(issue_notesTable));
 
         // set all the tabs initially not in editing mode
@@ -709,10 +719,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         TableFilterBtnGroup = new javax.swing.ButtonGroup();
         jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
         jPanel5 = new javax.swing.JPanel();
+        jPanelEdit = new javax.swing.JPanel();
+        btnBatchEdit = new javax.swing.JButton();
+        btnAddIssue = new javax.swing.JButton();
+        btnUploadChanges = new javax.swing.JButton();
+        labelEditModeState = new javax.swing.JLabel();
+        labelEditMode = new javax.swing.JLabel();
+        btnRevertChanges = new javax.swing.JButton();
+        informationLabel = new javax.swing.JLabel();
         tabbedPanel = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         PMTable = new javax.swing.JTable();
@@ -722,16 +741,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         AnalysterTable = new javax.swing.JTable();
         jScrollPane5 = new javax.swing.JScrollPane();
         OtherTable = new javax.swing.JTable();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        issue_filesTable = new javax.swing.JTable();
-        jPanelEdit = new javax.swing.JPanel();
-        btnBatchEdit = new javax.swing.JButton();
-        btnAddIssue = new javax.swing.JButton();
-        btnUploadChanges = new javax.swing.JButton();
-        labelEditModeState = new javax.swing.JLabel();
-        labelEditMode = new javax.swing.JLabel();
-        btnRevertChanges = new javax.swing.JButton();
-        informationLabel = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        referenceTable = new javax.swing.JTable();
         jPanelSQL = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaSQL = new javax.swing.JTextArea();
@@ -762,11 +773,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemOfflineMode = new javax.swing.JCheckBoxMenuItem();
         menuEdit = new javax.swing.JMenu();
         menuItemManageDBs = new javax.swing.JMenuItem();
+        menuItemManageALs = new javax.swing.JMenuItem();
         menuItemDeleteRecord = new javax.swing.JMenuItem();
-        menuItemArchiveRecord = new javax.swing.JMenuItem();
-        menuItemActivateRecord = new javax.swing.JMenuItem();
-        menuFind = new javax.swing.JMenu();
-        menuReports = new javax.swing.JMenu();
+        menuItemLoadDataFromTXT = new javax.swing.JMenuItem();
         menuView = new javax.swing.JMenu();
         menuItemLogChkBx = new javax.swing.JCheckBoxMenuItem();
         menuItemSQLCmdChkBx = new javax.swing.JCheckBoxMenuItem();
@@ -776,13 +785,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemReloadSelectedData = new javax.swing.JMenuItem();
         menuItemReloadData = new javax.swing.JMenuItem();
         menuItemReloadAllData = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuItemTurnEditModeOff = new javax.swing.JMenuItem();
         menuItemMoveSeletedRowsToEnd = new javax.swing.JMenuItem();
         menuItemCompIssues = new javax.swing.JMenuItem();
         menuItemBackup = new javax.swing.JMenuItem();
         menuItemSyncLocalData = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         menuItemReconcileConflict = new javax.swing.JMenuItem();
-        menuItemLoadDataFromTXT = new javax.swing.JMenuItem();
+        menuItemExportIssueToReference = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemRepBugSugg = new javax.swing.JMenuItem();
 
@@ -790,10 +801,114 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(1072, 600));
+        setPreferredSize(new java.awt.Dimension(1072, 600));
+        getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jPanel5.setMinimumSize(new java.awt.Dimension(1072, 500));
+        jPanel5.setPreferredSize(new java.awt.Dimension(1072, 500));
+        jPanel5.setLayout(new java.awt.GridBagLayout());
+
+        jPanelEdit.setPreferredSize(new java.awt.Dimension(636, 180));
+        jPanelEdit.setLayout(new java.awt.GridBagLayout());
+
+        btnBatchEdit.setText("Batch Edit");
+        btnBatchEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatchEditActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
+        jPanelEdit.add(btnBatchEdit, gridBagConstraints);
+
+        btnAddIssue.setText("Add Issue");
+        btnAddIssue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddIssueActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        jPanelEdit.add(btnAddIssue, gridBagConstraints);
+
+        btnUploadChanges.setText("Upload Changes");
+        btnUploadChanges.setMaximumSize(new java.awt.Dimension(95, 30));
+        btnUploadChanges.setMinimumSize(new java.awt.Dimension(95, 30));
+        btnUploadChanges.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUploadChangesActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 33;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, -120, 0, 0);
+        jPanelEdit.add(btnUploadChanges, gridBagConstraints);
+
+        labelEditModeState.setText("OFF");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
+        jPanelEdit.add(labelEditModeState, gridBagConstraints);
+
+        labelEditMode.setText("Edit Mode:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 0);
+        jPanelEdit.add(labelEditMode, gridBagConstraints);
+
+        btnRevertChanges.setText("Revert Changes");
+        btnRevertChanges.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRevertChangesActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 18;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
+        jPanelEdit.add(btnRevertChanges, gridBagConstraints);
+
+        informationLabel.setText("Information Label");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 6;
+        jPanelEdit.add(informationLabel, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        jPanel5.add(jPanelEdit, gridBagConstraints);
 
         tabbedPanel.setAlignmentX(0.0F);
         tabbedPanel.setAlignmentY(0.0F);
+        tabbedPanel.setMinimumSize(new java.awt.Dimension(2645, 787));
         tabbedPanel.setName("Analyster"); // NOI18N
+        tabbedPanel.setPreferredSize(new java.awt.Dimension(929, 551));
         tabbedPanel.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 tabbedPanelStateChanged(evt);
@@ -825,7 +940,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         PMTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        PMTable.setColumnSelectionAllowed(true);
         PMTable.setMinimumSize(new java.awt.Dimension(10, 240));
         PMTable.setName("PM"); // NOI18N
         jScrollPane1.setViewportView(PMTable);
@@ -925,103 +1039,46 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         tabbedPanel.addTab("Other", jScrollPane5);
 
-        issue_filesTable.setModel(new javax.swing.table.DefaultTableModel(
+        referenceTable.setAutoCreateRowSorter(true);
+        referenceTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "fileID", "taskID", "app", "submitter", "step", "date_", "files", "path", "notes"
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "submitter", "issueType", "locked", "lastmodTime"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, true, true, true, true, true, true, true, true, false, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
-        });
-        issue_filesTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        issue_filesTable.setMinimumSize(new java.awt.Dimension(10, 240));
-        issue_filesTable.setName("issue_files"); // NOI18N
-        jScrollPane4.setViewportView(issue_filesTable);
 
-        tabbedPanel.addTab("issue_files", jScrollPane4);
-
-        jPanelEdit.setPreferredSize(new java.awt.Dimension(636, 180));
-
-        btnBatchEdit.setText("Batch Edit");
-        btnBatchEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBatchEditActionPerformed(evt);
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
+        jScrollPane3.setViewportView(referenceTable);
 
-        btnAddIssue.setText("Add Issue");
-        btnAddIssue.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddIssueActionPerformed(evt);
-            }
-        });
+        tabbedPanel.addTab("References", jScrollPane3);
 
-        btnUploadChanges.setText("Upload Changes");
-        btnUploadChanges.setMaximumSize(new java.awt.Dimension(95, 30));
-        btnUploadChanges.setMinimumSize(new java.awt.Dimension(95, 30));
-        btnUploadChanges.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUploadChangesActionPerformed(evt);
-            }
-        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel5.add(tabbedPanel, gridBagConstraints);
+        tabbedPanel.getAccessibleContext().setAccessibleName("Reports");
+        tabbedPanel.getAccessibleContext().setAccessibleParent(tabbedPanel);
 
-        labelEditModeState.setText("OFF");
-
-        labelEditMode.setText("Edit Mode:");
-
-        btnRevertChanges.setText("Revert Changes");
-        btnRevertChanges.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRevertChangesActionPerformed(evt);
-            }
-        });
-
-        informationLabel.setText("jLabel2");
-
-        javax.swing.GroupLayout jPanelEditLayout = new javax.swing.GroupLayout(jPanelEdit);
-        jPanelEdit.setLayout(jPanelEditLayout);
-        jPanelEditLayout.setHorizontalGroup(
-            jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelEditLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(labelEditMode)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelEditModeState)
-                .addGap(233, 233, 233)
-                .addGroup(jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(informationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanelEditLayout.createSequentialGroup()
-                        .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRevertChanges, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
-                        .addComponent(btnAddIssue)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBatchEdit)
-                        .addGap(26, 26, 26))))
-        );
-        jPanelEditLayout.setVerticalGroup(
-            jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelEditLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanelEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelEditMode)
-                    .addComponent(labelEditModeState)
-                    .addComponent(btnBatchEdit)
-                    .addComponent(btnAddIssue)
-                    .addComponent(btnRevertChanges)
-                    .addComponent(btnUploadChanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addComponent(informationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        jPanelSQL.setPreferredSize(new java.awt.Dimension(1072, 100));
+        jPanelSQL.setLayout(new java.awt.GridBagLayout());
 
         jScrollPane2.setBorder(null);
 
@@ -1033,81 +1090,89 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         ((AbstractDocument) jTextAreaSQL.getDocument())
         .setDocumentFilter(new CreateDocumentFilter(33));
         jTextAreaSQL.setWrapStyleWord(true);
-        jTextAreaSQL.setMaximumSize(new java.awt.Dimension(1590, 200));
-        jTextAreaSQL.setMinimumSize(new java.awt.Dimension(1590, 200));
+        jTextAreaSQL.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jTextAreaSQL.setMaximumSize(new java.awt.Dimension(1590, 100));
+        jTextAreaSQL.setMinimumSize(new java.awt.Dimension(1590, 100));
+        jTextAreaSQL.setPreferredSize(new java.awt.Dimension(1590, 100));
         jScrollPane2.setViewportView(jTextAreaSQL);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridheight = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.ipady = 75;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 2, 2);
+        jPanelSQL.add(jScrollPane2, gridBagConstraints);
+
         btnEnterSQL.setText("Enter");
+        btnEnterSQL.setMaximumSize(new java.awt.Dimension(71, 26));
+        btnEnterSQL.setMinimumSize(new java.awt.Dimension(71, 26));
+        btnEnterSQL.setPreferredSize(new java.awt.Dimension(71, 26));
         btnEnterSQL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEnterSQLActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        jPanelSQL.add(btnEnterSQL, gridBagConstraints);
 
         btnCancelSQL.setText("Cancel");
+        btnCancelSQL.setMaximumSize(new java.awt.Dimension(71, 26));
+        btnCancelSQL.setMinimumSize(new java.awt.Dimension(71, 26));
+        btnCancelSQL.setPreferredSize(new java.awt.Dimension(71, 26));
         btnCancelSQL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelSQLActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        jPanelSQL.add(btnCancelSQL, gridBagConstraints);
 
         btnCloseSQL.setText("Close");
+        btnCloseSQL.setMaximumSize(new java.awt.Dimension(70, 26));
+        btnCloseSQL.setMinimumSize(new java.awt.Dimension(65, 26));
+        btnCloseSQL.setPreferredSize(new java.awt.Dimension(70, 26));
         btnCloseSQL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCloseSQLActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        jPanelSQL.add(btnCloseSQL, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanelSQLLayout = new javax.swing.GroupLayout(jPanelSQL);
-        jPanelSQL.setLayout(jPanelSQLLayout);
-        jPanelSQLLayout.setHorizontalGroup(
-            jPanelSQLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelSQLLayout.createSequentialGroup()
-                .addGap(4, 4, 4)
-                .addGroup(jPanelSQLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnCancelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEnterSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnCloseSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(4, 4, 4)
-                .addComponent(jScrollPane2)
-                .addContainerGap())
-        );
-        jPanelSQLLayout.setVerticalGroup(
-            jPanelSQLLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelSQLLayout.createSequentialGroup()
-                .addGap(4, 4, 4)
-                .addComponent(btnEnterSQL)
-                .addGap(4, 4, 4)
-                .addComponent(btnCancelSQL)
-                .addGap(4, 4, 4)
-                .addComponent(btnCloseSQL)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanelSQLLayout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 2695;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(jPanelSQL, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelEdit, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
-            .addComponent(jPanelSQL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(tabbedPanel)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jPanelSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
-        );
-
-        tabbedPanel.getAccessibleContext().setAccessibleName("Reports");
-        tabbedPanel.getAccessibleContext().setAccessibleParent(tabbedPanel);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(jPanel5, gridBagConstraints);
 
         addPanel_control.setPreferredSize(new java.awt.Dimension(1045, 120));
 
@@ -1126,7 +1191,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(273, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(status)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1181,19 +1246,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         searchPanelLayout.setHorizontalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(searchPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnClearAllFilter)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboBoxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSearch)
-                .addGap(0, 96, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37))
+                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(searchPanelLayout.createSequentialGroup()
+                        .addComponent(btnClearAllFilter)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comboBoxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSearch))
+                    .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 201, Short.MAX_VALUE))
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1204,9 +1268,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     .addComponent(comboBoxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch)
                     .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0))
         );
 
         javax.swing.GroupLayout addPanel_controlLayout = new javax.swing.GroupLayout(addPanel_control);
@@ -1222,9 +1286,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+            .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(addPanel_control, gridBagConstraints);
 
         menuFile.setText("File");
 
@@ -1292,6 +1365,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuEdit.add(menuItemManageDBs);
 
+        menuItemManageALs.setText("Manage AccessLevels");
+        menuItemManageALs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemManageALsActionPerformed(evt);
+            }
+        });
+        menuEdit.add(menuItemManageALs);
+
         menuItemDeleteRecord.setText("Delete Record");
         menuItemDeleteRecord.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1300,32 +1381,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuEdit.add(menuItemDeleteRecord);
 
-        menuItemArchiveRecord.setText("Archive Record");
-        menuItemArchiveRecord.setEnabled(false);
-        menuItemArchiveRecord.addActionListener(new java.awt.event.ActionListener() {
+        menuItemLoadDataFromTXT.setText("Import Data From TXT File");
+        menuItemLoadDataFromTXT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemArchiveRecordActionPerformed(evt);
+                menuItemLoadDataFromTXTActionPerformed(evt);
             }
         });
-        menuEdit.add(menuItemArchiveRecord);
-
-        menuItemActivateRecord.setText("Activate Record");
-        menuItemActivateRecord.setEnabled(false);
-        menuItemActivateRecord.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemActivateRecordActionPerformed(evt);
-            }
-        });
-        menuEdit.add(menuItemActivateRecord);
+        menuEdit.add(menuItemLoadDataFromTXT);
 
         menuBar.add(menuEdit);
-
-        menuFind.setText("Find");
-        menuBar.add(menuFind);
-
-        menuReports.setText("Reports");
-        menuReports.setEnabled(false);
-        menuBar.add(menuReports);
 
         menuView.setText("View");
 
@@ -1390,6 +1454,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemReloadAllData);
+        menuTools.add(jSeparator1);
 
         menuItemTurnEditModeOff.setText("Turn Edit Mode OFF");
         menuItemTurnEditModeOff.addActionListener(new java.awt.event.ActionListener() {
@@ -1430,6 +1495,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemSyncLocalData);
+        menuTools.add(jSeparator2);
 
         menuItemReconcileConflict.setText("Reconcile Conflict Issue");
         menuItemReconcileConflict.addActionListener(new java.awt.event.ActionListener() {
@@ -1439,13 +1505,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuTools.add(menuItemReconcileConflict);
 
-        menuItemLoadDataFromTXT.setText("Import Data From TXT File");
-        menuItemLoadDataFromTXT.addActionListener(new java.awt.event.ActionListener() {
+        menuItemExportIssueToReference.setText("Export Issue To Reference");
+        menuItemExportIssueToReference.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemLoadDataFromTXTActionPerformed(evt);
+                menuItemExportIssueToReferenceActionPerformed(evt);
             }
         });
-        menuTools.add(menuItemLoadDataFromTXT);
+        menuTools.add(menuItemExportIssueToReference);
 
         menuBar.add(menuTools);
 
@@ -1464,23 +1530,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         setJMenuBar(menuBar);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(addPanel_control, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(addPanel_control, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(35, 35, 35))
-        );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1491,6 +1540,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 + "Version: " + version);
     }//GEN-LAST:event_menuItemVersionActionPerformed
 
+    private void menuItemManageALsActionPerformed(java.awt.event.ActionEvent evt){}
+    private void menuItemExportIssueToReferenceActionPerformed(java.awt.event.ActionEvent evt){}
+    
     private Map loadingDropdownList() {
         String selectedTabName = this.getSelectedTabName();
         Tab tab = tabs.get(selectedTabName);
@@ -1518,7 +1570,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         TableModel tableModel = table.getModel();
                         String colName;
                         colName = columnNames[col].toLowerCase();
-                        System.out.println(entry.getValue().getTableName() + "." + colName);
                         switch (colName) {
                             case "title":
                             case "description":
@@ -1537,7 +1588,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                         DropDownListValueForEachColumn.add("");
                                     }
                                 }
-                                System.out.println(DropDownListValueForEachColumn);
                                 break;
                         }
                     }
@@ -3761,8 +3811,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param table
      */
     public void setColumnFormat(float[] width, JTable table) {
-
-        // Center column content
+    // Center column content
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -3776,15 +3825,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             header.setDefaultRenderer(new AlignmentTableHeaderCellRenderer(header.getDefaultRenderer()));
         }
 
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        
 
+        
+        
         switch (table.getName()) {
 
             // Set the format for tableSelected task.
             case "PM": {
                 for (int i = 0; i < width.length; i++) {
                     int pWidth = Math.round(width[i]);
-                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
                     if (i == 2 || i == 3) {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
@@ -3792,19 +3842,24 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     }
                     
                     // hide lock and submitter columns
-                    if(i == 10 || i == 11|| i == 12){
+                    //if(i == 10 || i == 11|| i == 12)
+                    if(table.getColumnName(i).equalsIgnoreCase("description")){
+                        table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);}
+                    
+                    else{   
                         TableColumn column = table.getColumnModel().getColumn(i);
                         column.setMinWidth(pWidth);
                         column.setMaxWidth(pWidth);
                         column.setPreferredWidth(pWidth);
                     }
+                    
                 }
                 break;
             }
             case "ELLEGUI": {
                 for (int i = 0; i < width.length; i++) {
                     int pWidth = Math.round(width[i]);
-                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+                    //table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
                     if (i == 2 || i == 3) {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
@@ -3812,7 +3867,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     }
                     
                     // hide lock and submitter columns
-                    if(i == 10 || i == 11){
+                    //if(i == 10 || i == 11){
+                        if(table.getColumnName(i).equalsIgnoreCase("description")){
+                        table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);}
+                    else{   
                         TableColumn column = table.getColumnModel().getColumn(i);
                         column.setMinWidth(pWidth);
                         column.setMaxWidth(pWidth);
@@ -3824,7 +3882,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             case "Analyster": {
                 for (int i = 0; i < width.length; i++) {
                     int pWidth = Math.round(width[i]);
-                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+                   // table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
                     if (i == 2 || i == 3) {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
@@ -3832,7 +3890,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     }
                     
                     // hide lock and submitter columns
-                    if(i == 10 || i == 11){
+                    //if(i == 10 || i == 11){
+                    if(table.getColumnName(i).equalsIgnoreCase("description")){
+                        table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);}
+                    else{   
                         TableColumn column = table.getColumnModel().getColumn(i);
                         column.setMinWidth(pWidth);
                         column.setMaxWidth(pWidth);
@@ -3844,7 +3905,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             case "Other": {
                 for (int i = 0; i < width.length; i++) {
                     int pWidth = Math.round(width[i]);
-                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+                   // table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
                     if (i == 2 || i == 3) {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
@@ -3852,7 +3913,31 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     }
                     
                     // hide lock and submitter columns
-                    if(i == 10 || i == 11){
+                   // if(i == 10 || i == 11){
+                        if(table.getColumnName(i).equalsIgnoreCase("description")){
+                        table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);}
+                    else{   
+                        TableColumn column = table.getColumnModel().getColumn(i);
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                        column.setPreferredWidth(pWidth);
+                    }
+                }
+                break;
+            }
+            
+            case "References": {
+                for (int i = 0; i < width.length; i++) {
+                    int pWidth = Math.round(width[i]);
+                    if (i == 2 || i == 3) {
+                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
+                    } else {
+                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                    
+                        if(table.getColumnName(i).equalsIgnoreCase("description")){
+                        table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+                    }else{   
                         TableColumn column = table.getColumnModel().getColumn(i);
                         column.setMinWidth(pWidth);
                         column.setMaxWidth(pWidth);
@@ -3897,11 +3982,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 break;
             }
             default: {
-                System.out.println("Load table errer!");
+                System.out.println("Load table error!");
                 break;
             }
         }
     }
+
 
     /**
      * updateTable Updates database with edited data This is called from batch
@@ -4207,11 +4293,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         comboBoxField.setEnabled(disable);
         menuEdit.setEnabled(disable);
         menuFile.setEnabled(disable);
-        menuFind.setEnabled(disable);
+      //?  menuFind.setEnabled(disable);
         menuHelp.setEnabled(disable);
         menuView.setEnabled(disable);
         menuTools.setEnabled(disable);
-        menuReports.setEnabled(disable);
+    //?   menuReports.setEnabled(disable);
         searchPanel.setEnabled(disable);
 
         String tabName = getSelectedTabName();
@@ -4259,12 +4345,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.server = server;
     }
 
-    public void showDatabase() {
-        databaseLabel = new JLabel("                                          "
-                + "                                                             "
-                + "                                                                            " 
-                + "Connected to: " + server + "." + database);
-
+     public void showDatabase() {
+        databaseLabel = new JLabel(
+            server + "." + database);
+        menuBar.add(Box.createHorizontalGlue());
         menuBar.add(databaseLabel);
     }
 
@@ -4558,7 +4642,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         //make table scroll down as default
         scrollDown(jScrollPane1);
-        scrollDown(jScrollPane4);
+        scrollDown(jScrollPane3);
         scrollDown(jScrollPane5);
         scrollDown(jScrollPane6);
         scrollDown(jScrollPane7);
@@ -4653,7 +4737,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         //make table scroll down as default
         scrollDown(jScrollPane1);
-        scrollDown(jScrollPane4);
+        scrollDown(jScrollPane3);
         scrollDown(jScrollPane5);
         scrollDown(jScrollPane6);
         scrollDown(jScrollPane7);
@@ -4670,7 +4754,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                informationLabel.setText("");
+                informationLabel.setText("Information Label");
                 searchInformationLabel.setText("");
             }
         });
@@ -4856,7 +4940,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JComboBox comboBoxField;
     private javax.swing.JComboBox comboBoxValue;
     public static javax.swing.JLabel informationLabel;
-    private javax.swing.JTable issue_filesTable;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
@@ -4864,10 +4947,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JPanel jPanelSQL;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JTextArea jTextAreaSQL;
     private javax.swing.JLabel labelEditMode;
     private javax.swing.JLabel labelEditModeState;
@@ -4876,17 +4961,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuEdit;
     private javax.swing.JMenu menuFile;
-    private javax.swing.JMenu menuFind;
     private javax.swing.JMenu menuHelp;
     private javax.swing.JMenuItem menuItemAWSAssign;
-    private javax.swing.JMenuItem menuItemActivateRecord;
-    private javax.swing.JMenuItem menuItemArchiveRecord;
     private javax.swing.JMenuItem menuItemBackup;
     private javax.swing.JMenuItem menuItemCompIssues;
     private javax.swing.JMenuItem menuItemDeleteRecord;
+    private javax.swing.JMenuItem menuItemExportIssueToReference;
     private javax.swing.JMenuItem menuItemLoadDataFromTXT;
     private javax.swing.JCheckBoxMenuItem menuItemLogChkBx;
     private javax.swing.JMenuItem menuItemLogOff;
+    private javax.swing.JMenuItem menuItemManageALs;
     private javax.swing.JMenuItem menuItemManageDBs;
     private javax.swing.JMenuItem menuItemMoveSeletedRowsToEnd;
     private javax.swing.JCheckBoxMenuItem menuItemOfflineMode;
@@ -4904,11 +4988,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemVersion;
     private javax.swing.JMenuItem menuItemViewSplashScreen;
     private javax.swing.JMenu menuPrint;
-    private javax.swing.JMenu menuReports;
     private javax.swing.JMenu menuSelectConn;
     private javax.swing.JMenu menuTools;
     private javax.swing.JMenu menuView;
     private javax.swing.JMenuItem menuitemViewOneIssue;
+    private javax.swing.JTable referenceTable;
     public static javax.swing.JLabel searchInformationLabel;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JLabel status;
@@ -5088,10 +5172,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public JComboBox getComboBoxSearch() {
         return comboBoxField;
     }
-
-    public JTable getIssue_filesTable() {
-        return issue_filesTable;
-    }
+//? 
+    /*public JTable getIssue_filesTable() {
+       return issue_filesTable;
+    }*/
 
     public JCheckBoxMenuItem getjCheckBoxMenuItem1() {
         return jCheckBoxMenuItem1;
@@ -5109,8 +5193,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return jScrollPane2;
     }
 
-    public JScrollPane getjScrollPane4() {
-        return jScrollPane4;
+    public JScrollPane getjScrollPane3() {
+        return jScrollPane3;
     }
 
     public JScrollPane getjScrollPane5() {
@@ -5149,9 +5233,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return menuFile;
     }
 
-    public JMenu getMenuFind() {
-        return menuFind;
-    }
+//    public JMenu getMenuFind() {
+//        return menuFind;
+//    }
 
     public JMenu getMenuHelp() {
         return menuHelp;
@@ -5161,13 +5245,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return menuItemAWSAssign;
     }
 
-    public JMenuItem getMenuItemActivateRecord() {
-        return menuItemActivateRecord;
-    }
+//?    public JMenuItem getMenuItemActivateRecord() {
+//        return menuItemActivateRecord;
+//    }
 
-    public JMenuItem getMenuItemArchiveRecord() {
-        return menuItemArchiveRecord;
-    }
+//  ?  public JMenuItem getMenuItemArchiveRecord() {
+//        return menuItemArchiveRecord;
+//    }
 
     public JMenuItem getMenuItemCompIssues() {
         return menuItemCompIssues;
@@ -5233,9 +5317,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return menuPrint;
     }
 
-    public JMenu getMenuReports() {
-        return menuReports;
-    }
+//  ?  public JMenu getMenuReports() {
+//        return menuReports;
+//    }
 
     public JMenu getMenuSelectConn() {
         return menuSelectConn;
