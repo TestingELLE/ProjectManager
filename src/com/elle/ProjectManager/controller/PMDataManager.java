@@ -21,20 +21,31 @@ public class PMDataManager{
     ReferenceTableController refController;
     private IssueConverter issueConverter;
     
-    public PMDataManager(){
+    public PMDataManager(boolean online){
         //adding controllers
-        issueController = new IssueTableController();
-        refController = new ReferenceTableController();
+        issueController = new IssueTableController(online);
+        refController = new ReferenceTableController(online);
         //adding converters
         issueConverter = new IssueConverter();
+        
+        instance = this;
     }
     
     public static PMDataManager getInstance() {
-      if(instance == null) {
-         instance = new PMDataManager();
-      }
       return instance;
    }
+    
+    public void setOpMode(boolean online){
+        if (online) {
+            issueController.setOpMode(Mode.ONLINE);
+            refController.setOpMode(Mode.ONLINE);
+        }
+        else{
+            issueController.setOpMode(Mode.OFFLINE);
+            issueController.setOpMode(Mode.OFFLINE);
+        }
+        
+    }
 
    /* Issues related data operations */
     //get issues based on app name
@@ -89,7 +100,7 @@ public class PMDataManager{
     //get issue entity by id
     public Issue getIssueEntity(int id) {
       
-        return issueController.get(id);
+        return (Issue) issueController.get(id).deepClone();
     }
     
     
@@ -144,7 +155,7 @@ public class PMDataManager{
     //get reference by id
     public Issue getReferenceEntity(int id) {
       
-        return refController.get(id);
+        return (Issue) refController.get(id).deepClone();
        
     }
     

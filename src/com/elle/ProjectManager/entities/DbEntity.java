@@ -9,7 +9,7 @@ package com.elle.ProjectManager.entities;
  *
  * @author Yi
  */
-public class DbEntity {
+public abstract class DbEntity  {
     protected int id;
     public DbEntity(){
         
@@ -22,6 +22,8 @@ public class DbEntity {
     public void setId(int id) {
         this.id = id;
     }
+
+    public abstract Object deepClone();
     
     
 }

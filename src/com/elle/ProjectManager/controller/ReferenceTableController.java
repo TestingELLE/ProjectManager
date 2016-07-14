@@ -5,6 +5,7 @@
  */
 package com.elle.ProjectManager.controller;
 
+import com.elle.ProjectManager.dao.OfflineIssueDAO;
 import com.elle.ProjectManager.dao.ReferenceDAO;
 import com.elle.ProjectManager.entities.Issue;
 import java.util.List;
@@ -15,12 +16,17 @@ import java.util.List;
  */
 public class ReferenceTableController extends DBTableController<Issue> {
     
-    public ReferenceTableController(){
+    public ReferenceTableController(boolean online){
         super();
         tableName = REF_TABLE_NAME;
         onlineDAO = new ReferenceDAO();
+        offlineDAO = new OfflineIssueDAO("ref");
         //load issues from db to map
+        if (online) opMode = Mode.ONLINE;
+        else opMode = Mode.OFFLINE;
         getAll();
+        
+        
     }
 
     public void updatePartial(Issue issue) {

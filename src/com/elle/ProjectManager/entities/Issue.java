@@ -2,6 +2,7 @@
 package com.elle.ProjectManager.entities;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Issue
@@ -189,6 +190,27 @@ public class Issue extends DbEntity implements Serializable {
 
     public void setLastmodtime(String lastmodtime) {
         this.lastmodtime = lastmodtime;
+    }
+
+    @Override
+    public Object deepClone() {
+        Issue temp = new Issue();
+        temp.setId(this.getId());
+        temp.setApp(this.getApp());
+        temp.setTitle(this.getTitle());
+        byte[] source = this.getDescription();
+        temp.setDescription(Arrays.copyOf(source, source.length));
+        temp.setProgrammer(this.getProgrammer());
+        temp.setDateOpened(this.getDateOpened());
+        temp.setRk(this.getRk());
+        temp.setVersion(this.getVersion());
+        temp.setDateClosed(this.getDateClosed());
+        temp.setIssueType(this.getIssueType());
+        temp.setSubmitter(this.getSubmitter());
+        temp.setLocked(this.getLocked());
+        temp.setLastmodtime(this.getLastmodtime());
+        return temp;
+        
     }
 
 }

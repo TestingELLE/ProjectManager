@@ -428,9 +428,7 @@ public class LoginWindow extends JFrame {
             // terminate this object
             this.dispose();// returns used resources
             
-            
-            
-            
+       
         }
         
 

@@ -7,7 +7,9 @@ package com.elle.ProjectManager.controller;
 
 import com.elle.ProjectManager.dao.AbstractDAO;
 import com.elle.ProjectManager.entities.DbEntity;
+import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ITableConstants;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,41 +31,84 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     public DBTableController() {
         onlineItems = new HashMap();
         offlineItems = new HashMap();   
+        opMode = Mode.ONLINE;
     }
      
-    public boolean create(T item) {
-        if(onlineDAO.insert(item)) {
-            onlineItems.put(item.getId(), item);   
-            System.out.println("New record #" + item.getId() + " is inserted into table " + tableName + ".");
-            return true;
+    public void create(T item) {
+        // if offline mode, do offline insert.
+        if (opMode == Mode.OFFLINE) {
+            offlineDAO.insert(item);
+            offlineItems.put(item.getId(), item);
+            System.out.println("New record #" + item.getId() + " is saved locally.");
         }
-        return false;
+        else {
+            //if online insert fails, do offline insert
+            if(onlineDAO.insert(item)) {
+                onlineItems.put(item.getId(), item);   
+                System.out.println("New record #" + item.getId() + " is inserted into table " + tableName + ".");
+            
+            }
+            else {
+                offlineDAO.insert(item);
+                offlineItems.put(item.getId(), item);
+                System.out.println("New record #" + item.getId() + " is saved locally.");
+            
+            }
+            
+        }
+   
     }
 
     
-    public boolean update(T item) {
-        if(onlineDAO.update(item)) {
-            onlineItems.put(item.getId(), item);
+    public void update(T item) {
+    
+        int id = item.getId();
+        if(id > 0 && id < 9000 && opMode == Mode.ONLINE && onlineDAO.update(item)) {
+            onlineItems.put(id, item);
             System.out.println("Record #" + item.getId() + " is updated in table " + tableName + ".");
-            return true;
+            
         }
-        return false;
+        else {
+            offlineDAO.update(item);
+            offlineItems.put(item.getId(), item);
+            System.out.println("Record #" + item.getId() + " is updated locally. ");
+        }
+    
     }
 
-    public boolean delete(int id) {
-        if(onlineDAO.delete(id)){
+    public void delete(int id) {
+        
+        if(id > 0 && id < 9000 && onlineDAO.delete(id)){
             onlineItems.remove(id);
             System.out.println("Record #" + id + " is deleted from table " + tableName + ".");
-            return true;
+            
         }
-        return false;
+        else{
+            if (id < 0 || id > 9000) {
+                offlineItems.remove(id);
+                System.out.println("Record #" + id + " is deleted locally . ");
+            }
+            else {
+                System.out.println("Record #" + id + " failed to be deleted from " + tableName + ", please try again later.");
+            }
+            
+        }
     }
 
     public void getAll() {
-        List<T> items =  onlineDAO.getAll();
-        for(T item: items) {
-            onlineItems.put(item.getId(), item);
+        if (opMode == Mode.ONLINE) {
+             List<T> items =  onlineDAO.getAll();
+            for(T item: items) {
+                onlineItems.put(item.getId(), item);
+            }
+            
         }
+       
+        List<T> offlineitems = offlineDAO.getAll();
+        for(T item: offlineitems) {
+            offlineItems.put(item.getId(), item);
+        }
+        
         System.out.println("Table " + tableName +" is loaded from database.");
     }
     
@@ -112,6 +157,15 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-   
+
+    public Mode getOpMode() {
+        return opMode;
+    }
+
+    public void setOpMode(Mode opMode) {
+        this.opMode = opMode;
+    }
     
+    
+   
 }

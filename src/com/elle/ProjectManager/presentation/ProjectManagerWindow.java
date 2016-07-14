@@ -124,9 +124,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     /**
      * CONSTRUCTOR
      */
-    public ProjectManagerWindow(String userName, boolean mode) throws IOException, BadLocationException {
+    public ProjectManagerWindow(String userName, boolean mode) {
         
-        dataManager = PMDataManager.getInstance();
+        dataManager = new PMDataManager(mode);
 
         /**
          * Note: initComponents() executes the tabpaneChanged method. Thus, some
@@ -1923,7 +1923,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             menuItemSyncLocalData.setEnabled(false);
             menuItemReconcileConflict.setEnabled(false);
             
-        
+            dataManager.setOpMode(false);
 
         } else {
            
@@ -1932,7 +1932,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             status.setForeground(new Color(0, 153, 0));
             menuItemSyncLocalData.setEnabled(true);
             menuItemReconcileConflict.setEnabled(true);
-            
+            dataManager.setOpMode(true);
         }
         
     }//GEN-LAST:event_menuItemOfflineModeActionPerformed

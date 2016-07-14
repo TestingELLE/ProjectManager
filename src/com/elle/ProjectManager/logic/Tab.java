@@ -101,7 +101,7 @@ public class Tab implements ITableConstants {
      *
      * @param table
      */
-    public Tab(JTable table) throws IOException, BadLocationException {
+    public Tab(JTable table)  {
         //set up reference to main window
         pmWindow = ProjectManagerWindow.getInstance();
         dataManager = PMDataManager.getInstance();
@@ -113,7 +113,7 @@ public class Tab implements ITableConstants {
     }
     
     
-    private void setUpTabData() throws IOException, BadLocationException {
+    private void setUpTabData()  {
         //set up data array
         
         if (table.getName().equals("References")) {
@@ -416,8 +416,9 @@ public class Tab implements ITableConstants {
             table.repaint();
         }
         else{
-            String errMsg = "Problem updating row: Row not Found";
-            LoggingAspect.afterReturn(errMsg);
+            //offline update , insert new row
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.addRow(rowData);
         }
     }
 

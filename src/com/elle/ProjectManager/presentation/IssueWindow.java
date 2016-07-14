@@ -97,7 +97,7 @@ public class IssueWindow extends JFrame {
     private String previousValue= "";
     private ShortCutSetting ShortCutSetting;
     private Map<Integer, Tab> tabs;       // used to update the records label
-    
+    private int originalId;
 
     
     
@@ -141,6 +141,7 @@ public class IssueWindow extends JFrame {
         else{
             if(refIssueMode) issue = dataManager.getReferenceEntity(id);
             else issue = dataManager.getIssueEntity(id);
+            originalId = id;
         }
         
         //set up gui components
@@ -1831,7 +1832,7 @@ public class IssueWindow extends JFrame {
         if (addIssueMode) {
             projectManager.setAddIssueWindowShow(false);
         } else {
-            projectManager.getOpeningIssuesList().remove(table.getName()+ issue.getId(), this); 
+            projectManager.getOpeningIssuesList().remove(table.getName()+ originalId, this); 
             
             //convert id to Object ,otherwise, remove uses id as index.
             tab.getFilter().getCustomIdListFilter().remove((Object) issue.getId());
