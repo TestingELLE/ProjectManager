@@ -15,6 +15,9 @@ import java.util.List;
 /**
  *
  * @author Yi
+ * for insert and update
+ * after db transaction, issue will be set with the latest lastmodtime 
+ * 
  */
 public class ReferenceDAO implements AbstractDAO<Issue> {
     // database table information
@@ -167,6 +170,7 @@ public class ReferenceDAO implements AbstractDAO<Issue> {
             }
         }
         DBConnection.close();
+        issue.setLastmodtime(get(issue.getId()).getLastmodtime());
         return successful;
     }
     

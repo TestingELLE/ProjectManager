@@ -190,6 +190,7 @@ public class IssueDAO implements AbstractDAO<Issue> {
             }
         }
         DBConnection.close();
+        issue.setLastmodtime(get(issue.getId()).getLastmodtime());
         return successful;
     }
     

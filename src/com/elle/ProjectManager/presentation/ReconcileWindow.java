@@ -489,7 +489,9 @@ public class ReconcileWindow extends javax.swing.JFrame {
    
     
     private void reconcileWindowClosing() {
-        pmWindow.setReconcileWindowShow(false);
+        
+        pmWindow.setEnabled(true);
+        pmWindow.reloadAllData();
         this.dispose();
     }
 

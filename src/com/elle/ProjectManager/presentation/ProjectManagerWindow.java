@@ -100,7 +100,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private boolean comboBoxStartToSearch;
 
     private boolean popupWindowShowInPM;
-    private boolean reconcileWindowShow;
+   
 
     // create a jlabel to show the database used
     private JLabel databaseLabel;
@@ -228,11 +228,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
              SwingUtilities.invokeLater(new Runnable() {
 
                 public void run() {
-                
-                reconcileWindow = new ReconcileWindow();
-                    
-                reconcileWindow.setVisible(true);
-                reconcileWindowShow = true;
+                    openReconcileWindow();
                 
                 }
             });
@@ -1804,7 +1800,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     }//GEN-LAST:event_menuItemReloadAllDataActionPerformed
 
-    private void reloadAllData() {
+    public void reloadAllData() {
 
         for (Map.Entry<Integer, Tab> entry : tabs.entrySet()) {
             
@@ -1896,6 +1892,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         reloadAllData();
         LoggingAspect.afterReturn("Local data is sychronized to database");
         
+        if(dataManager.getConflictIssues().size() > 0) {
+            if (JOptionPane.showConfirmDialog(this, "There are conflict issues, do you want to resolve now? ", "WARNING",
+                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                
+                openReconcileWindow();
+    
+            } 
+            
+        }
+        
         
     }//GEN-LAST:event_menuItemSyncLocalDataActionPerformed
 
@@ -1925,31 +1931,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void menuItemReconcileConflictActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReconcileConflictActionPerformed
         
-        if (reconcileWindowShow) {
-            reconcileWindow.toFront();
-        }
         
-        else {
-            if (dataManager.getConflictIssues().size() > 0){
-            
-                
-                reconcileWindow = new ReconcileWindow();
-                
-                reconcileWindow.setVisible(true);
-                reconcileWindowShow = true;
-                reconcileWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);        
+        if (dataManager.getConflictIssues().size() > 0){
+
+                openReconcileWindow();
+                       
             }
             else {
                 JOptionPane.showMessageDialog(this,
                      "There are no conflicts issues to be resolved.");
                 
             }
-            
-        }
-            
-       
-        
-     
+    
     }//GEN-LAST:event_menuItemReconcileConflictActionPerformed
 
     private void menuItemLoadDataFromTXTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLoadDataFromTXTActionPerformed
@@ -2595,6 +2588,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             labelEditMode.setForeground(editModeDefaultTextColor);
             labelEditModeState.setForeground(editModeDefaultTextColor);
         }
+    }
+    
+    private void openReconcileWindow(){
+        
+        reconcileWindow = new ReconcileWindow();
+        this.setEnabled(false);
+        reconcileWindow.setVisible(true);
+        
     }
 
     /**
@@ -3331,49 +3332,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.online = online;
     }
 
-    public boolean isReconcileWindowShow() {
-        return reconcileWindowShow;
-    }
-
-    public void setReconcileWindowShow(boolean reconcileWindowShow) {
-        this.reconcileWindowShow = reconcileWindowShow;
-    }
-    
-    
-    
-    
-    
-    
-    /**
-     * CLASS
-     */
-    class AlignmentTableHeaderCellRenderer implements TableCellRenderer {
-
-        private final TableCellRenderer wrappedRenderer;
-        private final JLabel label;
-
-        public AlignmentTableHeaderCellRenderer(TableCellRenderer wrappedRenderer) {
-            if (!(wrappedRenderer instanceof JLabel)) {
-                throw new IllegalArgumentException("The supplied renderer must inherit from JLabel");
-            }
-            this.wrappedRenderer = wrappedRenderer;
-            this.label = (JLabel) wrappedRenderer;
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column) {
-            wrappedRenderer.getTableCellRendererComponent(table, value,
-                    isSelected, hasFocus, row, column);
-            
-
-            label.setHorizontalAlignment(column == table.getColumnCount() - 1 ? JLabel.LEFT : JLabel.CENTER);
-            return label;
-
-        }
-
-    }
-
+   
     public JMenuItem getMenuItemReconcileConflict() {
         return menuItemReconcileConflict;
     }
