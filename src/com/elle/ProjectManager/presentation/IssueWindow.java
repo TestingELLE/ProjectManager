@@ -713,10 +713,11 @@ public class IssueWindow extends JFrame {
         idText = new javax.swing.JLabel();
         id = new javax.swing.JLabel();
         lockCheckBox = new javax.swing.JCheckBox();
+        comboBoxIssueType = new javax.swing.JComboBox<>();
         jPanel7 = new javax.swing.JPanel();
-        comboBoxIssueType = new javax.swing.JComboBox<String>();
         submitter = new javax.swing.JLabel();
         submitterText = new javax.swing.JTextField();
+        jPanel8 = new javax.swing.JPanel();
         dateOpenedText = new javax.swing.JTextField();
         dateOpened = new javax.swing.JLabel();
         programmerComboBox = new javax.swing.JComboBox();
@@ -964,30 +965,24 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(17, 30, 0, 0);
         jPanel6.add(lockCheckBox, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(15, 0, 0, 0);
-        jPanel3.add(jPanel6, gridBagConstraints);
-
-        jPanel7.setLayout(new java.awt.GridBagLayout());
-
-        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE", "TEST ISSUE" }));
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE", "TEST ISSUE" }));
         comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxIssueTypeActionPerformed(evt);
             }
         });
+        jPanel6.add(comboBoxIssueType, new java.awt.GridBagConstraints());
+
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 0);
-        jPanel7.add(comboBoxIssueType, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(13, 0, 0, 0);
+        jPanel3.add(jPanel6, gridBagConstraints);
+
+        jPanel7.setLayout(new java.awt.GridBagLayout());
 
         submitter.setText(" submitter");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
@@ -1001,11 +996,13 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
         jPanel7.add(submitterText, gridBagConstraints);
+
+        jPanel8.setLayout(new java.awt.GridBagLayout());
 
         dateOpenedText.setText("jTextField1");
         dateOpenedText.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -1024,20 +1021,20 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel7.add(dateOpenedText, gridBagConstraints);
+        jPanel8.add(dateOpenedText, gridBagConstraints);
 
         dateOpened.setText(" dateOpened");
         dateOpened.setPreferredSize(new java.awt.Dimension(79, 12));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel7.add(dateOpened, gridBagConstraints);
+        jPanel8.add(dateOpened, gridBagConstraints);
 
         programmerComboBox.setEditable(true);
         programmerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -1054,7 +1051,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel7.add(programmerComboBox, gridBagConstraints);
+        jPanel8.add(programmerComboBox, gridBagConstraints);
 
         programmer.setText(" programmer");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1062,11 +1059,18 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel7.add(programmer, gridBagConstraints);
+        jPanel8.add(programmer, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        jPanel7.add(jPanel8, gridBagConstraints);
 
         rk.setText(" rk");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
@@ -1081,15 +1085,14 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
         jPanel7.add(rkComboBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
         gridBagConstraints.weightx = 1.0;
         jPanel3.add(jPanel7, gridBagConstraints);
 
@@ -1180,7 +1183,7 @@ public class IssueWindow extends JFrame {
         rtftext.setContentType("text/rtf"); // NOI18N
         rtftext.setMinimumSize(new java.awt.Dimension(25, 25));
         rtftext.setPreferredSize(new java.awt.Dimension(100, 98));
-        rtftext.setRequestFocusEnabled(true);
+        rtftext.setRequestFocusEnabled(false);
         rtftext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 rtftextMouseClicked(evt);
@@ -3043,6 +3046,7 @@ public class IssueWindow extends JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollBar jScrollBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lastmodTime;

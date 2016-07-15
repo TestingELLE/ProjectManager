@@ -6,18 +6,23 @@
  */
 package com.elle.ProjectManager.presentation;
 
+import static com.elle.ProjectManager.presentation.ProjectManagerWindow.version;
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.Database;
 import com.elle.ProjectManager.database.Server;
 import static com.elle.ProjectManager.presentation.LogWindow.HYPHENS;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
+import javax.swing.Timer;
 
 public class LoginWindow extends JFrame {
 
@@ -38,7 +43,7 @@ public class LoginWindow extends JFrame {
         this.setContentPane(new JLabel(new ImageIcon(getClass().getResource("image.png"))));
 
         initComponents();
-        this.setTitle("Log in to Project Manager");
+        this.setTitle();
         loadServers();
     }
 
@@ -69,19 +74,21 @@ public class LoginWindow extends JFrame {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setSize(new java.awt.Dimension(415, 291));
 
         jTextPanel.setOpaque(false);
 
         jLabel1.setText("Please input your username and password to log in.");
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout jTextPanelLayout = new javax.swing.GroupLayout(jTextPanel);
         jTextPanel.setLayout(jTextPanelLayout);
         jTextPanelLayout.setHorizontalGroup(
             jTextPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTextPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
-                .addGap(19, 19, 19))
+                .addGap(56, 56, 56)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jTextPanelLayout.setVerticalGroup(
             jTextPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -154,7 +161,7 @@ public class LoginWindow extends JFrame {
         jButtonPanelLayout.setHorizontalGroup(
             jButtonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jButtonPanelLayout.createSequentialGroup()
-                .addGap(99, 99, 99)
+                .addGap(0, 0, 0)
                 .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -180,33 +187,35 @@ public class LoginWindow extends JFrame {
         jInputPanel.setLayout(jInputPanelLayout);
         jInputPanelLayout.setHorizontalGroup(
             jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jInputPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInputPanelLayout.createSequentialGroup()
                 .addGap(37, 37, 37)
                 .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jInputPanelLayout.createSequentialGroup()
                         .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(username)
-                            .addComponent(password))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(passwordFieldPW)
-                            .addComponent(textFieldUsername)))
+                            .addGroup(jInputPanelLayout.createSequentialGroup()
+                                .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(username)
+                                    .addComponent(password))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(passwordFieldPW)
+                                    .addComponent(textFieldUsername)
+                                    .addComponent(jButtonPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(jInputPanelLayout.createSequentialGroup()
+                                .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(database)
+                                    .addComponent(server, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(comboBoxServer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(comboBoxDatabase, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEditDB)
+                        .addContainerGap())
                     .addGroup(jInputPanelLayout.createSequentialGroup()
-                        .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(database)
-                            .addComponent(server, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(comboBoxServer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(comboBoxDatabase, 0, 209, Short.MAX_VALUE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEditDB)
-                .addContainerGap())
-            .addComponent(jButtonPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jInputPanelLayout.createSequentialGroup()
-                .addGap(105, 105, 105)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(58, 58, 58)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(20, Short.MAX_VALUE))))
         );
         jInputPanelLayout.setVerticalGroup(
             jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -228,11 +237,11 @@ public class LoginWindow extends JFrame {
                 .addGroup(jInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(password, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(passwordFieldPW, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(38, 38, 38)
+                .addGap(0, 0, 0)
                 .addComponent(jButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -339,6 +348,11 @@ public class LoginWindow extends JFrame {
             jLabel2.setText("Connection successful!");
             jLabel2.paintImmediately(jLabel2.getVisibleRect());
             
+            logWindow.addMessageWithDate("Authenticating...");
+            jLabel2.setText("Authenticating...");
+            jLabel2.paintImmediately(jLabel2.getVisibleRect());
+            
+            
             if(!Authorization.getInfoFromDB()){
                 logWindow.addMessageWithDate("This user has not been authorized!"
                                           + "\n Access denied!");
@@ -346,13 +360,33 @@ public class LoginWindow extends JFrame {
                 jLabel2.setText("This user has not been authorized!"
                                           + "\n Access denied!");
                 jLabel2.paintImmediately(jLabel2.getVisibleRect());
-                
+                JOptionPane.showMessageDialog(this, "You have not been authorized. Default user access.");
                 JOptionPane.showMessageDialog(this, "Logged in as default user.");
             }
+            
             userName = userName.substring(7);
-            System.out.println("userName: " + userName);
-            jLabel2.setText("connection successful!" + " userName: " + userName);
+             System.out.println("userName: " + userName);
+            logWindow.addMessageWithDate("Authenticating...");
+            logWindow.addMessageWithDate("Authentication Successful!" + " userName: " + userName);
+            
+            jLabel2.setText("Authentication Successful!" + " userName: " + userName);
             jLabel2.paintImmediately(jLabel2.getVisibleRect());
+            
+            //set the timer for information Label show
+    
+            Timer timer = new Timer( 1000, new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    jLabel2.setText("Loading tables...");
+                    jLabel2.paintImmediately(jLabel2.getVisibleRect());
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
+
+            //jLabel2.setText("Loading tables...");
+            //jLabel2.paintImmediately(jLabel2.getVisibleRect());
 
             // create an projectManager object
             projectManager = new ProjectManagerWindow(userName, true);
@@ -364,6 +398,10 @@ public class LoginWindow extends JFrame {
             // pass the selectedDB to projectManager
             // it is used in sql statements
             projectManager.setDatabase(selectedDB);
+            
+            //pass the selectedServer to project Manager
+            //used to show the server in the menubar
+            projectManager.setServer(selectedServer);
 
             // show the database name in menubar
             projectManager.showDatabase();
@@ -495,6 +533,30 @@ public class LoginWindow extends JFrame {
         Database db = servers.get(server).getDatabases().get(dbIndex);
         textFieldUsername.setText(db.getUsername());
         passwordFieldPW.setText(db.getPassword());
+    }
+    private void displayTableLoadingMessage ()    {  
+    jLabel2.setText("Loading tables...");
+            jLabel2.paintImmediately(jLabel2.getVisibleRect());
+    }  
+    /*Corinne 7/11/16
+    //calculate the left spacing needed to center the title, 
+     create a formatted string which contains this space, and add the formatted string(spacing) to the title*/
+    private void setTitle(){
+        Font f = this.getFont();
+        FontMetrics fm = this.getFontMetrics(f);
+        String title = "Log in to Project Manager " + version;
+        
+        /*calcullate the left spacing needed to center the title
+        This may not return an accurate value. Adjust the amount 
+        subtracted from z/y to obtain a more accurate value.*/
+        int x = fm.stringWidth(title);
+        int y = fm.stringWidth(" ");
+        int z = this.getWidth()/2 - (x/2);
+        int w = z/y - 11; //here subtract from z/y to position the string closer to the center
+        String pad ="";
+        //for (int i=0; i!=w; i++) pad +=" "; 
+        pad = String.format("%"+w+"s", pad);
+        this.setTitle(pad+title);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
