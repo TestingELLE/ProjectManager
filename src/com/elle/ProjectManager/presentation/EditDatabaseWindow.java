@@ -4,6 +4,7 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.Database;
 import com.elle.ProjectManager.database.Server;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -12,12 +13,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Vector;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.Timer;
+import javax.swing.border.LineBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 
 
 /**
@@ -54,6 +60,13 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
         fillServersTable(tableServers);
         cbServer.setModel(getServerNamesCBModel());
         fillDatabasesTable(tableDatabases, servers.get(0).getName());
+        
+        //set cellrenderers to make the password invisible-Wei
+        JPasswordField password = new JPasswordField();
+        password.setBorder( new LineBorder(Color.BLACK) );
+        TableCellEditor editor = new DefaultCellEditor( password );
+        tableDatabases.getColumnModel().getColumn(3).setCellEditor( editor );
+        tableDatabases.getColumnModel().getColumn(3).setCellRenderer(new passwordrender());
         
         // set table listeners
         setTableListeners(tableServers);
@@ -564,6 +577,34 @@ public class EditDatabaseWindow extends javax.swing.JFrame {
                 }
             }
         });
+    }
+    
+    public class passwordrender extends DefaultTableCellRenderer {
+
+        private static final String ASTERISKS = "************************";
+        
+        @Override public void setValue(Object aValue) {
+            int length =0;
+            if (aValue instanceof String) {
+                length =  ((String) aValue).length();
+            } else if (aValue instanceof char[]) {
+                length = ((char[])aValue).length;
+            }
+                super.setText(asterisks(length));
+
+        }
+
+        private String asterisks(int length) {
+            if (length > ASTERISKS.length()) {
+                StringBuilder sb = new StringBuilder(length);
+                for (int i = 0; i < length; i++) {
+                    sb.append('*');
+                }
+                return sb.toString();
+            } else {
+                return ASTERISKS.substring(0, length);
+            }
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
