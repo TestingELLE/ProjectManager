@@ -24,7 +24,12 @@ public class ReferenceTableController extends DBTableController<Issue> {
         //load issues from db to map
         if (online) opMode = Mode.ONLINE;
         else opMode = Mode.OFFLINE;
+        
+        //populate data from database and local files
         getAll();
+        
+        //sync local data 
+        syncOfflineItems();
         
         
     }
@@ -33,6 +38,14 @@ public class ReferenceTableController extends DBTableController<Issue> {
         Issue stored = getAllItems().get(issue.getId());
         issue.setDescription(stored.getDescription());
         update(issue);
+    }
+
+    @Override
+    public boolean checkConflict(Issue onlineItem, Issue offlineItem) {
+        if (offlineItem.getLastmodtime().compareTo(onlineItem.getLastmodtime()) < 0) {
+                return true;
+        }
+        return false;
     }
     
     

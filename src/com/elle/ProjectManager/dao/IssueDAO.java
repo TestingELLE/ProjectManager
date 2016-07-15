@@ -245,7 +245,10 @@ public class IssueDAO implements AbstractDAO<Issue> {
                 PreparedStatement pstmt = con.prepareStatement(sql);
                 pstmt.setBytes(1, description);
                 pstmt.execute();
+                
                 LoggingAspect.afterReturn("Upload Successful!");
+                
+                
                 successful = true;
             }
             catch (SQLException ex) {
@@ -254,6 +257,9 @@ public class IssueDAO implements AbstractDAO<Issue> {
             }
         }
         DBConnection.close();
+        //here, need to reset issue timestamp
+        issue.setLastmodtime(get(issue.getId()).getLastmodtime());
+          
         return successful;
     }
     

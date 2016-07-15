@@ -7,10 +7,11 @@ package com.elle.ProjectManager.controller;
 
 import com.elle.ProjectManager.dao.AbstractDAO;
 import com.elle.ProjectManager.entities.DbEntity;
-import com.elle.ProjectManager.entities.Issue;
+import com.elle.ProjectManager.logic.ConflictItemPair;
 import com.elle.ProjectManager.logic.ITableConstants;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     
     protected Map<Integer, T> onlineItems;
     protected Map<Integer, T> offlineItems;
+    ArrayList<ConflictItemPair<T>> conflictItems;
     protected AbstractDAO onlineDAO;
     protected AbstractDAO offlineDAO;
     protected Mode opMode;
@@ -31,6 +33,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     public DBTableController() {
         onlineItems = new HashMap();
         offlineItems = new HashMap();   
+        conflictItems = new ArrayList();
         opMode = Mode.ONLINE;
     }
      
@@ -63,12 +66,16 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     public void update(T item) {
     
         int id = item.getId();
+        
+        //if issue is online issue, mode is online, and online update sucessful
+        //otherwise, do offline update
         if(id > 0 && id < 9000 && opMode == Mode.ONLINE && onlineDAO.update(item)) {
             onlineItems.put(id, item);
             System.out.println("Record #" + item.getId() + " is updated in table " + tableName + ".");
             
         }
-        else {
+        else { 
+            //adding 9000 is done in offlineDAO update.
             offlineDAO.update(item);
             offlineItems.put(item.getId(), item);
             System.out.println("Record #" + item.getId() + " is updated locally. ");
@@ -77,7 +84,9 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     }
 
     public void delete(int id) {
-        
+        //if issue is online issue, and delete by onlinedao successfully
+        //else if issue is offline, delete by offlinedao
+        //      else online delete fails, prompt the message
         if(id > 0 && id < 9000 && onlineDAO.delete(id)){
             onlineItems.remove(id);
             System.out.println("Record #" + id + " is deleted from table " + tableName + ".");
@@ -86,6 +95,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
         else{
             if (id < 0 || id > 9000) {
                 offlineItems.remove(id);
+                offlineDAO.delete(id);
                 System.out.println("Record #" + id + " is deleted locally . ");
             }
             else {
@@ -95,6 +105,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
         }
     }
 
+    //populate data from db and local folder
     public void getAll() {
         if (opMode == Mode.ONLINE) {
              List<T> items =  onlineDAO.getAll();
@@ -116,6 +127,96 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     public T get(int id) {
         return (T) getAllItems().get(id);
     };
+    
+    
+    public void syncOfflineItems(){
+        //use iterator for deletion, as map is concurrent
+        Iterator<Integer> it = offlineItems.keySet().iterator();
+        
+        while (it.hasNext()){
+            Integer key = it.next();
+            T offlineItem = offlineItems.get(key);
+            //use clone copy to operate 
+            T copyItem = (T) offlineItem.deepClone();
+            if (copyItem.getId() < 0 && onlineDAO.insert(copyItem)) {
+                onlineItems.put(copyItem.getId(), copyItem);
+                //delete from local folder, remove from offline items
+                offlineDAO.delete(key);
+                it.remove();
+            }
+            if (copyItem.getId() > 9000) {
+                //get the online item
+                T onlineItem = onlineItems.get(copyItem.getId()-9000);
+                
+                //check if item exsits
+                if (onlineItem != null) {
+                    //check if there is conflict 
+                    if(!checkConflict(onlineItem, copyItem)) {
+                        //no conflicts, reset copyItem id
+                        copyItem.setId(onlineItem.getId());
+                        //update to db
+                        onlineDAO.update(copyItem);
+                        //put into online array
+                        onlineItems.put(copyItem.getId(), copyItem);
+                        //remove from offline items and delete locally
+                        offlineDAO.delete(key);
+                        it.remove();
+                        
+                    }
+                    else{
+                        //copyItem maintains id +9000
+                        //add to conflict array
+                        conflictItems.add(new ConflictItemPair(onlineItem, copyItem));
+                    } 
+                }
+                //if online item was deleted accidentally by others
+                else{
+                    //not implemented yet
+                    //can add logic here if required
+                }
+                
+            }
+        }
+   
+    }
+    
+    public void resolveConflictPair(ConflictItemPair<T> pair) {
+        if (pair.isChoice() && onlineDAO.update(pair.getDbItem())) {
+            //online item is chosen, however, it could be changed, thus still need to update database
+            conflictItems.remove(pair);
+            //offline item should be deleted
+            int itemId = pair.getLocalItem().getId();
+            offlineDAO.delete(itemId);
+            offlineItems.remove(itemId);
+            
+        }
+        
+        else {
+            if(!pair.isChoice()) {
+                //local copy is chosen. 
+                int itemId = pair.getLocalItem().getId();
+                
+                //reset local item id
+                pair.getLocalItem().setId(itemId - 9000);
+                onlineDAO.update(pair.getLocalItem());
+                onlineItems.put(pair.getLocalItem().getId(), pair.getLocalItem());
+                conflictItems.remove(pair);
+                
+                //remove local issues
+                offlineDAO.delete(itemId);
+                offlineItems.remove(itemId);
+            }
+        }
+        
+    }
+    
+    //returns if conflicted or not
+    //if with conflicts, return true
+    //no conflicts, return false;
+    //this function can be implemented differently on different tables
+    public abstract boolean checkConflict(T onlineItem, T offlineItem);
+    
+    
     
     public Map<Integer,T> getAllItems(){
         Map<Integer, T> Items = new HashMap();
@@ -164,6 +265,14 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
 
     public void setOpMode(Mode opMode) {
         this.opMode = opMode;
+    }
+
+    public ArrayList<ConflictItemPair<T>> getConflictItems() {
+        return conflictItems;
+    }
+
+    public void setConflictItems(ArrayList<ConflictItemPair<T>> conflictItems) {
+        this.conflictItems = conflictItems;
     }
     
     

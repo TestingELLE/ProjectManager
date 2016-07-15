@@ -148,6 +148,7 @@ public class OfflineIssueDAO implements AbstractDAO<Issue>{
         for (int i = 0; i < listOfFiles.length; i++) {
             String name = listOfFiles[i].getName();
             if (name.startsWith(prefix))
+               
                 issues.add(readIssueFromFile(listOfFiles[i]));
         }
         return issues;

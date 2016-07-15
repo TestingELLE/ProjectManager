@@ -26,6 +26,10 @@ public class IssueTableController extends DBTableController<Issue> {
         
         //load issues from db to map
         getAll();
+        
+        //sync local data
+        syncOfflineItems();
+        
     }
     
     //this update will exclude the description field
@@ -36,6 +40,14 @@ public class IssueTableController extends DBTableController<Issue> {
         issue.setDescription(stored.getDescription());
         update(issue);
         
+    }
+
+    @Override
+    public boolean checkConflict(Issue onlineItem, Issue offlineItem) {
+        if (offlineItem.getLastmodtime().compareTo(onlineItem.getLastmodtime()) < 0) {
+                return true;
+        }
+        return false;
     }
     
 

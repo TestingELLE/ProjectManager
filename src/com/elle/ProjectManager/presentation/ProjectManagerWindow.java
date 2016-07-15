@@ -108,13 +108,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private String userName;
     private String searchValue = null;
     private String searchColName = "programmer";
-//    private ArrayList<Integer> idNumOfOpenningIssues;
+
     private ArrayList<String> programmersActiveForSearching;
     
     
-    
-    //offline data manager
-    public OfflineIssueManager offlineIssueMgr;
     
     private final String HYPHENS = "--------------------------------------------------------"
                                  + "--------------------------------------------------------"
@@ -140,7 +137,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         this.userName = userName;
         online = mode;
-        offlineIssueMgr = new OfflineIssueManager(userName);
         
         
         initComponents(); // generated code
@@ -204,16 +200,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         boolean ifDeleteRecords = false;
 
 
-        //start to set renderers for id columns, it uses singleton  - by Yi
-        
-//        idRender = IdColumnRenderer.getInstance(offlineIssueMgr);
-//        tabs.get(tableNames[0]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-//        tabs.get(tableNames[1]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-//        tabs.get(tableNames[2]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-//        tabs.get(tableNames[3]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-//        tabs.get(tableNames[4]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-        
-
         // initial openedIssuesList to manager all the openning issues
         openingIssuesList = new HashMap<String, IssueWindow>();
 
@@ -238,17 +224,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         
         //if there are conflicted issues and is in online mode
         //open reconcile window in the dispatch thread , thus not delaying the main window
-        if (online && offlineIssueMgr.getConflictIssues().size() > 0)
+        if (online && dataManager.getConflictIssues().size() > 0)
              SwingUtilities.invokeLater(new Runnable() {
 
                 public void run() {
-                    try {
-                        reconcileWindow = new ReconcileWindow();
-                    } catch (IOException ex) {
-                        Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                
+                reconcileWindow = new ReconcileWindow();
+                    
                 reconcileWindow.setVisible(true);
                 reconcileWindowShow = true;
                 
@@ -1877,7 +1859,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             
             //delete particular rows from table - Yi
             for(int index = authorizedRows.size() -1; index >= 0; index --) {
-                currentTab.deleteRow(index);
+                currentTab.deleteRow(authorizedRows.get(index));
             }
         
             // update records label
@@ -1909,7 +1891,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void menuItemSyncLocalDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSyncLocalDataActionPerformed
         // Sync local data
         LoggingAspect.addLogMsgWthDate("Preparing to sync local data to db server.....");
-        offlineIssueMgr.syncLocalData();
+        dataManager.syncLocalData();
+        //after sync, reload table to reflect changes.
+        reloadAllData();
+        LoggingAspect.afterReturn("Local data is sychronized to database");
+        
         
     }//GEN-LAST:event_menuItemSyncLocalDataActionPerformed
 
@@ -1944,15 +1930,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
         
         else {
-            if (offlineIssueMgr.getConflictIssues().size() > 0){
+            if (dataManager.getConflictIssues().size() > 0){
             
-                try {
-                    reconcileWindow = new ReconcileWindow();
-                } catch (IOException ex) {
-                    Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                
+                reconcileWindow = new ReconcileWindow();
+                
                 reconcileWindow.setVisible(true);
                 reconcileWindowShow = true;
                 reconcileWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);        
@@ -2173,95 +2155,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
        issue.setIssueType("REFERENCE");
        return ref;
    }
- 
-//    private void syncLocalData() {
-//        
-//        File issuesDir = FilePathFormat.localDataFilePath();
-//        File[] listOfFiles = issuesDir.listFiles();
-//
-//        for (int i = 0; i < listOfFiles.length; i++) {
-//            syncIssueToDbFromFile(listOfFiles[i]);
-//            
-//        } 
-//    }
-//    
-//    //currently only finish the insert part
-//    // update part will be added later
-//    
-//    private void syncIssueToDbFromFile(File file) {
-//        logWindow.addMessage("Now sync file: " + file.getName());
-//        try{
-//            ObjectInputStream ois =
-//                    new ObjectInputStream(new FileInputStream(file));
-//            Issue temp = (Issue)ois.readObject();
-//            ois.close();
-//            boolean success = false;
-//            String option = "new";
-//            if (file.getName().startsWith("new")){
-//                success = issueDAO.insert(temp);               
-//            }
-////            if (file.getName().startsWith("update")) {
-////                Issue dbIssue = issueDAO.get(temp.getId());
-////                if (dbIssue.getDatetimeLastMod()!= null &&
-////                        dbIssue.getDatetimeLastMod().compareTo(temp.getDatetimeLastMod()) > 0) {
-////                
-////                    StringBuilder sb  = new StringBuilder(dbIssue.getDescription());
-////                    sb.append(System.lineSeparator());
-////                    sb.append("<Merged from local data>");
-////                    sb.append(System.lineSeparator());
-////                    sb.append(temp.getDescription());
-////                    sb.append(System.lineSeparator());
-////                    sb.append("</Merged from local data>");
-////                    temp.setDescription(sb.toString());
-////                  
-////                }
-//                
-////                
-////                success = issueDAO.update(temp);
-////                option = "update";
-////                
-////            }
-//            
-//            if (success) {
-//               
-//                for (Tab tab : tabs.values()) {
-//                    if (tab.getTable().getName().equals(temp.getApp())){
-//                       if (option.equals("new"))
-//                            insertTableRow(tab.getTable(),temp);
-//                       if (option.equals("update"))
-//                            updateTableRow(tab.getTable(),temp);
-//                      makeTableEditable(false);
-//                      break;
-//                    }
-//                }
-//                logWindow.addMessage(file.getName() +" is updated to server successfully");
-//                if (file.delete()) {
-//                    logWindow.addMessage(file.getName() +" is deleted");
-//                }
-//                else {
-//                    logWindow.addMessage(file.getName() +" failed to be deleted, please manually delete it");    
-//                }
-//            }
-//            
-//            else{
-//                
-//                logWindow.addMessage(file.getName() + " failed to update to db server");
-//                     
-//            }
-//            
-//        }  catch (IOException ex) {
-//            System.out.println( "File I/O error ");
-//        } catch (ClassNotFoundException ex) {
-//            System.out.println("Issue class not found error");
-//        }
-//        
-//        
-//    }
-//     
-    
-     
-    
-   
+  
     
     public void comboBoxForSearchEditorMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {

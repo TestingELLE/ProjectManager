@@ -78,7 +78,7 @@ public class Tab implements ITableConstants {
     private ColumnPopupMenu columnPopupMenu;     // column filter pop up menu
     private JTableCellRenderer cellRenderer;     // table cell renderer
     private ModifiedTableData modTableData;         // modified table data object
-                 
+    private IdColumnRenderer idRenderer;             
  
     //Storing Jcomponents states
     private ButtonsState state;
@@ -144,6 +144,7 @@ public class Tab implements ITableConstants {
         filter = new TableFilter(this);
         columnPopupMenu = new ColumnPopupMenu(this);
         cellRenderer = new JTableCellRenderer(table);
+        idRenderer = IdColumnRenderer.getInstance();
         
         
         //initialize counts
@@ -155,6 +156,9 @@ public class Tab implements ITableConstants {
         
         //after loading table data, set up modeTableData
         modTableData = new ModifiedTableData(table);
+        
+        //set up id renderer
+        table.getColumnModel().getColumn(0).setCellRenderer(idRenderer);
         
         //set up table listeners
         setTableListeners();
@@ -312,9 +316,8 @@ public class Tab implements ITableConstants {
         
         //reset the sorter key -Yi
         table.getRowSorter().setSortKeys(keys);
-        
-        
-       // tabs.get(tab).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
+        table.getColumnModel().getColumn(0).setCellRenderer(idRenderer);
+       
 
         LoggingAspect.afterReturn(table.getName() + " is reloading");
 
@@ -643,7 +646,6 @@ public class Tab implements ITableConstants {
             @Override
             public void tableChanged(TableModelEvent e) {
 
-                System.out.println("table changed called");
                 int row = e.getFirstRow();
                 int col = e.getColumn();
 

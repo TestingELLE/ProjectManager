@@ -221,6 +221,8 @@ public class ReferenceDAO implements AbstractDAO<Issue> {
             }
         }
         DBConnection.close();
+        //here, need to reset issue timestamp
+        issue.setLastmodtime(get(issue.getId()).getLastmodtime());
         return successful;
     }
     
@@ -333,6 +335,8 @@ public class ReferenceDAO implements AbstractDAO<Issue> {
         }
         // finally close connection
         DBConnection.close();
+        
+        
         return updateSuccessful;
     }
 

@@ -2,11 +2,8 @@ package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
 import com.elle.ProjectManager.controller.PMDataManager;
-import com.elle.ProjectManager.dao.IssueDAO;
-import com.elle.ProjectManager.dao.ReferenceDAO;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.CustomComboBoxRenderer;
-import com.elle.ProjectManager.logic.OfflineIssueManager;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
 import java.awt.BorderLayout;
@@ -36,14 +33,10 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
@@ -65,7 +58,6 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.TableModel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
@@ -93,7 +85,7 @@ public class IssueWindow extends JFrame {
     private int row;
     private boolean addIssueMode;
     private boolean refIssueMode;
-    private OfflineIssueManager mgr;
+    
     private String previousValue= "";
     private ShortCutSetting ShortCutSetting;
     private Map<Integer, Tab> tabs;       // used to update the records label

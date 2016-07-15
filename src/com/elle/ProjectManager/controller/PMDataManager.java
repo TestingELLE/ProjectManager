@@ -6,13 +6,15 @@
 package com.elle.ProjectManager.controller;
 
 import com.elle.ProjectManager.entities.Issue;
+import com.elle.ProjectManager.logic.ConflictItemPair;
 import com.elle.ProjectManager.logic.IssueConverter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  *
- * @author Yi
+ * @author Yi 07/14/2016
  */
 public class PMDataManager{
     
@@ -48,7 +50,7 @@ public class PMDataManager{
     }
 
    /* Issues related data operations */
-    //get issues based on app name
+    //get issues based on app name, requested by tab
     public List<Object[]> getIssues(String appType) {
         ArrayList<String> apps = new ArrayList();
         apps.add("PM");
@@ -73,7 +75,7 @@ public class PMDataManager{
       
     }
     
-    //get issue by id
+    //get issue rowdata by id , requested by tab
     public Object[] getIssue(int id) {
       
         Issue issue = issueController.get(id);
@@ -81,7 +83,7 @@ public class PMDataManager{
        
     }
     
-    //get issue rowdata by entity
+    //get issue rowdata by entity , requested by tab
     public Object[] getIssue(Issue issue) {
       return (issueConverter.convertToRow(issue));   
     }
@@ -97,7 +99,10 @@ public class PMDataManager{
     }
     
     
-    //get issue entity by id
+    //get issue entity by id , requested by issue window
+    //it returns a copy of the issue
+    //reasons: issue get updated later on, if failed, the original issue is intact
+    //the changed copy is saved locally
     public Issue getIssueEntity(int id) {
       
         return (Issue) issueController.get(id).deepClone();
@@ -105,6 +110,9 @@ public class PMDataManager{
     
     
     //this is for batch update, which does not include the description field
+    //for batch edit mode
+    //since table batch edit will not change description field
+    //and the field lost all style info, so will not be used for update
     public void updateIssues(List<Object[]> rowsData) {
         ArrayList<Issue> changedIssues = new ArrayList();
         for(Object[] rowData : rowsData) {
@@ -136,7 +144,7 @@ public class PMDataManager{
       
     }
     
-    //get reference rowdata by id
+    //get reference rowdata by id , requested by tab
     public Object[] getReference(int id) {
       
         Issue reference = refController.get(id);
@@ -144,7 +152,7 @@ public class PMDataManager{
        
     }
     
-    //get reference rowdata by entity
+    //get reference rowdata by entity, request by tab
     public Object[] getReference(Issue ref) {
       
         return (issueConverter.convertToRow(ref));
@@ -152,7 +160,7 @@ public class PMDataManager{
     }
     
     
-    //get reference by id
+    //get reference entity copy by id, requested by issuewindow
     public Issue getReferenceEntity(int id) {
       
         return (Issue) refController.get(id).deepClone();
@@ -186,4 +194,33 @@ public class PMDataManager{
             refController.delete(id);
         }
     }
+    
+    
+    //get conflict issues
+    public ArrayList<ConflictItemPair<Issue>> getConflictIssues() {
+        ArrayList<ConflictItemPair<Issue>> conflictIssues = new ArrayList();
+        conflictIssues.addAll(issueController.getConflictItems());
+        conflictIssues.addAll(refController.getConflictItems());
+        
+        return conflictIssues;
+        
+    }
+    
+    public void resolveConflictPair(ConflictItemPair<Issue> pair) {
+        
+        if (pair.getDbItem().getIssueType().equals("REFERENCE")) {
+            refController.resolveConflictPair(pair);
+            
+        }
+        else{
+            issueController.resolveConflictPair(pair);
+        }
+            
+    }
+    
+    public void syncLocalData() {
+        issueController.syncOfflineItems();
+        refController.syncOfflineItems();
+    }
+    
 }
