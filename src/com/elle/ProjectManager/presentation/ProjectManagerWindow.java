@@ -3733,8 +3733,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
         loadTable(sql, table);
         LoggingAspect.afterReturn("Selected Rows Move to the End...");
-//        informationLabel.setText("Selected Rows Move to the End...");
-//        startCountDownFromNow(10);
+
 
         ListSelectionModel model = table.getSelectionModel();
         model.clearSelection();
@@ -4754,7 +4753,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                informationLabel.setText("Information Label");
+                informationLabel.setText("");
                 searchInformationLabel.setText("");
             }
         });
