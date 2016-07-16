@@ -476,7 +476,7 @@
                         <Column editable="false" title="ID" type="java.lang.Integer"/>
                         <Column editable="true" title="app" type="java.lang.Object"/>
                         <Column editable="true" title="title" type="java.lang.Object"/>
-                        <Column editable="true" title="description" type="java.lang.Object"/>
+                        <Column editable="false" title="description" type="java.lang.Object"/>
                         <Column editable="true" title="programmer" type="java.lang.Object"/>
                         <Column editable="true" title="dateOpened" type="java.lang.Object"/>
                         <Column editable="true" title="rk" type="java.lang.Object"/>
@@ -591,7 +591,7 @@
                         <Column editable="false" title="ID" type="java.lang.Integer"/>
                         <Column editable="true" title="app" type="java.lang.Object"/>
                         <Column editable="true" title="title" type="java.lang.Object"/>
-                        <Column editable="true" title="description" type="java.lang.Object"/>
+                        <Column editable="false" title="description" type="java.lang.Object"/>
                         <Column editable="true" title="programmer" type="java.lang.Object"/>
                         <Column editable="true" title="dateOpened" type="java.lang.Object"/>
                         <Column editable="true" title="rk" type="java.lang.Object"/>
@@ -791,7 +791,7 @@
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[10, 240]"/>
                     </Property>
-                    <Property name="name" type="java.lang.String" value="" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="Analyster" noResource="true"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
@@ -1017,6 +1017,7 @@
                         </Column>
                       </TableColumnModel>
                     </Property>
+                    <Property name="name" type="java.lang.String" value="References" noResource="true"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>

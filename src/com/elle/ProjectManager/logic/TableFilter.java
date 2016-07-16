@@ -22,7 +22,7 @@ import javax.swing.table.TableRowSorter;
 public class TableFilter extends RowFilter<TableModel, Integer> {
 
     // attributes
-    private JTable table;                                  // table to be filtered 
+    private Tab tab;
     private TableRowSorter<TableModel> sorter;             // the table sorter
     private Map<Integer, ArrayList<Object>> filterItems;    // distinct items to filter
     private CustomIDList customIdListFilter;
@@ -34,9 +34,11 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      *
      * @param table // the table to apply the filter
      */
-    public TableFilter(JTable table) {
+    public TableFilter(Tab tab) {
 
-        this.table = table;
+        this.tab = tab;
+        
+        customIdListFilter = new CustomIDList();
 
         // initialize the color for the table header when it is filtering
         color = Color.GREEN; // default color is green
@@ -55,7 +57,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
 
         // initialize filterItems
         filterItems = new HashMap<>();
-        for (int i = 0; i < table.getColumnCount(); i++) {
+        for (int i = 0; i < tab.getTable().getColumnCount(); i++) {
             filterItems.put(i, new ArrayList<>());
         }
         
@@ -155,19 +157,25 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      * applyFilter
      */
     public void applyFilter() {
+        JTable table = tab.getTable();
         sorter = new TableRowSorter<TableModel>(table.getModel());
         table.setRowSorter(sorter);
         sorter.setRowFilter(this);
+        //each time , after filter applied, reset PM window labelRecords
+        tab.setLabelRecords();
     }
 
     /**
      * applyFilter
      */
     public void applyFilter(EditableTableModel model) {
-
+        JTable table = tab.getTable();
         sorter = new TableRowSorter<TableModel>(model);
         sorter.setRowFilter(this);
         table.setRowSorter(sorter);
+        
+        //each time , after filter applied, reset PM window labelRecords
+        tab.setLabelRecords();
     }
 
     /**
@@ -176,7 +184,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      * @param columnIndex
      */
     public void addColorHeader(int columnIndex) {
-
+        JTable table = tab.getTable();
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
         cellRenderer.setBackground(color);
         cellRenderer.setHorizontalAlignment(JLabel.CENTER);
@@ -190,7 +198,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      *
      */
     public void applyColorHeaders() {
-
+        JTable table = tab.getTable();
         for (int i = 0; i < filterItems.size(); i++) {
             if (filterItems.get(i).isEmpty()) {
                 removeColorHeader(i);
@@ -207,7 +215,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      * @param columnIndex
      */
     public void removeColorHeader(int columnIndex) {
-
+        JTable table = tab.getTable();
         table.getColumnModel().getColumn(columnIndex)
                 .setHeaderRenderer(table.getTableHeader().getDefaultRenderer());
         table.getTableHeader().repaint();
@@ -218,7 +226,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      *
      */
     public void removeAllColorHeaders() {
-
+        JTable table = tab.getTable();
         for (int i = 0; i < filterItems.size(); i++) {
             removeColorHeader(i);
         }
@@ -248,8 +256,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      *
      * @return
      */
-    public JTable getTable() {
-        return table;
+    public Tab getTab() {
+        return tab;
     }
 
     /**
@@ -257,8 +265,8 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
      *
      * @param table
      */
-    public void setTable(JTable table) {
-        this.table = table;
+    public void setTab(Tab tab) {
+        this.tab = tab;
     }
 
     /**
@@ -278,6 +286,17 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
     public void setSorter(TableRowSorter<TableModel> sorter) {
         this.sorter = sorter;
     }
+
+    public CustomIDList getCustomIdListFilter() {
+        return customIdListFilter;
+    }
+
+    public void setCustomIdListFilter(CustomIDList customIdListFilter) {
+        this.customIdListFilter = customIdListFilter;
+    }
+    
+    
+    
 
     /**
      * getFilterItems

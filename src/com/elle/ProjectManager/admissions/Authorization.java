@@ -99,12 +99,8 @@ public class Authorization {
         else if(c instanceof LoginWindow){
             admin.setComponent((LoginWindow)c);
         }
-        else if(c instanceof ProjectManagerWindow){
-            admin.setComponent((ProjectManagerWindow)c);
-        }
-        else if(c instanceof IssueWindow){
-            admin.setComponent((IssueWindow)c);
-        }
+        
+        
     }
 
     public static String getAccessLevel() {

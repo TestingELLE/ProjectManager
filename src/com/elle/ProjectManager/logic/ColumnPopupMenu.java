@@ -1,7 +1,5 @@
 package com.elle.ProjectManager.logic;
 
-import com.elle.ProjectManager.presentation.ProjectManagerWindow;
-import com.elle.ProjectManager.logic.Tab;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -15,7 +13,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -35,32 +32,29 @@ import javax.swing.table.TableColumnModel;
 public class ColumnPopupMenu extends JPopupMenu {
 
     // attributes
-    private CheckBoxList checkBoxList;
+    private Tab tab;
     private TableFilter filter;
-    private CustomIDList idList;
     private JTable table;
+    private CheckBoxList checkBoxList;
     private Map<Integer, ArrayList<CheckBoxItem>> checkBoxItems; // distinct items for options
     private int columnIndex; // selected colunm
 
-    // for updating the records label when a filter is applied
-    private ProjectManagerWindow analyster;
-    private Map<String, Tab> tabs;
-
+   
+    
     /**
      * CONSTRUCTOR ColumnPopupMenu creates a ColumnPopupMenu
      */
-    public ColumnPopupMenu(TableFilter filter, CustomIDList idList) {
+    public ColumnPopupMenu(Tab tab) {
+        this.tab = tab;
+        this.filter = tab.getFilter();
+        this.table = tab.getTable();
+        
         initComponents();
-        this.filter = filter;
-        this.idList = idList;
-        table = filter.getTable();
-
+       
         // load all check box items
-        //loadAllCheckBoxItems();
-        // initialize analyster and tabs 
-        // for updating the records label when filter is applied
-        analyster = ProjectManagerWindow.getInstance();
-        tabs = analyster.getTabs();
+        loadAllCheckBoxItems();
+
+
     }
 
     /**
@@ -211,6 +205,7 @@ public class ColumnPopupMenu extends JPopupMenu {
         // get filtered items
         ArrayList<Object> fItems = filter.getFilterItems().get(col);
         ArrayList<CheckBoxItem> cbItems = checkBoxItems.get(col);
+        CustomIDList idList = filter.getCustomIdListFilter();
         ArrayList<Object> idItems = new ArrayList<Object>(idList.size());
 
         for (int row = 0; row < table.getRowCount(); row++) {
@@ -390,6 +385,7 @@ public class ColumnPopupMenu extends JPopupMenu {
             }
         }
         return distinctItems;
+       
     }
 
     /**
@@ -415,9 +411,9 @@ public class ColumnPopupMenu extends JPopupMenu {
      *
      * @return
      */
-    public TableFilter getFilter() {
-        return filter;
-    }
+//    public TableFilter getFilter() {
+//        return filter;
+//    }
 
     /**
      * setFilter
@@ -484,12 +480,6 @@ public class ColumnPopupMenu extends JPopupMenu {
         filter.addFilterItems(columnIndex, filterItems);
         filter.applyFilter();
 
-        // update record label
-        String tabName = table.getName();
-        Tab tab = tabs.get(tabName);
-        String recordsLabelText = tab.getRecordsLabel();
-        JLabel recordsLabel = analyster.getRecordsLabel();
-        recordsLabel.setText(recordsLabelText);
     }
 
     /**
