@@ -776,6 +776,7 @@ public class Tab implements ITableConstants {
     */
     //set up table column layout
     private void setColumnFormat() {
+        
 
         // Center column content
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -848,7 +849,7 @@ public class Tab implements ITableConstants {
 
             
             default: {
-                System.out.println("Load table errer!");
+                System.out.println("Load table error!");
                 break;
             }
         }
@@ -1010,6 +1011,21 @@ public class Tab implements ITableConstants {
 
         return valueListMap;
 
+    }
+    
+     public void moveSelectedRowsToTheEnd() {
+         
+        int[] rows = table.getSelectedRows();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        int rowNum = table.getRowCount();
+        int count = 0;
+        for (int row : rows) {
+            row = row - count;
+
+            model.moveRow(row, row, rowNum - 1);
+            count++;
+        }
+        table.setRowSelectionInterval(rowNum - count, rowNum - 1);
     }
 
     /**

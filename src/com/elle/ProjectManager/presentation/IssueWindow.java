@@ -2250,13 +2250,13 @@ public class IssueWindow extends JFrame {
         String rk = "";
         String app = "";
         if (table.getModel().getValueAt(row, 1) != null) {
-            app = projectManager.getSelectedTable().getModel().getValueAt(row, 1).toString();
+            app = table.getModel().getValueAt(row, 1).toString();
         }
         if (table.getModel().getValueAt(row, 4) != null) {
-            programmer = projectManager.getSelectedTable().getModel().getValueAt(row, 4).toString();
+            programmer = table.getModel().getValueAt(row, 4).toString();
         }
         if (table.getModel().getValueAt(row, 6) != null) {
-            rk = projectManager.getSelectedTable().getModel().getValueAt(row, 6).toString();
+            rk = table.getModel().getValueAt(row, 6).toString();
         }
         programmerComboBox.setSelectedItem(programmer);
         rkComboBox.setSelectedItem(rk);
@@ -2264,20 +2264,6 @@ public class IssueWindow extends JFrame {
 
     }
     
-
-//    private void updateComboBoxValue() {
-//        int row = projectManager.getSelectedTable().getSelectedRow();
-//        String programmer = "";
-//        String rk = "";
-//        String app = "";
-//        programmer = programmerComboBox.getSelectedItem().toString();
-//        rk = rkComboBox.getSelectedItem().toString();
-//        app = appComboBox.getSelectedItem().toString();
-//        projectManager.getSelectedTable().getModel().setValueAt(programmer, row, 4);
-//        projectManager.getSelectedTable().getModel().setValueAt(rk, row, 6);
-//        projectManager.getSelectedTable().getModel().setValueAt(app, row, 1);
-//
-//    }
 
 /*
     ** getters and setters

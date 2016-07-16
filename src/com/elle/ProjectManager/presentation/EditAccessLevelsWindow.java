@@ -9,11 +9,8 @@ import com.elle.ProjectManager.dao.AccessLevelDAO;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.entities.AccessLevel;
 import com.elle.ProjectManager.logic.LoggingAspect;
-import java.awt.Adjustable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,8 +19,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -50,7 +45,7 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
      * Creates new form EditAccessLevelsWindow
      */
     public EditAccessLevelsWindow() {
-        DBConnection.connect("Local", "pupone_pm", "pupone_Yi", "YiXue8888");
+        
         //initialize data members
         dao = new AccessLevelDAO();  //set up dao
         accounts = dao.getAll();  //get all accounts from db
@@ -375,40 +370,7 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_cancelBtnActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(EditAccessLevelsWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(EditAccessLevelsWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(EditAccessLevelsWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(EditAccessLevelsWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new EditAccessLevelsWindow().setVisible(true);
-            }
-        });
-    }
+   
     
     public void setUpAccessLevelsColumn(JTable table,
                 TableColumn accessLevelsColumn) {

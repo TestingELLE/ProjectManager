@@ -5,12 +5,10 @@ import com.elle.ProjectManager.controller.PMDataManager;
 import com.elle.ProjectManager.dao.IssueDAO;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.entities.Issue;
-import com.elle.ProjectManager.entities.IssueFile;
 import com.elle.ProjectManager.logic.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.*;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
@@ -24,15 +22,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.sql.Statement;
 import java.text.DateFormat;
@@ -48,8 +40,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.rtf.RTFEditorKit;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 /**
@@ -177,11 +167,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // initialize comboBoxForSeachDropDownList
         comboBoxForSearchDropDown = new HashMap();
         programmersActiveForSearching = new ArrayList<String>();
-
-
-
-        initComponents(); // generated code
-        
+      
         // initialized with a list of inactive programmers from the database
          inactiveProgrammers = getInactiveProgrammers();
         
@@ -1110,18 +1096,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         alWindow.setVisible(true);
     }
         
-    
-          
-    
-    
-
+  
     private void updateComboList(String colName, Tab tab) {
         //create a combo box model
         DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
         comboBoxValue.setModel(comboBoxSearchModel);
 
-        
-       
+        //the combobox values are loaded from tab class
         Map comboBoxForSearchValue = tab.loadingDropdownList();
 
 
@@ -1255,24 +1236,24 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     //Custom renderer used to render the list of programmers in comboBoxValue with a seperator line
     //by Corinne Martus on July 5, 2016
     class ComboBoxRenderer extends BasicComboBoxRenderer implements ListCellRenderer {
-    JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
+        JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
     
-    final ListCellRenderer<? super Object> original = new JComboBox<Object>()
+        final ListCellRenderer<? super Object> original = new JComboBox<Object>()
             .getRenderer();
 
-    public Component getListCellRendererComponent(JList list, Object value,
-        int index, boolean isSelected, boolean cellHasFocus) { 
-      Component renderComponent = null;
-       String str = (value == null) ? "" : value.toString();
-        if (SEPARATOR.equals(str)) {
-          renderComponent = separator;
-       }
-      else{
-        renderComponent = original.getListCellRendererComponent(list,
+        public Component getListCellRendererComponent(JList list, Object value,
+            int index, boolean isSelected, boolean cellHasFocus) { 
+            Component renderComponent = null;
+            String str = (value == null) ? "" : value.toString();
+            if (SEPARATOR.equals(str)) {
+                renderComponent = separator;
+            }
+            else{
+                renderComponent = original.getListCellRendererComponent(list,
                     str, index, isSelected, cellHasFocus);
+            }
+            return renderComponent;      
         }
-      return renderComponent;      
-    }
     }
     
      //custom combo box listener applied to the list of analysts in comboBoxValue 
@@ -1381,7 +1362,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     // not sure what this is
     private void menuItemAWSAssignActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAWSAssignActionPerformed
-
 
         Tab PMTable = tabs.get(0);
 
@@ -1914,12 +1894,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_tabbedPanelStateChanged
 
     private void menuItemMoveSeletedRowsToEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemMoveSeletedRowsToEndActionPerformed
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        int[] rows = table.getSelectedRows();
-
-        moveSelectedRowsToTheEnd(rows, table);
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        currentTab.moveSelectedRowsToTheEnd();
     }//GEN-LAST:event_menuItemMoveSeletedRowsToEndActionPerformed
 
     private void comboBoxValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxValueActionPerformed
@@ -1990,6 +1966,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             Tab tab = tabs.get(entry.getKey());         
             tab.reloadTable();
         }
+        
+        LoggingAspect.afterReturn("All tabs are reloaded.");
 
     }
     /**
@@ -2081,6 +2059,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             } 
             
         }
+        
         
         
     }//GEN-LAST:event_menuItemSyncLocalDataActionPerformed
@@ -2339,32 +2318,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }    
     }
 
-    public void moveSelectedRowsToTheEnd(int[] rows, JTable table) {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        int rowNum = table.getRowCount();
-        int count = 0;
-        for (int row : rows) {
-            row = row - count;
-
-            model.moveRow(row, row, rowNum - 1);
-            count++;
-        }
-        table.setRowSelectionInterval(rowNum - count, rowNum - 1);
-    }
-
- 
-
-    /**
-     * getSelectedTable gets the selected tabName
-     *
-     * @return
-     */
-    public JTable getSelectedTable() {  //get JTable by  selected Tab
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        return table;
-    }
 
     /**
      * get Opening Issues list
@@ -2379,15 +2332,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.openingIssuesList.get(id);
     }
 
-    /**
-     * setLastUpdateTime sets the last update time label
-     */
-    public void setLastUpdateTime() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String time = dateFormat.format(new Date());
-        labelTimeLastUpdate.setText("Last updated: " + time);
-    }
-
+   
     /**
      * setKeyboardFocusManager sets the keyboard focus manager
      */
@@ -2400,7 +2345,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             if (e.isAltDown()) {
 //                        if (e.getComponent() instanceof JTable) {
 //                            JTable table = (JTable) e.getComponent();
-                                Tab tab = tabs.get(getSelectedTabName());
+                                Tab tab = tabs.get(tabbedPanel.getSelectedIndex());
                                 JTable table = tab.getTable();
 
                                 if (table.isEditing()) {
@@ -2554,8 +2499,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         searchPanel.setEnabled(disable);
 
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
+        Tab tab = tabs.get(tabbedPanel.getSelectedIndex());
         tab.getTable().setEnabled(disable);
         if (!disable) {
             //set sort and filter enabled
@@ -2580,15 +2524,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public Map<Integer, Tab> getTabs() {
         return tabs;
-    }
-
-    public String getSelectedTabName() {
-        String title = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
-        if (title.startsWith("<")) {
-            title = title.substring(9, title.length() - 11);
-        }
-
-        return title;
     }
 
     public void setDatabase(String database) {
@@ -2900,15 +2835,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.openingIssuesList.size();
     }
 
-//    public void deleteNumOfAddIssueWindowOpened() {
-//        this.numOfAddIssueWindowOpened--;
-//        if (numOfAddIssueWindowOpened == 0) {
-//            addIssueWindowShow = false;
-//        }
-//    }
-//    public void setPopupWindowShowInPM(boolean b) {
-//        popupWindowShowInPM = b;
-//    }
+
     public JLabel getInformationLabel() {
         return this.informationLabel;
     }
@@ -3270,202 +3197,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // add redo and undo short cut to text component
     }
 
-    public Tab getSelectedTab() {
-        return tabs.get(getSelectedTabName());
-    }
-
-    /**
-     * Updates a table rowIndex's data
-     * @param table
-     * @param issue 
-     */
-    public void updateTableRow(JTable table, Issue issue) throws IOException, BadLocationException {
-        int row = findTableModelRow(table,issue);
-        if(row != -1){
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            
-            // remove table listeners because this listens for changes in 
-            // table and changes the cell green for upload changes and revert
-            // changes. So I remove them and then put them back.
-            TableModelListener[] listeners = model.getTableModelListeners();
-            for(int i = 0; i < listeners.length; i++){
-                model.removeTableModelListener(listeners[i]);
-            }
-
-            // update -> no need for id
-            model.setValueAt(issue.getApp(), row, 1);
-            model.setValueAt(issue.getTitle(), row, 2);
-            
-            byte[] descriptiontablebytesout = issue.getDescription();
-            InputStream descriptiontablestream = new ByteArrayInputStream(descriptiontablebytesout);
-            RTFEditorKit rtfParser = new RTFEditorKit();
-            Document document = rtfParser.createDefaultDocument();
-            rtfParser.read(descriptiontablestream, document, 0);
-            String text = document.getText(0, document.getLength());
-            model.setValueAt(text, row, 3);
-            
-            
-            model.setValueAt(issue.getProgrammer(), row, 4);
-            model.setValueAt(issue.getDateOpened(), row, 5);
-            model.setValueAt(issue.getRk(), row, 6);
-            model.setValueAt(issue.getVersion(), row, 7);
-            model.setValueAt(issue.getDateClosed(), row, 8);
-            model.setValueAt(issue.getIssueType(), row, 9);
-            model.setValueAt(issue.getSubmitter(), row, 10);
-            model.setValueAt(issue.getLocked(), row, 11);
-            
-            // add back the table listeners
-            for(int i = 0; i < listeners.length; i++){
-                model.addTableModelListener(listeners[i]);
-            }
-            
-            table.repaint();
-        }
-        else{
-            String errMsg = "Problem updating row: Row not Found";
-            LoggingAspect.afterReturn(errMsg);
-        }
-    }
-
-    /**
-     * Inserts a new rowIndex in the table
-     * @param table
-     * @param issue 
-     */
-    public void insertTableRow(JTable table, Issue issue) throws IOException, BadLocationException {
-
-        Object[] rowData = new Object[13];
-        rowData[0] = issue.getId();
-        rowData[1] = issue.getApp();
-        rowData[2] = issue.getTitle();
-        byte[] descriptiontablebytesout;
-
-        if (issue.getDescription() == null) {
-            descriptiontablebytesout = new byte[0];
-        } else {
-            descriptiontablebytesout = issue.getDescription();
-        }
-        
-        InputStream descriptiontablestream = new ByteArrayInputStream(descriptiontablebytesout);
-        String convertedstrings = convertStreamToString(descriptiontablestream);
-        
-        String rtfsign = "\\par";
-        boolean rtfornot = convertedstrings.contains(rtfsign);
-        
-        if (rtfornot) {
-            RTFEditorKit rtfParser = new RTFEditorKit();
-            Document document = rtfParser.createDefaultDocument();
-            rtfParser.read(new ByteArrayInputStream(descriptiontablebytesout), document, 0);
-            String text = document.getText(0, document.getLength());
-            rowData[3] = text;
-        } else {
-            rowData[3] = convertedstrings;
-        }
-
-        rowData[4] = issue.getProgrammer();
-        rowData[5] = issue.getDateOpened();
-        rowData[6] = issue.getRk();
-        rowData[7] = issue.getVersion();
-        rowData[8] = issue.getDateClosed();
-        rowData[9] = issue.getIssueType();
-        rowData[10] = issue.getSubmitter();
-        rowData[11] = issue.getLocked();
-        ((DefaultTableModel)table.getModel()).addRow(rowData);
-    }
    
-    public String convertStreamToString(InputStream is) throws IOException {
-        // To convert the InputStream to String we use the
-        // Reader.read(char[] buffer) method. We iterate until the
-        // Reader return -1 which means there's no more data to
-        // read. We use the StringWriter class to produce the string.
-        if (is != null) {
-            Writer writer = new StringWriter();
-
-            char[] buffer = new char[1024];
-            try {
-                Reader reader;
-                reader = new BufferedReader(
-                        new InputStreamReader(is, "UTF-8"));
-                int n;
-                while ((n = reader.read(buffer)) != -1) {
-                    writer.write(buffer, 0, n);
-                }
-            } finally {
-                is.close();
-            }
-            return writer.toString();
-        }
-        return "";
-    }
-    
-    
-    /**
-     * Inserts a new rowIndex in the table
-     * @param table
-     * @param issueFile
-     * @param issue 
-     */
-    public void insertTableRow(JTable table, IssueFile issueFile) {
-
-        Object[] rowData = new Object[9];
-        rowData[0] = issueFile.getFileID();
-        rowData[1] = issueFile.getTaskID();
-        rowData[2] = issueFile.getApp();
-        rowData[3] = issueFile.getSubmitter();
-        rowData[4] = issueFile.getStep();
-        rowData[5] = issueFile.getDate();
-        rowData[6] = issueFile.getFiles();
-        rowData[7] = issueFile.getPath();
-        rowData[8] = issueFile.getNotes();
-        ((DefaultTableModel)table.getModel()).addRow(rowData);
-    }
-
-    /**
-     * Locates the table model rowIndex index
-     * @param issue
-     * @return int table model rowIndex
-     */
-    public int findTableModelRow(JTable table, Issue issue) {
-        int rowCount = table.getModel().getRowCount();
-        TableModel model = table.getModel();
-        for(int rowIndex = 0; rowIndex < rowCount; rowIndex++){
-            int rowId = Integer.parseInt(model.getValueAt(rowIndex, 0).toString());
-            if(rowId == issue.getId()){
-                return rowIndex;
-            }
-        }
-        return -1; // rowIndex not found
-    }
-
-    /**
-     * removes the selected rows from the table
-     * @param table
-     * @return 
-     */
-    private boolean removeSelectedRows(JTable table) {
-        
-        int[] rows = table.getSelectedRows();
-	DefaultTableModel model = (DefaultTableModel)table.getModel();
-
-        if(rows.length != -1){
-            while(rows.length>0)
-            {
-                int row = table.convertRowIndexToModel(rows[0]);
-                model.removeRow(row);
-                rows = table.getSelectedRows();
-            }
-            table.getSelectionModel().clearSelection();
-            return true;
-        }
-        else{
-            // no rows selected
-            return false;
-        }
-    }
-    
-    
-    
-    
     /**
      * Yi
      * for offline data, remove the offline data from table if it gets pushed to server.

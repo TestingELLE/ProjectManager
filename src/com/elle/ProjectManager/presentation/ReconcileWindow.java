@@ -8,6 +8,7 @@ package com.elle.ProjectManager.presentation;
 import com.elle.ProjectManager.controller.PMDataManager;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ConflictItemPair;
+import com.elle.ProjectManager.logic.LoggingAspect;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -62,6 +63,8 @@ public class ReconcileWindow extends javax.swing.JFrame {
     
     private void setComponentsValues()  {
         try {
+            //data is changed dynamically, each time, should reference conflictIssues again
+            conflictIssues = dataManager.getConflictIssues();
             total = conflictIssues.size();
             currentIssuePair = conflictIssues.get(index);
             
@@ -492,6 +495,7 @@ public class ReconcileWindow extends javax.swing.JFrame {
         
         pmWindow.setEnabled(true);
         pmWindow.reloadAllData();
+        LoggingAspect.afterReturn("Conflicts are resolved.");
         this.dispose();
     }
 

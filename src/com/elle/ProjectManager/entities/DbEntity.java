@@ -23,6 +23,7 @@ public abstract class DbEntity  {
         this.id = id;
     }
 
+    //this is to create a deep clone copy of the entity object
     public abstract Object deepClone();
     
     

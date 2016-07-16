@@ -9,6 +9,7 @@ import com.elle.ProjectManager.dao.AbstractDAO;
 import com.elle.ProjectManager.entities.DbEntity;
 import com.elle.ProjectManager.logic.ConflictItemPair;
 import com.elle.ProjectManager.logic.ITableConstants;
+import com.elle.ProjectManager.logic.LoggingAspect;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +24,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     
     protected Map<Integer, T> onlineItems;
     protected Map<Integer, T> offlineItems;
-    ArrayList<ConflictItemPair<T>> conflictItems;
+    protected ArrayList<ConflictItemPair<T>> conflictItems;
     protected AbstractDAO onlineDAO;
     protected AbstractDAO offlineDAO;
     protected Mode opMode;
@@ -42,19 +43,19 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
         if (opMode == Mode.OFFLINE) {
             offlineDAO.insert(item);
             offlineItems.put(item.getId(), item);
-            System.out.println("New record #" + item.getId() + " is saved locally.");
+            LoggingAspect.afterReturn("New record #" + item.getId() + " is saved locally.");
         }
         else {
             //if online insert fails, do offline insert
             if(onlineDAO.insert(item)) {
                 onlineItems.put(item.getId(), item);   
-                System.out.println("New record #" + item.getId() + " is inserted into table " + tableName + ".");
+                LoggingAspect.afterReturn("New record #" + item.getId() + " is inserted into table " + tableName + ".");
             
             }
             else {
                 offlineDAO.insert(item);
                 offlineItems.put(item.getId(), item);
-                System.out.println("New record #" + item.getId() + " is saved locally.");
+                LoggingAspect.afterReturn("New record #" + item.getId() + " is saved locally.");
             
             }
             
@@ -71,14 +72,14 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
         //otherwise, do offline update
         if(id > 0 && id < 9000 && opMode == Mode.ONLINE && onlineDAO.update(item)) {
             onlineItems.put(id, item);
-            System.out.println("Record #" + item.getId() + " is updated in table " + tableName + ".");
+            LoggingAspect.afterReturn("Record #" + item.getId() + " is updated in table " + tableName + ".");
             
         }
         else { 
             //adding 9000 is done in offlineDAO update.
             offlineDAO.update(item);
             offlineItems.put(item.getId(), item);
-            System.out.println("Record #" + item.getId() + " is updated locally. ");
+            LoggingAspect.afterReturn("Record #" + item.getId() + " is updated locally. ");
         }
     
     }
@@ -89,17 +90,17 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
         //      else online delete fails, prompt the message
         if(id > 0 && id < 9000 && onlineDAO.delete(id)){
             onlineItems.remove(id);
-            System.out.println("Record #" + id + " is deleted from table " + tableName + ".");
+            LoggingAspect.afterReturn("Record #" + id + " is deleted from table " + tableName + ".");
             
         }
         else{
             if (id < 0 || id > 9000) {
                 offlineItems.remove(id);
                 offlineDAO.delete(id);
-                System.out.println("Record #" + id + " is deleted locally . ");
+                LoggingAspect.afterReturn("Record #" + id + " is deleted locally . ");
             }
             else {
-                System.out.println("Record #" + id + " failed to be deleted from " + tableName + ", please try again later.");
+                LoggingAspect.afterReturn("Record #" + id + " failed to be deleted from " + tableName + ", please try again later.");
             }
             
         }
@@ -180,6 +181,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
    
     }
     
+    //logics for resolving conflict pair
     public void resolveConflictPair(ConflictItemPair<T> pair) {
         if (pair.isChoice() && onlineDAO.update(pair.getDbItem())) {
             //online item is chosen, however, it could be changed, thus still need to update database
@@ -194,6 +196,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
         else {
             if(!pair.isChoice()) {
                 //local copy is chosen. 
+                //get id 9000+
                 int itemId = pair.getLocalItem().getId();
                 
                 //reset local item id
@@ -202,7 +205,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
                 onlineItems.put(pair.getLocalItem().getId(), pair.getLocalItem());
                 conflictItems.remove(pair);
                 
-                //remove local issues
+                //remove local issues by originalId
                 offlineDAO.delete(itemId);
                 offlineItems.remove(itemId);
             }
@@ -213,7 +216,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     //returns if conflicted or not
     //if with conflicts, return true
     //no conflicts, return false;
-    //this function can be implemented differently on different tables
+    //this function can be implemented differently for different tables, eg lastmodtime
     public abstract boolean checkConflict(T onlineItem, T offlineItem);
     
     
@@ -250,6 +253,10 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     }
     
     
+    
+    /*
+    **getters and setters
+    */
    
     public String getTableName() {
         return tableName;

@@ -6,7 +6,7 @@ package com.elle.ProjectManager.entities;
  * @author Carlos Igreja
  * @since  May 12, 2016
  */
-public class AccessLevel {
+public class AccessLevel extends DbEntity {
     private int id;
     private String user;
     private String accessLevel;
@@ -43,6 +43,13 @@ public class AccessLevel {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    //do not need, so no implementation
+    @Override
+    public Object deepClone() {
+        
+        return null;
     }
     
     

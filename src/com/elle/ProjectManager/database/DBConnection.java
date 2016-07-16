@@ -77,7 +77,7 @@ public class DBConnection {
             // connect to server
             connection = DriverManager.getConnection(url, userName, userPassword);
             statement = connection.createStatement();
-            LoggingAspect.afterReturn("Connection successful");
+            LoggingAspect.addLogMsgWthDate("Connection successful");
             return true;
         } catch (Exception ex) {
             //LoggingAspect.afterThrown(ex);
@@ -109,7 +109,7 @@ public class DBConnection {
         try {
             statement.close();
             connection.close();
-            LoggingAspect.afterReturn("Connection closed successful");
+            LoggingAspect.addLogMsgWthDate("Connection closed successful");
             return true;
         } catch (SQLException ex) {
             LoggingAspect.afterThrown(ex);
