@@ -55,7 +55,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public static String version;       // set automatically from manifest
     
     //Data center
-    PMDataManager dataManager;
+    private PMDataManager dataManager;
     
     // attributes
     private boolean online;
