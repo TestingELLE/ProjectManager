@@ -1183,7 +1183,6 @@ public class IssueWindow extends JFrame {
         rtftext.setContentType("text/rtf"); // NOI18N
         rtftext.setMinimumSize(new java.awt.Dimension(25, 25));
         rtftext.setPreferredSize(new java.awt.Dimension(100, 98));
-        rtftext.setRequestFocusEnabled(false);
         rtftext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 rtftextMouseClicked(evt);
