@@ -106,6 +106,10 @@ public class Authorization {
     public static String getAccessLevel() {
         return accessLevel;
     }
+
+    public static void setAccessLevel(String accessLevel) {
+        Authorization.accessLevel = accessLevel;
+    }
     
     
 }

@@ -1182,23 +1182,27 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }
     
-    public ArrayList getInactiveProgrammers(){
-        String sql = "SELECT * FROM programmers WHERE status = 'INACTIVE'";
-        ResultSet rs = null;
-        ArrayList <Object> inactiveProgrammers = new ArrayList<Object>();
-        try {
+    public List<Object> getInactiveProgrammers(){
+        if (online) {
+             String sql = "SELECT * FROM programmers WHERE status = 'INACTIVE'";
+            ResultSet rs = null;
+            ArrayList <Object> inactiveProgrammers = new ArrayList<Object>();
+            try {
 
-            DBConnection.close();
-            DBConnection.open();
-            rs = DBConnection.getStatement().executeQuery(sql);
+                DBConnection.close();
+                DBConnection.open();
+                rs = DBConnection.getStatement().executeQuery(sql);
             
-            while(rs.next()){
-                inactiveProgrammers.add(rs.getObject("name"));
-            }          
-        } 
-        catch (SQLException e) {
-            LoggingAspect.afterThrown(e);
+                while(rs.next()){
+                    inactiveProgrammers.add(rs.getObject("name"));
+                }          
+            } 
+            catch (SQLException e) {
+                LoggingAspect.afterThrown(e);
+            
+            }
         }
+       
         
         return inactiveProgrammers;
     }

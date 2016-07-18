@@ -1032,17 +1032,17 @@ public class IssueWindow extends JFrame {
      * @param newRow 
      * ##############requires mod
      */
-    private void updateCustomIdList(int newRow) {
+    private void updateCustomIdList(int oldID) {
         
         // remove this id from the openIssuesList and CustomIdList
-        projectManager.getOpeningIssuesList().remove(table.getName() + issue.getId(), this);
+        projectManager.getOpeningIssuesList().remove(table.getName() + oldID, this);
         //projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
 
-        String newID = table.getValueAt(newRow, 0).toString();
+        String newID = table.getName() + issue.getId();
 
         // if issue is not open
         if (!projectManager.getOpeningIssuesList().containsKey(newID)) {
-            projectManager.getOpeningIssuesList().put(table.getName() + issue.getId(), this);
+            projectManager.getOpeningIssuesList().put(newID, this);
             //projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getId());
 
         } 
@@ -1145,16 +1145,18 @@ public class IssueWindow extends JFrame {
         else if (row == 0) {
             JOptionPane.showMessageDialog(this, "This issue is already the first row on the table!");
         } else {
+            //keep record of old id
+            int oldId = issue.getId();
             row--;
-            try {
-                setIssueValuesFromTable(row,table);
-            } catch (IOException ex) {
-                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
-           
+            
+            int newId = (int)table.getValueAt(row, 0);
+            issue = dataManager.getIssueEntity(newId);
+            
+            updateCustomIdList(oldId);
+                
             setComponentValuesFromIssue(this);
             table.setRowSelectionInterval(row, row);
-            updateCustomIdList(row);
+            
         }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
@@ -1187,17 +1189,19 @@ public class IssueWindow extends JFrame {
         else if (row == table.getRowCount() - 1) {
             JOptionPane.showMessageDialog(this, "This issue is already the last row on the table!");
         } else {
-            row++;
-            try {
-                setIssueValuesFromTable(row,table);
-            } catch (IOException ex) {
-                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
             
-           setComponentValuesFromIssue(this);
+            int oldId = issue.getId();
+            row++;
+            
+            int newId = (int)table.getValueAt(row, 0);
+            issue = dataManager.getIssueEntity(newId);
+            
+            updateCustomIdList(oldId);
+            
+            setComponentValuesFromIssue(this);
             
             table.setRowSelectionInterval(row, row);
-            updateCustomIdList(row);
+            
         }
     }//GEN-LAST:event_BtnNextActionPerformed
 

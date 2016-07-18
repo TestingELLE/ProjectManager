@@ -442,6 +442,7 @@ public class LoginWindow extends JFrame {
             //passwordFieldPW.setText("");
             logWindow.addMessageWithDate("Entering offline mode..");
             Authorization.setAdminComponentType("user");
+            Authorization.setAccessLevel("user");
             userName = userName.substring(7);
             
             // create an projectManager object
