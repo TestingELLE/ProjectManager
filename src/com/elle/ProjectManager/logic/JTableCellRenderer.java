@@ -78,7 +78,7 @@ public class JTableCellRenderer extends DefaultTableCellRenderer{
         col = table.convertColumnIndexToModel(col);
         Component component =  super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
         
-        
+       
         // check if cell is in the list
         if(!cells.get(col).isEmpty() && cells.get(col).contains(row)){
             component.setBackground(modifiedCellColor);

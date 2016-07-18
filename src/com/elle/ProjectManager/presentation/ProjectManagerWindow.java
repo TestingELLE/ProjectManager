@@ -1,18 +1,14 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
+import com.elle.ProjectManager.controller.PMDataManager;
 import com.elle.ProjectManager.dao.IssueDAO;
-import com.elle.ProjectManager.dao.IssueFileDAO;
 import com.elle.ProjectManager.database.DBConnection;
-import com.elle.ProjectManager.database.ModifiedData;
-import com.elle.ProjectManager.database.ModifiedTableData;
 import com.elle.ProjectManager.entities.Issue;
-import com.elle.ProjectManager.entities.IssueFile;
 import com.elle.ProjectManager.logic.*;
-
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
@@ -20,30 +16,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.nio.charset.Charset;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -52,20 +34,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.rtf.RTFEditorKit;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 /**
  * ProjectManagerWindow
@@ -79,18 +54,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public static String creationDate;  // set automatically from manifest
     public static String version;       // set automatically from manifest
     
+    //Data center
+    private PMDataManager dataManager;
     
     // attributes
     private boolean online;
-    private Map<String, Tab> tabs; // stores individual tabName information
+    
+    private Map<Integer, Tab> tabs; // stores individual tabName information
     private Map<String, Map<Integer, ArrayList<Object>>> comboBoxForSearchDropDown;
     private static Statement statement;
     private String database;
     private String server;
 
-    //tables 
-    //added category 'test issue' - by Yi 
-    private String[] tableNames = {"PM", "ELLEGUI", "Analyster", "Other", "References"};
 
     // components
     private static ProjectManagerWindow instance;
@@ -104,7 +79,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private SqlOutputWindow sqlOutputWindow;
     private ReconcileWindow reconcileWindow;
 
-    private Map<Integer, IssueWindow> openingIssuesList;
+    private Map<String, IssueWindow> openingIssuesList;
 
     // colors - Edit mode labels
     private Color editModeDefaultTextColor;
@@ -118,7 +93,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private boolean comboBoxStartToSearch;
 
     private boolean popupWindowShowInPM;
-    private boolean reconcileWindowShow;
+
     
     //Separator line place holder
     public final static String SEPARATOR = "SEPARATOR";
@@ -126,21 +101,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // creates a array list to store a list of inactive programmers retrieved from the database
     List<Object> inactiveProgrammers = new ArrayList<Object>();
 
+
     // create a jlabel to show the database and server used
     private JLabel databaseLabel;
     private String currentTabName;
     private String userName;
     private String searchValue = null;
     private String searchColName = "programmer";
-//    private ArrayList<Integer> idNumOfOpenningIssues;
+
     private ArrayList<String> programmersActiveForSearching;
     
-    // Data Access Objects
-    IssueDAO issueDAO;
-    IssueFileDAO issueFileDAO;
-    
-    //offline data manager
-    public OfflineIssueManager offlineIssueMgr;
     
     private final String HYPHENS = "--------------------------------------------------------"
                                  + "--------------------------------------------------------"
@@ -150,95 +120,51 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * CONSTRUCTOR
      */
     public ProjectManagerWindow(String userName, boolean mode) {
+        
+        dataManager = new PMDataManager(mode);
 
-        /**
-         * Note: initComponents() executes the tabpaneChanged method. Thus, some
-         * things need to be before or after the initComponents();
-         */
-        // the statement is used for sql statements with the database connection
-        // the statement is created in LoginWindow and passed to Analyster.
-        statement = DBConnection.getStatement();
-        issueDAO = new IssueDAO();
-        issueFileDAO = new IssueFileDAO();
-        instance = this;                         // this is used to call this instance of Analyster 
+        instance = this;                         // this is used to call this instance of PM
+
 
         this.userName = userName;
         online = mode;
-        offlineIssueMgr = new OfflineIssueManager(userName);
         
-
-        // initialize tabs
+        
+        initComponents(); // generated code
+        
+        // initialize tabs 
+        // set up table, renderer, filter, columnpopupmenu
+        // initialize and save the buttons state
         tabs = new HashMap();
+        for(int i = 0; i < tabbedPanel.getTabCount(); i++) {
+            JScrollPane scrollPane = (JScrollPane)tabbedPanel.getComponent(i);
+            JViewport viewport = scrollPane.getViewport();
+            JTable table = (JTable)viewport.getView();
+            Tab tab = new Tab(table);
+            tabs.put(i, tab);
+        }
+        
+        //set up orange dot
+        updateTabOrangeDot();
+        //scrolldown tables
+        scrolldownTables();
+        
+        //initialize tab related components
+        //including button state, recordsLabel, comboBoxSearchField, addIssue button text ,etc
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex()); 
+        changeTabbedPanelState(currentTab);
+        
+        jPanelSQL.setVisible(false);
+        comboBoxStartToSearch = false;
+        
         // initialize comboBoxForSeachDropDownList
         comboBoxForSearchDropDown = new HashMap();
         programmersActiveForSearching = new ArrayList<String>();
-
-        // create tabName objects -> this has to be before initcomponents();
-        for (int tableName = 0; tableName < tableNames.length; tableName++) {
-            tabs.put(tableNames[tableName], new Tab());
-
-            // set tableSelected names 
-            tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
-            //tabs.get(tableNames[tableName]).setTableName(tableNames[tableName]);
-
-            if (!tableNames[tableName].equals(TASKS_TABLE_NAME)) {
-                
-                if(tableNames[tableName].equalsIgnoreCase("other")){
-                    // set the search fields for the comboBox for each tabName
-                tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS_OTHERS);                 
-                }
-                else{
-                    // set the search fields for the comboBox for each tabName
-                tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS);
-                }               
-                
-                // set column width percents to tables of the tabName objects
-                if (tableNames[tableName].equalsIgnoreCase("References")){
-                tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_REFERENCES);
-                 }
-                
-                else{
-                // set column width percents to tables of the tabName objects
-                tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_TASKS);
-                }
-               
-                // set the search fields for the comboBox for each tabName
-                tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
-            }else {
-                tabs.get(tableNames[tableName]).setSearchFields(TASKS_SEARCH_FIELDS);
-                tabs.get(tableNames[tableName]).setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
-                tabs.get(tableNames[tableName]).setColWidthPercent(COL_WIDTH_PER_REPORTS);
-            }
-//        tabs.get(TASKNOTES_TABLE_NAME).setSearchFields(TASKNOTES_SEARCH_FIELDS);
-//        tabs.get(TASKNOTES_TABLE_NAME).setBatchEditFields(TASKNOTES_BATCHEDIT_CB_FIELDS);
-//        tabs.get(TASKNOTES_TABLE_NAME).setColWidthPercent(COL_WIDTH_PER_ARCHIVE);
-
-            // set Activate Records menu item enabled for each tabName
-            tabs.get(tableNames[tableName]).setActivateRecordMenuItemEnabled(false);
-            tabs.get(tableNames[tableName]).setActivateRecordMenuItemEnabled(false);
-//        tabs.get(TASKNOTES_TABLE_NAME).setActivateRecordMenuItemEnabled(true);
-
-            // set Archive Records menu item enabled for each tabName
-            tabs.get(tableNames[tableName]).setArchiveRecordMenuItemEnabled(true);
-            tabs.get(tableNames[tableName]).setArchiveRecordMenuItemEnabled(false);
-//        tabs.get(TASKNOTES_TABLE_NAME).setArchiveRecordMenuItemEnabled(false);
-
-            // set add records button visible for each tabName
-            tabs.get(tableNames[tableName]).setAddRecordsBtnVisible(true);
-            tabs.get(tableNames[tableName]).setAddRecordsBtnVisible(true);
-//        tabs.get(TASKNOTES_TABLE_NAME).setAddRecordsBtnVisible(false);
-
-            // set batch edit button visible for each tabName
-            tabs.get(tableNames[tableName]).setBatchEditBtnVisible(true);
-            tabs.get(tableNames[tableName]).setBatchEditBtnVisible(true);
-//        tabs.get(TASKNOTES_TABLE_NAME).setBatchEditBtnVisible(false);
-        }
-
-        initComponents(); // generated code
-        
+      
         // initialized with a list of inactive programmers from the database
          inactiveProgrammers = getInactiveProgrammers();
         
+
         ///set the offline status
         if (online) {
             status.setText("Online");
@@ -260,194 +186,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         editModeActiveTextColor = new Color(44, 122, 22); //dark green
         editModeDefaultTextColor = labelEditMode.getForeground();
 
-        // set names to tables (this was in tabbedPanelChanged method)
-        PMTable.setName(tableNames[0]);
-        ELLEGUITable.setName(tableNames[1]);
-        AnalysterTable.setName(tableNames[2]);
-        OtherTable.setName(tableNames[3]);
-
-        referenceTable.setName(tableNames[4]);
-        
-//        issue_notesTable.setName(TASKNOTES_TABLE_NAME);
-
-        // set tables to tabName objects
-        tabs.get(tableNames[0]).setTable(PMTable);
-        tabs.get(tableNames[1]).setTable(ELLEGUITable);
-        tabs.get(tableNames[2]).setTable(AnalysterTable);
-        tabs.get(tableNames[3]).setTable(OtherTable);
-        tabs.get(tableNames[4]).setTable(referenceTable);
-        
-//        tabs.get(TASKS_TABLE_NAME).setTable(issue_filesTable);
-        
-//        tabs.get(TASKNOTES_TABLE_NAME).setTable(issue_notesTable);
-
-        // set array variable of stored column names of the tables
-        // this is just to store and use the information
-        // to actually change the tableSelected names it should be done
-        // through properties in the gui design tabName
-        tabs.get(tableNames[0]).setTableColNames(PMTable);
-        tabs.get(tableNames[1]).setTableColNames(ELLEGUITable);
-        tabs.get(tableNames[2]).setTableColNames(AnalysterTable);
-        tabs.get(tableNames[3]).setTableColNames(OtherTable);
-        tabs.get(tableNames[4]).setTableColNames(referenceTable);
-
-        //tabs.get(TASKS_TABLE_NAME).setTableColNames(issue_filesTable);
-        
-//        tabs.get(TASKNOTES_TABLE_NAME).setTableColNames(issue_notesTable);
 
         informationLabel.setText("");
 
         // this sets the KeyboardFocusManger
         setKeyboardFocusManager(this);
-        if (!getSelectedTabName().equals(TASKS_TABLE_NAME)) {
-            btnAddIssue.setText("Add issue to " + getSelectedTabName());
-        } else {
-            btnAddIssue.setText("Add " + getSelectedTabName());
-        }
 
         textComponentShortCutSetting();
-
-        // show and hide components
-        btnUploadChanges.setVisible(false);
-        jPanelSQL.setVisible(false);
-        btnEnterSQL.setVisible(true);
-        btnCancelSQL.setVisible(true);
-        btnBatchEdit.setVisible(true);
-        jTextAreaSQL.setVisible(true);
-        jPanelEdit.setVisible(true);
-        btnRevertChanges.setVisible(false);
-
-        // add filters for each tableSelected
-        // must be before setting ColumnPopupMenu because this is its parameter
-        tabs.get(tableNames[0]).setFilter(new TableFilter(PMTable));
-        tabs.get(tableNames[1]).setFilter(new TableFilter(ELLEGUITable));
-        tabs.get(tableNames[2]).setFilter(new TableFilter(AnalysterTable));
-        tabs.get(tableNames[3]).setFilter(new TableFilter(OtherTable));
-        tabs.get(tableNames[4]).setFilter(new TableFilter(OtherTable));
-
-        //add custom id list for each tab
-        tabs.get(tableNames[0]).setCustomIdList(new CustomIDList());
-        tabs.get(tableNames[1]).setCustomIdList(new CustomIDList());
-        tabs.get(tableNames[2]).setCustomIdList(new CustomIDList());
-        tabs.get(tableNames[3]).setCustomIdList(new CustomIDList());
-        tabs.get(tableNames[4]).setCustomIdList(new CustomIDList());
-       
-
-  //      tabs.get(TASKS_TABLE_NAME).setFilter(new TableFilter(issue_filesTable));
-//        tabs.get(TASKNOTES_TABLE_NAME).setFilter(new TableFilter(issue_notesTable));
-
-        // initialize columnPopupMenu 
-        // - must be before setTerminalFunctions is called
-        // - because the mouslistener is added to the tableSelected header
-        tabs.get(tableNames[0])
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[0]).
-                                getFilter(), tabs.get(tableNames[0]).getCustomIdList()));
-        tabs.get(tableNames[1])
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[1]).
-                                getFilter(), tabs.get(tableNames[1]).getCustomIdList()));
-        tabs.get(tableNames[2])
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[2]).
-                                getFilter(), tabs.get(tableNames[2]).getCustomIdList()));
-        tabs.get(tableNames[3])
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[3]).
-                                getFilter(), tabs.get(tableNames[3]).getCustomIdList()));
-        tabs.get(tableNames[4])
-                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(tableNames[4]).
-                                getFilter(), tabs.get(tableNames[4]).getCustomIdList()));
-        
-        
-
-//        tabs.get(TASKS_TABLE_NAME)
-//                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKS_TABLE_NAME).
-//                                getFilter(), tabs.get(TASKS_TABLE_NAME).getCustomIdList()));
-//        tabs.get(TASKNOTES_TABLE_NAME)
-//                .setColumnPopupMenu(new ColumnPopupMenu(tabs.get(TASKNOTES_TABLE_NAME).getFilter()));
-        comboBoxStartToSearch = false;
+  
         boolean ifDeleteRecords = false;
-        try {
-            // load data from database to tables
-            loadTables(tabs);
-        } catch (IOException ex) {
-            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadLocationException ex) {
-            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
-        // set initial record counts of now full tables
-        // this should only need to be called once at start up of Analyster.
-        // total counts are removed or added in the Tab class
-        initTotalRowCounts(tabs);
+        openingIssuesList = new HashMap<String, IssueWindow>();
 
-        // set the cell renderers for each tabName
-        
-        tabs.get(tableNames[0]).setCellRenderer(new JTableCellRenderer(PMTable));
-        tabs.get(tableNames[1]).setCellRenderer(new JTableCellRenderer(ELLEGUITable));
-        tabs.get(tableNames[2]).setCellRenderer(new JTableCellRenderer(AnalysterTable));
-        tabs.get(tableNames[3]).setCellRenderer(new JTableCellRenderer(OtherTable));
-        tabs.get(tableNames[3]).setCellRenderer(new JTableCellRenderer(referenceTable));
-       
-
-       // tabs.get(TASKS_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_filesTable));
-    //    tabs.get(TASKNOTES_TABLE_NAME).setCellRenderer(new JTableCellRenderer(issue_notesTable));
-
-        
-        /*
-        JTableCellRenderer cellRender = tabs.get(tab).getCellRenderer();
-                        cellRender.getCells().get(col).add(row);
-                        table.getColumnModel().getColumn(col).setCellRenderer(cellRender);
-        
-        */
-        //start to set renderers for id columns, it uses singleton  - by Yi
-        
-        IdColumnRenderer idRender = IdColumnRenderer.getInstance(offlineIssueMgr);
-        tabs.get(tableNames[0]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-        tabs.get(tableNames[1]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-        tabs.get(tableNames[2]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-        tabs.get(tableNames[3]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-        tabs.get(tableNames[4]).getTable().getColumnModel().getColumn(0).setCellRenderer(idRender);
-        
-        
-        // set the modified tableSelected data objects for each tabName
-        tabs.get(tableNames[0]).setTableData(new ModifiedTableData(PMTable));
-        tabs.get(tableNames[1]).setTableData(new ModifiedTableData(ELLEGUITable));
-        tabs.get(tableNames[2]).setTableData(new ModifiedTableData(AnalysterTable));
-        tabs.get(tableNames[3]).setTableData(new ModifiedTableData(OtherTable));
-         tabs.get(tableNames[4]).setTableData(new ModifiedTableData(referenceTable));
-
-  //      tabs.get(TASKS_TABLE_NAME).setTableData(new ModifiedTableData(issue_filesTable));
-//        tabs.get(TASKNOTES_TABLE_NAME).setTableData(new ModifiedTableData(issue_notesTable));
-
-        // set all the tabs initially not in editing mode
-        for (int tableName = 0; tableName < tableNames.length; tableName++) {
-            tabs.get(tableNames[tableName]).setEditing(false);
-
-        }
-
-        // initial openedIssuesList to manager all the openning issues
-        openingIssuesList = new HashMap<Integer, IssueWindow>();
-//        tabs.get(TASKNOTES_TABLE_NAME).setEditing(false);
-
-//        // Call the initTableCellPopup method to initiate the Table Cell Popup window
-//        initTableCellPopup();
-//       
-//        // Set the tableSelected listener for the tableSelected cell popup window.
-//        setTableListener(tasksTable);
-//        setTableListener(task_filesTable);
-//        setTableListener(task_notesTable);  
-        isBatchEditWindowShow = false;
-
-        currentTabName = getSelectedTabName();
-
-        btnBatchEdit.setVisible(false);
-
-//        numOfAddIssueWindowOpened = 0;
-//        String tabName = getSelectedTabName();
-        String searchContent = comboBoxField.getSelectedItem().toString();
-
-        this.updateComboList(searchContent, currentTabName);
-
-        this.comboBoxValue.setSelectedItem("Enter search value here");
-        comboBoxStartToSearch = true;
         this.comboBoxValue.getEditor().getEditorComponent().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 comboBoxForSearchEditorMouseClicked(e);
@@ -460,43 +210,23 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.setPreferredSize(new Dimension(1014, 550));
         this.setMinimumSize(new Dimension(1000, 550));
         
+        //set up the menuItem for manage accessLevels
+        if (!Authorization.getAccessLevel().equals("administrator")) menuItemManageALs.setEnabled(false);
+        else menuItemManageALs.setEnabled(true);
         
-        
-
         this.pack();
 
         // authorize user for this component
         Authorization.authorize(this);
         
-        // listen to the tab change, if selected to 'TEST ISSUE' , then enable for deletion for all
-        
-//        tabbedPanel.addChangeListener(new ChangeListener() {
-//            public void stateChanged(ChangeEvent e) {
-//                if (Authorization.getAccessLevel().equals("administrator") || tabbedPanel.getSelectedIndex() == 5) {
-//                    menuItemDeleteRecord.setEnabled(true);
-//                }
-//                else 
-//                    menuItemDeleteRecord.setEnabled(false);
-//                
-//            }
-//        });
-        
-        
+    
         //if there are conflicted issues and is in online mode
         //open reconcile window in the dispatch thread , thus not delaying the main window
-        if (online && offlineIssueMgr.getConflictIssues().size() > 0)
+        if (online && dataManager.getConflictIssues().size() > 0)
              SwingUtilities.invokeLater(new Runnable() {
 
                 public void run() {
-                    try {
-                        reconcileWindow = new ReconcileWindow();
-                    } catch (IOException ex) {
-                        Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                reconcileWindow.setVisible(true);
-                reconcileWindowShow = true;
+                    openReconcileWindow();
                 
                 }
             });
@@ -518,198 +248,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         };
         verticalBar.addAdjustmentListener(downScroller);
     }
-//    
-//    /*
-//     * This is to initiate the tableSelected cell popup window.
-//     */
-//    private void initTableCellPopup(){
-//        
-//        // initialize the textAreatableCellPopup
-//        textAreatableCellPopup = new JTextArea();
-//        textAreatableCellPopup.setOpaque(true);
-//        textAreatableCellPopup.setBorder(BorderFactory.createLineBorder(Color.gray));
-//        textAreatableCellPopup.setSize(new Dimension(500,200)); 
-//        textAreatableCellPopup.setLineWrap(true);
-//        textAreatableCellPopup.setWrapStyleWord(true);    
-//        
-//        // initialize the areaScrollPanetableCellPopup
-//        areaScrollPanetableCellPopup = new JScrollPane(textAreatableCellPopup);
-//        areaScrollPanetableCellPopup.setOpaque(true);       
-//        areaScrollPanetableCellPopup.setSize(new Dimension(500,200));        
-//        
-//        // initialize the tableCellPopupPanel
-//        tableCellPopupPanel = new JPanel();
-//        tableCellPopupPanel.add(areaScrollPanetableCellPopup);
-//        tableCellPopupPanel.setLayout(new BorderLayout());
-//        tableCellPopupPanel.setOpaque(true);
-//        tableCellPopupPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
-//        tableCellPopupPanel.setSize(500, 200);   
-//        tableCellPopupPanel.setVisible(false);
-//        
-//        // initialize the controlPopupPanel
-//        controlPopupPanel = new JPanel(new GridBagLayout());
-//        controlPopupPanel.setOpaque(true);
-//        controlPopupPanel.setSize(500, 35);
-//        controlPopupPanel.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
-//        controlPopupPanel.setVisible(false);
-//
-//        
-//        // initialize the confirmButtonTableCellPopup                       
-//        GridBagConstraints tableCellPopupConstraints = new GridBagConstraints();
-//        tableCellPopupConstraints.gridx = 0;
-//        tableCellPopupConstraints.gridy = 0;
-//        tableCellPopupConstraints.fill = GridBagConstraints.HORIZONTAL;
-//        
-//        confirmButtonTableCellPopup = new JButton("Confirm");
-//        confirmButtonTableCellPopup.setOpaque(true);
-//        controlPopupPanel.add(confirmButtonTableCellPopup, tableCellPopupConstraints);
-//
-//        // initialize the cancelButtonTableCellPopup        
-//        tableCellPopupConstraints.gridx = 1;
-//        tableCellPopupConstraints.gridy = 0;
-//        tableCellPopupConstraints.fill = GridBagConstraints.HORIZONTAL;
-//        
-//        cancelButtonTableCellPopup = new JButton("Cancel");
-//        cancelButtonTableCellPopup.setOpaque(true);
-//        controlPopupPanel.add(cancelButtonTableCellPopup, tableCellPopupConstraints);
-//            
-//        // set the popup_layer of projectmanager for the tableSelected cell popup window
-//        this.getLayeredPane().add(tableCellPopupPanel, JLayeredPane.POPUP_LAYER);
-//        this.getLayeredPane().add(controlPopupPanel, JLayeredPane.POPUP_LAYER);
-//        
-//    }
-//
-//    /*
-//     * This is to set tableSelected listener for the tableSelected cell popup window.
-//     * @parm tableSelected
-//    */        
-//    private void setTableListener(JTable tableSelected){
-//        
-//        tableSelected.addMouseListener(new MouseAdapter(){             
-//            public void mouseClicked(MouseEvent evt){
-//                int rowIndex = tableSelected.getSelectedRow();
-//                int column = tableSelected.getSelectedColumn();   
-//                if(tableSelected.equals(tasksTable)){                   
-//                    if(column == 2 || column == 4 || column == 5){
-//                        // popup tableSelected cell edit window
-//                        tableCellPopup(tasksTable, rowIndex , column);
-//                    }else{
-//                        tableCellPopupPanel.setVisible(false);
-//                        controlPopupPanel.setVisible(false);
-//                    }
-//                }
-//                else if(tableSelected.equals(task_filesTable)){
-//                    if(column == 5 || column == 6 || column == 7){
-//                        // popup tableSelected cell edit window
-//                        tableCellPopup(task_filesTable, rowIndex , column);
-//                    }else{
-//                        tableCellPopupPanel.setVisible(false);
-//                        controlPopupPanel.setVisible(false);
-//                    }                   
-//                }
-//                else if(tableSelected.equals(task_notesTable)){
-//                    if(column == 3){
-//                        // popup tableSelected cell edit window
-//                        tableCellPopup(task_notesTable, rowIndex , column);
-//                    }else{
-//                        tableCellPopupPanel.setVisible(false);
-//                        controlPopupPanel.setVisible(false);
-//                    }                    
-//                }
-//            }
-//        });
-//        
-//        tableSelected.setFocusTraversalKeysEnabled(false);
-//        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher(){
-//            @Override
-//            public boolean dispatchKeyEvent(KeyEvent evt){                
-//                if(evt.getKeyCode() == KeyEvent.VK_TAB || evt.getKeyCode() == KeyEvent.VK_LEFT ||
-//                        evt.getKeyCode() == KeyEvent.VK_RIGHT || evt.getKeyCode() == KeyEvent.VK_UP ||
-//                        evt.getKeyCode() == KeyEvent.VK_DOWN){
-//                    
-//                    if (evt.getComponent() instanceof JTable){
-//                        JTable tableSelected = (JTable) evt.getComponent();
-//                        int rowIndex = tableSelected.getSelectedRow();                    
-//                        int column = tableSelected.getSelectedColumn();   
-//                        if(tableSelected.equals(tasksTable)){
-//                            if(column == 2 || column == 4 || column == 5 || column == 6){
-//                                // popup tableSelected cell edit window
-//                                tableCellPopup(tasksTable, rowIndex , column);
-//                            }else{
-//                                tableCellPopupPanel.setVisible(false);
-//                                controlPopupPanel.setVisible(false);
-//                            }
-//                        }
-//                        else if(tableSelected.equals(task_filesTable)){
-//                            if(column == 5 || column == 6 || column == 7){
-//                                // popup tableSelected cell edit window
-//                                tableCellPopup(task_filesTable, rowIndex , column);
-//                            }else{
-//                                tableCellPopupPanel.setVisible(false);
-//                                controlPopupPanel.setVisible(false);
-//                            }                   
-//                        }
-//                        else if(tableSelected.equals(task_notesTable)){
-//                            if(column == 3){
-//                                // popup tableSelected cell edit window
-//                                tableCellPopup(task_notesTable, rowIndex , column);
-//                            }else{
-//                                tableCellPopupPanel.setVisible(false);
-//                                controlPopupPanel.setVisible(false);
-//                            }                    
-//                        }
-//                    }
-//                }
-//                return false; 
-//            }
-//        });
-//    }
-//        
-//    
-//    
-//    /*
-//     * This is to set the tableSelected cell popup window visible to edit.
-//     * @parm selectedTable, rowIndex , column
-//    */    
-//    private void tableCellPopup(JTable selectedTable, int rowIndex, int column){
-//        
-//        // find the selected tableSelected cell 
-//        Rectangle cellRect = selectedTable.getCellRect(rowIndex, column, true);
-//        
-//        // set the tableSelected cell popup window visible
-//        tableCellPopupPanel.setVisible(true);
-//        controlPopupPanel.setVisible(true); 
-//   
-//        // use the tableSelected cell content to set the content for textarea
-//        textAreatableCellPopup.setText("");
-//        textAreatableCellPopup.setText((String) selectedTable.getValueAt(rowIndex, column)); 
-//    
-//        // set the tableCellPopupPanel position
-//        tableCellPopupPanel.setLocation(cellRect.x + 2, cellRect.y + cellRect.height + 2 + 150);  
-//        
-//        // set the controlPopupPanel position
-//        controlPopupPanel.setLocation(cellRect.x + 2, cellRect.y + cellRect.height + 2 + 200 + 150);
-//         
-//        // update the tableSelected cell content and tableSelected cell popup window
-//        confirmButtonTableCellPopup.addActionListener(new ActionListener(){
-//            public void actionPerformed(ActionEvent e){
-//                String newTableCellValue = textAreatableCellPopup.getText();
-//                tableCellPopupPanel.setVisible(false);
-//                controlPopupPanel.setVisible(false);                   
-//                selectedTable.setValueAt(newTableCellValue, rowIndex, column);
-//                uploadChanges();
-//            }
-//        });
-//           
-//        // quit the tableSelected cell popup window
-//        cancelButtonTableCellPopup.addActionListener(new ActionListener(){
-//            public void actionPerformed(ActionEvent e){  
-//                tableCellPopupPanel.setVisible(false);
-//                controlPopupPanel.setVisible(false);                      
-//            }
-//        });         
-//    }   
-//        
+    
+    private void scrolldownTables(){
+        //make table scroll down as default
+        scrollDown(jScrollPane1);
+        scrollDown(jScrollPane3);
+        scrollDown(jScrollPane5);
+        scrollDown(jScrollPane6);
+        scrollDown(jScrollPane7);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -928,7 +475,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true, false
+                false, true, true, false, true, true, true, true, true, true, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -959,7 +506,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true, false
+                false, true, true, false, true, true, true, true, true, true, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1003,7 +550,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         AnalysterTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         AnalysterTable.setMinimumSize(new java.awt.Dimension(10, 240));
-        AnalysterTable.setName(""); // NOI18N
+        AnalysterTable.setName("Analyster"); // NOI18N
         jScrollPane7.setViewportView(AnalysterTable);
 
         tabbedPanel.addTab("Analyster", jScrollPane7);
@@ -1063,6 +610,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 return canEdit [columnIndex];
             }
         });
+        referenceTable.setName("References"); // NOI18N
         jScrollPane3.setViewportView(referenceTable);
 
         tabbedPanel.addTab("References", jScrollPane3);
@@ -1533,6 +1081,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    
     private void menuItemVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemVersionActionPerformed
 
         JOptionPane.showMessageDialog(this, "Creation Date: "
@@ -1540,79 +1090,35 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 + "Version: " + version);
     }//GEN-LAST:event_menuItemVersionActionPerformed
 
-    private void menuItemManageALsActionPerformed(java.awt.event.ActionEvent evt){}
-    private void menuItemExportIssueToReferenceActionPerformed(java.awt.event.ActionEvent evt){}
-    
-    private Map loadingDropdownList() {
-        String selectedTabName = this.getSelectedTabName();
-        Tab tab = tabs.get(selectedTabName);
 
-        Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
-        if (!selectedTabName.equalsIgnoreCase("issue_files")) {
-            for (String searchField : tab.getSearchFields()) {
-
-                for (int i = 0; i < tab.getTable().getColumnCount(); i++) {
-                    if (tab.getTable().getColumnName(i).equalsIgnoreCase(searchField)) {
-                        valueListMap.put(i, new ArrayList<Object>());
-                    }
-                }
-            }
-            for (int col : valueListMap.keySet()) {
-                //for each search item, create a new drop down list
-                ArrayList DropDownListValueForEachColumn = new ArrayList<Object>();
-                // load drop down for each table
-                for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-                    if (!entry.getKey().equalsIgnoreCase("issue_files")) {
-                        tab = tabs.get(entry.getKey());
-
-                        String[] columnNames = tab.getTableColNames();
-                        JTable table = tab.getTable();
-                        TableModel tableModel = table.getModel();
-                        String colName;
-                        colName = columnNames[col].toLowerCase();
-                        switch (colName) {
-                            case "title":
-                            case "description":
-                            case "version":
-                                DropDownListValueForEachColumn.add("");
-                                break;
-                            default:
-                                Object valueAddToDropDownList;
-                                for (int row = 0; row < tableModel.getRowCount(); row++) {
-                                    valueAddToDropDownList = tableModel.getValueAt(row, col);
-
-                                    if (valueAddToDropDownList != null) {
-                                        // add to drop down list
-                                        DropDownListValueForEachColumn.add(valueAddToDropDownList);
-                                    } else {
-                                        DropDownListValueForEachColumn.add("");
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                }
-
-                //make every item in drop down list unique
-                Set<Object> uniqueValue = new HashSet<Object>(DropDownListValueForEachColumn);
-                ArrayList uniqueList = new ArrayList<Object>(uniqueValue);
-              //System.out.println(col + ": " + uniqueList);
-                valueListMap.put(col, uniqueList);
-            }
+    private void menuItemManageALsActionPerformed(java.awt.event.ActionEvent evt){
+        // TODO add your handling code here:
+        if (online) {
+            EditAccessLevelsWindow alWindow = new EditAccessLevelsWindow();
+            alWindow.setLocation(200,200);
+            alWindow.setVisible(true);
         }
-        return valueListMap;
-
+        else{
+            JOptionPane.showMessageDialog(this,
+                    "AccessLevels management does not support offline mode.",
+                    "Error Message",
+                    JOptionPane.ERROR_MESSAGE);
+            
+        }
+       
     }
-
-    private void updateComboList(String colName, String tableName) {
+        
+  
+    private void updateComboList(String colName, Tab tab) {
         //create a combo box model
         DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
         comboBoxValue.setModel(comboBoxSearchModel);
-        Map comboBoxForSearchValue = loadingDropdownList();
-        
-        
 
-        JTable table = tabs.get(tableName).getTable();
+        //the combobox values are loaded from tab class
+        Map comboBoxForSearchValue = tab.loadingDropdownList();
+
+
+        JTable table = tab.getTable();
 
         for (int col = 0; col < table.getColumnCount(); col++) {
 
@@ -1676,23 +1182,27 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }
     
-    public ArrayList getInactiveProgrammers(){
-        String sql = "SELECT * FROM programmers WHERE status = 'INACTIVE'";
-        ResultSet rs = null;
-        ArrayList <Object> inactiveProgrammers = new ArrayList<Object>();
-        try {
+    public List<Object> getInactiveProgrammers(){
+        if (online) {
+             String sql = "SELECT * FROM programmers WHERE status = 'INACTIVE'";
+            ResultSet rs = null;
+            ArrayList <Object> inactiveProgrammers = new ArrayList<Object>();
+            try {
 
-            DBConnection.close();
-            DBConnection.open();
-            rs = DBConnection.getStatement().executeQuery(sql);
+                DBConnection.close();
+                DBConnection.open();
+                rs = DBConnection.getStatement().executeQuery(sql);
             
-            while(rs.next()){
-                inactiveProgrammers.add(rs.getObject("name"));
-            }          
-        } 
-        catch (SQLException e) {
-            LoggingAspect.afterThrown(e);
+                while(rs.next()){
+                    inactiveProgrammers.add(rs.getObject("name"));
+                }          
+            } 
+            catch (SQLException e) {
+                LoggingAspect.afterThrown(e);
+            
+            }
         }
+       
         
         return inactiveProgrammers;
     }
@@ -1742,24 +1252,24 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     //Custom renderer used to render the list of programmers in comboBoxValue with a seperator line
     //by Corinne Martus on July 5, 2016
     class ComboBoxRenderer extends BasicComboBoxRenderer implements ListCellRenderer {
-    JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
+        JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
     
-    final ListCellRenderer<? super Object> original = new JComboBox<Object>()
+        final ListCellRenderer<? super Object> original = new JComboBox<Object>()
             .getRenderer();
 
-    public Component getListCellRendererComponent(JList list, Object value,
-        int index, boolean isSelected, boolean cellHasFocus) { 
-      Component renderComponent = null;
-       String str = (value == null) ? "" : value.toString();
-        if (SEPARATOR.equals(str)) {
-          renderComponent = separator;
-       }
-      else{
-        renderComponent = original.getListCellRendererComponent(list,
+        public Component getListCellRendererComponent(JList list, Object value,
+            int index, boolean isSelected, boolean cellHasFocus) { 
+            Component renderComponent = null;
+            String str = (value == null) ? "" : value.toString();
+            if (SEPARATOR.equals(str)) {
+                renderComponent = separator;
+            }
+            else{
+                renderComponent = original.getListCellRendererComponent(list,
                     str, index, isSelected, cellHasFocus);
+            }
+            return renderComponent;      
         }
-      return renderComponent;      
-    }
     }
     
      //custom combo box listener applied to the list of analysts in comboBoxValue 
@@ -1804,7 +1314,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         String text = "";
 
         int count = 0;
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+        for (Map.Entry<Integer, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
 
@@ -1824,8 +1334,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     boolean isValueInTable = false;
                     isValueInTable = checkValueInTableCell(col, searchBoxValue, table);
 
-
-                    //filter.addCustomIdListToFilterItem(tab.getCustomIdList());
                     filter.addFilterItem(col, searchBoxValue);
                     filter.applyFilter();
                     if (!isValueInTable) {
@@ -1871,22 +1379,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // not sure what this is
     private void menuItemAWSAssignActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAWSAssignActionPerformed
 
-        Tab PMTable = tabs.get(tableNames[0]);
-        Tab issue_filesTable = tabs.get(tableNames[4]);
-        try {
-            loadTable(PMTable);
-        } catch (IOException ex) {
-            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadLocationException ex) {
-            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            loadTable(issue_filesTable);
-        } catch (IOException ex) {
-            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadLocationException ex) {
-            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Tab PMTable = tabs.get(0);
+
     }//GEN-LAST:event_menuItemAWSAssignActionPerformed
     /**
      * This method is performed when we click the upload changes button. it
@@ -1894,54 +1388,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     private void btnUploadChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadChangesActionPerformed
 
-        uploadChanges();
+        Tab tab = tabs.get(tabbedPanel.getSelectedIndex());
+        tab.uploadChanges();
     }//GEN-LAST:event_btnUploadChangesActionPerformed
 
-    /**
-     * This uploads changes made by editing and saves the changes by uploading
-     * them to the database. This method is called by:
-     * btnUploadChangesActionPerformed(java.awt.event.ActionEvent evt) and also
-     * a keylistener when editing mode is on and enter is pressed
-     */
-    public void uploadChanges() {
-
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        JTableCellRenderer cellRenderer = tab.getCellRenderer();
-        ModifiedTableData data = tab.getTableData();
-
-        // this updates database and should be replaced with dao
-        boolean uploaded = updateTable(table, data.getNewData());
-        
-        if (uploaded) {
-
-            int[] rows = table.getSelectedRows();
-
-            //loadTable(tab); // refresh tableSelected
-
-            ListSelectionModel model = table.getSelectionModel();
-            model.clearSelection();
-            for (int r = 0; r < rows.length; r++) {
-                model.addSelectionInterval(rows[r], rows[r]);
-            }
-
-            // clear cellrenderer
-            cellRenderer.clearCellRender();
-
-            // reload modified tableSelected data with current tableSelected model
-            data.reloadData();
-
-            makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false);
-
-            data.getNewData().clear();    // reset the arraylist to record future changes
-            setLastUpdateTime();          // update time
-
-            // no changes to upload or revert
-            setEnabledEditingButtons(true, false, false);
-
-        }
-    }
 
     private int[] getSelectedRowsId(JTable table) {
         int[] rows = table.getSelectedRows();
@@ -1994,207 +1444,82 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
          this.setSize(this.getWidth(), 560);
     }//GEN-LAST:event_btnCloseSQLActionPerformed
 
-    /**
-     * makeTableEditable Make tables editable or non editable
-     *
-     * @param makeTableEditable // takes boolean true or false to make editable
-     */
-    public void makeTableEditable(boolean makeTableEditable) {
-        String selectedTabName = this.getSelectedTabName();
-        Tab tab = tabs.get(selectedTabName);
-        boolean isAddRecordsBtnVisible = tab.isAddRecordsBtnVisible();
-        boolean isBatchEditBtnVisible = tab.isBatchEditBtnVisible();
-
-        if (makeTableEditable) {
-            tab.setEditing(true);
-            labelEditModeState.setText("ON ");
-//            btnSwitchEditMode.setVisible(true);
-            btnAddIssue.setVisible(false);
-//            btnBatchEdit.setVisible(true);
-            if (!addIssueWindowShow) {
-                btnUploadChanges.setVisible(true);
-                btnRevertChanges.setVisible(true);
-            }
-            editModeTextColor(tab.isEditing());
-        } else {
-            tab.setEditing(false);
-            labelEditModeState.setText("OFF");
-//            btnSwitchEditMode.setVisible(true);
-            btnUploadChanges.setVisible(false);
-            btnAddIssue.setVisible(isAddRecordsBtnVisible);
-//            btnBatchEdit.setVisible(isBatchEditBtnVisible);
-            btnRevertChanges.setVisible(false);
-            editModeTextColor(tab.isEditing());
-        }
-
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-            tab = tabs.get(entry.getKey());
-            JTable table = tab.getTable();
-            EditableTableModel model = ((EditableTableModel) table.getModel());
-            model.setCellEditable(makeTableEditable);
-        }
-    }
+   
 
     /**
-     * getEditMode on or off
-     *
-     */
-    public boolean getEditMode() {
-        String editState = labelEditModeState.getText();
-
-        boolean editable = editState.equals("ON ");
-
-        return editable;
-    }
-
-    /**
+     * @author Yi 7/11/2016
      * changeTabbedPanelState
+     * getting states from panel, and set up the pwWindow components
      */
-    private void changeTabbedPanelState() {
 
-        // get selected tab
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-
-        JTable table = tab.getTable();
-/**
- * COMMENTED THIS OUT BECAUSE THIS BEHAVIOR MAY NO LONGER BE USED FOR THE
- * TASKFILES_TABLE
- */
-//        if (tabName.equals(TASKS_TABLE_NAME)) {
-//            String str = tabName;
-//            if (currentTabName.equals("PM") || currentTabName.equals("ELLEGUI") || currentTabName.equals("Analyster")) {
-//                str = str + " WHERE app = " + "'" + currentTabName + "'";
-//            } else if (currentTabName.equals("Other")) {
-//                str = str + " WHERE app != 'PM' and app != 'Analyster' "
-//                        + "and app != 'ELLEGUI' or app IS NULL";
-//            }
-//
-//            // connection might time out
-//            DBConnection.close();
-//            DBConnection.open();
-//
-//            statement = DBConnection.getStatement();
-//            String sql = "SELECT * FROM " + str + " ORDER BY taskId ASC";
-////                System.out.println(sql);
-//            loadTable(sql, table);
-//        }
-//        currentTabName = getSelectedTabName();
-
-        boolean isBatchEditBtnEnabled = tab.isBatchEditBtnEnabled();
-        boolean isBatchEditWindowOpen = tab.isBatchEditWindowOpen();
-        boolean isBatchEditWindowVisible = tab.isBatchEditWindowVisible();
-
-        // this enables or disables the menu components for this tabName
-//        menuItemActivateRecord.setEnabled(isActivateRecordMenuItemEnabled);
-//        menuItemArchiveRecord.setEnabled(isArchiveRecordMenuItemEnabled);
-        // batch edit button enabled is only allowed for table that is editing
-        btnBatchEdit.setEnabled(isBatchEditBtnEnabled);
-        if (isBatchEditWindowOpen) {
-            batchEditWindow.setVisible(isBatchEditWindowVisible);
+    public void changeTabbedPanelState(Tab tab) {
+        
+        //comboBoxField drop down reset
+        String[] searchFields = tab.getSearchFields();
+        if (searchFields != null) {
+            comboBoxField.setModel(new DefaultComboBoxModel(searchFields));
         }
+        //populate comboxValue drop down
+        String searchContent = comboBoxField.getSelectedItem().toString();
+        this.updateComboList(searchContent, tab);
+        this.comboBoxValue.setSelectedItem("Enter search value here");
+        
+        
+        //change addIssue button text
+        btnAddIssue.setText("Add issue to " + tab.getTable().getName());
+            
+        //labelRecords reset for # of records andn # of records shown
+        labelRecords.setText(tab.getRecordsLabel());
+        
+        //set buttons state
+        setButtonsState(tab);
+    
 
-        // must be instance of EditableTableModel 
-        // this method is called from init componenents before the table model is set
-        // check whether editing and display accordingly
-        boolean editing = tab.isEditing();
-
-        if (table.getModel() instanceof EditableTableModel) {
-            makeTableEditable(editing);
-        }
-
-        // set the color of the edit mode text
-        editModeTextColor(tab.isEditing());
-
-        // set label record information
-        String recordsLabel = tab.getRecordsLabel();
-        labelRecords.setText(recordsLabel);
-
-        // buttons if in edit mode
-        if (labelEditModeState.getText().equals("ON ")) {
-            btnAddIssue.setVisible(false);
-            btnBatchEdit.setVisible(true);
-        }
-
-        // batch edit window visible only on the editing tab
-        if (batchEditWindow != null) {
-            boolean batchWindowVisible = tab.isBatchEditWindowVisible();
-            batchEditWindow.setVisible(batchWindowVisible);
-        }
-
-        // if this tab is editing
-        if (editing) {
-
-            // if there is no modified data
-            if (tab.getTableData().getNewData().isEmpty()) {
-                setEnabledEditingButtons(true, false, false);
-            } // there is modified data to upload or revert
-            else {
-                setEnabledEditingButtons(false, true, true);
-            }
-
-            // set edit mode label
-            labelEditMode.setText("Edit Mode: ");
-            labelEditModeState.setVisible(true);
-            editModeTextColor(true);
-        } // else if no tab is editing
-        else if (!isTabEditing()) {
-//            btnSwitchEditMode.setEnabled(true);
-            btnAddIssue.setEnabled(true);
-            btnBatchEdit.setEnabled(true);
-
-            // set edit mode label
-            labelEditMode.setText("Edit Mode: ");
-            labelEditModeState.setVisible(true);
-
-            editModeTextColor(false);
-        } // else if there is a tab editing but it is not this one
-        else if (isTabEditing()) {
-//            btnSwitchEditMode.setEnabled(false);
-            btnAddIssue.setEnabled(false);
-            btnBatchEdit.setEnabled(false);
-
-            // set edit mode label
-            labelEditMode.setText("Editing " + getEditingTabName() + " ... ");
-            labelEditModeState.setVisible(false);
-            editModeTextColor(true);
-        }
-        if (!getSelectedTabName().equals(TASKS_TABLE_NAME)) {
-            btnAddIssue.setText("Add issue to " + getSelectedTabName());
-        } else {
-            btnAddIssue.setText("Add " + getSelectedTabName());
-        }
-
-        // Authorization
         Authorization.authorize(this);
     }
+    
+    
+    /**
+     * @author Yi 7/11/2016
+     * set buttons visibility from tab state
+     */
+    private void setButtonsState(Tab tab) {
+        btnAddIssue.setVisible(tab.getState().isAddBtnVisible());
+        btnBatchEdit.setVisible(tab.getState().isBatchEditBtnVisible());
+        btnUploadChanges.setVisible(tab.getState().isUploadChangesBtnVisible());
+        btnRevertChanges.setVisible(tab.getState().isRevertChangesBtnVisible());
+        if(tab.getState().isEditMode()) {
+            labelEditModeState.setText("ON");
+            
+        }
+        else labelEditModeState.setText("OFF");
+        
+        editModeTextColor(tab.getState().isEditMode());
+    }
+    
+    /**
+     * @author Yi 7/11/2016
+     */
 
     private void btnBatchEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatchEditActionPerformed
 
         // get selected tab
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
+        
+        Tab tab = tabs.get(tabbedPanel.getSelectedIndex());
         JTable table = tab.getTable();
         int[] rows = table.getSelectedRows();
-//        this.moveSelectedRowsToTheEnd(rows, table);
 
-        // set the tab to editing
-        makeTableEditable(true);
-
-        // set the color of the edit mode text
-        editModeTextColor(tab.isEditing());
-
+        // set the tab state to editing
+        //hide add button, show changes btns, set editmode
+        tab.getState().enableEdit(true);
+        changeTabbedPanelState(tab);
+        
+        //open batch edit window
         // open a batch edit window and make visible only to this tab
-        batchEditWindow = new BatchEditWindow();
+        batchEditWindow = new BatchEditWindow(tab);
+        this.setEnabled(false);
         batchEditWindow.setVisible(true);
-        tab.setBatchEditWindowVisible(true);
-        tab.setBatchEditWindowOpen(true);
-        tab.setBatchEditBtnEnabled(false);
 
-        setBatchEditButtonStates(tab);
-
-        // show the batch edit window in front of the Main Window
-        showWindowInFront(batchEditWindow);
     }//GEN-LAST:event_btnBatchEditActionPerformed
 
     private void menuItemManageDBsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemManageDBsActionPerformed
@@ -2212,28 +1537,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     private void btnAddIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddIssueActionPerformed
 
+        
         if (addIssueWindowShow) {
             addIssueWindow.toFront();
-        } else {
-            if (btnAddIssue.getText().contains("Add issue to")) {
-                try {
-                    ArrayList<Issue> issues = null;
-                    addIssueWindow = new IssueWindow(-1, this.getSelectedTable(), issues);
-                } catch (IOException ex) {
-                    Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                addIssueWindow.setVisible(true);
-                addIssueWindowShow = true;
-            } 
+        }
+        else {
+            
+            Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+            addIssueWindow = new IssueWindow(-1, currentTab);
+            addIssueWindow.setVisible(true);
+            addIssueWindowShow = true;
+                        
         }
 
-        // update records
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        String recordsLabel = tab.getRecordsLabel();
-        labelRecords.setText(recordsLabel);
     }//GEN-LAST:event_btnAddIssueActionPerformed
 
     /**
@@ -2274,20 +1590,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param evt
      */
     private void btnClearAllFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearAllFilterActionPerformed
-        String recordsLabel = "";
+        
         // clear all filters
-        //      String tabName = getSelectedTabName();
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+        
+        for (Map.Entry<Integer, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             TableFilter filter = tab.getFilter();
             filter.clearAllFilters();
             filter.applyFilter();
-            filter.applyColorHeaders();
-            recordsLabel = recordsLabel + tab.getRecordsLabel() + " \n";
-
         }
+        
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        currentTab.setLabelRecords();
 
-        labelRecords.setText(recordsLabel);
     }//GEN-LAST:event_btnClearAllFilterActionPerformed
 
     /**
@@ -2297,94 +1612,24 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
 
     private void menuItemReloadDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadDataActionPerformed
-        
-        //remove current table data -Yi
-        String tab = getSelectedTabName();
-        System.out.println(tab);
-        JTable selectedTable = tabs.get(tab).getTable();
-        DefaultTableModel dm = (DefaultTableModel)selectedTable.getModel();
-        while (dm.getRowCount() > 0) {
-            dm.removeRow(0);
-        }
-        
-        
-        //if table is sorted, save the info -Yi
-         List<RowSorter.SortKey> keys = (List<RowSorter.SortKey>) selectedTable.getRowSorter().getSortKeys();
      
-        try {
-            reloadData();
-        } catch (IOException ex) {
-            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadLocationException ex) {
-            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        currentTab.reloadTable();
+        //scroll down the table
+        JTable table = currentTab.getTable();
+        JScrollPane scrollPane = (JScrollPane) table.getParent().getParent();
+        scrollDown(scrollPane);
         
-        //reset the sorter key -Yi
-        selectedTable.getRowSorter().setSortKeys(keys);
         
-        String searchColName = comboBoxField.getSelectedItem().toString();
-
-        String tabName = getSelectedTabName();
-        updateComboList(searchColName, tabName);
-
-        LoggingAspect.afterReturn(tabName + " is reloading");
-
 
     }//GEN-LAST:event_menuItemReloadDataActionPerformed
 
-    //reload the current tab data in table
-    private void reloadData() throws IOException, BadLocationException {
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTableCellRenderer cellRenderer = tab.getCellRenderer();
-        ModifiedTableData data = tab.getTableData();
-
-        // reload tableSelected from database
-        JTable table = tab.getTable();
-        loadTable(tab);
-
-        // clear cellrenderer
-        cellRenderer.clearCellRender();
-
-        // reload modified tableSelected data with current tableSelected model
-        data.reloadData();
-
-        // set label record information
-        String recordsLabel = tab.getRecordsLabel();
-        labelRecords.setText(recordsLabel);
-
-    }
-
-    private void reloadAllData() throws IOException, BadLocationException {
-
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-            Tab tab = tabs.get(entry.getKey());
-            JTableCellRenderer cellRenderer = tab.getCellRenderer();
-            ModifiedTableData data = tab.getTableData();
-
-            // reload tableSelected from database
-            JTable table = tab.getTable();
-            loadTable(tab);
-
-            // clear cellrenderer
-            cellRenderer.clearCellRender();
-
-            // reload modified tableSelected data with current tableSelected model
-            data.reloadData();
-
-            // set label record information
-            String recordsLabel = tab.getRecordsLabel();
-            labelRecords.setText(recordsLabel);
-            LoggingAspect.afterReturn(tab.getTableName() + " is reloading");
-        }
-
-    }
-
-////    /**
-////     * jArchiveRecordActionPerformed
-////     *
-////     * @param evt
-////     */
+ 
+//    /**
+//     * jArchiveRecordActionPerformed
+//     *
+//     * @param evt
+//     */
     private void menuItemArchiveRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemArchiveRecordActionPerformed
 
 //        int rowSelected = issuesTable.getSelectedRows().length;
@@ -2567,46 +1812,56 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     }//GEN-LAST:event_btnRevertChangesActionPerformed
 
+    
     private void menuitemViewOneIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuitemViewOneIssueActionPerformed
 
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
 
+        JTable table = currentTab.getTable();
         int row = table.getSelectedRow();
-        int col = table.getSelectedColumn();
+        
+        openIssueWindow(row, currentTab);
+        
+        
+    }                                                    
 
+    /*
+    **@author Yi
+    ** 07/13/2016
+    */
+    public void openIssueWindow(int rowIndex, Tab tab) {
+        
         boolean isIssueAlreadyOpened = false;
 
-        Integer openningIssueId = (Integer) table.getValueAt(row, 0);
+        JTable table = tab.getTable();
+        //get issue id 
+        int id = (int) table.getValueAt(rowIndex, 0);
+        //set the issue identifier
+        String identifier = table.getName() + id;
+        
+        //if issue already opened
+        if (openingIssuesList.size() > 0) {
+            for (String uniqueId : openingIssuesList.keySet()) {
+            
+                if (identifier.equals(uniqueId)) {
 
-        for (Integer id : openingIssuesList.keySet()) {
-            if (openningIssueId != null) {
-                if (id == openningIssueId) {
                     isIssueAlreadyOpened = true;
+                    break;
                 }
             }
+        
         }
-
+        
         if (isIssueAlreadyOpened) {
-            openingIssuesList.get(openningIssueId).toFront();
+
+            openingIssuesList.get(identifier).toFront();
         } else {
             if (openingIssuesList.size() < 6) {
-                IssueWindow viewIssue = null;
-                String currentabname = getSelectedTabName();
-                try {
-                    ArrayList<Issue> issues = issueDAO.get(currentabname);
-                    viewIssue = new IssueWindow(row, table, issues);
-                } catch (IOException ex) {
-                    Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                openingIssuesList.put(openningIssueId, viewIssue);
-                tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
-//                tab.getCustomIdList().printOutIDList();
-//                                    System.out.println("issue opened's id is: " + openningIssueId + 
-//                                            " and id in view issue is: " + selectedIssue.getID().toString());
+                
+                IssueWindow viewIssue = new IssueWindow(id, tab);
+                openingIssuesList.put(identifier, viewIssue);
+                tab.getFilter().getCustomIdListFilter().add(id);
+
                 viewIssue.setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(null,
@@ -2615,15 +1870,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             }
         }
+
     }//GEN-LAST:event_menuitemViewOneIssueActionPerformed
+
+        
 
     private void comboBoxFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxFieldActionPerformed
         System.out.println("here" + comboBoxStartToSearch);
         searchColName = comboBoxField.getSelectedItem().toString();
         searchValue = comboBoxValue.getSelectedItem().toString();
-        String tabName = getSelectedTabName();
         // update the dropdown list when we change a searchable item
-        updateComboList(searchColName, tabName);
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        updateComboList(searchColName, currentTab);
 
         comboBoxValue.setSelectedItem(searchValue);
 
@@ -2632,9 +1890,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     }//GEN-LAST:event_comboBoxFieldActionPerformed
 
+    /* By Yi */
     private void menuItemTurnEditModeOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTurnEditModeOffActionPerformed
-        String tabName = getSelectedTabName();
-        makeTableEditable(false);
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        currentTab.getState().enableEdit(false);
+        changeTabbedPanelState(currentTab);
     }//GEN-LAST:event_menuItemTurnEditModeOffActionPerformed
 
     /**
@@ -2644,33 +1904,20 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     private void tabbedPanelStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPanelStateChanged
         
-        changeTabbedPanelState();
+        // tab change will change related components
         
-        // this changes the search fields for the comboBox for each tabName
-        // this event is fired from initCompnents hence the null condition
-        String tabName = getSelectedTabName();
-
-        Tab tab = tabs.get(tabName);
-        String[] searchFields = tab.getSearchFields();
-
-        if (searchFields != null) {
-            comboBoxField.setModel(new DefaultComboBoxModel(searchFields));
+        if (tabs != null) {
+            Tab tab = tabs.get(tabbedPanel.getSelectedIndex());
+            
+            //set up related JComponents 
+            changeTabbedPanelState(tab);
         }
-        comboBoxField.setSelectedItem(searchColName);
-//        if (tabName.equalsIgnoreCase("issue_files")) {
-//            comboBoxForSearch.setSelectedItem("Enter submitter here");
-//        } else {
-//            comboBoxForSearch.setSelectedItem("Enter programmer here");
-//        }
+    
     }//GEN-LAST:event_tabbedPanelStateChanged
 
     private void menuItemMoveSeletedRowsToEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemMoveSeletedRowsToEndActionPerformed
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        int[] rows = table.getSelectedRows();
-
-        moveSelectedRowsToTheEnd(rows, table);
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        currentTab.moveSelectedRowsToTheEnd();
     }//GEN-LAST:event_menuItemMoveSeletedRowsToEndActionPerformed
 
     private void comboBoxValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxValueActionPerformed
@@ -2728,21 +1975,24 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemBackupActionPerformed
 
     private void menuItemReloadAllDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadAllDataActionPerformed
-        try {
-            reloadAllData();
-        } catch (IOException ex) {
-            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadLocationException ex) {
-            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        String searchColName = comboBoxField.getSelectedItem().toString();
-
-        String tabName = getSelectedTabName();
-        updateComboList(searchColName, tabName);
-        LoggingAspect.afterReturn("All tabs reload complete");
+        
+       reloadAllData();
+       
 
     }//GEN-LAST:event_menuItemReloadAllDataActionPerformed
 
+    public void reloadAllData() {
+
+        for (Map.Entry<Integer, Tab> entry : tabs.entrySet()) {
+            
+            Tab tab = tabs.get(entry.getKey());         
+            tab.reloadTable();
+        }
+       
+        scrolldownTables();
+        LoggingAspect.afterReturn("All tabs are reloaded.");
+
+    }
     /**
      * menuItemDeleteRecordActionPerformed Delete records menu item action
      * performed
@@ -2750,26 +2000,29 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param evt
      */
     private void menuItemDeleteRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemDeleteRecordActionPerformed
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        String tableName = table.getName(); // name of the tableSelected
+
+        
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        JTable table = currentTab.getTable();
 
         // get the ids
-        int[] ids; // ids to delete from database
         int[] selectedRows = table.getSelectedRows(); // array of the rows selected
         
         int rowCount = selectedRows.length; // the number of rows selected
-        ArrayList<Integer> authorizedRows = new ArrayList();
-        if (rowCount != -1) {
-            ids = new int[rowCount];
+        
+        ArrayList<Integer> authorizedRows = new ArrayList(); //rows index eligible for removal
+        ArrayList<Integer> ids = new ArrayList(); //issue ids eligible for removal from db
+        if (rowCount > 0) {
+ 
             for (int i = 0, j=0; i < rowCount; i++) {
                 int row = selectedRows[i];
-                Integer selectedID = (Integer) table.getValueAt(row, 0); // Add Note to selected taskID
+                int selectedID = (int) table.getValueAt(row, 0); // Add Note to selected taskID
                 String type = (String) table.getValueAt(row, 9);
                 if (Authorization.getAccessLevel().equals("administrator") || type.equals("TEST ISSUE")) {
-                    ids[j++] = selectedID;
-                    authorizedRows.add(selectedRows[i]);
+
+                    ids.add(selectedID);
+                    authorizedRows.add(row);
+
                 }
                      
                 else {
@@ -2780,45 +2033,22 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     continue;
                 }
             }
-            
-            if (tableName.equals(TASKS_TABLE_NAME)) {
-                if (online) {
-                    issueFileDAO.delete(table);
-                }
-                else {
-                    System.out.println("Offline mode has not implemented actions for issueFile deletion");
-                }
-             
-             //delete issues from table , first separate online from offline, and perform actions accordingly.
-             // in addition, online issues cannot be really deleted in offline mode, thought table seems delete the records.
-             
-            } else {
-                
-                int[] onlineIds = new int[ids.length];
-                int[] offlineIds = new int[ids.length];
-                int i=0, j=0;
-                for(int id : ids) {
-                    if (id < 0 || id > 9000) offlineIds[j++] = id;
-                    else onlineIds[i++] = id;
-                }
-                if (online) {
-                    issueDAO.delete(onlineIds);
-                    offlineIssueMgr.deleteIssues(offlineIds);
-                }
-                else {
-                    //offline delete records
-                    offlineIssueMgr.deleteIssues(offlineIds);
-                    //optional: save the online Ids to a local file, next time, during sync, request db deletion. 
-                }
-                
+
+            //delete authorized records from db
+            if (table.getName().equals("References")) {
+                dataManager.deleteReferences(ids);  
             }
+            else
+                dataManager.deleteIssues(ids);
+
             
             //delete particular rows from table - Yi
-            removeSelectedRows(table, authorizedRows);
+            for(int index = authorizedRows.size() -1; index >= 0; index --) {
+                currentTab.deleteRow(authorizedRows.get(index));
+            }
         
-            // the update label for row count
-            tab.subtractFromTotalRowCount(authorizedRows.size()); // update total rowIndex count
-            String recordsLabel = tab.getRecordsLabel();
+            // update records label
+            String recordsLabel = currentTab.getRecordsLabel();
             labelRecords.setText(recordsLabel); // update label
         }
         else{
@@ -2827,32 +2057,33 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemDeleteRecordActionPerformed
 
     private void menuItemReloadSelectedDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadSelectedDataActionPerformed
-       int row = getSelectedTable().getSelectedRow();
-       if(row == -1){
-           
-       }
-       else{
-       Object ID = getSelectedTable().getValueAt(row, 0);
-       System.out.println(ID + "ohhhhh");
+
+       
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        currentTab.reloadSelectedData();
+
         
-        
-        Issue issue = issueDAO.getSelectedRow(getSelectedTable().getName(), ID.toString());
-         
-        
-           try {
-               updateTableRow(getSelectedTable(),issue);
-           } catch (IOException ex) {
-               Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-           } catch (BadLocationException ex) {
-               Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-           }
-       }
     }//GEN-LAST:event_menuItemReloadSelectedDataActionPerformed
 
     private void menuItemSyncLocalDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSyncLocalDataActionPerformed
         // Sync local data
         LoggingAspect.addLogMsgWthDate("Preparing to sync local data to db server.....");
-        offlineIssueMgr.syncLocalData();
+        dataManager.syncLocalData();
+        //after sync, reload table to reflect changes.
+        reloadAllData();
+        LoggingAspect.afterReturn("Local data is sychronized to database");
+        
+        if(dataManager.getConflictIssues().size() > 0) {
+            if (JOptionPane.showConfirmDialog(this, "There are conflict issues, do you want to resolve now? ", "WARNING",
+                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                
+                openReconcileWindow();
+    
+            } 
+            
+        }
+        
+        
         
     }//GEN-LAST:event_menuItemSyncLocalDataActionPerformed
 
@@ -2866,7 +2097,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             menuItemSyncLocalData.setEnabled(false);
             menuItemReconcileConflict.setEnabled(false);
             
-        
+            dataManager.setOpMode(false);
 
         } else {
            
@@ -2875,41 +2106,24 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             status.setForeground(new Color(0, 153, 0));
             menuItemSyncLocalData.setEnabled(true);
             menuItemReconcileConflict.setEnabled(true);
-            
+            dataManager.setOpMode(true);
         }
         
     }//GEN-LAST:event_menuItemOfflineModeActionPerformed
 
     private void menuItemReconcileConflictActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReconcileConflictActionPerformed
         
-        if (reconcileWindowShow) {
-            reconcileWindow.toFront();
-        }
         
-        else {
-            if (offlineIssueMgr.getConflictIssues().size() > 0){
-            
-                try {
-                    reconcileWindow = new ReconcileWindow();
-                } catch (IOException ex) {
-                    Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                reconcileWindow.setVisible(true);
-                reconcileWindowShow = true;
-                reconcileWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);        
+        if (dataManager.getConflictIssues().size() > 0){
+
+                openReconcileWindow();
+                       
             }
             else {
                 JOptionPane.showMessageDialog(this,
                      "There are no conflicts issues to be resolved.");
             }
-            
-        }
-            
-       
-        
-     
+    
     }//GEN-LAST:event_menuItemReconcileConflictActionPerformed
 
     private void menuItemLoadDataFromTXTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLoadDataFromTXTActionPerformed
@@ -2917,8 +2131,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         JFileChooser fc = new JFileChooser();
         int returnVal = fc.showOpenDialog(this);
         
+        
         List<String> importedfile = new ArrayList<>();
-        int maximumid = issueDAO.getMaxId();
+        
         
         if (returnVal == fc.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
@@ -3067,10 +2282,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 
                 issue.setDescription(b);
                 
-                if (currentid <= maximumid) {
-                    dao.update(issue);
+                if (dataManager.getIssueEntity(currentid) != null){
+                
+                    dataManager.updateIssue(issue);
                 } else {
-                    dao.insert(issue);
+                    dataManager.insertIssue(issue);
                 }
                 
                 currentstartline = currentendline + 2; 
@@ -3079,955 +2295,52 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }        // TODO add your handling code here:
     }//GEN-LAST:event_menuItemLoadDataFromTXTActionPerformed
 
-    
-//    private void syncLocalData() {
-//        
-//        File issuesDir = FilePathFormat.localDataFilePath();
-//        File[] listOfFiles = issuesDir.listFiles();
-//
-//        for (int i = 0; i < listOfFiles.length; i++) {
-//            syncIssueToDbFromFile(listOfFiles[i]);
-//            
-//        } 
-//    }
-//    
-//    //currently only finish the insert part
-//    // update part will be added later
-//    
-//    private void syncIssueToDbFromFile(File file) {
-//        logWindow.addMessage("Now sync file: " + file.getName());
-//        try{
-//            ObjectInputStream ois =
-//                    new ObjectInputStream(new FileInputStream(file));
-//            Issue temp = (Issue)ois.readObject();
-//            ois.close();
-//            boolean success = false;
-//            String option = "new";
-//            if (file.getName().startsWith("new")){
-//                success = issueDAO.insert(temp);               
-//            }
-////            if (file.getName().startsWith("update")) {
-////                Issue dbIssue = issueDAO.get(temp.getId());
-////                if (dbIssue.getDatetimeLastMod()!= null &&
-////                        dbIssue.getDatetimeLastMod().compareTo(temp.getDatetimeLastMod()) > 0) {
-////                
-////                    StringBuilder sb  = new StringBuilder(dbIssue.getDescription());
-////                    sb.append(System.lineSeparator());
-////                    sb.append("<Merged from local data>");
-////                    sb.append(System.lineSeparator());
-////                    sb.append(temp.getDescription());
-////                    sb.append(System.lineSeparator());
-////                    sb.append("</Merged from local data>");
-////                    temp.setDescription(sb.toString());
-////                  
-////                }
-//                
-////                
-////                success = issueDAO.update(temp);
-////                option = "update";
-////                
-////            }
-//            
-//            if (success) {
-//               
-//                for (Tab tab : tabs.values()) {
-//                    if (tab.getTable().getName().equals(temp.getApp())){
-//                       if (option.equals("new"))
-//                            insertTableRow(tab.getTable(),temp);
-//                       if (option.equals("update"))
-//                            updateTableRow(tab.getTable(),temp);
-//                      makeTableEditable(false);
-//                      break;
-//                    }
-//                }
-//                logWindow.addMessage(file.getName() +" is updated to server successfully");
-//                if (file.delete()) {
-//                    logWindow.addMessage(file.getName() +" is deleted");
-//                }
-//                else {
-//                    logWindow.addMessage(file.getName() +" failed to be deleted, please manually delete it");    
-//                }
-//            }
-//            
-//            else{
-//                
-//                logWindow.addMessage(file.getName() + " failed to update to db server");
-//                     
-//            }
-//            
-//        }  catch (IOException ex) {
-//            System.out.println( "File I/O error ");
-//        } catch (ClassNotFoundException ex) {
-//            System.out.println("Issue class not found error");
-//        }
-//        
-//        
-//    }
-//     
-    
-     
-    
-   
+
+    private void menuItemExportIssueToReferenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemExportIssueToReferenceActionPerformed
+        // get selected issues
+        
+        if (tabbedPanel.getSelectedIndex() != 4) {
+            Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+            JTable table = currentTab.getTable();
+            int[] selectedRows = table.getSelectedRows();
+            if (selectedRows.length > 0) {
+                for(int row : selectedRows) {
+                    int id = (int)table.getValueAt(row, 0);
+                    Issue temp = dataManager.getIssueEntity(id);
+                    Issue ref = copyIssueToRef(temp);
+                    dataManager.insertReference(ref);
+                    
+                    //insert to reference table
+                    tabs.get(4).insertRow(dataManager.getReference(ref));            
+                }               
+            }
+        }
+  
+    }//GEN-LAST:event_menuItemExportIssueToReferenceActionPerformed
+
+   private Issue copyIssueToRef(Issue issue) {
+       Issue ref = new Issue();
+       ref.setId(-1);
+       ref.setTitle(issue.getTitle());
+       ref.setDescription(issue.getDescription());
+       ref.setProgrammer(issue.getProgrammer());
+       ref.setDateOpened(issue.getDateOpened());
+       ref.setLocked(issue.getLocked());
+       ref.setLastmodtime(issue.getLastmodtime());
+       issue.setIssueType("REFERENCE");
+       return ref;
+   }
+  
+
     
     public void comboBoxForSearchEditorMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
             comboBoxValue.getEditor().selectAll();
         } else if (e.isControlDown()) {
             comboBoxValue.showPopup();
-        }
+        }    
     }
 
-    public void moveSelectedRowsToTheEnd(int[] rows, JTable table) {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        int rowNum = table.getRowCount();
-        int count = 0;
-        for (int row : rows) {
-            row = row - count;
-
-            model.moveRow(row, row, rowNum - 1);
-            count++;
-        }
-        table.setRowSelectionInterval(rowNum - count, rowNum - 1);
-    }
-//    private void buttonFilteringTables(JTable table, String tableName) {
-//
-//        try {
-//            // open connection because might time out
-//            DBConnection.open();
-//            statement = DBConnection.getStatement();
-//            String sql = "SELECT * FROM " + table.getName() + tableName + " ORDER BY "
-//                    + "case when dateClosed IS null then 1 else 0 end, dateClosed asc, taskID ASC";
-//            System.out.println(sql);
-//            loadTableData(sql, table);
-//
-//        } catch (SQLException ex) {
-//            // for debugging
-//            LoggingAspect.afterThrown(ex);
-//
-//            // notify the user that there was an issue
-//            JOptionPane.showMessageDialog(this, "connection failed");
-//        }
-//        String tabName = getSelectedTabName();
-//        Tab tab = tabs.get(tabName);
-//        JTable tableFiltered = tab.getTable();
-//        tab.setTotalRecords(tableFiltered.getRowCount());
-//        String recordsLabel = tab.getRecordsLabel();
-//        labelRecords.setText(recordsLabel);
-//
-//    }
-
-    /**
-     * loadData
-     */
-    public void loadData() throws IOException, BadLocationException {
-        loadTables(tabs);
-    }
-
-//    public void viewNextIssue(int rowIndex, String columnName, JTable selectedTable) {
-//
-//        Object[] cellsValue = new Object[selectedTable.getColumnCount()];
-//        for (int col = 1; col < selectedTable.getColumnCount(); col++) {
-//            cellsValue[col - 1] = selectedTable.getValueAt(rowIndex, col);
-//        }
-//        boolean alreadyOpened = false;
-//
-//        Integer openningIssue = (Integer) selectedTable.getValueAt(rowIndex, 0);
-//
-//        String value = "openning issues are: ";
-//        for (int issue : idNumOfOpenningIssues) {
-//            value = value + " " + issue;
-//            if (issue == openningIssue) {
-//                alreadyOpened = true;
-//            }
-//        }
-//
-//        if (alreadyOpened) {
-//            addIssueWindow.toFront();
-//
-//        } else {
-//            idNumOfOpenningIssues.add(openningIssue);
-//            addIssueWindow.setId(openningIssue);
-//            addIssueWindow.setFormValue(cellsValue);
-//        }
-//        makeTableEditable(false);
-//
-//    }
-//    public ArrayList<Integer> getIdNumOfOpenningIssues() {
-//        return this.idNumOfOpenningIssues;
-//    }
-//    public void deleteFromIdNumOfOpenningIssues(int rowNum, JTable table) {
-//        int id = (Integer) table.getValueAt(rowNum, 0);
-//
-//        for (Integer IssueId : this.idNumOfOpenningIssues) {
-//            if (IssueId == id) {
-//                this.idNumOfOpenningIssues.remove(IssueId);
-//                break;
-//            }
-//        }
-//    }
-    /**
-     * setTableListeners This adds mouselisteners and keylisteners to tables.
-     *
-     * @param table
-     * @param frame
-     */
-    public void setTableListeners(final JTable table, final JFrame frame) {
-
-        // this adds a mouselistener to the tableSelected header
-        JTableHeader header = table.getTableHeader();
-        
-        
-        //disable default mouse listeners
-        MouseListener[] listeners = header.getMouseListeners();
-
-        for (MouseListener ml: listeners)
-        {
-            String className = ml.getClass().toString();
-
-            if (className.contains("BasicTableHeaderUI.MouseInputHandler"))
-               
-                header.removeMouseListener(ml);
-                
-           
-        }
-
-        //add customized mouselistener
-     
-        if (header != null) {
-            header.addMouseListener(new MouseAdapter() {
-                
-                @Override
-                public void mouseClicked(MouseEvent e) {
-
-                    if (e.getClickCount() == 2) {
-                        e.consume();
-                        clearFilterDoubleClick(e, table);
-                    }
-                    
-                    if (e.getClickCount() == 1 && !e.isConsumed() && e.isControlDown()) {
-                        e.consume();
-                        tabs.get(table.getName())
-                                .getColumnPopupMenu().showPopupMenu(e);
-                        
-                    }
-                    
-                    
-                    
-                    if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && !e.isConsumed()) {
-                        
-                        int columnIndex = header.columnAtPoint(e.getPoint());
-                        if (columnIndex != -1) {
-                                columnIndex = table.convertColumnIndexToModel(columnIndex);
-                                table.getRowSorter().toggleSortOrder(columnIndex);
-                                //System.out.println("clicked " + columnIndex);
-                                
-                        }
-                        e.consume();
-                    }
-                
-               
-                    
-                   
-//                    if (e.getClickCount() == 1) {
-//                        for (int j = 0; j < table.getColumnCount(); j++) {
-//                            // Locate columns under "ID"
-//                            String columnName = table.getColumnName(j);
-//                            if (columnName.equalsIgnoreCase("ID")) {
-//                                ArrayList<String> ID = new ArrayList<>();
-//
-//                                for (int rowIndex = 0; rowIndex < table.getModel().getRowCount(); rowIndex++) {
-//
-//                                    String Value = table.getModel().getValueAt(rowIndex, 0).toString();
-//
-//                                    ID.add(Value);
-//                                }
-//                                TableRowSorter<DefaultTableModel> RowSorter = (TableRowSorter<DefaultTableModel>) table.getRowSorter();
-//                                RowSorter.setComparator(0, new Comparator<String>() {
-//
-//                                    @Override
-//                                    public int compare(String o1, String o2) {
-//                                        return Integer.parseInt(o1) - Integer.parseInt(o2);
-//                                    }
-//
-//                                });
-//
-//                            }
-//                        }
-//                    }
-//
-//
-//                    for (int j = 0; j < table.getColumnCount(); j++) {
-//                        // Locate columns under "ID"
-//                        String columnName = table.getColumnName(j);
-//                        if (e.getClickCount() == 1 && columnName.equalsIgnoreCase("ID")) {
-//                            ArrayList<String> ID = new ArrayList<>();
-//
-//                            for (int rowIndex = 0; rowIndex < table.getModel().getRowCount(); rowIndex++) {
-//
-//                                String Value = table.getModel().getValueAt(rowIndex, 0).toString();
-//
-//                                ID.add(Value);
-//                            }
-//                            TableRowSorter<DefaultTableModel> rowSorter = (TableRowSorter<DefaultTableModel>) table.getRowSorter();
-//                            rowSorter.setComparator(0, new Comparator<String>() {
-//
-//                                @Override
-//                                public int compare(String o1, String o2) {
-//                                    return Integer.parseInt(o1) - Integer.parseInt(o2);
-//                                }
-//
-//                            });
-//
-//                        }
-//                    }
-                }
-
-                /**
-                 * Popup menus are triggered differently on different platforms
-                 * Therefore, isPopupTrigger should be checked in both
-                 * mousePressed and mouseReleased events for proper
-                 * cross-platform functionality.
-                 *
-                 * @param e
-                 */
-                @Override
-                public void mousePressed(MouseEvent e) {
-                 
-                    if (e.isPopupTrigger()) {
-                        // this calls the column popup menu
-                        tabs.get(table.getName())
-                                .getColumnPopupMenu().showPopupMenu(e);
-                    }
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                   
-                    if (e.isPopupTrigger()) {
-                        // this calls the column popup menu
-                        tabs.get(table.getName())
-                                .getColumnPopupMenu().showPopupMenu(e);
-                    }
-                }
-            }
-               
-            );
-        }
-
-        // add mouselistener to the tableSelected
-        table.addMouseListener(new MouseAdapter() {
-
-            boolean isClickOnce, doubleClick;
-            long theFirstClick = 0, theSecondClick = 0;
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-                // if left mouse clicks
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    if (e.getClickCount() == 2) {
-                        if (e.isControlDown()) {
-                            filterByDoubleClick(table);
-                        } else {
-                            if (e.getComponent() instanceof JTable) {
-//                                System.out.println("clicked!");
-                                int row = table.getSelectedRow();
-                                int col = table.getSelectedColumn();
-
-                                boolean isIssueAlreadyOpened = false;
-
-                                Integer openningIssueId = (Integer) table.getValueAt(row, 0);
-
-                                for (Integer id : openingIssuesList.keySet()) {
-                                    if (openningIssueId != null) {
-                                        if (id == openningIssueId) {
-                                            isIssueAlreadyOpened = true;
-                                        }
-                                    }
-                                }
-
-                                if (isIssueAlreadyOpened) {
-                                    openingIssuesList.get(openningIssueId).toFront();
-                                } else {
-                                    if (openingIssuesList.size() < 6) {
-                                        IssueWindow viewIssue = null;
-                                        String currentabname = getSelectedTabName();
-                                        try {
-                                            ArrayList<Issue> issues = issueDAO.get(currentabname);
-                                            viewIssue = new IssueWindow(row, table, issues);
-                                        } catch (IOException ex) {
-                                            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                                        } catch (BadLocationException ex) {
-                                            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
-                                        openingIssuesList.put(openningIssueId, viewIssue);
-                                        tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
-//                                        tabs.get(getSelectedTabName()).getCustomIdList().printOutIDList();
-//                                    System.out.println("issue opened's id is: " + openningIssueId + 
-//                                            " and id in view issue is: " + selectedIssue.getID().toString());
-                                        viewIssue.setVisible(true);
-                                    } else {
-                                        JOptionPane.showMessageDialog(null,
-                                                "The number of view issue window "
-                                                + "opened reached its maximum: 6!");
-
-                                    }
-                                }
-                            }
-                        }
-                    } else if (e.getClickCount() == 1) {
-                        if (e.getComponent() instanceof JTable) {
-                            JTable table = (JTable) e.getSource();
-                            int[] rows = table.getSelectedRows();
-
-                            if (rows.length >= 2) {
-
-                                btnBatchEdit.setEnabled(true);
-                                btnBatchEdit.setVisible(true);
-                            } else {
-                                btnBatchEdit.setEnabled(false);
-                                btnBatchEdit.setVisible(false);
-                            }
-                        }
-                    }
-                } // end if left mouse clicks
-                // if right mouse clicks
-                else if (SwingUtilities.isRightMouseButton(e)) {
-                    if (e.getClickCount() == 2) {
-
-                        Tab tab = tabs.get(table.getName());
-
-                        // check if this tab is editing or if allowed editing
-                        boolean thisTabIsEditing = tab.isEditing();
-                        boolean noTabIsEditing = !isTabEditing();
-
-                        if (thisTabIsEditing || noTabIsEditing) {
-
-                            // set the states for this tab
-                            makeTableEditable(true);
-                            setEnabledEditingButtons(true, true, true);
-                            setBatchEditButtonStates(tab);
-
-                            // set the color of the edit mode text
-                            editModeTextColor(tab.isEditing());
-
-                            // get selected cell for editing
-                            int columnIndex = table.columnAtPoint(e.getPoint()); // this returns the column index
-                            int rowIndex = table.rowAtPoint(e.getPoint()); // this returns the rowIndex index
-                            if (rowIndex != -1 && columnIndex != -1) {
-
-                                // make it the active editing cell
-                                table.changeSelection(rowIndex, columnIndex, false, false);
-
-                                selectAllText(e);
-
-                                // if cell is being edited
-                                // cannot cancel or upload or revert
-                                setEnabledEditingButtons(false, false, false);
-
-                            } // end not null condition
-
-                        } // end of is tab editing conditions
-
-                    } // end if 2 clicks 
-                } // end if right mouse clicks
-
-            }// end mouseClicked
-
-            private void selectAllText(MouseEvent e) {// Select all text inside jTextField
-
-                JTable table = (JTable) e.getComponent();
-                int row = table.getSelectedRow();
-                int column = table.getSelectedColumn();
-                if (column != 0) {
-                    table.getComponentAt(row, column).requestFocus();
-                    table.editCellAt(row, column);
-                    JTextField selectCom = (JTextField) table.getEditorComponent();
-                    if (selectCom != null) {
-                        selectCom.requestFocusInWindow();
-                        selectCom.selectAll();
-                    }
-                }
-
-            }
-            long firstClick = 0;
-            long secondClick = 0;
-            boolean click = false;
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (labelEditModeState.getText().equals("ON ")) {
-                    if (click == false) {
-                        firstClick = new Date().getTime();
-                        click = true;
-                    } else if (click == true) {
-                        secondClick = new Date().getTime();
-                        click = false;
-                    }
-                    if (Math.abs((secondClick - firstClick)) < 200 && (secondClick - firstClick) > 30) {
-                        selectAllText(e);
-                    }
-                }
-            }
-        }
-        );
-
-        table.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                if (e.getComponent() instanceof JTable) {
-                    JTable table = (JTable) e.getSource();
-                    int[] rows = table.getSelectedRows();
-                    if (rows.length >= 2) {
-//                        loadTableWhenSelectedRows(rows, table);
-                        btnBatchEdit.setEnabled(true);
-                        btnBatchEdit.setVisible(true);
-                    } else {
-                        btnBatchEdit.setEnabled(false);
-                        btnBatchEdit.setVisible(false);
-                    }
-                }
-            }
-        });
-
-        // add tableSelected model listener
-        table.getModel().addTableModelListener(new TableModelListener() {  // add tableSelected model listener every time the tableSelected model reloaded
-            @Override
-            public void tableChanged(TableModelEvent e) {
-
-                System.out.println("table changed called");
-                int row = e.getFirstRow();
-                int col = e.getColumn();
-                String tab = table.getName();
-
-                ModifiedTableData data = tabs.get(tab).getTableData();
-
-                if (col != -1) {
-                    Object oldValue = data.getOldData()[row][col];
-                    Object newValue = table.getModel().getValueAt(row, col);
-
-                    // check that data is different
-                    if (!newValue.equals(oldValue)) {
-
-                        String tableName = table.getName();
-                        String columnName = table.getColumnName(col);
-                        int id = (Integer) table.getModel().getValueAt(row, 0);
-
-                        data.getNewData().add(new ModifiedData(tableName, columnName, newValue, id));
-
-                        // color the cell
-                        JTableCellRenderer cellRender = tabs.get(tab).getCellRenderer();
-                        cellRender.getCells().get(col).add(row);
-                        table.getColumnModel().getColumn(col).setCellRenderer(cellRender);
-
-                        // can upload or revert changes
-                        setEnabledEditingButtons(false, true, true);
-                    } // if modified data then cancel button not enabled
-                    else if (!data.getNewData().isEmpty()) {
-                        // can upload or revert changes
-                        setEnabledEditingButtons(false, true, true);
-                    } // there is no new modified data
-                    else {
-                        // no changes to upload or revert (these options disabled)
-                        setEnabledEditingButtons(true, false, false);
-                    }
-                    int rows[] = table.getSelectedRows();
-                    if (rows.length >= 2) {
-                        btnBatchEdit.setEnabled(true);
-                        btnBatchEdit.setVisible(true);
-                    } else {
-                        btnBatchEdit.setEnabled(false);
-                        btnBatchEdit.setVisible(false);
-                    }
-                }
-//                }
-            }
-        });
-
-        // add keyListener to the tableSelected
-        table.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_F2) {
-
-                    // I believe this is meant to toggle edit mode
-                    // so I passed the conditional
-                    makeTableEditable(labelEditModeState.getText().equals("ON ") ? false : true);
-                }
-            }
-        });
-
-    }
-    //    private void popupWindowShowInTableByDiffTitle(JTable selectedTable) {
-    //        int selectedColumn = selectedTable.getSelectedColumn();
-    //
-    //        if (selectedTable.getName().equals(TASKS_TABLE_NAME)) {
-    //            if (selectedTable.getColumnName(selectedColumn).equals("title")
-    //                    || selectedTable.getColumnName(selectedColumn).equals("description")) {
-    //                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
-    ////                tableCellPopupWindow.showWindow();
-    ////                //to check it is edit mode or not in project manager
-    ////                //or in add records window it directly into edit mode
-    ////                tableCellPopupWindow.editModeSwich();
-    ////            } else {
-    ////                tableCellPopupWindow.windowClose();
-    //            }
-    //        } else if (selectedTable.getName().equals(TASKS_TABLE_NAME)) {
-    //            if (selectedTable.getColumnName(selectedColumn).equals("files")
-    //                    || selectedTable.getColumnName(selectedColumn).equals("notes")
-    //                    || selectedTable.getColumnName(selectedColumn).equals("path")) {
-    //
-    //                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
-    //
-    ////                // popup table cell edit window
-    ////                tableCellPopupWindow.showWindow();
-    ////                //to check it is edit mode or not in project manager
-    ////                //or in add records window it directly into edit mode
-    ////                tableCellPopupWindow.editModeSwich();
-    ////            } else {
-    ////                tableCellPopupWindow.windowClose();
-    //            }
-    //        } else if (selectedTable.getName().equals(TASKNOTES_TABLE_NAME)) {
-    //            if (selectedTable.getColumnName(selectedColumn).equals("status_notes")) {
-    //
-    //                tableCellPopupWindow = new PopupWindowInTableCell(this, selectedTable);
-    ////                // popup table cell edit window
-    ////                tableCellPopupWindow.showWindow();
-    ////                //to check it is edit mode or not in project manager
-    ////                //or in add records window it directly into edit mode
-    ////                tableCellPopupWindow.editModeSwich();
-    ////            } else {
-    ////                tableCellPopupWindow.windowClose();
-    //            }
-    //        }
-    //    }
-
-    public void loadTableWhenSelectedRows(int[] selectedRows, JTable table) {
-        String str = table.getName();
-
-        if (str == "PM" || str == "ELLEGUI" || str == "Analyster") {
-
-            str = TASKS_TABLE_NAME + " WHERE app = " + "'" + str + "'";
-        } else if (str == "Other") {
-            str = TASKS_TABLE_NAME + " WHERE app != 'PM' and app != 'Analyster' "
-                    + "and app != 'ELLEGUI' or app IS NULL";
-        }
-
-        str = str + " ORDER BY CASE";
-
-        for (int row = 0; row < selectedRows.length; row++) {
-            str = str + " WHEN taskID = " + table.getValueAt(selectedRows[row], 0) + " THEN " + (selectedRows.length + 1 - row);
-        }
-        str = str + " ELSE ";
-
-        // connection might time out
-        DBConnection.close();
-        DBConnection.open();
-        statement = DBConnection.getStatement();
-        String sql;
-        if (!table.getName().equals(TASKS_TABLE_NAME)) {
-            sql = "SELECT * FROM " + str
-                    + "CASE WHEN dateClosed IS NULL THEN 1 ELSE 0 END END, dateClosed asc, taskID ASC";
-        } else {
-            sql = "SELECT * FROM " + str + "0 END, taskId ASC";
-        }
-        loadTable(sql, table);
-        LoggingAspect.afterReturn("Selected Rows Move to the End...");
-//        informationLabel.setText("Selected Rows Move to the End...");
-//        startCountDownFromNow(10);
-
-        ListSelectionModel model = table.getSelectionModel();
-        model.clearSelection();
-        for (int r = 0; r < selectedRows.length; r++) {
-            model.addSelectionInterval((table.getRowCount() - 1 - r), (table.getRowCount() - 1 - r));
-        }
-
-    }
-
-    /**
-     * setTableListeners This method overloads the seTerminalFunctions to take
-     * tabs instead of a single tableSelected
-     *
-     * @param tabs
-     * @return
-     */
-    public Map<String, Tab> setTableListeners(Map<String, Tab> tabs) {
-
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-            setTableListeners((Map<String, Tab>) tabs.get(entry.getKey()).getTable());
-        }
-        return tabs;
-    }
-
-    /**
-     * filterByDoubleClick this selects the item double clicked on to be
-     * filtered
-     *
-     * @param table
-     */
-    public void filterByDoubleClick(JTable table) {
-
-        int columnIndex = table.getSelectedColumn(); // this returns the column index
-        int rowIndex = table.getSelectedRow(); // this returns the rowIndex index
-        if (rowIndex != -1) {
-            Object selectedField = table.getValueAt(rowIndex, columnIndex);
-            String tabName = getSelectedTabName();
-            Tab tab = tabs.get(tabName);
-            TableFilter filter = tab.getFilter();
-
-//            tab.getCustomIdList().printOutIDList();
-            filter.addFilterItem(columnIndex, selectedField);
-            //filter.addCustomIdListToFilterItem(tab.getCustomIdList());
-            filter.applyFilter();
-            String recordsLabel = tab.getRecordsLabel();
-            labelRecords.setText(recordsLabel);
-        }
-    }
-
-    /**
-     * clearFilterDoubleClick This clears the filters for that column by double
-     * clicking on that column header.
-     */
-    private void clearFilterDoubleClick(MouseEvent e, JTable table) {
-
-        int columnIndex = table.getColumnModel().getColumnIndexAtX(e.getX());
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        TableFilter filter = tab.getFilter();
-        filter.clearColFilter(columnIndex);
-        filter.applyFilter();
-
-        // update records label
-        String recordsLabel = tab.getRecordsLabel();
-        labelRecords.setText(recordsLabel);
-    }
-    
-    
-
-    /**
-     * setColumnFormat sets column format for each tableSelected
-     *
-     * @param width
-     * @param table
-     */
-    public void setColumnFormat(float[] width, JTable table) {
-    // Center column content
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
-        //LEFT column content
-        DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
-        leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
-
-        //Center column header
-        JTableHeader header = table.getTableHeader();
-        if (!(header.getDefaultRenderer() instanceof AlignmentTableHeaderCellRenderer)) {
-            header.setDefaultRenderer(new AlignmentTableHeaderCellRenderer(header.getDefaultRenderer()));
-        }
-
-        
-
-        
-        
-        switch (table.getName()) {
-
-            // Set the format for tableSelected task.
-            case "PM": {
-                for (int i = 0; i < width.length; i++) {
-                    int pWidth = Math.round(width[i]);
-                    if (i == 2 || i == 3) {
-                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
-                    } else {
-                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                    }
-                    
-                    // hide lock and submitter columns
-                    //if(i == 10 || i == 11|| i == 12)
-                    if(table.getColumnName(i).equalsIgnoreCase("description")){
-                        table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);}
-                    
-                    else{   
-                        TableColumn column = table.getColumnModel().getColumn(i);
-                        column.setMinWidth(pWidth);
-                        column.setMaxWidth(pWidth);
-                        column.setPreferredWidth(pWidth);
-                    }
-                    
-                }
-                break;
-            }
-            case "ELLEGUI": {
-                for (int i = 0; i < width.length; i++) {
-                    int pWidth = Math.round(width[i]);
-                    //table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
-                    if (i == 2 || i == 3) {
-                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
-                    } else {
-                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                    }
-                    
-                    // hide lock and submitter columns
-                    //if(i == 10 || i == 11){
-                        if(table.getColumnName(i).equalsIgnoreCase("description")){
-                        table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);}
-                    else{   
-                        TableColumn column = table.getColumnModel().getColumn(i);
-                        column.setMinWidth(pWidth);
-                        column.setMaxWidth(pWidth);
-                        column.setPreferredWidth(pWidth);
-                    }
-                }
-                break;
-            }
-            case "Analyster": {
-                for (int i = 0; i < width.length; i++) {
-                    int pWidth = Math.round(width[i]);
-                   // table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
-                    if (i == 2 || i == 3) {
-                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
-                    } else {
-                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                    }
-                    
-                    // hide lock and submitter columns
-                    //if(i == 10 || i == 11){
-                    if(table.getColumnName(i).equalsIgnoreCase("description")){
-                        table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);}
-                    else{   
-                        TableColumn column = table.getColumnModel().getColumn(i);
-                        column.setMinWidth(pWidth);
-                        column.setMaxWidth(pWidth);
-                        column.setPreferredWidth(pWidth);
-                    }
-                }
-                break;
-            }
-            case "Other": {
-                for (int i = 0; i < width.length; i++) {
-                    int pWidth = Math.round(width[i]);
-                   // table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
-                    if (i == 2 || i == 3) {
-                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
-                    } else {
-                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                    }
-                    
-                    // hide lock and submitter columns
-                   // if(i == 10 || i == 11){
-                        if(table.getColumnName(i).equalsIgnoreCase("description")){
-                        table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);}
-                    else{   
-                        TableColumn column = table.getColumnModel().getColumn(i);
-                        column.setMinWidth(pWidth);
-                        column.setMaxWidth(pWidth);
-                        column.setPreferredWidth(pWidth);
-                    }
-                }
-                break;
-            }
-            
-            case "References": {
-                for (int i = 0; i < width.length; i++) {
-                    int pWidth = Math.round(width[i]);
-                    if (i == 2 || i == 3) {
-                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
-                    } else {
-                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                    }
-                    
-                        if(table.getColumnName(i).equalsIgnoreCase("description")){
-                        table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
-                    }else{   
-                        TableColumn column = table.getColumnModel().getColumn(i);
-                        column.setMinWidth(pWidth);
-                        column.setMaxWidth(pWidth);
-                        column.setPreferredWidth(pWidth);
-                    }
-                }
-                break;
-            }
-            
-            case "TEST ISSUE": {
-                for (int i = 0; i < width.length; i++) {
-                    int pWidth = Math.round(width[i]);
-                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
-                    if (i == 2 || i == 3) {
-                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
-                    } else {
-                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                    }
-                    
-                    // hide lock and submitter columns
-                    if(i == 10 || i == 11|| i == 12){
-                        TableColumn column = table.getColumnModel().getColumn(i);
-                        column.setMinWidth(pWidth);
-                        column.setMaxWidth(pWidth);
-                        column.setPreferredWidth(pWidth);
-                    }
-                }
-                break;
-            }
-
-            // Set the format for tableSelected task_files
-            case TASKS_TABLE_NAME: {
-                for (int i = 0; i < width.length; i++) {
-                    int pWidth = Math.round(width[i]);
-                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
-                    if (i >= width.length - 3) {
-                        table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
-                    } else {
-                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                    }
-                }
-                break;
-            }
-            default: {
-                System.out.println("Load table error!");
-                break;
-            }
-        }
-    }
-
-
-    /**
-     * updateTable Updates database with edited data This is called from batch
-     * edit & uploadChanges
-     *
-     * @param table
-     * @param modifiedDataList
-     */
-    public boolean updateTable(JTable table, List<ModifiedData> modifiedDataList) {
-        boolean updateSuccessful = true;
-        // should probably not be here
-        // this method is to update the database, that is all it should do.
-        table.getModel().addTableModelListener(table);
-        
-        //loop the modified data list
-        for (ModifiedData modifiedData : modifiedDataList) {
-            String tableName = modifiedData.getTableName();
-            if (!tableName.equals(TASKS_TABLE_NAME)) {
-                tableName = TASKS_TABLE_NAME;
-                updateSuccessful = issueDAO.update(tableName,modifiedData);
-            }
-            else{
-                updateSuccessful = issueFileDAO.update(tableName,modifiedData);
-            }
-        }
-
-        return updateSuccessful;
-    }
-
-    /**
-     * getSelectedTable gets the selected tabName
-     *
-     * @return
-     */
-    public JTable getSelectedTable() {  //get JTable by  selected Tab
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        return table;
-    }
 
     /**
      * get Opening Issues list
@@ -4042,15 +2355,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.openingIssuesList.get(id);
     }
 
-    /**
-     * setLastUpdateTime sets the last update time label
-     */
-    public void setLastUpdateTime() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String time = dateFormat.format(new Date());
-        labelTimeLastUpdate.setText("Last updated: " + time);
-    }
-
+   
     /**
      * setKeyboardFocusManager sets the keyboard focus manager
      */
@@ -4063,7 +2368,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                             if (e.isAltDown()) {
 //                        if (e.getComponent() instanceof JTable) {
 //                            JTable table = (JTable) e.getComponent();
-                                Tab tab = tabs.get(getSelectedTabName());
+                                Tab tab = tabs.get(tabbedPanel.getSelectedIndex());
                                 JTable table = tab.getTable();
 
                                 if (table.isEditing()) {
@@ -4147,7 +2452,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                                         switch (selectedOption) {
                                             case 0:
                                                 // if Commit, upload changes and return to editing
-                                                uploadChanges();  // upload changes to database
+                                                //uploadChanges();  // upload changes to database, commented out by YI
                                                 break;
                                             case 1:
                                         {
@@ -4177,99 +2482,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
                         }
 
-//                if (!addRecordWindowShow) {
-//                if (e.getKeyCode() == KeyEvent.VK_TAB
-//                        || e.getKeyCode() == KeyEvent.VK_LEFT
-//                        || e.getKeyCode() == KeyEvent.VK_RIGHT
-//                        || e.getKeyCode() == KeyEvent.VK_UP
-//                        || e.getKeyCode() == KeyEvent.VK_DOWN) {
-//
-//                    if (e.getComponent() instanceof JTable) {
-//
-//                        JTable tableSelected = (JTable) e.getComponent();
-//
-//                        if (e.getID() == KeyEvent.KEY_RELEASED) {
-////                            System.out.println(popupWindowShowInPM);
-//                            if (popupWindowShowInPM) {
-//                                tableCellPopupWindow.windowClose();
-//                            }
-//
-//                            popupWindowShowInTableByDiffTitle(tableSelected);
-////                            if table get selected location is not the same as last selection
-////                            if (tableSelected.getSelectedRow() != lastSelectedRow
-////                                    || tableSelected.getSelectedColumn() != lastSelectedColumn) {
-////
-////                                if (lastSelectedRow == -1 || lastSelectedColumn == -1) {
-////                                    lastSelectedRow = tableSelected.getSelectedRow();
-////                                    lastSelectedColumn = tableSelected.getSelectedColumn();
-////                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
-////                                    popupWindowShowInPM = tableCellPopupWindow.isPopupWindowShow();
-////                                } else {
-////                                    tableCellPopupWindow.windowClose();
-////                                    tableCellPopupWindow = new PopupWindowInTableCell(frame, tableSelected);
-////                                    lastSelectedRow = tableSelected.getSelectedRow();
-////                                    lastSelectedColumn = tableSelected.getSelectedColumn();
-////                                    popupWindowShowInPM = tableCellPopupWindow.isPopupWindowShow();
-////                                }// last popup window dispose and new popup window show at the selected cell
-////                            } else {
-////                                //if current selection equals last selection nothing happens
-////                            }
-//                            tableSelected.requestFocus();
-//
-////                            }
-//                        }
-//                    }
-//
-//                }
+
                         if (e.isAltDown() && e.getKeyCode() == KeyEvent.VK_V) {
                             if (e.getComponent() instanceof JTable) {
+                                
+                                Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+                                int rowIndex = currentTab.getTable().getSelectedRow();
+                                
+                                if (rowIndex != -1) 
+                                    openIssueWindow(rowIndex, currentTab);
 
-                                String tabName = getSelectedTabName();
-                                Tab tab = tabs.get(tabName);
-                                JTable table = tab.getTable();
-
-                                int row = table.getSelectedRow();
-                                int col = table.getSelectedColumn();
-
-                                boolean isIssueAlreadyOpened = false;
-
-                                Integer openningIssueId = (Integer) table.getValueAt(row, 0);
-
-                                for (Integer id : openingIssuesList.keySet()) {
-                                    if (openningIssueId != null) {
-                                        if (id == openningIssueId) {
-                                            isIssueAlreadyOpened = true;
-                                        }
-                                    }
-                                }
-
-                                if (isIssueAlreadyOpened) {
-                                    openingIssuesList.get(openningIssueId).toFront();
-                                } else {
-                                    if (openingIssuesList.size() < 6) {
-                                        IssueWindow viewIssue = null;
-                                        String currentabname = getSelectedTabName();
-                                        try {
-                                            ArrayList<Issue> issues = issueDAO.get(currentabname);
-                                            viewIssue = new IssueWindow(row, table, issues);
-                                        } catch (IOException ex) {
-                                            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                                        } catch (BadLocationException ex) {
-                                            Logger.getLogger(ProjectManagerWindow.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
-                                        openingIssuesList.put(openningIssueId, viewIssue);
-                                        tabs.get(getSelectedTabName()).getCustomIdList().add(openningIssueId);
-//                                        tab.getCustomIdList().printOutIDList();
-//                                    System.out.println("issue opened's id is: " + openningIssueId + 
-//                                            " and id in view issue is: " + selectedIssue.getID().toString());
-                                        viewIssue.setVisible(true);
-                                    } else {
-                                        JOptionPane.showMessageDialog(null,
-                                                "The number of view issue window "
-                                                + "opened reached its maximum: 6!");
-
-                                    }
-                                }
                             }
                         }
                         return false;
@@ -4293,15 +2515,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         comboBoxField.setEnabled(disable);
         menuEdit.setEnabled(disable);
         menuFile.setEnabled(disable);
-      //?  menuFind.setEnabled(disable);
+
         menuHelp.setEnabled(disable);
         menuView.setEnabled(disable);
         menuTools.setEnabled(disable);
-    //?   menuReports.setEnabled(disable);
+
         searchPanel.setEnabled(disable);
 
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
+        Tab tab = tabs.get(tabbedPanel.getSelectedIndex());
         tab.getTable().setEnabled(disable);
         if (!disable) {
             //set sort and filter enabled
@@ -4324,17 +2545,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return logWindow;
     }
 
-    public Map<String, Tab> getTabs() {
+    public Map<Integer, Tab> getTabs() {
         return tabs;
-    }
-
-    public String getSelectedTabName() {
-        String title = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
-        if (title.startsWith("<")) {
-            title = title.substring(9, title.length() - 11);
-        }
-
-        return title;
     }
 
     public void setDatabase(String database) {
@@ -4366,7 +2578,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }
 
     public void setFiltersclean() {
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
+        for (Map.Entry<Integer, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             TableFilter filter = tab.getFilter();
             filter.clearAllFilters();
@@ -4374,47 +2586,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             filter.applyColorHeaders();
 
         }
-//        Tab tab1 = tabs.get("PM");
-//        TableFilter filter1 = tab1.getFilter();
-//        filter1.clearAllFilters();
-//        filter1.applyFilter();
-//        filter1.applyColorHeaders();
-//
-//        // set label record information
-//        String recordsLabel1 = tab1.getRecordsLabel();
-//
-//        Tab tab2 = tabs.get("ELLEGUI");
-//        TableFilter filter2 = tab2.getFilter();
-//        filter2.clearAllFilters();
-//        filter2.applyFilter();
-//        filter2.applyColorHeaders();
-//
-//        // set label record information
-//        String recordsLabel2 = tab2.getRecordsLabel();
-//
-//        Tab tab3 = tabs.get("Analyster");
-//        TableFilter filter3 = tab3.getFilter();
-//        filter3.clearAllFilters();
-//        filter3.applyFilter();
-//        filter3.applyColorHeaders();
-//
-//        // set label record information
-//        String recordsLabel3 = tab3.getRecordsLabel();
-//
-//        Tab tab4 = tabs.get("Other");
-//        TableFilter filter4 = tab4.getFilter();
-//        filter4.clearAllFilters();
-//        filter4.applyFilter();
-//        filter4.applyColorHeaders();
-//
-//        // set label record information
-//        String recordsLabel4 = tab4.getRecordsLabel();
-//
-//        Tab tab5 = tabs.get("issue_files");
-//        TableFilter filter5 = tab5.getFilter();
-//        filter5.clearAllFilters();
-//        filter5.applyFilter();
-//        filter5.applyColorHeaders();
+
     }
 
     public String getUserName() {
@@ -4429,73 +2601,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return jPanelEdit;
     }
 
-    /**
-     * initTotalRowCounts called once to initialize the total rowIndex counts of
-     * each tabs tableSelected
-     *
-     * @param tabs
-     * @return
-     */
-    public Map<String, Tab> initTotalRowCounts(Map<String, Tab> tabs) {
 
-        int totalRecords;
-
-//        boolean isFirstTabRecordLabelSet = false;
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-            Tab tab = tabs.get(entry.getKey());
-            JTable table = tab.getTable();
-//            JTable table = this.getSelectedTable();
-            totalRecords = table.getRowCount();
-            tab.setTotalRecords(totalRecords);
-
-            if (entry.getKey().equals("PM")) {
-                String recordsLabel = tab.getRecordsLabel();
-
-                labelRecords.setText(recordsLabel);
-//            }
-            }
-        }
-
-        return tabs;
-    }
-
-    /**
-     * Should only be called from loadTable(tab) to update orange dot
-     *
-     * @param tab
-     */
-    public void detectOpenIssues(Tab tab) {
-        JTable table = tab.getTable();
-        boolean openIssue = false;
-        for (int row = 0; row < table.getRowCount(); row++) {
-            String tableCellValue = "";
-            if (table.getValueAt(row, 4) != null) {
-                tableCellValue = table.getValueAt(row, 4).toString();
-            }
-            if (userName.equals(tableCellValue)) {
-                if (table.getValueAt(row, 8) == null || table.getValueAt(row, 8).toString().equals("")) {
-
-                    openIssue = true;
-                }
-            }
-        }
-
-        String title = table.getName();
-        JLabel titleLabel = new JLabel(title);
-        int tabIndex = -1;
-        for (int i = 0; i < tableNames.length; i++) {
-            if (tableNames[i].equals(title)) {
-                tabIndex = i;
-                break;
-            }
-        }
-
-        if (openIssue) {
-            titleLabel = this.getTabLabelWithOrangeDot(title);
-        }
-
-        tabbedPanel.setTabComponentAt(tabIndex, titleLabel);
-    }
 
     /**
      * This returns a JLabel with the title and an orange dot
@@ -4503,7 +2609,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * @param title
      * @return
      */
-    protected JLabel getTabLabelWithOrangeDot(String title) {
+    public JLabel getTabLabelWithOrangeDot(String title) {
         ImageIcon imcon = new ImageIcon(getClass().getResource("orange-dot.png"));
 
 //        ImageIcon icon = new ImageIcon(getClass().getResource("splashImage.png"));
@@ -4517,232 +2623,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return label;
     }
 
-    /**
-     * Loads all tab tables and updates the orange dots. It also checks for
-     * table consistency
-     *
-     * @param tabs
-     * @return
-     */
-    public Map<String, Tab> loadTables(Map<String, Tab> tabs) throws IOException, BadLocationException {
-
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-            Tab tab = tabs.get(entry.getKey());
-            JTable table = tab.getTable();
-
-            loadTable(tab);
-
-            LoggingAspect.afterReturn("Table loaded succesfully");
-            
-            //Yi 05-18-2016 commented out the duplicated mouse listener. 
-            //which was already added in loadTableData(table)
-            //setTableListeners(table, this);  
-
-            boolean isColumnNameTheSame = ColumnNameConsistency.IsTableColumnNameTheSame(tab, table);
-            if (!isColumnNameTheSame) {
-                System.out.println(ColumnNameConsistency.getErrorMessage());
-                LoggingAspect.afterReturn("Column Name(s) is(are) different from what in database");
-            }
-        }
-
-        setLastUpdateTime();
-        return tabs;
-    }
-
-    public void compareTablesColumnName(Tab tab, JTable table) {
-
-    }
-
-    /**
-     * This loads table data and updates orange dot.
-     * @param tab
-     * @return
-     */
-    public JTable loadTable(Tab tab) throws IOException, BadLocationException {
-        
-        JTable table = tab.getTable();
-        table = loadTableData(table);
-        detectOpenIssues(tab); // this puts an orange dot in tab title
-        return table;
-    }
-    
-   
-
-    /**
-     * This loads table data but does not update orange dot. Use loadTable(Tab
-     * tab) to load table and update orange dot.
-     * @param table
-     */
-    public JTable loadTableData(JTable table)throws IOException, BadLocationException {
-        
-        String tableName = table.getName();
-        System.out.println("now loading..." + tableName);
-        
-        // set table model data
-        if (tableName.equals(TASKS_TABLE_NAME) && online) {
-            // this is for the issue_files tab/table
-            ArrayList<IssueFile> issuesFiles = issueFileDAO.get(tableName);
-            
-            if(!issuesFiles.isEmpty() && issuesFiles != null){
-                for(IssueFile issueFile: issuesFiles){
-                    insertTableRow(table, issueFile);
-                }
-            }
-        }
-        else{
-            // this is for all other tabs which are all from the issues table
-            if (online) {
-                ArrayList<Issue> issues = issueDAO.get(tableName);
-                if(!issues.isEmpty() && issues != null)
-                    for(Issue issue: issues){
-                        insertTableRow(table, issue);
-                    }
-            }
-            
-            
-        }
-        
-        //load offline data
-        offlineIssueMgr.loadTableData(table);
-        
-        
-        // set table model to the custom editable table model		
-        addEditableTableModel(table);
- 
-        // if reloading data then deselects any selections
-        table.getSelectionModel().clearSelection();
-        
-        /** This is all for reloading table data **/
-        
-        // check that the filter items are initialized
-        String tabName = table.getName();
-        Tab tab = tabs.get(tabName);
-
-        // apply filter
-        TableFilter filter = tab.getFilter();
-        if (filter.getFilterItems() == null) {
-            filter.initFilterItems();
-        }
-        filter.applyFilter();
-        filter.applyColorHeaders();
-
-        // load all checkbox items for the checkbox column pop up filter
-        ColumnPopupMenu columnPopupMenu = tab.getColumnPopupMenu();
-        columnPopupMenu.loadAllCheckBoxItems();
-
-        // set column format
-        float[] colWidthPercent = tab.getColWidthPercent();
-        setColumnFormat(colWidthPercent, table);
-
-        // set the listeners for the tableSelected
-        setTableListeners(table, this);
-
-        // update last time the tableSelected was updated
-        setLastUpdateTime();
-
-        //make table scroll down as default
-        scrollDown(jScrollPane1);
-        scrollDown(jScrollPane3);
-        scrollDown(jScrollPane5);
-        scrollDown(jScrollPane6);
-        scrollDown(jScrollPane7);
-        
-        return table;
-    }
-
-    /**
-     * This is only used for the sql command panel
-     *
-     * @param sql
-     * @param table
-     * @return
-     */
-    public JTable loadTable(String sql, JTable table) {
-
-        Vector data = new Vector();
-        Vector columnNames = new Vector();
-        Vector columnClass = new Vector();
-        int columns;
-
-        ResultSet rs = null;
-        ResultSetMetaData metaData = null;
-        try {
-            rs = statement.executeQuery(sql);
-            metaData = rs.getMetaData();
-
-        } catch (Exception ex) {
-            LoggingAspect.afterThrown(ex);
-        }
-        try {
-            // Do not show "submitter" in "PM", "ELLEGUI", "Analyster" and "other" table
-            if (!table.getName().equals("issue_files")) {
-                columns = metaData.getColumnCount();
-                //System.out.println(table.getName() + " has " + columns + " columns");
-            } else {
-                columns = metaData.getColumnCount();
-
-            }
-            for (int i = 1; i <= columns; i++) {
-                columnClass.addElement(metaData.getColumnClassName(i));
-                //              System.out.println(metaData.getColumnClassName(i) + " 1");
-                columnNames.addElement(metaData.getColumnName(i));
-                //               System.out.println(metaData.getColumnName(i) + " 2");
-            }
-            while (rs.next()) {
-                Vector row = new Vector(columns);
-                for (int i = 1; i <= columns; i++) {
-                    row.addElement(rs.getObject(i));
-                }
-                data.addElement(row);
-            }
-            rs.close();
-
-        } catch (SQLException ex) {
-            LoggingAspect.afterThrown(ex);
-        }
-
-        //EditableTableModel model = new EditableTableModel(data, columnNames, columnClass);
-
-        // this has to be set here or else I get errors
-        // I tried passing the model to the filter and setting it there
-        // but it caused errors
-        //table.setModel(model);
-
-        // check that the filter items are initialized
-        String tabName = table.getName();
-        Tab tab = tabs.get(tabName);
-
-        // apply filter
-        TableFilter filter = tab.getFilter();
-        if (filter.getFilterItems() == null) {
-            filter.initFilterItems();
-        }
-        filter.applyFilter();
-        filter.applyColorHeaders();
-
-        // load all checkbox items for the checkbox column pop up filter
-        ColumnPopupMenu columnPopupMenu = tab.getColumnPopupMenu();
-        columnPopupMenu.loadAllCheckBoxItems();
-
-        // set column format
-        float[] colWidthPercent = tab.getColWidthPercent();
-        setColumnFormat(colWidthPercent, table);
-
-        // set the listeners for the tableSelected
-        setTableListeners(table, this);
-//        table.setEnabled(false);
-
-        // update last time the tableSelected was updated
-        setLastUpdateTime();
-
-        //make table scroll down as default
-        scrollDown(jScrollPane1);
-        scrollDown(jScrollPane3);
-        scrollDown(jScrollPane5);
-        scrollDown(jScrollPane6);
-        scrollDown(jScrollPane7);
-        return table;
-    }
 
     /**
      * set the timer for information Label show
@@ -4754,7 +2634,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                informationLabel.setText("Information Label");
+                informationLabel.setText("");
                 searchInformationLabel.setText("");
             }
         });
@@ -4787,27 +2667,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      *
      * @param selectedTab // this is the editing tab
      */
-    private void setBatchEditButtonStates(Tab selectedTab) {
-
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-            Tab tab = tabs.get(entry.getKey());
-
-            // if selectedTab is editing, that means the switch button was pressed
-            if (selectedTab.isEditing()) {
-                if (tab == selectedTab) {
-                    if (selectedTab.isBatchEditWindowOpen()) {
-                        btnBatchEdit.setEnabled(false);
-                    } else {
-                        tab.setBatchEditBtnEnabled(true);
-                    }
-                } else {
-                    tab.setBatchEditBtnEnabled(false);
-                }
-            } else {
-                tab.setBatchEditBtnEnabled(true);
-            }
-        }
-    }
+    
 
     /**
      * getBtnBatchEdit
@@ -4822,30 +2682,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return batchEditWindow;
     }
 
-    /**
-     * isTabEditing This method returns true or false whether a tab is in
-     * editing mode or not
-     *
-     * @return boolean isEditing
-     */
-    public boolean isTabEditing() {
-
-        boolean isEditing = false;
-
-        for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-            Tab tab = tabs.get(entry.getKey());
-            isEditing = tab.isEditing();
-
-            // if editing break and return true
-            if (isEditing) {
-                editingTabName = entry.getKey();
-                break;
-            }
-        }
-
-        return isEditing;
-    }
-
+ 
     /**
      * setEnabledEditingButtons sets the editing buttons enabled
      *
@@ -4866,25 +2703,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      */
     public void revertChanges() throws IOException, BadLocationException {
 
-        String tabName = getSelectedTabName();
-        Tab tab = tabs.get(tabName);
-        JTable table = tab.getTable();
-        ModifiedTableData modifiedTableData = tab.getTableData();
-        modifiedTableData.getNewData().clear();  // clear any stored changes (new data)
-        loadTable(tab); // reverts the model back
-
-        LoggingAspect.afterReturn("Nothing has been Changed!");
-//        informationLabel.setText("Nothing has been Changed!");
-//        startCountDownFromNow(5);
-
-        modifiedTableData.reloadData();  // reloads data of new table (old data) to compare with new changes (new data)
-
-        makeTableEditable(labelEditModeState.getText().equals("OFF") ? true : false);
-        // no changes to upload or revert
-        setEnabledEditingButtons(true, false, false);
-
-        // set the color of the edit mode text
-        editModeTextColor(tab.isEditing());
+        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        currentTab.revertChanges();
     }
 
     /**
@@ -4903,6 +2723,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             labelEditMode.setForeground(editModeDefaultTextColor);
             labelEditModeState.setForeground(editModeDefaultTextColor);
         }
+    }
+    
+    private void openReconcileWindow(){
+        
+        reconcileWindow = new ReconcileWindow();
+        this.setEnabled(false);
+        reconcileWindow.setVisible(true);
+        
     }
 
     /**
@@ -5000,9 +2828,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     // End of variables declaration//GEN-END:variables
     // @formatter:on
 
-    public CustomIDList getSelectedTabCustomIdList(String TabName) {
-        return tabs.get(TabName).getCustomIdList();
-    }
+    
 
     public boolean getAddRecordsWindowShow() {
 
@@ -5032,15 +2858,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return this.openingIssuesList.size();
     }
 
-//    public void deleteNumOfAddIssueWindowOpened() {
-//        this.numOfAddIssueWindowOpened--;
-//        if (numOfAddIssueWindowOpened == 0) {
-//            addIssueWindowShow = false;
-//        }
-//    }
-//    public void setPopupWindowShowInPM(boolean b) {
-//        popupWindowShowInPM = b;
-//    }
+
     public JLabel getInformationLabel() {
         return this.informationLabel;
     }
@@ -5065,9 +2883,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return database;
     }
 
-    public String[] getTableNames() {
-        return tableNames;
-    }
+    
 
     public IssueWindow getAddIssueWindow() {
         return addIssueWindow;
@@ -5172,10 +2988,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public JComboBox getComboBoxSearch() {
         return comboBoxField;
     }
-//? 
-    /*public JTable getIssue_filesTable() {
-       return issue_filesTable;
-    }*/
+
 
     public JCheckBoxMenuItem getjCheckBoxMenuItem1() {
         return jCheckBoxMenuItem1;
@@ -5233,9 +3046,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return menuFile;
     }
 
-//    public JMenu getMenuFind() {
-//        return menuFind;
-//    }
 
     public JMenu getMenuHelp() {
         return menuHelp;
@@ -5244,14 +3054,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public JMenuItem getMenuItemAWSAssign() {
         return menuItemAWSAssign;
     }
-
-//?    public JMenuItem getMenuItemActivateRecord() {
-//        return menuItemActivateRecord;
-//    }
-
-//  ?  public JMenuItem getMenuItemArchiveRecord() {
-//        return menuItemArchiveRecord;
-//    }
 
     public JMenuItem getMenuItemCompIssues() {
         return menuItemCompIssues;
@@ -5317,9 +3119,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         return menuPrint;
     }
 
-//  ?  public JMenu getMenuReports() {
-//        return menuReports;
-//    }
+
 
     public JMenu getMenuSelectConn() {
         return menuSelectConn;
@@ -5409,214 +3209,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // add redo and undo short cut to text component
     }
 
-    public Tab getSelectedTab() {
-        return tabs.get(getSelectedTabName());
-    }
-
-    /**
-     * Updates a table rowIndex's data
-     * @param table
-     * @param issue 
-     */
-    public void updateTableRow(JTable table, Issue issue) throws IOException, BadLocationException {
-        int row = findTableModelRow(table,issue);
-        if(row != -1){
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            
-            // remove table listeners because this listens for changes in 
-            // table and changes the cell green for upload changes and revert
-            // changes. So I remove them and then put them back.
-            TableModelListener[] listeners = model.getTableModelListeners();
-            for(int i = 0; i < listeners.length; i++){
-                model.removeTableModelListener(listeners[i]);
-            }
-
-            // update -> no need for id
-            model.setValueAt(issue.getApp(), row, 1);
-            model.setValueAt(issue.getTitle(), row, 2);
-            
-            byte[] descriptiontablebytesout = issue.getDescription();
-            InputStream descriptiontablestream = new ByteArrayInputStream(descriptiontablebytesout);
-            RTFEditorKit rtfParser = new RTFEditorKit();
-            Document document = rtfParser.createDefaultDocument();
-            rtfParser.read(descriptiontablestream, document, 0);
-            String text = document.getText(0, document.getLength());
-            model.setValueAt(text, row, 3);
-            
-            
-            model.setValueAt(issue.getProgrammer(), row, 4);
-            model.setValueAt(issue.getDateOpened(), row, 5);
-            model.setValueAt(issue.getRk(), row, 6);
-            model.setValueAt(issue.getVersion(), row, 7);
-            model.setValueAt(issue.getDateClosed(), row, 8);
-            model.setValueAt(issue.getIssueType(), row, 9);
-            model.setValueAt(issue.getSubmitter(), row, 10);
-            model.setValueAt(issue.getLocked(), row, 11);
-            
-            // add back the table listeners
-            for(int i = 0; i < listeners.length; i++){
-                model.addTableModelListener(listeners[i]);
-            }
-            
-            table.repaint();
-        }
-        else{
-            String errMsg = "Problem updating row: Row not Found";
-            LoggingAspect.afterReturn(errMsg);
-        }
-    }
-
-    /**
-     * Inserts a new rowIndex in the table
-     * @param table
-     * @param issue 
-     */
-    public void insertTableRow(JTable table, Issue issue) throws IOException, BadLocationException {
-
-        Object[] rowData = new Object[13];
-        rowData[0] = issue.getId();
-        rowData[1] = issue.getApp();
-        rowData[2] = issue.getTitle();
-        byte[] descriptiontablebytesout;
-
-        if (issue.getDescription() == null) {
-            descriptiontablebytesout = new byte[0];
-        } else {
-            descriptiontablebytesout = issue.getDescription();
-        }
-        
-        InputStream descriptiontablestream = new ByteArrayInputStream(descriptiontablebytesout);
-        String convertedstrings = convertStreamToString(descriptiontablestream);
-        
-        String rtfsign = "\\par";
-        boolean rtfornot = convertedstrings.contains(rtfsign);
-        
-        if (rtfornot) {
-            RTFEditorKit rtfParser = new RTFEditorKit();
-            Document document = rtfParser.createDefaultDocument();
-            rtfParser.read(new ByteArrayInputStream(descriptiontablebytesout), document, 0);
-            String text = document.getText(0, document.getLength());
-            rowData[3] = text;
-        } else {
-            rowData[3] = convertedstrings;
-        }
-
-        rowData[4] = issue.getProgrammer();
-        rowData[5] = issue.getDateOpened();
-        rowData[6] = issue.getRk();
-        rowData[7] = issue.getVersion();
-        rowData[8] = issue.getDateClosed();
-        rowData[9] = issue.getIssueType();
-        rowData[10] = issue.getSubmitter();
-        rowData[11] = issue.getLocked();
-        ((DefaultTableModel)table.getModel()).addRow(rowData);
-    }
    
-    public String convertStreamToString(InputStream is) throws IOException {
-        // To convert the InputStream to String we use the
-        // Reader.read(char[] buffer) method. We iterate until the
-        // Reader return -1 which means there's no more data to
-        // read. We use the StringWriter class to produce the string.
-        if (is != null) {
-            Writer writer = new StringWriter();
-
-            char[] buffer = new char[1024];
-            try {
-                Reader reader;
-                reader = new BufferedReader(
-                        new InputStreamReader(is, "UTF-8"));
-                int n;
-                while ((n = reader.read(buffer)) != -1) {
-                    writer.write(buffer, 0, n);
-                }
-            } finally {
-                is.close();
-            }
-            return writer.toString();
-        }
-        return "";
-    }
-    
-    
-    /**
-     * Inserts a new rowIndex in the table
-     * @param table
-     * @param issueFile
-     * @param issue 
-     */
-    public void insertTableRow(JTable table, IssueFile issueFile) {
-
-        Object[] rowData = new Object[9];
-        rowData[0] = issueFile.getFileID();
-        rowData[1] = issueFile.getTaskID();
-        rowData[2] = issueFile.getApp();
-        rowData[3] = issueFile.getSubmitter();
-        rowData[4] = issueFile.getStep();
-        rowData[5] = issueFile.getDate();
-        rowData[6] = issueFile.getFiles();
-        rowData[7] = issueFile.getPath();
-        rowData[8] = issueFile.getNotes();
-        ((DefaultTableModel)table.getModel()).addRow(rowData);
-    }
-
-    /**
-     * Locates the table model rowIndex index
-     * @param issue
-     * @return int table model rowIndex
-     */
-    public int findTableModelRow(JTable table, Issue issue) {
-        int rowCount = table.getModel().getRowCount();
-        TableModel model = table.getModel();
-        for(int rowIndex = 0; rowIndex < rowCount; rowIndex++){
-            int rowId = Integer.parseInt(model.getValueAt(rowIndex, 0).toString());
-            if(rowId == issue.getId()){
-                return rowIndex;
-            }
-        }
-        return -1; // rowIndex not found
-    }
-
-    /**
-     * removes the selected rows from the table
-     * @param table
-     * @return 
-     */
-    private boolean removeSelectedRows(JTable table) {
-        
-        int[] rows = table.getSelectedRows();
-	DefaultTableModel model = (DefaultTableModel)table.getModel();
-
-        if(rows.length != -1){
-            while(rows.length>0)
-            {
-                int row = table.convertRowIndexToModel(rows[0]);
-                model.removeRow(row);
-                rows = table.getSelectedRows();
-            }
-            table.getSelectionModel().clearSelection();
-            return true;
-        }
-        else{
-            // no rows selected
-            return false;
-        }
-    }
-    
-    /*remove authorized rows - by Yi */
-    private void removeSelectedRows(JTable table, ArrayList<Integer> rows) {
-        
-       
-	DefaultTableModel model = (DefaultTableModel)table.getModel();
-        for(int i = 0; i< rows.size(); i++) {
-                int row = table.convertRowIndexToModel(rows.get(i)); 
-                model.removeRow(row);
-                //the selection is automatically deleted after row removed from model.
-                 
-        }
-        
-    }
-    
-    
     /**
      * Yi
      * for offline data, remove the offline data from table if it gets pushed to server.
@@ -5659,58 +3252,36 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.online = online;
     }
 
-    public boolean isReconcileWindowShow() {
-        return reconcileWindowShow;
+
+   
+    public JMenuItem getMenuItemReconcileConflict() {
+        return menuItemReconcileConflict;
     }
 
-    public void setReconcileWindowShow(boolean reconcileWindowShow) {
-        this.reconcileWindowShow = reconcileWindowShow;
-    }
-    
-    
-    
-    
-    
-    
-    /**
-     * CLASS
-     */
-    class AlignmentTableHeaderCellRenderer implements TableCellRenderer {
-
-        private final TableCellRenderer wrappedRenderer;
-        private final JLabel label;
-
-        public AlignmentTableHeaderCellRenderer(TableCellRenderer wrappedRenderer) {
-            if (!(wrappedRenderer instanceof JLabel)) {
-                throw new IllegalArgumentException("The supplied renderer must inherit from JLabel");
-            }
-            this.wrappedRenderer = wrappedRenderer;
-            this.label = (JLabel) wrappedRenderer;
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column) {
-            wrappedRenderer.getTableCellRendererComponent(table, value,
-                    isSelected, hasFocus, row, column);
-            if (table.getName().equals(TASKS_TABLE_NAME)) {
-
-                if (column < table.getColumnCount() - 4) {
-                    label.setHorizontalAlignment(JLabel.CENTER);
-                    return label;
-                } else {
-                    label.setHorizontalAlignment(JLabel.LEFT);
-                    return label;
-                }
-            }
-
-            label.setHorizontalAlignment(column == table.getColumnCount() - 1 ? JLabel.LEFT : JLabel.CENTER);
-            return label;
-
-        }
+    public void setMenuItemReconcileConflict(JMenuItem menuItemReconcileConflict) {
+        this.menuItemReconcileConflict = menuItemReconcileConflict;
 
     }
  
- 
+    /***************************************************************************************************
+     * Newly added functions
+    ****************************************************************************************************/
+     
+    /*
+    **added by Yi
+    **update orange dot issues
+    */
+    
+    private void updateTabOrangeDot(){
+        for(int i: tabs.keySet()) {
+            //check detect issue
+            Tab tab = tabs.get(i);
+            if (tab.detectOpenIssues()){
+                String title = tab.getTable().getName();
+                JLabel titleWithDot = getTabLabelWithOrangeDot(title);
+                tabbedPanel.setTabComponentAt(i, titleWithDot);
+            };
+        }
+    }
 
 }

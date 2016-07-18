@@ -40,12 +40,7 @@ public class Developer extends Administrator{
     public void setComponent(LoginWindow window) {
         super.setComponent(window);
     }
-
-    @Override
-    public void setComponent(ProjectManagerWindow window) {
-        super.setComponent(window);
-    }
-    
+ 
     @Override
     public void setComponent(IssueWindow window) {
         super.setComponent(window);

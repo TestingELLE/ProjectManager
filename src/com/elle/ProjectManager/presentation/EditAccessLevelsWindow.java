@@ -5,15 +5,11 @@
  */
 package com.elle.ProjectManager.presentation;
 
-import com.elle.ProjectManager.dao.AccessLevelDAO;
+import com.elle.ProjectManager.controller.PMDataManager;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.entities.AccessLevel;
-import com.elle.ProjectManager.logic.LoggingAspect;
-import java.awt.Adjustable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,8 +18,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -41,8 +35,9 @@ import javax.swing.table.TableColumn;
  */
 public class EditAccessLevelsWindow extends javax.swing.JFrame {
     
-    private ArrayList<AccessLevel> accounts;
-    private AccessLevelDAO dao;
+    private PMDataManager dataManager;
+    
+    private ArrayList<AccessLevel> users;
     private Set<Integer> updatedRows;
     private Set<String> dropdownItems;
 
@@ -50,10 +45,9 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
      * Creates new form EditAccessLevelsWindow
      */
     public EditAccessLevelsWindow() {
-        DBConnection.connect("Local", "pupone_pm", "pupone_Yi", "YiXue8888");
-        //initialize data members
-        dao = new AccessLevelDAO();  //set up dao
-        accounts = dao.getAll();  //get all accounts from db
+        dataManager = PMDataManager.getInstance();
+        
+        users = dataManager.getUsers();  //get all accounts from db
         updatedRows = new HashSet(); //initialize the updaterows
         dropdownItems = getAccessLevels(); //get all access levels from db for cmobobox
         
@@ -65,7 +59,7 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
     
     private Set<String> getAccessLevels() {
         Set<String> levels = new HashSet();
-        for(AccessLevel acct: accounts) {
+        for(AccessLevel acct: users) {
             levels.add(acct.getAccessLevel());
         }
         return levels;
@@ -105,7 +99,7 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
             public void tableChanged(TableModelEvent e) {
                 if (e.getType() == TableModelEvent.UPDATE)
                     updatedRows.add(e.getFirstRow());
-                System.out.println("Row " + e.getFirstRow() + " is updated.");
+                
             }
 
         });
@@ -114,7 +108,7 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
     
     private void loadTableData(){
         DefaultTableModel model = (DefaultTableModel) accessLevelsTable.getModel();
-        for(AccessLevel acct : accounts) {
+        for(AccessLevel acct : users) {
             Vector rowData = new Vector(3);
             rowData.add(acct.getId());
             rowData.add(acct.getUser());
@@ -327,42 +321,36 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
 
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
         int selectedRow = accessLevelsTable.getSelectedRow();
-        int id = accounts.get(selectedRow).getId();
-        String name = accounts.get(selectedRow).getUser();
-        dao.delete(id);
-        accounts.remove(selectedRow);
+        int id = users.get(selectedRow).getId();
+        String name = users.get(selectedRow).getUser();
+        dataManager.deleteUser(id);
+        users.remove(selectedRow);
         
         //delete acct from table
         DefaultTableModel model = (DefaultTableModel) accessLevelsTable.getModel();
         model.removeRow(selectedRow);
-        
-        //log 
-        String msg = "Access level account of" + name.substring(7) + " is deleted";
-        LoggingAspect.addLogMsgWthDate(msg);
 
-        setInformationLabel("Selected account is deleted successfully", 10);
+        setInformationLabel("Selected user is deleted successfully", 10);
         
     }//GEN-LAST:event_deleteBtnActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
         // check updated rows to find out the real updated acct, and update to db
-        boolean changed = false;
+        int cnt = 0;
         
         DefaultTableModel model = (DefaultTableModel) accessLevelsTable.getModel();
         for(Integer row: updatedRows) {
             String updatedValue = (String)model.getValueAt(row, 2);
-            String originalValue = accounts.get(row).getAccessLevel();
+            String originalValue = users.get(row).getAccessLevel();
             if(!originalValue.equals(updatedValue)) {
-                accounts.get(row).setAccessLevel(updatedValue);
-                changed = dao.update(accounts.get(row));
-                String msg = "Access level of " + accounts.get(row).getUser().substring(7) + " is changed";
-                LoggingAspect.addLogMsgWthDate(msg);
+                users.get(row).setAccessLevel(updatedValue);
+                dataManager.updateUser(users.get(row));
+                cnt++;
             }
         }
         
         
-        
-        if (changed) {
+        if (cnt > 0) {
             //reset updated rows
             updatedRows = new HashSet();
             setInformationLabel("Accounts updated successfully", 10);
@@ -375,40 +363,7 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_cancelBtnActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(EditAccessLevelsWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(EditAccessLevelsWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(EditAccessLevelsWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(EditAccessLevelsWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new EditAccessLevelsWindow().setVisible(true);
-            }
-        });
-    }
+   
     
     public void setUpAccessLevelsColumn(JTable table,
                 TableColumn accessLevelsColumn) {
@@ -443,23 +398,12 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
         timer.start();
     }
 
-    public AccessLevelDAO getDao() {
-        return dao;
-    }
-
-   
-    public Set<String> getDropdownItems() {
-        return dropdownItems;
-    }
-
-    public ArrayList<AccessLevel> getAccounts() {
-        return accounts;
-    }
+    
 
     public void insert(AccessLevel newaccount) {
         //add new data to db, and accounts
-        dao.insert(newaccount);
-        accounts.add(newaccount);
+        dataManager.insertUser(newaccount);
+        users = dataManager.getUsers();
 
         //add data to table
         DefaultTableModel model = (DefaultTableModel) accessLevelsTable.getModel();
@@ -469,15 +413,15 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
         rowData.add(newaccount.getUser());
         rowData.add(newaccount.getAccessLevel());
         model.addRow(rowData);
-        
-        
-        //log 
-        String msg = "Access level account of" + newaccount.getUser().substring(7) + " is created";
-        LoggingAspect.addLogMsgWthDate(msg);
-        
-        
+   
         setInformationLabel("New account is created successfully", 10);
 
+    }
+    
+    //getter and setter
+
+    public Set<String> getDropdownItems() {
+        return dropdownItems;
     }
     
     
