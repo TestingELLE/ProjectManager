@@ -123,15 +123,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         
         dataManager = new PMDataManager(mode);
 
-        /**
-         * Note: initComponents() executes the tabpaneChanged method. Thus, some
-         * things need to be before or after the initComponents();
-         */
-        // the statement is used for sql statements with the database connection
-        // the statement is created in LoginWindow and passed to Analyster.
-
-        
-        
         instance = this;                         // this is used to call this instance of PM
 
 
@@ -155,6 +146,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         
         //set up orange dot
         updateTabOrangeDot();
+        //scrolldown tables
+        scrolldownTables();
         
         //initialize tab related components
         //including button state, recordsLabel, comboBoxSearchField, addIssue button text ,etc
@@ -254,6 +247,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         };
         verticalBar.addAdjustmentListener(downScroller);
+    }
+    
+    private void scrolldownTables(){
+        //make table scroll down as default
+        scrollDown(jScrollPane1);
+        scrollDown(jScrollPane3);
+        scrollDown(jScrollPane5);
+        scrollDown(jScrollPane6);
+        scrollDown(jScrollPane7);
     }
 
     /**
@@ -1091,9 +1093,19 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void menuItemManageALsActionPerformed(java.awt.event.ActionEvent evt){
         // TODO add your handling code here:
-        EditAccessLevelsWindow alWindow = new EditAccessLevelsWindow();
-        alWindow.setLocation(200,200);
-        alWindow.setVisible(true);
+        if (online) {
+            EditAccessLevelsWindow alWindow = new EditAccessLevelsWindow();
+            alWindow.setLocation(200,200);
+            alWindow.setVisible(true);
+        }
+        else{
+            JOptionPane.showMessageDialog(this,
+                    "AccessLevels management does not support offline mode.",
+                    "Error Message",
+                    JOptionPane.ERROR_MESSAGE);
+            
+        }
+       
     }
         
   
@@ -1599,6 +1611,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      
         Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
         currentTab.reloadTable();
+        //scroll down the table
+        JTable table = currentTab.getTable();
+        JScrollPane scrollPane = (JScrollPane) table.getParent().getParent();
+        scrollDown(scrollPane);
+        
+        
 
     }//GEN-LAST:event_menuItemReloadDataActionPerformed
 
@@ -1966,7 +1984,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             Tab tab = tabs.get(entry.getKey());         
             tab.reloadTable();
         }
-        
+       
+        scrolldownTables();
         LoggingAspect.afterReturn("All tabs are reloaded.");
 
     }

@@ -5,10 +5,9 @@
  */
 package com.elle.ProjectManager.presentation;
 
-import com.elle.ProjectManager.dao.AccessLevelDAO;
+import com.elle.ProjectManager.controller.PMDataManager;
 import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.entities.AccessLevel;
-import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -36,8 +35,9 @@ import javax.swing.table.TableColumn;
  */
 public class EditAccessLevelsWindow extends javax.swing.JFrame {
     
-    private ArrayList<AccessLevel> accounts;
-    private AccessLevelDAO dao;
+    private PMDataManager dataManager;
+    
+    private ArrayList<AccessLevel> users;
     private Set<Integer> updatedRows;
     private Set<String> dropdownItems;
 
@@ -45,10 +45,9 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
      * Creates new form EditAccessLevelsWindow
      */
     public EditAccessLevelsWindow() {
+        dataManager = PMDataManager.getInstance();
         
-        //initialize data members
-        dao = new AccessLevelDAO();  //set up dao
-        accounts = dao.getAll();  //get all accounts from db
+        users = dataManager.getUsers();  //get all accounts from db
         updatedRows = new HashSet(); //initialize the updaterows
         dropdownItems = getAccessLevels(); //get all access levels from db for cmobobox
         
@@ -60,7 +59,7 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
     
     private Set<String> getAccessLevels() {
         Set<String> levels = new HashSet();
-        for(AccessLevel acct: accounts) {
+        for(AccessLevel acct: users) {
             levels.add(acct.getAccessLevel());
         }
         return levels;
@@ -100,7 +99,7 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
             public void tableChanged(TableModelEvent e) {
                 if (e.getType() == TableModelEvent.UPDATE)
                     updatedRows.add(e.getFirstRow());
-                System.out.println("Row " + e.getFirstRow() + " is updated.");
+                
             }
 
         });
@@ -109,7 +108,7 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
     
     private void loadTableData(){
         DefaultTableModel model = (DefaultTableModel) accessLevelsTable.getModel();
-        for(AccessLevel acct : accounts) {
+        for(AccessLevel acct : users) {
             Vector rowData = new Vector(3);
             rowData.add(acct.getId());
             rowData.add(acct.getUser());
@@ -322,42 +321,36 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
 
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
         int selectedRow = accessLevelsTable.getSelectedRow();
-        int id = accounts.get(selectedRow).getId();
-        String name = accounts.get(selectedRow).getUser();
-        dao.delete(id);
-        accounts.remove(selectedRow);
+        int id = users.get(selectedRow).getId();
+        String name = users.get(selectedRow).getUser();
+        dataManager.deleteUser(id);
+        users.remove(selectedRow);
         
         //delete acct from table
         DefaultTableModel model = (DefaultTableModel) accessLevelsTable.getModel();
         model.removeRow(selectedRow);
-        
-        //log 
-        String msg = "Access level account of" + name.substring(7) + " is deleted";
-        LoggingAspect.addLogMsgWthDate(msg);
 
-        setInformationLabel("Selected account is deleted successfully", 10);
+        setInformationLabel("Selected user is deleted successfully", 10);
         
     }//GEN-LAST:event_deleteBtnActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
         // check updated rows to find out the real updated acct, and update to db
-        boolean changed = false;
+        int cnt = 0;
         
         DefaultTableModel model = (DefaultTableModel) accessLevelsTable.getModel();
         for(Integer row: updatedRows) {
             String updatedValue = (String)model.getValueAt(row, 2);
-            String originalValue = accounts.get(row).getAccessLevel();
+            String originalValue = users.get(row).getAccessLevel();
             if(!originalValue.equals(updatedValue)) {
-                accounts.get(row).setAccessLevel(updatedValue);
-                changed = dao.update(accounts.get(row));
-                String msg = "Access level of " + accounts.get(row).getUser().substring(7) + " is changed";
-                LoggingAspect.addLogMsgWthDate(msg);
+                users.get(row).setAccessLevel(updatedValue);
+                dataManager.updateUser(users.get(row));
+                cnt++;
             }
         }
         
         
-        
-        if (changed) {
+        if (cnt > 0) {
             //reset updated rows
             updatedRows = new HashSet();
             setInformationLabel("Accounts updated successfully", 10);
@@ -405,23 +398,12 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
         timer.start();
     }
 
-    public AccessLevelDAO getDao() {
-        return dao;
-    }
-
-   
-    public Set<String> getDropdownItems() {
-        return dropdownItems;
-    }
-
-    public ArrayList<AccessLevel> getAccounts() {
-        return accounts;
-    }
+    
 
     public void insert(AccessLevel newaccount) {
         //add new data to db, and accounts
-        dao.insert(newaccount);
-        accounts.add(newaccount);
+        dataManager.insertUser(newaccount);
+        users = dataManager.getUsers();
 
         //add data to table
         DefaultTableModel model = (DefaultTableModel) accessLevelsTable.getModel();
@@ -431,15 +413,15 @@ public class EditAccessLevelsWindow extends javax.swing.JFrame {
         rowData.add(newaccount.getUser());
         rowData.add(newaccount.getAccessLevel());
         model.addRow(rowData);
-        
-        
-        //log 
-        String msg = "Access level account of" + newaccount.getUser().substring(7) + " is created";
-        LoggingAspect.addLogMsgWthDate(msg);
-        
-        
+   
         setInformationLabel("New account is created successfully", 10);
 
+    }
+    
+    //getter and setter
+
+    public Set<String> getDropdownItems() {
+        return dropdownItems;
     }
     
     

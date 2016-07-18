@@ -5,6 +5,7 @@
  */
 package com.elle.ProjectManager.controller;
 
+import com.elle.ProjectManager.entities.AccessLevel;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ConflictItemPair;
 import com.elle.ProjectManager.logic.IssueConverter;
@@ -15,39 +16,46 @@ import java.util.List;
 /**
  *
  * @author Yi 07/14/2016
+ * DataManager for PM
  */
 public class PMDataManager{
     
     private static PMDataManager instance = null;
     IssueTableController issueController;
     ReferenceTableController refController;
+    AccessLevelTableController alController;
     private IssueConverter issueConverter;
     
     public PMDataManager(boolean online){
         //adding controllers
         issueController = new IssueTableController(online);
         refController = new ReferenceTableController(online);
+        alController = new AccessLevelTableController(online);
         //adding converters
         issueConverter = new IssueConverter();
         
         instance = this;
     }
     
+    public void setOpMode(boolean online) {
+        if(online) {
+            issueController.setOpMode(Mode.ONLINE);
+            refController.setOpMode(Mode.ONLINE);
+            alController.setOpMode(Mode.ONLINE);
+        }
+        
+        else{
+            issueController.setOpMode(Mode.OFFLINE);
+            refController.setOpMode(Mode.OFFLINE);
+            alController.setOpMode(Mode.OFFLINE);
+        }
+    }
+    
     public static PMDataManager getInstance() {
       return instance;
    }
     
-    public void setOpMode(boolean online){
-        if (online) {
-            issueController.setOpMode(Mode.ONLINE);
-            refController.setOpMode(Mode.ONLINE);
-        }
-        else{
-            issueController.setOpMode(Mode.OFFLINE);
-            issueController.setOpMode(Mode.OFFLINE);
-        }
-        
-    }
+    
 
    /* Issues related data operations */
     //get issues based on app name, requested by tab
@@ -221,6 +229,27 @@ public class PMDataManager{
     public void syncLocalData() {
         issueController.syncOfflineItems();
         refController.syncOfflineItems();
+    }
+    
+    
+    /*
+    **AccessLevel Table related operations
+    */
+    
+    public ArrayList<AccessLevel> getUsers(){
+        return new ArrayList<AccessLevel>(alController.getAllItems().values()) ;
+    }
+    
+    public void deleteUser(int id) {
+        alController.delete(id);
+    }
+    
+    public void updateUser(AccessLevel user) {
+        alController.update(user);
+    }
+    
+    public void insertUser(AccessLevel user) {
+        alController.create(user);
     }
     
 }

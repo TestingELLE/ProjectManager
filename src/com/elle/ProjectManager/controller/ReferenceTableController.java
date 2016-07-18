@@ -24,7 +24,7 @@ public class ReferenceTableController extends DBTableController<Issue> {
         //load issues from db to map
         if (online) opMode = Mode.ONLINE;
         else opMode = Mode.OFFLINE;
-        
+        offlineEnabled = true;
         //populate data from database and local files
         getAll();
         
