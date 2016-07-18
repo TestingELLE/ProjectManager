@@ -2123,14 +2123,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemReconcileConflictActionPerformed
 
     private void menuItemLoadDataFromTXTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLoadDataFromTXTActionPerformed
-        IssueDAO issueDAO = new IssueDAO();
         
         JFileChooser fc = new JFileChooser();
         int returnVal = fc.showOpenDialog(this);
         
         
         List<String> importedfile = new ArrayList<>();
-        int maximumid = issueDAO.getMaxId();
+        
         
         if (returnVal == fc.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
@@ -2279,10 +2278,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 
                 issue.setDescription(b);
                 
-                if (currentid <= maximumid) {
-                    dao.update(issue);
+                if (dataManager.getIssueEntity(currentid) != null){
+                
+                    dataManager.updateIssue(issue);
                 } else {
-                    dao.insert(issue);
+                    dataManager.insertIssue(issue);
                 }
                 
                 currentstartline = currentendline + 2; 
@@ -2984,10 +2984,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public JComboBox getComboBoxSearch() {
         return comboBoxField;
     }
-//? 
-    /*public JTable getIssue_filesTable() {
-       return issue_filesTable;
-    }*/
+
 
     public JCheckBoxMenuItem getjCheckBoxMenuItem1() {
         return jCheckBoxMenuItem1;
@@ -3053,14 +3050,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     public JMenuItem getMenuItemAWSAssign() {
         return menuItemAWSAssign;
     }
-
-//?    public JMenuItem getMenuItemActivateRecord() {
-//        return menuItemActivateRecord;
-//    }
-
-//  ?  public JMenuItem getMenuItemArchiveRecord() {
-//        return menuItemArchiveRecord;
-//    }
 
     public JMenuItem getMenuItemCompIssues() {
         return menuItemCompIssues;
@@ -3290,7 +3279,5 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             };
         }
     }
-  
- 
 
 }

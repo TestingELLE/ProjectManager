@@ -10,7 +10,6 @@ import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ConflictItemPair;
 import com.elle.ProjectManager.logic.IssueConverter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
