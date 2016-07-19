@@ -1,14 +1,14 @@
 <?xml version="1.0"?><servers>
   <server>
-    <name>AWS</name>
-    <url>jdbc:mysql://elle.csndtbcukajz.us-west-2.rds.amazonaws.com:3306/</url>
+    <server-name>AWS</server-name>
+    <server-url>jdbc:mysql://elle.csndtbcukajz.us-west-2.rds.amazonaws.com:3306/</server-url>
   </server>
   <server>
-    <name>Local</name>
-    <url>jdbc:mysql://localhost:3307/</url>
+    <server-name>Local</server-name>
+    <server-url>jdbc:mysql://localhost:3307/</server-url>
   </server>
   <server>
-    <name>pupone</name>
-    <url>jdbc:mysql://rendertech.com:3306/</url>
+    <server-name>pupone</server-name>
+    <server-url>jdbc:mysql://rendertech.com:3306/</server-url>
   </server>
 </servers>
