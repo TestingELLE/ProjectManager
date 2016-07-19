@@ -19,10 +19,14 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
-import javax.swing.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.text.BadLocationException;
+
 
 public class LoginWindow extends JFrame {
 
@@ -277,12 +281,24 @@ public class LoginWindow extends JFrame {
         System.exit(0); // Terminates the currently running Java Virtual Machine.
     }
     private void btnLoginActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        login();
+        try {
+            login();
+        } catch (IOException ex) {
+            Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void passwordFieldPWKeyPressed(KeyEvent evt) {//GEN-FIRST:event_passwordFieldPWKeyPressed
         if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
-            login();
+            try {
+                login();
+            } catch (IOException ex) {
+                Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_passwordFieldPWKeyPressed
 
@@ -320,7 +336,7 @@ public class LoginWindow extends JFrame {
     /**
      * login
      */
-    public void login() {
+    public void login() throws IOException, BadLocationException {
 
         // get user data
         selectedServer = comboBoxServer.getSelectedItem().toString();
@@ -390,6 +406,7 @@ public class LoginWindow extends JFrame {
 
             // create an projectManager object
             projectManager = new ProjectManagerWindow(userName, true);
+            
            
     //        projectManager.setUserName(userName.substring(7));
             // pass the log window to projectManager
@@ -425,6 +442,7 @@ public class LoginWindow extends JFrame {
             //passwordFieldPW.setText("");
             logWindow.addMessageWithDate("Entering offline mode..");
             Authorization.setAdminComponentType("user");
+            Authorization.setAccessLevel("user");
             userName = userName.substring(7);
             
             // create an projectManager object
@@ -449,9 +467,7 @@ public class LoginWindow extends JFrame {
             // terminate this object
             this.dispose();// returns used resources
             
-            
-            
-            
+       
         }
         
 

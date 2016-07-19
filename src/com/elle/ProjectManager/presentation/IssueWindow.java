@@ -1,12 +1,9 @@
 package com.elle.ProjectManager.presentation;
 
 import com.elle.ProjectManager.admissions.Authorization;
-import com.elle.ProjectManager.dao.IssueDAO;
-import com.elle.ProjectManager.dao.ReferenceDAO;
-import com.elle.ProjectManager.dao.AbstractDAO;
+import com.elle.ProjectManager.controller.PMDataManager;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.CustomComboBoxRenderer;
-import com.elle.ProjectManager.logic.OfflineIssueManager;
 import com.elle.ProjectManager.logic.ShortCutSetting;
 import com.elle.ProjectManager.logic.Tab;
 import java.awt.BorderLayout;
@@ -36,14 +33,10 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
@@ -61,12 +54,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.TableModel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
@@ -77,7 +68,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.StyledEditorKit.BoldAction;
-import javax.swing.text.StyledEditorKit.ForegroundAction;
 import javax.swing.text.StyledEditorKit.ItalicAction;
 import javax.swing.text.StyledEditorKit.UnderlineAction;
 
@@ -88,431 +78,77 @@ import javax.swing.text.StyledEditorKit.UnderlineAction;
 public class IssueWindow extends JFrame {
 
     private ProjectManagerWindow projectManager;
+    private PMDataManager dataManager;
+    private Tab tab;
     private Issue issue;
     private JTable table;
     private int row;
-    private IssueDAO dao;
-    private ReferenceDAO refDao;
     private boolean addIssueMode;
     private boolean refIssueMode;
-    private OfflineIssueManager mgr;
-    private String previousValue= "";
-
-    IssueWindow(int i, JTable selectedTable) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
-    public ProjectManagerWindow getProjectManager() {
-        return projectManager;
-    }
-
-    public void setProjectManager(ProjectManagerWindow projectManager) {
-        this.projectManager = projectManager;
-    }
-
-    public Issue getIssue() {
-        return issue;
-    }
-
-    public void setIssue(Issue issue) {
-        this.issue = issue;
-    }
-
-    public JTable getTable() {
-        return table;
-    }
-
-    public void setTable(JTable table) {
-        this.table = table;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
-
-    public IssueDAO getDao() {
-        return dao;
-    }
-
-    public void setDao(IssueDAO dao) {
-        this.dao = dao;
-    }
-
-    public boolean isAddIssueMode() {
-        return addIssueMode;
-    }
-
-    public void setAddIssueMode(boolean addIssueMode) {
-        this.addIssueMode = addIssueMode;
-    }
-
-    public ShortCutSetting getShortCutSetting() {
-        return ShortCutSetting;
-    }
-
-    public void setShortCutSetting(ShortCutSetting ShortCutSetting) {
-        this.ShortCutSetting = ShortCutSetting;
-    }
-
-    public String[] getDropdownlist() {
-        return dropdownlist;
-    }
-
-    public void setDropdownlist(String[] dropdownlist) {
-        this.dropdownlist = dropdownlist;
-    }
-
-    public Map<String, Tab> getTabs() {
-        return tabs;
-    }
-
-    public void setTabs(Map<String, Tab> tabs) {
-        this.tabs = tabs;
-    }
-
-    public JButton getBtnNext() {
-        return BtnNext;
-    }
-
-    public void setBtnNext(JButton BtnNext) {
-        this.BtnNext = BtnNext;
-    }
-
-    public JButton getBtnPrevious() {
-        return BtnPrevious;
-    }
-
-    public void setBtnPrevious(JButton BtnPrevious) {
-        this.BtnPrevious = BtnPrevious;
-    }
-
-    public JLabel getApp() {
-        return app;
-    }
-
-    public void setApp(JLabel app) {
-        this.app = app;
-    }
-
-    public JComboBox getAppComboBox() {
-        return appComboBox;
-    }
-
-    public void setAppComboBox(JComboBox appComboBox) {
-        this.appComboBox = appComboBox;
-    }
-
-    public JButton getBtnCloseIssue() {
-        return btnCloseIssue;
-    }
-
-    public void setBtnCloseIssue(JButton btnCloseIssue) {
-        this.btnCloseIssue = btnCloseIssue;
-    }
-
-    public JButton getButtonCancel() {
-        return buttonCancel;
-    }
-
-    public void setButtonCancel(JButton buttonCancel) {
-        this.buttonCancel = buttonCancel;
-    }
-
-    public JButton getButtonConfirm() {
-        return buttonConfirm;
-    }
-
-    public void setButtonConfirm(JButton buttonConfirm) {
-        this.buttonConfirm = buttonConfirm;
-    }
-
-    public JButton getButtonSubmit() {
-        return buttonSubmit;
-    }
-
-    public void setButtonSubmit(JButton buttonSubmit) {
-        this.buttonSubmit = buttonSubmit;
-    }
-
-    public JComboBox<String> getComboBoxIssueType() {
-        return comboBoxIssueType;
-    }
-
-    public void setComboBoxIssueType(JComboBox<String> comboBoxIssueType) {
-        this.comboBoxIssueType = comboBoxIssueType;
-    }
-
-    public JLabel getDateClosed() {
-        return dateClosed;
-    }
-
-    public void setDateClosed(JLabel dateClosed) {
-        this.dateClosed = dateClosed;
-    }
-
-    public JTextField getDateClosedText() {
-        return dateClosedText;
-    }
-
-    public void setDateClosedText(JTextField dateClosedText) {
-        this.dateClosedText = dateClosedText;
-    }
-
-    public JLabel getDateOpened() {
-        return dateOpened;
-    }
-
-    public void setDateOpened(JLabel dateOpened) {
-        this.dateOpened = dateOpened;
-    }
-
-    public JTextField getDateOpenedText() {
-        return dateOpenedText;
-    }
-
-    public void setDateOpenedText(JTextField dateOpenedText) {
-        this.dateOpenedText = dateOpenedText;
-    }
-
-    public JLabel getDescription() {
-        return description;
-    }
-
-    public void setDescription(JLabel description) {
-        this.description = description;
-    }
-
-    public JTextPane getDescriptionText() {
-        return rtftext;
-    }
-
-    public void setDescriptionText(JTextPane descriptionText) {
-        this.rtftext = rtftext;
-    }
-
-    public JPanel getFormPane() {
-        return formPane;
-    }
-
-    public void setFormPane(JPanel formPane) {
-        this.formPane = formPane;
-    }
-
-    public JLabel getId() {
-        return id;
-    }
-
-    public void setId(JLabel id) {
-        this.id = id;
-    }
-
-    public JLabel getIdText() {
-        return idText;
-    }
-
-    public void setIdText(JLabel idText) {
-        this.idText = idText;
-    }
-
-    public JPanel getjPanel1() {
-        return jPanel1;
-    }
-
-    public void setjPanel1(JPanel jPanel1) {
-        this.jPanel1 = jPanel1;
-    }
-
-    public JScrollPane getjScrollPane1() {
-        return jScrollPane1;
-    }
-
-    public void setjScrollPane1(JScrollPane jScrollPane1) {
-        this.jScrollPane1 = jScrollPane1;
-    }
-
-    public JLabel getLock() {
-        return lock;
-    }
-
-    public void setLock(JLabel lock) {
-        this.lock = lock;
-    }
-
-    public JCheckBox getLockCheckBox() {
-        return lockCheckBox;
-    }
-
-    public void setLockCheckBox(JCheckBox lockCheckBox) {
-        this.lockCheckBox = lockCheckBox;
-    }
-
-    public JLabel getProgrammer() {
-        return programmer;
-    }
-
-    public void setProgrammer(JLabel programmer) {
-        this.programmer = programmer;
-    }
-
-    public JComboBox getProgrammerComboBox() {
-        return programmerComboBox;
-    }
-
-    public void setProgrammerComboBox(JComboBox programmerComboBox) {
-        this.programmerComboBox = programmerComboBox;
-    }
-
-    public JLabel getRk() {
-        return rk;
-    }
-
-    public void setRk(JLabel rk) {
-        this.rk = rk;
-    }
-
-    public JComboBox getRkComboBox() {
-        return rkComboBox;
-    }
-
-    public void setRkComboBox(JComboBox rkComboBox) {
-        this.rkComboBox = rkComboBox;
-    }
-
-    public JScrollPane getScrollPane() {
-        return scrollPane;
-    }
-
-    public void setScrollPane(JScrollPane scrollPane) {
-        this.scrollPane = scrollPane;
-    }
-
-    public JLabel getSubmitter() {
-        return submitter;
-    }
-
-    public void setSubmitter(JLabel submitter) {
-        this.submitter = submitter;
-    }
-
-    public JTextField getSubmitterText() {
-        return submitterText;
-    }
-
-    public void setSubmitterText(JTextField submitterText) {
-        this.submitterText = submitterText;
-    }
-
-    public void setTitle(JLabel title) {
-        this.title = title;
-    }
-
-    public JTextField getTitleText() {
-        return titleText;
-    }
-
-    public void setTitleText(JTextField titleText) {
-        this.titleText = titleText;
-    }
-
-    public JLabel getVersion() {
-        return version;
-    }
-
-    public void setVersion(JLabel version) {
-        this.version = version;
-    }
-
-    public JTextField getVersionText() {
-        return versionText;
-    }
-
-    public void setVersionText(JTextField versionText) {
-        this.versionText = versionText;
-    }
+    private String previousValue= "";
     private ShortCutSetting ShortCutSetting;
-    private String[] dropdownlist = {"app","title", "description","programmer", "dateOpened", "rk", "version", "dateClosed"};
-    private String[] refDropdownlist = {"title", "description","programmer", "dateOpened"};
-    private Map<String, Tab> tabs;       // used to update the records label
+    private Map<Integer, Tab> tabs;       // used to update the records label
+    private int originalId;
 
-    /**
-     * Creates new form IssueWindow
-     */
-    public IssueWindow(int row, JTable table, ArrayList<Issue> issues) throws IOException, BadLocationException {
-        projectManager = ProjectManagerWindow.getInstance();
-        tabs = projectManager.getTabs();
-        this.table = table;
-        this.row = row;
-        dao = new IssueDAO();
-        refDao = new ReferenceDAO();
-        issue = new Issue();
-        mgr = projectManager.offlineIssueMgr;
+    
+    
+    
+    IssueWindow(int id, Tab tab) {
         
-        if(table.getName().equals("References")) {
+        //set singleton reference
+        projectManager = ProjectManagerWindow.getInstance();
+        dataManager = PMDataManager.getInstance();
+        
+        //set up tab and table
+        this.tab = tab;
+        this.table = tab.getTable();
+        String tableName = table.getName();
+                
+        
+        //set up modes
+        if(tableName.equals("References")) {
             refIssueMode = true;
         }
 
-        // new issue initialization, including set app, dateopened and 
-        if (this.row == -1) {
+        if (id == -1) {
             addIssueMode = true;
+        }
+        
+        //if new issue
+        if (addIssueMode) {
+            issue = new Issue();
             issue.setId(-1);
             if(!refIssueMode) {
-                issue.setApp(projectManager.getSelectedTabName());
+                issue.setApp(tableName);
                 issue.setSubmitter(projectManager.getUserName());
                 issue.setIssueType("TEST ISSUE");
-                
+ 
             }
             else issue.setIssueType("REFERENCE");
             issue.setDateOpened(todaysDate());
-            
-            
-        } 
-        // existing issue
-        else {
-            addIssueMode = false;
-            int currentid = getcurrentissueid(row,table);
-            
-            if(!issues.isEmpty() && issues != null){
-                for(Issue issueindb: issues){
-                    if (issueindb.getId() == currentid) {
-                        issue.setId(issueindb.getId());
-                        issue.setApp(issueindb.getApp());
-                        issue.setTitle(issueindb.getTitle());
-                        issue.setDescription(issueindb.getDescription());
-                        issue.setProgrammer(issueindb.getProgrammer());
-                        System.out.println(issueindb.getProgrammer());
-                        issue.setDateOpened(issueindb.getDateOpened());
-                        issue.setRk(issueindb.getRk());
-                        issue.setVersion(issueindb.getVersion());
-                        issue.setDateClosed(issueindb.getDateClosed());
-                        issue.setIssueType(issueindb.getIssueType());
-                        issue.setSubmitter(issueindb.getSubmitter());
-                        issue.setLocked(issueindb.getLocked());
-                        issue.setLastmodtime(issueindb.getLastmodtime());
-                        System.out.println(issueindb.getLocked());
-                    }
-                }
-            }
         }
-       
+        
+        //if open exsiting issue
+        else{
+            if(refIssueMode) issue = dataManager.getReferenceEntity(id);
+            else issue = dataManager.getIssueEntity(id);
+            originalId = id;
+        }
+        
+        //set up gui components
         initComponents();
         
-        if(!refIssueMode) {
-            setUpIssueWindow();
-        }
-        
-        else{
+        //set up window for ref or issue
+        if(refIssueMode) {
             setUpRefIssueWindow();
         }
         
+        else{
+            setUpIssueWindow();
+        }
         
-        
-       
-        this.setTitle("Issue in " + table.getName());
-        
+        this.setTitle("Issue in " + tableName);
         
         
         // get current monitor resolution.height
@@ -533,9 +169,7 @@ public class IssueWindow extends JFrame {
         this.setPreferredSize(frameSize);
         this.setMinimumSize(minSize);
         
-        //setup tooltips
-        Hyperlink.setToolTipText("hyperlink examples: https://www.google.com or /REFERENCE MATERIALS/Build New Jar Reference.docx");
-
+ 
         // set view issue window location in screen
         // check x and y , if beyond the boarder, set to default 10 and 5
         Point pmWindowLocation = projectManager.getLocationOnScreen(); //get the project manager window in screen
@@ -547,10 +181,18 @@ public class IssueWindow extends JFrame {
         this.pack();
         
         Authorization.authorize(this);
+        
+        
+        
     }
     
     
-    private void setUpIssueWindow() throws IOException, BadLocationException{
+    public void setVersionText(JTextField versionText) {
+        this.versionText = versionText;
+    }
+    
+    
+    private void setUpIssueWindow(){
         //implement the logic for disabling 'test issue' or not
         //if not in new issue mode, if not admin, and not test issue, disable the "test issue".
         if (projectManager.isOnline() && !addIssueMode && !issue.getIssueType().equals(comboBoxIssueType.getItemAt(3)) &&
@@ -599,18 +241,17 @@ public class IssueWindow extends JFrame {
         textComponentList.add(versionText);
         addDocumentListener(textComponentList);
         addInputMappingsAndShortcuts(textComponentList);
-        updateComboList("programmer", projectManager.getSelectedTabName());
-        updateComboList("rk", projectManager.getSelectedTabName());
-        updateComboList("app", projectManager.getSelectedTabName());
-        
-        setComponentValuesFromIssue(this);
+        updateComboList("programmer");
+        updateComboList("rk");
+        updateComboList("app");
 
+        setComponentValuesFromIssue(this); 
         setOpenCloseIssueBtnText();
         setIssueWindowMode();
         
     }
     
-    private void setUpRefIssueWindow() throws IOException, BadLocationException{
+    private void setUpRefIssueWindow(){
         
         /**
          * Add all JTextComponents to add document listener, input mappings,
@@ -620,17 +261,14 @@ public class IssueWindow extends JFrame {
          * You can reference one that exists for help with the code if needed.
          */
         ArrayList<JTextComponent> textComponentList = new ArrayList<>();
-        //textComponentList.add(submitterText);
         textComponentList.add(dateOpenedText);
         
         textComponentList.add(titleText);
         textComponentList.add(rtftext);
    
-        //textComponentList.add(dateClosedText);
-        //textComponentList.add(versionText);
         addDocumentListener(textComponentList);
         addInputMappingsAndShortcuts(textComponentList);
-        updateComboList("programmer", projectManager.getSelectedTabName());
+        updateComboList("programmer");
         
         setComponentValuesFromIssue(this);
         
@@ -713,11 +351,10 @@ public class IssueWindow extends JFrame {
         idText = new javax.swing.JLabel();
         id = new javax.swing.JLabel();
         lockCheckBox = new javax.swing.JCheckBox();
-        comboBoxIssueType = new javax.swing.JComboBox<>();
         jPanel7 = new javax.swing.JPanel();
+        comboBoxIssueType = new javax.swing.JComboBox<String>();
         submitter = new javax.swing.JLabel();
         submitterText = new javax.swing.JTextField();
-        jPanel8 = new javax.swing.JPanel();
         dateOpenedText = new javax.swing.JTextField();
         dateOpened = new javax.swing.JLabel();
         programmerComboBox = new javax.swing.JComboBox();
@@ -965,24 +602,30 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(17, 30, 0, 0);
         jPanel6.add(lockCheckBox, gridBagConstraints);
 
-        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE", "TEST ISSUE" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(15, 0, 0, 0);
+        jPanel3.add(jPanel6, gridBagConstraints);
+
+        jPanel7.setLayout(new java.awt.GridBagLayout());
+
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE", "TEST ISSUE" }));
         comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxIssueTypeActionPerformed(evt);
             }
         });
-        jPanel6.add(comboBoxIssueType, new java.awt.GridBagConstraints());
-
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(13, 0, 0, 0);
-        jPanel3.add(jPanel6, gridBagConstraints);
-
-        jPanel7.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 0);
+        jPanel7.add(comboBoxIssueType, gridBagConstraints);
 
         submitter.setText(" submitter");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
@@ -996,13 +639,11 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
         jPanel7.add(submitterText, gridBagConstraints);
-
-        jPanel8.setLayout(new java.awt.GridBagLayout());
 
         dateOpenedText.setText("jTextField1");
         dateOpenedText.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -1021,20 +662,20 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel8.add(dateOpenedText, gridBagConstraints);
+        jPanel7.add(dateOpenedText, gridBagConstraints);
 
         dateOpened.setText(" dateOpened");
         dateOpened.setPreferredSize(new java.awt.Dimension(79, 12));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel8.add(dateOpened, gridBagConstraints);
+        jPanel7.add(dateOpened, gridBagConstraints);
 
         programmerComboBox.setEditable(true);
         programmerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -1051,7 +692,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel8.add(programmerComboBox, gridBagConstraints);
+        jPanel7.add(programmerComboBox, gridBagConstraints);
 
         programmer.setText(" programmer");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1059,18 +700,11 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel8.add(programmer, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-        jPanel7.add(jPanel8, gridBagConstraints);
+        jPanel7.add(programmer, gridBagConstraints);
 
         rk.setText(" rk");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
@@ -1085,14 +719,15 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
         jPanel7.add(rkComboBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         jPanel3.add(jPanel7, gridBagConstraints);
 
@@ -1183,7 +818,7 @@ public class IssueWindow extends JFrame {
         rtftext.setContentType("text/rtf"); // NOI18N
         rtftext.setMinimumSize(new java.awt.Dimension(25, 25));
         rtftext.setPreferredSize(new java.awt.Dimension(100, 98));
-        rtftext.setRequestFocusEnabled(false);
+        rtftext.setRequestFocusEnabled(true);
         rtftext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 rtftextMouseClicked(evt);
@@ -1391,28 +1026,24 @@ public class IssueWindow extends JFrame {
         return dateFormat.format(new Date());
     }
     
-    // get current timestamp for datetimeLastMod
-//    private String currentTimeStamp() {
-//        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-//    }
-    
 
     /**
      * This updates the custom id list when traversing the table
      * @param newRow 
+     * ##############requires mod
      */
-    private void updateCustomIdList(int newRow) {
+    private void updateCustomIdList(int oldID) {
         
         // remove this id from the openIssuesList and CustomIdList
-        projectManager.getOpeningIssuesList().remove(issue.getId(), this);
-        projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
+        projectManager.getOpeningIssuesList().remove(table.getName() + oldID, this);
+        //projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
 
-        String newID = table.getValueAt(newRow, 0).toString();
+        String newID = table.getName() + issue.getId();
 
         // if issue is not open
         if (!projectManager.getOpeningIssuesList().containsKey(newID)) {
-            projectManager.getOpeningIssuesList().put(issue.getId(), this);
-            projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getId());
+            projectManager.getOpeningIssuesList().put(newID, this);
+            //projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getId());
 
         } 
         // use the window with this issue already open
@@ -1422,60 +1053,11 @@ public class IssueWindow extends JFrame {
         }
     }
 
-//    private void updateIssueWindow() {
-//        for (int i = 0; i < issue.getFieldsNumber(); i++) {
-//            String columnName = issue.getFieldName(i);
-//            String cellValue = issue.getIssueValueAt(i);
-//            switch (columnName) {
-//                case "ID":
-//                    idText.setText(cellValue);
-//                case "app":
-////                    System.out.println(issue.getIssueValueAt(i));
-//                    appText.setText(cellValue);// set app textfield with the content in app column in view issue
-//                    break;
-//                case "title":
-//                    titleText.setText(cellValue);
-//                    break;
-//                case "description":
-//                    descriptionText.setText(cellValue);
-//                    break;
-//                case "programmer":
-//                    programmerText.setText(cellValue);
-//                    break;
-//                case "dateOpened":
-//                    dateOpenedText.setText(cellValue);
-//                    break;
-//                case "rk":
-//                    rkText.setText(cellValue);
-//                    break;
-//                case "version":
-//                    versionText.setText(cellValue);
-//                    break;
-//                case "dateClosed":
-//                    dateClosedText.setText(cellValue);
-//                    break;
-//                case "submitter":
-//                    submitterText.setText(cellValue);
-//                    break;
-//                case "locked":
-//                    if (cellValue.equals("Y")) {
-//                        lockCheckBox.setSelected(true);
-//                    } else {
-//                        lockCheckBox.setSelected(false);
-//                    }
-//                    break;
-//                default:
-//                    break;
-//            }
-//            issue.getIssueData(columnName).setChanged(false);
-//        }
-//        
-//        setOpenCloseIssueBtnText();
-//    }
+
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         issueWindowClosing();
-//        System.out.println("window closing!");
+
     }//GEN-LAST:event_formWindowClosing
 
     private void rkComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rkComboBoxActionPerformed
@@ -1563,21 +1145,18 @@ public class IssueWindow extends JFrame {
         else if (row == 0) {
             JOptionPane.showMessageDialog(this, "This issue is already the first row on the table!");
         } else {
+            //keep record of old id
+            int oldId = issue.getId();
             row--;
-            try {
-                setIssueValuesFromTable(row,table);
-            } catch (IOException ex) {
-                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                setComponentValuesFromIssue(this);
-            } catch (IOException ex) {
-                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (BadLocationException ex) {
-                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
+            int newId = (int)table.getValueAt(row, 0);
+            issue = dataManager.getIssueEntity(newId);
+            
+            updateCustomIdList(oldId);
+                
+            setComponentValuesFromIssue(this);
             table.setRowSelectionInterval(row, row);
-            updateCustomIdList(row);
+            
         }
     }//GEN-LAST:event_BtnPreviousActionPerformed
 
@@ -1610,21 +1189,19 @@ public class IssueWindow extends JFrame {
         else if (row == table.getRowCount() - 1) {
             JOptionPane.showMessageDialog(this, "This issue is already the last row on the table!");
         } else {
+            
+            int oldId = issue.getId();
             row++;
-            try {
-                setIssueValuesFromTable(row,table);
-            } catch (IOException ex) {
-                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                setComponentValuesFromIssue(this);
-            } catch (IOException ex) {
-                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (BadLocationException ex) {
-                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
+            int newId = (int)table.getValueAt(row, 0);
+            issue = dataManager.getIssueEntity(newId);
+            
+            updateCustomIdList(oldId);
+            
+            setComponentValuesFromIssue(this);
+            
             table.setRowSelectionInterval(row, row);
-            updateCustomIdList(row);
+            
         }
     }//GEN-LAST:event_BtnNextActionPerformed
 
@@ -1657,8 +1234,29 @@ public class IssueWindow extends JFrame {
         byte[] getcurrentdescriptiontextbytearray = getcurrentdescriptiontext.toByteArray();
         String rtfstring = getcurrentdescriptiontext.toString();
         String newrtfstring = rtfstring.substring(0,rtfstring.length()-2);
-
-        //System.out.println(newrtfstring);
+        
+       
+//        System.out.println(newrtfstring);
+//        int start = newrtfstring.indexOf("{\\colortbl");
+//        int stop = newrtfstring.indexOf("}", start);
+//        //find current color counts
+//        String colortable = newrtfstring.substring(start, stop);
+//        int index = 0 , count = 0;
+//        do {
+//            index  = colortable.indexOf("red", index);
+//            if ( index == -1 ) break;
+//            index += "red".length();
+//            count++;
+//        } while( true );
+//        
+//        if (colortable.indexOf("\\red0\\green51\\blue204") == -1){
+//            newrtfstring = newrtfstring.substring(0, stop) + "\\red0\\green51\\blue204;" + newrtfstring.substring(stop);
+//            
+//        }
+//       String newcolor = "\\cf" + count;     
+//        
+//        
+//        //System.out.println(newrtfstring);
 
         if (btnCloseIssue.getText().equalsIgnoreCase("close issue")) {
             // set dateClosed text field with date today
@@ -1666,23 +1264,24 @@ public class IssueWindow extends JFrame {
             String temperaryVersion = "XXX";
             versionText.setText(temperaryVersion);
             btnCloseIssue.setText("Reopen Issue");
-            
-            System.out.println(newrtfstring);
-            
-            newrtfstring = newrtfstring + "\n -- \\cf1 Issue Closed by "
-            + userName + " on " + today + "\\cf0  --\\par";
+
+            newrtfstring = newrtfstring + "\n-- Issue Closed by "
+            + userName + " on " + today + " --\\par";
             newrtfstring = newrtfstring + "\n}";
 
         } else if (btnCloseIssue.getText().equalsIgnoreCase("reopen issue")) {
-
-            newrtfstring = newrtfstring + "\n \n -- \\cf1 Issue reopened by "
-            + userName + " on " + today + " (version " + versionText.getText() + ")\\cf0  --\\par";
-            newrtfstring = newrtfstring + "\n}";
+            
+            newrtfstring = newrtfstring + "\n \n-- Issue reopened by "
+                    
+            + userName + " on " + today + " (version " + versionText.getText() + ")" + " --\\par";
+            newrtfstring = newrtfstring + "\n}" ;
 
             versionText.setText("");
             dateClosedText.setText("");
             btnCloseIssue.setText("Close Issue");
         }
+        
+        System.out.println(newrtfstring);
 
         byte[] close_openrtfbytearray = newrtfstring.getBytes(Charset.forName("UTF-8"));
         InputStream close_openrtfstream = new ByteArrayInputStream(close_openrtfbytearray);
@@ -1709,154 +1308,16 @@ public class IssueWindow extends JFrame {
      */
     private void buttonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmActionPerformed
         setIssueValuesFromComponents();
-        int originalId = issue.getId();
-        AbstractDAO dbDAO = (issue.getIssueType().equals("REFERENCE"))?refDao:dao;
+        if(refIssueMode)
+            dataManager.updateReference(issue);
+        else
+            dataManager.updateIssue(issue);
+                
+        //update rows in tab
+        Object[] rowData = dataManager.getIssue(issue);
+        tab.updateRow(rowData);
         
         
-        if (projectManager.isOnline()) {
-            //if it is offline updated issue, reset id by -9000
-            if (originalId > 9000) issue.setId(originalId - 9000);
-            boolean onlineUpdateSuccess =  issue.getId() > 0 ? dbDAO.update(issue) :  dbDAO.insert(issue);
-            if(onlineUpdateSuccess){
-                if (originalId < 0) {try {
-                    //for new issues
-                    projectManager.insertTableRow(table, issue);
-                    } catch (IOException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                 //remove original row
-                    projectManager.removeTableRow(table, originalId);
-                    
-                    mgr.removeIssue(mgr.getIssue(originalId));
-                    
-                }
-                else {
-                    // for updating issues, it could be >9000 or <9000, >9000 update requires extra removing the 9xxx table row
-                    
-                    if (originalId > 9000) {
-                        projectManager.removeTableRow(table, originalId);
-                        mgr.removeIssue(mgr.getIssue(originalId));
-                    
-                    }
-                    try {
-                        projectManager.updateTableRow(table,issue);
-                    } catch (IOException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    //update the orange dot issue 
-                    
-                    if(!issue.getIssueType().equals("REFERENCE")){
-                        ArrayList<String> apps = new ArrayList();
-                        apps.add("PM");
-                        apps.add("Analyster");
-                        apps.add("ELLE_GUI");
-                    
-                        if(apps.contains(issue.getApp())) {
-                            projectManager.detectOpenIssues(tabs.get(issue.getApp()));
-                        } else {
-                            projectManager.detectOpenIssues(tabs.get("Other"));
-                        }
-                        
-                    }
-                    
-
-                }
-              
-                //update offlineIssueMgr
-                projectManager.makeTableEditable(false);
-                
-            }
-            else { //offline actions
-                
-                JOptionPane.showMessageDialog(this,
-                    "Fail to connect to server.\n Data will be saved saved locally.",
-                    "Error Message",
-                    JOptionPane.ERROR_MESSAGE);
-            
-                //save the issue to local computer
-                if (mgr.updateIssue(issue)){
-                    JOptionPane.showMessageDialog(this,
-                     "Data saved successfully.");
-                    
-                    //if new offline issue or update offline issue, then update
-                    if (originalId < 0 || originalId > 9000) try {
-                        projectManager.updateTableRow(table, issue);
-                    } catch (IOException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    
-                    //if update some online issue
-                    else
-                        try {
-                            projectManager.insertTableRow(table,issue);
-                    } catch (IOException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    projectManager.makeTableEditable(false);
-               
-                }
-                else {
-                    JOptionPane.showMessageDialog(this,
-                        "Fail to save issue locally.",
-                        "I/O Error Message",
-                        JOptionPane.ERROR_MESSAGE);
-                
-                }
-           
-            }
-            
-            
-        }
-        
-        else {
-            
-            JOptionPane.showMessageDialog(this,"Offline Mode : data is saved locally.");
-            
-            if (mgr.updateIssue(issue)){
-                
-                    JOptionPane.showMessageDialog(this,
-                     "Data saved successfully.");
-                    //if already in table, update, else insert
-                    int row = projectManager.findTableModelRow(table,issue);
-                    if (row != -1)
-                        try {
-                            projectManager.updateTableRow(table,issue);
-                    } catch (IOException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    else
-                        try {
-                            projectManager.insertTableRow(table,issue);
-                    } catch (IOException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    
-                        
-                    projectManager.makeTableEditable(false);
-               
-                }
-                else {
-                    JOptionPane.showMessageDialog(this,
-                        "Fail to save issue locally.",
-                        "I/O Error Message",
-                        JOptionPane.ERROR_MESSAGE);
-                
-                }      
-        }
-        
-        issue.setId(originalId);
         issueWindowClosing();
     }//GEN-LAST:event_buttonConfirmActionPerformed
 
@@ -1868,105 +1329,24 @@ public class IssueWindow extends JFrame {
      * @param evt 
      */
     private void buttonSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSubmitActionPerformed
-        
-       
+
         setIssueValuesFromComponents();
-        int originalId = issue.getId();
-        AbstractDAO DAO = dao; 
-        
-        if(refIssueMode) {
-            DAO = refDao;
-            System.out.println("accessing refdao");
-                    
-        }
-            
-        
-        
-        if (projectManager.isOnline() && DAO.insert(issue)) {
-            
-            try {
-                projectManager.insertTableRow(table,issue);
-            } catch (IOException ex) {
-                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (BadLocationException ex) {
-                Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            projectManager.makeTableEditable(false); 
-        
-        }
-        
-        else {
-            String msg = "Fail to connect to server.\nData will be saved saved locally.";
-            if (!projectManager.isOnline()) msg = "Offline Mode : data is saved locally.";
-            
-            JOptionPane.showMessageDialog(this,msg);
-            
-            //save the issue to local computer
-            if (mgr.addIssue(issue)) {
-                JOptionPane.showMessageDialog(this,
-                    "Data saved successfully.");
-                try {
-                    projectManager.insertTableRow(table,issue);
-                } catch (IOException ex) {
-                    Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                projectManager.makeTableEditable(false);  
-            }
-            else {
-                JOptionPane.showMessageDialog(this,
-                    "Fail to save issue locally.",
-                    "I/O Error Message",
-                    JOptionPane.ERROR_MESSAGE);
+        if(refIssueMode)
+            dataManager.insertReference(issue);
+        else
+            dataManager.insertIssue(issue);
                 
-            }
-            
-            
-            
-            
-        }
-        
-//        if(dao.insert(issue)){
-//            projectManager.inserTableRow(table,issue);
-//            projectManager.makeTableEditable(false);
-//            
-//        }
-//        else {//offline actions
-//            
-//            JOptionPane.showMessageDialog(this,
-//                    "Fail to connect to server.\nData will be saved saved locally.",
-//                    "Error Message",
-//                    JOptionPane.ERROR_MESSAGE);
-//            
-//            
-//            //save the issue to local computer
-//            if (mgr.addIssue(issue)) {
-//                JOptionPane.showMessageDialog(this,
-//                    "Data saved successfully.");
-//                projectManager.inserTableRow(table,issue);
-//                projectManager.makeTableEditable(false);
-//                
-//            }
-//            else {
-//                JOptionPane.showMessageDialog(this,
-//                    "Fail to save issue locally.",
-//                    "I/O Error Message",
-//                    JOptionPane.ERROR_MESSAGE);
-//                
-//            }
-//        }
-        
-        issue.setId(originalId);
+        //insert row in tab
+        Object[] rowData = dataManager.getIssue(issue);
+        tab.insertRow(rowData);
+
         issueWindowClosing();
     }//GEN-LAST:event_buttonSubmitActionPerformed
     
     
     
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        //        System.out.println(selectedTable.getValueAt(0, 0));
-
-        //        projectManager.getOpeningIssuesList().remove(issue.getID(), this);
+        
         issueWindowClosing();
     }//GEN-LAST:event_buttonCancelActionPerformed
 
@@ -2076,36 +1456,20 @@ public class IssueWindow extends JFrame {
             String selectedtext = getselectedtext();
             String urlstring = selectedtext;
             String currentstring = getcurrentrtf();
-                        
-            //String stringtosearch = "\\i\\ul\\cf2 " + selectedtext.substring(0,10);
-            //boolean checkformat = currentstring.contains(stringtosearch);
-            
-            String osname = System.getProperty("os.name");
+            String stringtosearch = "\\i\\ul\\cf2 " + selectedtext.substring(0,10);
+            boolean checkformat = currentstring.contains(stringtosearch);
             
             if (!urlstring.contains("https") && !urlstring.contains("http")) {
                 String urlstringcheck = System.getProperty("user.dir");
+                System.out.println(urlstringcheck);
                 
-                if (osname == "Mac OS X") {
-                    if (urlstringcheck.contains("ELLE Prog 2015")) {
-                        urlstring = "file://" + System.getProperty("user.dir") + urlstring;
-                        urlstring = urlstring.replace(" ","%20");
-
-                    } else {                   
-                        urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + "/ELLE Prog 2015" +urlstring;
-                        urlstring = urlstring.replace(" ","%20");
-
-                    }
-                } else {
-                    if (urlstringcheck.contains("ELLE Prog 2015")) {
-                        urlstring = "file:///" + System.getProperty("user.dir") + urlstring;
-                        urlstring = urlstring.replace(" ","%20");
-
-                    } else {                   
-                        urlstring = "file:///" + System.getProperty("user.home")+File.separator+"Dropbox" + "/ELLE Prog 2015" +urlstring;
-                        urlstring = urlstring.replace(" ","%20");
-
-                    }
-                    
+                if (urlstringcheck.contains("ELLE Prog 2015")) {
+                    urlstring = "file://" + System.getProperty("user.dir") + urlstring;
+                    urlstring = urlstring.replace(" ","%20");
+                    System.out.println(urlstring);
+                } else {                   
+                    urlstring = "file://" + System.getProperty("user.home")+File.separator+"Dropbox" + urlstring;
+                    urlstring = urlstring.replace(" ","%20");
                 }
             } else {
                 urlstring = urlstring.replaceAll("\\s","");
@@ -2113,9 +1477,9 @@ public class IssueWindow extends JFrame {
             
             try {
                 URI uri = new URI(urlstring);
-                System.out.println("Opening " + uri);
+                System.out.println(uri);
                 
-                if (uri != null) {
+                if (checkformat && uri != null) {
                     openWebpage(uri);
                 } else {
                     System.out.println("Not a link!");
@@ -2464,9 +1828,10 @@ public class IssueWindow extends JFrame {
         if (addIssueMode) {
             projectManager.setAddIssueWindowShow(false);
         } else {
-            projectManager.getOpeningIssuesList().remove(table.getName()+ issue.getId(), this);
-            projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
-            projectManager.getSelectedTabCustomIdList(table.getName()).printOutIDList();
+            projectManager.getOpeningIssuesList().remove(table.getName()+ originalId, this); 
+            
+            //convert id to Object ,otherwise, remove uses id as index.
+            tab.getFilter().getCustomIdListFilter().remove((Object) issue.getId());
         }
         this.dispose();
     }
@@ -2623,55 +1988,61 @@ public class IssueWindow extends JFrame {
     /**
      * Sets the components and fields on issue window from the issue object.
      */
-    private void setComponentValuesFromIssue(IssueWindow aThis) throws IOException, BadLocationException {
+    private void setComponentValuesFromIssue(IssueWindow aThis) {
 
-        idText.setText(Integer.toString(issue.getId()));
-        appComboBox.setSelectedItem(issue.getApp());
-        titleText.setText(issue.getTitle());
+            idText.setText(Integer.toString(issue.getId()));
+            appComboBox.setSelectedItem(issue.getApp());
+            titleText.setText(issue.getTitle());
+            programmerComboBox.setSelectedItem(issue.getProgrammer());
+            dateOpenedText.setText(issue.getDateOpened());
+            rkComboBox.setSelectedItem(issue.getRk());
+            versionText.setText(issue.getVersion());
+            dateClosedText.setText(issue.getDateClosed());
+            comboBoxIssueType.setSelectedItem(issue.getIssueType());
+            submitterText.setText(issue.getSubmitter());
+            lastmodTime.setText(issue.getLastmodtime());
+            setOpenCloseIssueBtnText(); // set button text to Open/Close issue
+        try {    
+            rtftext.setText("");
+            
+            byte[] descriptionbytesout;
+            if (issue.getDescription() == null) {
+                descriptionbytesout = new byte[0];
+            } else {
+                descriptionbytesout = issue.getDescription();
+            }
+            
+            InputStream rtfstream = new ByteArrayInputStream(descriptionbytesout);
+            String convertedstrings = convertStreamToString(rtfstream);
+            String rtfsign = "{\\rtf1\\ansi";
+            boolean rtfornot = convertedstrings.contains(rtfsign);
+            
+            if (rtfornot) {
+                byte[] descriptionbytesout2 = issue.getDescription();
+                InputStream rtfstream2 = new ByteArrayInputStream(descriptionbytesout2);
+                
+                rtftext.getEditorKit().read(rtfstream2, rtftext.getDocument(), 0);
+                 
+            } else {
+                String displaystringinrtf = "{\\rtf1\\ansi\n" +
+                        "{\\fonttbl\\f0\\fnil Monospaced;\\f1\\fnil sansserif;}\n" +
+                        "{\\colortbl\\red0\\green0\\blue0;\\red0\\green0\\blue0;}\n" +
+                        "\n" +
+                        "\\li0\\ri0\\fi0\\f1\\fs24\\i0\\b0\\cf1 " + convertedstrings + "\\par\n" +
+                        "}";
+                byte[] displaystringinrtfbyte = displaystringinrtf.getBytes(Charset.forName("UTF-8"));
+                InputStream displaystringinrtfintput = new ByteArrayInputStream(displaystringinrtfbyte);
+                
+                rtftext.getEditorKit().read(displaystringinrtfintput, rtftext.getDocument(), 0);       
+            }
         
-        rtftext.setText("");
-        
-        byte[] descriptionbytesout;
-        if (issue.getDescription() == null) {
-            descriptionbytesout = new byte[0];
-        } else {
-            descriptionbytesout = issue.getDescription();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(IssueWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        InputStream rtfstream = new ByteArrayInputStream(descriptionbytesout);
-        String convertedstrings = convertStreamToString(rtfstream);
-        String rtfsign = "{\\rtf1\\ansi";
-        boolean rtfornot = convertedstrings.contains(rtfsign);
-
-        if (rtfornot) {
-            byte[] descriptionbytesout2 = issue.getDescription();
-            InputStream rtfstream2 = new ByteArrayInputStream(descriptionbytesout2);
-            rtftext.getEditorKit().read(rtfstream2, rtftext.getDocument(), 0);
-        } else {
-            String displaystringinrtf = "{\\rtf1\\ansi\n" +
-                    "{\\fonttbl\\f0\\fnil Monospaced;\\f1\\fnil sansserif;}\n" +
-                    "{\\colortbl\\red0\\green0\\blue0;\\red0\\green0\\blue0;}\n" +
-                                                                            "\n" +
-                     "\\li0\\ri0\\fi0\\f1\\fs24\\i0\\b0\\cf1 " + convertedstrings + "\\par\n" +
-                    "}";
-            byte[] displaystringinrtfbyte = displaystringinrtf.getBytes(Charset.forName("UTF-8"));
-            InputStream displaystringinrtfintput = new ByteArrayInputStream(displaystringinrtfbyte);
-            rtftext.getEditorKit().read(displaystringinrtfintput, rtftext.getDocument(), 0);
-        }
-
-        //descriptionText.setText(issue.getDescription());
         
-        programmerComboBox.setSelectedItem(issue.getProgrammer());
-        dateOpenedText.setText(issue.getDateOpened());
-        rkComboBox.setSelectedItem(issue.getRk());
-        versionText.setText(issue.getVersion());
-        dateClosedText.setText(issue.getDateClosed());
-        comboBoxIssueType.setSelectedItem(issue.getIssueType());
-        submitterText.setText(issue.getSubmitter());
-        lastmodTime.setText(issue.getLastmodtime());
-        //lockCheckBox.setSelected(issue.getLocked().equals("Y"));
-        
-        setOpenCloseIssueBtnText(); // set button text to Open/Close issue
     }
     
     public String convertStreamToString(InputStream is) throws IOException {
@@ -2794,79 +2165,15 @@ public class IssueWindow extends JFrame {
         }
     }
     private Map loadingDropdownList() {
-        String selectedTabName = projectManager.getSelectedTabName();
-        Tab tab = tabs.get(selectedTabName);
         
-   
-        Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
-        if (!selectedTabName.equalsIgnoreCase("issue_files")) {
-            String[] currList = dropdownlist;
-            if (selectedTabName.equalsIgnoreCase("references")) {
-                currList = refDropdownlist;
-            }
-            
-            for (String searchField : currList) {
-
-                for (int i = 0; i < tab.getTable().getColumnCount(); i++) {
-                    if (tab.getTable().getColumnName(i).equalsIgnoreCase(searchField)) {
-                        valueListMap.put(i, new ArrayList<Object>());
-                    }
-                }
-            }
-            for (int col : valueListMap.keySet()) {
-                //for each search item, create a new drop down list
-                ArrayList DropDownListValueForEachColumn = new ArrayList<Object>();
-                // load drop down for each table
-                for (Map.Entry<String, Tab> entry : tabs.entrySet()) {
-                    if (!entry.getKey().equalsIgnoreCase("issue_files")) {
-                        tab = tabs.get(entry.getKey());
-
-                        String[] columnNames = tab.getTableColNames();
-                        JTable table = tab.getTable();
-                        TableModel tableModel = table.getModel();
-                        String colName;
-                        colName = columnNames[col].toLowerCase();
-                  
-
-                        switch (colName) {
-                            case "title":
-                            case "description":
-                            case "version":
-                                DropDownListValueForEachColumn.add("");
-                                break;
-                            default:
-                                Object valueAddToDropDownList;
-                                for (int row = 0; row < tableModel.getRowCount(); row++) {
-                                    valueAddToDropDownList = tableModel.getValueAt(row, col);
-
-                                    if (valueAddToDropDownList != null) {
-                                        // add to drop down list
-                                        DropDownListValueForEachColumn.add(valueAddToDropDownList);
-                                    } else {
-                                        DropDownListValueForEachColumn.add("");
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                }
-
-                //make every item in drop down list unique
-                Set<Object> uniqueValue = new HashSet<Object>(DropDownListValueForEachColumn);
-                ArrayList uniqueList = new ArrayList<Object>(uniqueValue);
-//                System.out.println(col + " " + uniqueList);
-                valueListMap.put(col, uniqueList);
-                System.out.println(uniqueList);
-            }
-        }
-        return valueListMap;
+        return tab.loadingDropdownList();
 
     }
     
     
     //should update offline values
    
-    private void updateComboList(String colName, String tableName) {
+    private void updateComboList(String colName) {
         //create a combo box model
         DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
         if (colName.equalsIgnoreCase("programmer")) {
@@ -2882,26 +2189,15 @@ public class IssueWindow extends JFrame {
         //[, SKYPE, Analyster, Other, ELLEGUI, VBA, TOOLS, DOVISLEX, SQL, PM]
         //[, Shenrui, Corinne, Azoacha, Youzhi, Ying, Bektur, Xiao, Anthea, Carlos, Professor, Yi, Wei, Yiqi]
 
-
         Map comboBoxForSearchValue = loadingDropdownList();
-
-        JTable table = tabs.get(tableName).getTable();
-
+       
         for (int col = 0; col < table.getColumnCount(); col++) {
-
+            
             if (table.getColumnName(col).equalsIgnoreCase(colName)) {
                 ArrayList<Object> dropDownList = (ArrayList<Object>) comboBoxForSearchValue.get(col);
-
-                if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed")) {
-                    Collections.sort(dropDownList, new Comparator<Object>() {
-                        public int compare(Object o1, Object o2) {
-                            return o2.toString().compareTo(o1.toString());
-                        }
-
-                    });
-                    
-                } else if (colName.equalsIgnoreCase("rk")) {
-                    if (projectManager.isOnline() && dropDownList.get(0) == "") {
+                
+                if (colName.equalsIgnoreCase("rk")) {
+                    if (dropDownList.get(0) == "") {
                         ArrayList<Object> list = new ArrayList<Object>();
 
                         for (int i = 1; i < dropDownList.size(); i++) {
@@ -2911,32 +2207,11 @@ public class IssueWindow extends JFrame {
 
                         dropDownList = list;
                     }
-                    else {
-                      
-                       Object[] defaultArray = {"1","2","3","4","5",""};
-                       dropDownList.addAll(Arrays.asList(defaultArray));
-                       
-                        
-                    }
-                    
-                    
-                } else if (colName.equalsIgnoreCase("programmer") || colName.equalsIgnoreCase("app") ) {
-                    Object nullValue = "";
-                    
-                    if (!projectManager.isOnline() && colName.equalsIgnoreCase("programmer") ) {
-                        
-                        Object[] defaultArray = {"", "Shenrui", "Corinne", "Azoacha", "Youzhi", "Ying", "Bektur", "Xiao", "Anthea", "Carlos", "Professor", "Yi", "Wei", "Yiqi"};
-                        dropDownList = new ArrayList<Object>();
-                        dropDownList.addAll(Arrays.asList(defaultArray));
-                        
-                    }
-                    
-                    if (!projectManager.isOnline() && colName.equalsIgnoreCase("app") ) {
-                        Object[] defaultArray = {"", "SKYPE", "Analyster", "Other", "ELLEGUI", "VBA", "TOOLS", "DOVISLEX", "SQL", "PM"};   
-                        dropDownList = new ArrayList<Object>();
-                        dropDownList.addAll(Arrays.asList(defaultArray));
                    
-                    }
+                }   
+                    
+                if (colName.equalsIgnoreCase("programmer") || colName.equalsIgnoreCase("app") ) {
+                    Object nullValue = "";
                     
                     Collections.sort(dropDownList, new Comparator<Object>() {
                         public int compare(Object o1, Object o2) {
@@ -2955,39 +2230,37 @@ public class IssueWindow extends JFrame {
                             }
 
                             return o1.toString().toLowerCase().compareTo(o2.toString().toLowerCase());
-                        }
-
-                    });
-
+                            }
+                    
+                        });
+                  
                 }
-//                System.out.println(dropDownList);
-
                 for (Object item : dropDownList) {
  
                     comboBoxSearchModel.addElement(item);
 
-                }
-
+                }  
             }
+            
         }
-//        comboBoxForSearch.setSelectedItem("Enter " + colName + " here");
-//        comboBoxStartToSearch = true;
+        
+        
     }
     
     
     private void setComboBoxValue() {
-        int row = projectManager.getSelectedTable().getSelectedRow();
+        int row = table.getSelectedRow();
         String programmer = "";
         String rk = "";
         String app = "";
-        if (projectManager.getSelectedTable().getModel().getValueAt(row, 1) != null) {
-            app = projectManager.getSelectedTable().getModel().getValueAt(row, 1).toString();
+        if (table.getModel().getValueAt(row, 1) != null) {
+            app = table.getModel().getValueAt(row, 1).toString();
         }
-        if (projectManager.getSelectedTable().getModel().getValueAt(row, 4) != null) {
-            programmer = projectManager.getSelectedTable().getModel().getValueAt(row, 4).toString();
+        if (table.getModel().getValueAt(row, 4) != null) {
+            programmer = table.getModel().getValueAt(row, 4).toString();
         }
-        if (projectManager.getSelectedTable().getModel().getValueAt(row, 6) != null) {
-            rk = projectManager.getSelectedTable().getModel().getValueAt(row, 6).toString();
+        if (table.getModel().getValueAt(row, 6) != null) {
+            rk = table.getModel().getValueAt(row, 6).toString();
         }
         programmerComboBox.setSelectedItem(programmer);
         rkComboBox.setSelectedItem(rk);
@@ -2996,19 +2269,324 @@ public class IssueWindow extends JFrame {
     }
     
 
-//    private void updateComboBoxValue() {
-//        int row = projectManager.getSelectedTable().getSelectedRow();
-//        String programmer = "";
-//        String rk = "";
-//        String app = "";
-//        programmer = programmerComboBox.getSelectedItem().toString();
-//        rk = rkComboBox.getSelectedItem().toString();
-//        app = appComboBox.getSelectedItem().toString();
-//        projectManager.getSelectedTable().getModel().setValueAt(programmer, row, 4);
-//        projectManager.getSelectedTable().getModel().setValueAt(rk, row, 6);
-//        projectManager.getSelectedTable().getModel().setValueAt(app, row, 1);
-//
-//    }
+/*
+    ** getters and setters
+    
+*/
+
+    public ProjectManagerWindow getProjectManager() {
+        return projectManager;
+    }
+
+    public void setProjectManager(ProjectManagerWindow projectManager) {
+        this.projectManager = projectManager;
+    }
+
+    public Issue getIssue() {
+        return issue;
+    }
+
+    public void setIssue(Issue issue) {
+        this.issue = issue;
+    }
+
+    public JTable getTable() {
+        return table;
+    }
+
+    public void setTable(JTable table) {
+        this.table = table;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    
+    public boolean isAddIssueMode() {
+        return addIssueMode;
+    }
+
+    public void setAddIssueMode(boolean addIssueMode) {
+        this.addIssueMode = addIssueMode;
+    }
+
+    public ShortCutSetting getShortCutSetting() {
+        return ShortCutSetting;
+    }
+
+    public void setShortCutSetting(ShortCutSetting ShortCutSetting) {
+        this.ShortCutSetting = ShortCutSetting;
+    }
+
+   
+    public Map<Integer, Tab> getTabs() {
+        return tabs;
+    }
+
+    public void setTabs(Map<Integer, Tab> tabs) {
+        this.tabs = tabs;
+    }
+
+    public JButton getBtnNext() {
+        return BtnNext;
+    }
+
+    public void setBtnNext(JButton BtnNext) {
+        this.BtnNext = BtnNext;
+    }
+
+    public JButton getBtnPrevious() {
+        return BtnPrevious;
+    }
+
+    public void setBtnPrevious(JButton BtnPrevious) {
+        this.BtnPrevious = BtnPrevious;
+    }
+
+    public JLabel getApp() {
+        return app;
+    }
+
+    public void setApp(JLabel app) {
+        this.app = app;
+    }
+
+    public JComboBox getAppComboBox() {
+        return appComboBox;
+    }
+
+    public void setAppComboBox(JComboBox appComboBox) {
+        this.appComboBox = appComboBox;
+    }
+
+    public JButton getBtnCloseIssue() {
+        return btnCloseIssue;
+    }
+
+    public void setBtnCloseIssue(JButton btnCloseIssue) {
+        this.btnCloseIssue = btnCloseIssue;
+    }
+
+    public JButton getButtonCancel() {
+        return buttonCancel;
+    }
+
+    public void setButtonCancel(JButton buttonCancel) {
+        this.buttonCancel = buttonCancel;
+    }
+
+    public JButton getButtonConfirm() {
+        return buttonConfirm;
+    }
+
+    public void setButtonConfirm(JButton buttonConfirm) {
+        this.buttonConfirm = buttonConfirm;
+    }
+
+    public JButton getButtonSubmit() {
+        return buttonSubmit;
+    }
+
+    public void setButtonSubmit(JButton buttonSubmit) {
+        this.buttonSubmit = buttonSubmit;
+    }
+
+    public JComboBox<String> getComboBoxIssueType() {
+        return comboBoxIssueType;
+    }
+
+    public void setComboBoxIssueType(JComboBox<String> comboBoxIssueType) {
+        this.comboBoxIssueType = comboBoxIssueType;
+    }
+
+    public JLabel getDateClosed() {
+        return dateClosed;
+    }
+
+    public void setDateClosed(JLabel dateClosed) {
+        this.dateClosed = dateClosed;
+    }
+
+    public JTextField getDateClosedText() {
+        return dateClosedText;
+    }
+
+    public void setDateClosedText(JTextField dateClosedText) {
+        this.dateClosedText = dateClosedText;
+    }
+
+    public JLabel getDateOpened() {
+        return dateOpened;
+    }
+
+    public void setDateOpened(JLabel dateOpened) {
+        this.dateOpened = dateOpened;
+    }
+
+    public JTextField getDateOpenedText() {
+        return dateOpenedText;
+    }
+
+    public void setDateOpenedText(JTextField dateOpenedText) {
+        this.dateOpenedText = dateOpenedText;
+    }
+
+    public JLabel getDescription() {
+        return description;
+    }
+
+    public void setDescription(JLabel description) {
+        this.description = description;
+    }
+
+    public JTextPane getDescriptionText() {
+        return rtftext;
+    }
+
+    public void setDescriptionText(JTextPane descriptionText) {
+        this.rtftext = rtftext;
+    }
+
+    public JPanel getFormPane() {
+        return formPane;
+    }
+
+    public void setFormPane(JPanel formPane) {
+        this.formPane = formPane;
+    }
+
+    public JLabel getId() {
+        return id;
+    }
+
+    public void setId(JLabel id) {
+        this.id = id;
+    }
+
+    public JLabel getIdText() {
+        return idText;
+    }
+
+    public void setIdText(JLabel idText) {
+        this.idText = idText;
+    }
+
+    public JPanel getjPanel1() {
+        return jPanel1;
+    }
+
+    public void setjPanel1(JPanel jPanel1) {
+        this.jPanel1 = jPanel1;
+    }
+
+    public JScrollPane getjScrollPane1() {
+        return jScrollPane1;
+    }
+
+    public void setjScrollPane1(JScrollPane jScrollPane1) {
+        this.jScrollPane1 = jScrollPane1;
+    }
+
+    public JLabel getLock() {
+        return lock;
+    }
+
+    public void setLock(JLabel lock) {
+        this.lock = lock;
+    }
+
+    public JCheckBox getLockCheckBox() {
+        return lockCheckBox;
+    }
+
+    public void setLockCheckBox(JCheckBox lockCheckBox) {
+        this.lockCheckBox = lockCheckBox;
+    }
+
+    public JLabel getProgrammer() {
+        return programmer;
+    }
+
+    public void setProgrammer(JLabel programmer) {
+        this.programmer = programmer;
+    }
+
+    public JComboBox getProgrammerComboBox() {
+        return programmerComboBox;
+    }
+
+    public void setProgrammerComboBox(JComboBox programmerComboBox) {
+        this.programmerComboBox = programmerComboBox;
+    }
+
+    public JLabel getRk() {
+        return rk;
+    }
+
+    public void setRk(JLabel rk) {
+        this.rk = rk;
+    }
+
+    public JComboBox getRkComboBox() {
+        return rkComboBox;
+    }
+
+    public void setRkComboBox(JComboBox rkComboBox) {
+        this.rkComboBox = rkComboBox;
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
+    }
+
+    public void setScrollPane(JScrollPane scrollPane) {
+        this.scrollPane = scrollPane;
+    }
+
+    public JLabel getSubmitter() {
+        return submitter;
+    }
+
+    public void setSubmitter(JLabel submitter) {
+        this.submitter = submitter;
+    }
+
+    public JTextField getSubmitterText() {
+        return submitterText;
+    }
+
+    public void setSubmitterText(JTextField submitterText) {
+        this.submitterText = submitterText;
+    }
+
+    public void setTitle(JLabel title) {
+        this.title = title;
+    }
+
+    public JTextField getTitleText() {
+        return titleText;
+    }
+
+    public void setTitleText(JTextField titleText) {
+        this.titleText = titleText;
+    }
+
+    public JLabel getVersion() {
+        return version;
+    }
+
+    public void setVersion(JLabel version) {
+        this.version = version;
+    }
+
+    public JTextField getVersionText() {
+        return versionText;
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -3046,7 +2624,6 @@ public class IssueWindow extends JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollBar jScrollBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lastmodTime;

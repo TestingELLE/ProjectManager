@@ -1,6 +1,8 @@
 
 package com.elle.ProjectManager.database;
 
+import static com.elle.ProjectManager.admissions.AESCrypt.decrypt;
+import static com.elle.ProjectManager.admissions.AESCrypt.encrypt;
 import com.elle.ProjectManager.logic.FilePathFormat;
 import com.elle.ProjectManager.logic.LoggingAspect;
 import java.awt.Component;
@@ -44,6 +46,8 @@ public class DBConnection {
     private static Statement statement;
     private static final String SERVERS_FILENAME = "servers.xml";
     private static Component parentComponent;
+    private static String key = "Bar12345Bar12345"; // 128 bit key
+    private static String initVector = "RandomInitVector"; // 16 bytes IV
     
     /**
      * connect
@@ -77,7 +81,7 @@ public class DBConnection {
             // connect to server
             connection = DriverManager.getConnection(url, userName, userPassword);
             statement = connection.createStatement();
-            LoggingAspect.afterReturn("Connection successful");
+            LoggingAspect.addLogMsgWthDate("Connection successful");
             return true;
         } catch (Exception ex) {
             //LoggingAspect.afterThrown(ex);
@@ -109,7 +113,7 @@ public class DBConnection {
         try {
             statement.close();
             connection.close();
-            LoggingAspect.afterReturn("Connection closed successful");
+            LoggingAspect.addLogMsgWthDate("Connection closed successful");
             return true;
         } catch (SQLException ex) {
             LoggingAspect.afterThrown(ex);
@@ -306,7 +310,8 @@ public class DBConnection {
                             readDBUsername = true; 
                         }
                         else if(elementName.equals("db-password")){
-                            dbPassword = xmlStrReader.getElementText();
+                            String encryptedpw = xmlStrReader.getElementText();
+                            dbPassword = decrypt(key, initVector, encryptedpw);
                         }
                         else if(elementName.equals("db-default")){
                             dbDefault = (xmlStrReader.getElementText().equals("true"))?true:false;
@@ -403,7 +408,9 @@ public class DBConnection {
                     writer.writeCharacters(database.getUsername());
                     writer.writeEndElement();
                     writer.writeStartElement("db-password");
-                    writer.writeCharacters(database.getPassword());
+                    String password = database.getPassword();
+                    String encryptedpassword = encrypt(key, initVector, password);
+                    writer.writeCharacters(encryptedpassword);
                     writer.writeEndElement();
                     writer.writeStartElement("db-default");
                     writer.writeCharacters(Boolean.toString(database.isDefaultSelection()));

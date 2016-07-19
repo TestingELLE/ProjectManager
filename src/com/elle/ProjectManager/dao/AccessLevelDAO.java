@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * @author Carlos Igreja
  * @since  May 12, 2016
  */
-public class AccessLevelDAO {
+public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
 
     // database table information
     public static final String DB_TABLE_NAME = "accessLevels";
@@ -234,6 +234,37 @@ public class AccessLevelDAO {
         }
         
         return accessLevel.getAccessLevel();
+    }
+
+    @Override
+    public AccessLevel get(int id) {
+        String sql = "SELECT * FROM " + DB_TABLE_NAME +
+                      " WHERE " + COL_PK_ID + " = '" + id +"';";
+
+        ResultSet rs = null;
+        AccessLevel accessLevel = new AccessLevel();
+        
+        try {
+
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            
+            while(rs.next()){
+                
+                accessLevel.setId(rs.getInt(COL_PK_ID));
+                accessLevel.setUser(rs.getString(COL_USER));
+                accessLevel.setAccessLevel(rs.getString(COL_ACCESS_LEVEL));
+                
+            }
+            
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return accessLevel;
+        
     }
     
     
