@@ -258,7 +258,7 @@ public class DBConnection {
                 xmlStrReader = inputFactory.createXMLStreamReader(fileReader);
             }
             else{
-                inputStream = DBConnection.class.getResourceAsStream("../"+SERVERS_FILENAME);
+                inputStream = DBConnection.class.getResourceAsStream("/com/elle/ProjectManager/"+SERVERS_FILENAME);
                 inStrReader = new InputStreamReader(inputStream);
                 xmlStrReader = inputFactory.createXMLStreamReader(inStrReader);
             }
