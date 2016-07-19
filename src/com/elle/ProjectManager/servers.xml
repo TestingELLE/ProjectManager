@@ -3,7 +3,7 @@
     <server>
         <server-name>Local</server-name>
         <server-url>jdbc:mysql://localhost:3306/</server-url>
-        <server-default>true</server-default>
+        <server-default>false</server-default>
         <database>
             <db-name>pupone_pm</db-name>
             <db-username></db-username>
@@ -14,7 +14,7 @@
     <server>
         <server-name>pupone</server-name>
         <server-url>jdbc:mysql://rendertech.com:3306/</server-url>
-        <server-default>true</server-default>
+        <server-default>false</server-default>
         <database>
             <db-name>pupone_PM</db-name>
             <db-username></db-username>

@@ -398,7 +398,7 @@ public class LoginWindow extends JFrame {
             // create an projectManager object
            projectManager = new ProjectManagerWindow(userName, true);
            
-           projectManager.setUserName(userName.substring(7));
+           projectManager.setUserName(userName);
             // pass the log window to projectManager
            projectManager.setLogWindow(logWindow);
 
