@@ -454,7 +454,7 @@ public class Tab implements ITableConstants {
         for (MouseListener ml: listeners)
         {
             String className = ml.getClass().toString();
-            if (className.contains("BasicTableHeaderUI"))
+            if (className.contains("BasicTableHeaderUI.MouseInputHandler"))
                 header.removeMouseListener(ml);
         }
 
@@ -792,7 +792,7 @@ public class Tab implements ITableConstants {
             header.setDefaultRenderer(new AlignmentTableHeaderCellRenderer(header.getDefaultRenderer()));
         }
 
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         switch (table.getName()) {
 
@@ -803,20 +803,25 @@ public class Tab implements ITableConstants {
             case "Other": {
                 for (int i = 0; i < colWidthPercent.length; i++) {
                     int pWidth = Math.round(colWidthPercent[i]);
-                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+                    TableColumn column = table.getColumnModel().getColumn(i);
+                    column.setPreferredWidth(pWidth);
+                    
+                    //Fixes the width of all columns except description 
+                    String name = table.getColumnName(i);
+                    if(!table.getColumnName(i).equalsIgnoreCase("description")){
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                    }
+              
                     if (i == 2 || i == 3) {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
                     }
                     
-                    // hide lock and submitter columns
-                    if(i == 10 || i == 11){
-                        TableColumn column = table.getColumnModel().getColumn(i);
-                        column.setMinWidth(pWidth);
-                        column.setMaxWidth(pWidth);
-                        column.setPreferredWidth(pWidth);
-                    }
+                    
+                        
+                   
                 }
                 break;
             }
@@ -828,21 +833,23 @@ public class Tab implements ITableConstants {
                 for(int temp = 6; temp<=12; temp++)
                     hideCols.add(temp);
                 
-                for (int i = 0; i < colWidthPercent.length; i++) {
+               for (int i = 0; i < colWidthPercent.length; i++) {
                     int pWidth = Math.round(colWidthPercent[i]);
-                    table.getColumnModel().getColumn(i).setPreferredWidth(pWidth);
+                    TableColumn column = table.getColumnModel().getColumn(i);
+                    column.setPreferredWidth(pWidth);
+                    
+                    //Fixes the width of all columns except description 
+                    if(!table.getColumnName(i).equalsIgnoreCase("description")){
+                        column.setMinWidth(pWidth);
+                        column.setMaxWidth(pWidth);
+                    }
+              
                     if (i == 2 || i == 3) {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
                         table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
                     }
                     
-                    if(hideCols.contains(i)){
-                        TableColumn column = table.getColumnModel().getColumn(i);
-                        column.setMinWidth(pWidth);
-                        column.setMaxWidth(pWidth);
-                        column.setPreferredWidth(pWidth);
-                    }
                 }
                 break;
             }
