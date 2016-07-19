@@ -36,6 +36,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -149,6 +151,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         //scrolldown tables
         scrolldownTables();
         
+        // initialized with a list of inactive programmers from the database
+         inactiveProgrammers = getInactiveProgrammers();
+        
         //initialize tab related components
         //including button state, recordsLabel, comboBoxSearchField, addIssue button text ,etc
         Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex()); 
@@ -160,9 +165,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // initialize comboBoxForSeachDropDownList
         comboBoxForSearchDropDown = new HashMap();
         programmersActiveForSearching = new ArrayList<String>();
-      
-        // initialized with a list of inactive programmers from the database
-         inactiveProgrammers = getInactiveProgrammers();
         
 
         ///set the offline status
@@ -187,7 +189,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         editModeDefaultTextColor = labelEditMode.getForeground();
 
 
-        informationLabel.setText("");
+        informationLabel.setText("v." + version);
 
         // this sets the KeyboardFocusManger
         setKeyboardFocusManager(this);
@@ -349,7 +351,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1072, 600));
-        setPreferredSize(new java.awt.Dimension(1072, 600));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jPanel5.setMinimumSize(new java.awt.Dimension(1072, 500));
@@ -437,11 +438,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
         jPanelEdit.add(btnRevertChanges, gridBagConstraints);
 
+        informationLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         informationLabel.setText("Information Label");
+        informationLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 6;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 4, 2, 0);
         jPanelEdit.add(informationLabel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -731,8 +735,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         labelRecords.setPreferredSize(new java.awt.Dimension(61, 20));
 
         labelTimeLastUpdate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labelTimeLastUpdate.setText("Last updated: ");
+        labelTimeLastUpdate.setText("Last updated:");
         labelTimeLastUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        labelTimeLastUpdate.setMaximumSize(new java.awt.Dimension(67, 14));
+        labelTimeLastUpdate.setMinimumSize(new java.awt.Dimension(67, 14));
+        labelTimeLastUpdate.setPreferredSize(new java.awt.Dimension(67, 14));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -750,11 +757,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(3, 3, 3)
+                .addGap(5, 5, 5)
                 .addComponent(status)
-                .addGap(0, 0, 0)
-                .addComponent(labelTimeLastUpdate)
-                .addGap(0, 0, 0)
+                .addGap(2, 2, 2)
+                .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -834,7 +841,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         );
         addPanel_controlLayout.setVerticalGroup(
             addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
+            .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
@@ -1113,80 +1120,87 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         //create a combo box model
         DefaultComboBoxModel comboBoxSearchModel = new DefaultComboBoxModel();
         comboBoxValue.setModel(comboBoxSearchModel);
-
-        //the combobox values are loaded from tab class
-        Map comboBoxForSearchValue = tab.loadingDropdownList();
-
-
+        Map comboBoxForSearchValue = new HashMap();
         JTable table = tab.getTable();
-
-        for (int col = 0; col < table.getColumnCount(); col++) {
-
-            if (table.getColumnName(col).equalsIgnoreCase(colName)) {
-                ArrayList<Object> dropDownList = (ArrayList<Object>) comboBoxForSearchValue.get(col);
-                
-                if (colName.equalsIgnoreCase("programmer")){
-                    Collections.sort(dropDownList, new ProgrammerComparator());
-                    int listLength = dropDownList.size();
-                    for (int i = 0; i < listLength; i++)
-                    { 
-                        if (dropDownList.get(i) != null){
-                        String currentProgrammer = dropDownList.get(i).toString();
-                            if(inactiveProgrammers.contains(currentProgrammer))
-                            {
-                              dropDownList.add(i, SEPARATOR);
-                               break;
-                            }
-                        }
-                    } 
-                comboBoxValue.setRenderer(new ComboBoxRenderer());
-                comboBoxValue.addActionListener(new BlockComboListener(comboBoxValue));
-                } 
-
-                if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed") || colName.equalsIgnoreCase("app") ) {
-                    Collections.sort(dropDownList, new Comparator<Object>() {
-                        public int compare(Object o1, Object o2) {
-                            return o2.toString().toLowerCase().compareTo(o1.toString().toLowerCase());
-                        }
-
-                    });
-
-                } else if (colName.equalsIgnoreCase("rk")) {
-                    if (dropDownList.get(0) == "") {
-                        ArrayList<Object> list = new ArrayList<Object>();
-
-                        for (int i = 1; i < dropDownList.size(); i++) {
-                            list.add(dropDownList.get(i));
-                        }
-                        list.add(dropDownList.get(0));
-
-                        dropDownList = list;
+        Set uniqueSearchValues = new HashSet();
+        
+        //Corinne 7//19/2016
+        //the combobox values are loaded from tab class
+        //load the unique column values for each tab
+        for(Map.Entry<Integer, Tab> entry: tabs.entrySet()){
+            comboBoxForSearchValue = entry.getValue().loadingDropdownList();
+            
+            for (int col = 0; col < table.getColumnCount(); col++) {
+                if (table.getColumnName(col).equalsIgnoreCase(colName)) {
+                     ArrayList<Object> columnValues = (ArrayList<Object>)comboBoxForSearchValue.get(col);
+                     if (columnValues != null){
+                     uniqueSearchValues.addAll(columnValues);
                     }
                 }
-                if (colName.equalsIgnoreCase("app") || colName.equalsIgnoreCase("programmer")) {
-                    
-                           Collections.sort(dropDownList, new NullComparator()); 
-                        }
+            
+            }
+        }
+                
+        ArrayList<Object> dropDownList = new ArrayList<Object> (uniqueSearchValues); 
+        if (colName.equalsIgnoreCase("programmer")){
+            Collections.sort(dropDownList, new ProgrammerComparator());
+            int listLength = dropDownList.size();
+            for (int i = 0; i < listLength; i++)
+            { 
+                if (dropDownList.get(i) != null){
+                String currentProgrammer = dropDownList.get(i).toString();
+                    if(inactiveProgrammers.contains(currentProgrammer))
+                    {
+                      dropDownList.add(i, SEPARATOR);
+                       break;
+                    }
+                }
+            } 
+        comboBoxValue.setRenderer(new ComboBoxRenderer());
+        comboBoxValue.addActionListener(new BlockComboListener(comboBoxValue));
+        } 
 
-//                System.out.println(dropDownList);
-                comboBoxStartToSearch = false;
-                for (Object item : dropDownList) {
-
-                    comboBoxSearchModel.addElement(item);
-
+        if (colName.equalsIgnoreCase("dateOpened") || colName.equalsIgnoreCase("dateClosed") || colName.equalsIgnoreCase("app") ) {
+            Collections.sort(dropDownList, new Comparator<Object>() {
+                public int compare(Object o1, Object o2) {
+                    return o2.toString().toLowerCase().compareTo(o1.toString().toLowerCase());
                 }
 
+            });
+
+        } else if (colName.equalsIgnoreCase("rk")) {
+            if (dropDownList.get(0) == "") {
+                ArrayList<Object> list = new ArrayList<Object>();
+
+                for (int i = 1; i < dropDownList.size(); i++) {
+                    list.add(dropDownList.get(i));
+                }
+                list.add(dropDownList.get(0));
+
+                dropDownList = list;
             }
+        }
+        if (colName.equalsIgnoreCase("app") || colName.equalsIgnoreCase("programmer")) {
+
+                   Collections.sort(dropDownList, new NullComparator()); 
+                }
+
+//                System.out.println(dropDownList);
+        comboBoxStartToSearch = false;
+        for (Object item : dropDownList) {
+
+            comboBoxSearchModel.addElement(item);
+
 //        comboBoxForSearch.setSelectedItem("Enter " + colName + " here");
 //        comboBoxStartToSearch = true;
         }
     }
     
     public List<Object> getInactiveProgrammers(){
+        ArrayList <Object> inactiveProgrammers = new ArrayList<Object>();
         if (online) {
              String sql = "SELECT * FROM programmers WHERE status = 'INACTIVE'";
             ResultSet rs = null;
-            ArrayList <Object> inactiveProgrammers = new ArrayList<Object>();
             try {
 
                 DBConnection.close();
@@ -1201,9 +1215,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 LoggingAspect.afterThrown(e);
             
             }
-        }
-       
-        
+        }          
         return inactiveProgrammers;
     }
 
@@ -2634,7 +2646,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                informationLabel.setText("");
+                informationLabel.setText("v." + version);
                 searchInformationLabel.setText("");
             }
         });
