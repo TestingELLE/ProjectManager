@@ -10,12 +10,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Yi
+ * for insert and update
+ * after db transaction, issue will be set with the latest lastmodtime 
+ * 
  */
-public class ReferenceDAO implements AbstractDAO {
+public class ReferenceDAO implements AbstractDAO<Issue> {
     // database table information
     private final String DB_TABLE_NAME = "reference_issues";
     private final String COL_PK_ID = "ID";
@@ -166,6 +170,7 @@ public class ReferenceDAO implements AbstractDAO {
             }
         }
         DBConnection.close();
+        issue.setLastmodtime(get(issue.getId()).getLastmodtime());
         return successful;
     }
     
@@ -220,6 +225,8 @@ public class ReferenceDAO implements AbstractDAO {
             }
         }
         DBConnection.close();
+        //here, need to reset issue timestamp
+        issue.setLastmodtime(get(issue.getId()).getLastmodtime());
         return successful;
     }
     
@@ -332,52 +339,12 @@ public class ReferenceDAO implements AbstractDAO {
         }
         // finally close connection
         DBConnection.close();
+        
+        
         return updateSuccessful;
     }
 
-    public ArrayList<Issue> get(String tableName) {
-        
-        ArrayList<Issue> issues = new ArrayList<>();
-        ResultSet rs = null;
-        String sql = " SELECT * FROM " + DB_TABLE_NAME ;
-        
-//        if(tableName.equals("Other")){
-//            sql = "SELECT * FROM " + DB_TABLE_NAME 
-//               + " WHERE app != 'PM' and app != 'Analyster'"
-//               + " AND app != 'ELLEGUI' or app IS NULL";
-//        }
-//        else{
-//            sql = "SELECT * FROM " + DB_TABLE_NAME + " WHERE app = " + "'" 
-//            + tableName + "' ORDER BY case when dateClosed IS null then 1 else 0 end, dateClosed asc, ID ASC";
-//        }
-        
-        try {
-
-            DBConnection.close();
-            DBConnection.open();
-            rs = DBConnection.getStatement().executeQuery(sql);
-            while(rs.next()){
-                Issue issue = new Issue();
-                issue.setId(rs.getInt(COL_PK_ID));
-                issue.setTitle(rs.getString(COL_TITLE));
-                issue.setDescription(rs.getBytes(COL_DESCRIPTION));
-                issue.setProgrammer(rs.getString(COL_PROGRAMMER));
-                issue.setDateOpened(rs.getString(COL_DATE_OPENED));
-                issue.setLocked(rs.getString(COL_LOCKED));
-                issue.setLastmodtime(rs.getString(COL_LASTMODTIME));
-                issue.setIssueType("REFERENCE");
-                issues.add(issue);
-            }
-            
-            LoggingAspect.afterReturn("Loaded table " + tableName);
-        } 
-        catch (SQLException e) {
-            LoggingAspect.afterThrown(e);
-        }
-        
-        return issues;
-    }
-    
+   
     public Issue getSelectedRow(String tableName, String row) {
         
        
@@ -413,6 +380,68 @@ public class ReferenceDAO implements AbstractDAO {
         }
         
         return issue;
+    }
+    
+    
+
+    @Override
+    public boolean delete(int id) {
+
+        String sqlDelete = "DELETE FROM " + DB_TABLE_NAME
+                + " WHERE " + COL_PK_ID + " =" + id + ";";
+
+        try {
+
+            // delete records from database
+            DBConnection.close();
+            DBConnection.open();
+            DBConnection.getStatement().executeUpdate(sqlDelete);
+            LoggingAspect.afterReturn("Record" + id + " is Deleted");
+            return true;
+
+        } catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+            return false;
+        }
+    }
+
+
+    public List<Issue> get(String tabName) {
+        return getAll();
+    }
+
+    @Override
+    public List<Issue> getAll() {
+        ArrayList<Issue> issues = new ArrayList<>();
+        ResultSet rs = null;
+        String sql = " SELECT * FROM " + DB_TABLE_NAME ;
+        
+        
+        try {
+
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while(rs.next()){
+                Issue issue = new Issue();
+                issue.setId(rs.getInt(COL_PK_ID));
+                issue.setTitle(rs.getString(COL_TITLE));
+                issue.setDescription(rs.getBytes(COL_DESCRIPTION));
+                issue.setProgrammer(rs.getString(COL_PROGRAMMER));
+                issue.setDateOpened(rs.getString(COL_DATE_OPENED));
+                issue.setLocked(rs.getString(COL_LOCKED));
+                issue.setLastmodtime(rs.getString(COL_LASTMODTIME));
+                issue.setIssueType("REFERENCE");
+                issues.add(issue);
+            }
+            
+            LoggingAspect.afterReturn("Loaded table " + DB_TABLE_NAME);
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return issues;
     }
     
     

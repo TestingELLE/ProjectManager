@@ -87,7 +87,7 @@ public class AddNewAccountWindow extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Add new account");
+        jLabel3.setText("Add new user");
         jLabel3.setToolTipText("");
 
         userText.setText("userText");

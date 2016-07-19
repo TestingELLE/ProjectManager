@@ -15,16 +15,15 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author Yi
  */
 public class IdColumnRenderer extends DefaultTableCellRenderer {
-    private OfflineIssueManager mgr;
+    
     private static IdColumnRenderer instance = null;
     
-    protected IdColumnRenderer(OfflineIssueManager mgr) {
-        this.mgr = mgr;
-      
+    protected IdColumnRenderer() {
+       
    }
-   public static IdColumnRenderer getInstance(OfflineIssueManager mgr) {
+   public static IdColumnRenderer getInstance() {
       if(instance == null) {
-         instance = new IdColumnRenderer(mgr);
+         instance = new IdColumnRenderer();
       }
       return instance;
    }
@@ -42,12 +41,12 @@ public class IdColumnRenderer extends DefaultTableCellRenderer {
        
         if(isSelected) {
             component.setBackground(table.getSelectionBackground());
-            if (mgr.getIds().contains(id)) component.setForeground(Color.RED);
+            if (id <0 || id > 9000) component.setForeground(Color.RED);
             else component.setForeground(table.getForeground());
         }
         else {
             component.setBackground(table.getBackground());
-            if (mgr.getIds().contains(id)) component.setForeground(Color.RED);
+            if (id <0 || id > 9000) component.setForeground(Color.RED);
             else component.setForeground(table.getForeground());
         }
         
