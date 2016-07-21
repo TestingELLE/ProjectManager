@@ -1036,19 +1036,21 @@ public class IssueWindow extends JFrame {
         
         // remove this id from the openIssuesList and CustomIdList
         projectManager.getOpeningIssuesList().remove(table.getName() + oldID, this);
-        //projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
+        tab.getFilter().getCustomIdListFilter().remove((Object)oldID);
+        
+        int newID = issue.getId();
 
-        String newID = table.getName() + issue.getId();
+        String identifier = table.getName() + newID;
 
         // if issue is not open
-        if (!projectManager.getOpeningIssuesList().containsKey(newID)) {
-            projectManager.getOpeningIssuesList().put(newID, this);
-            //projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getId());
-
+        if (!projectManager.getOpeningIssuesList().containsKey(identifier)) {
+            projectManager.getOpeningIssuesList().put(identifier, this);
+            tab.getFilter().getCustomIdListFilter().add(newID);
+         
         } 
         // use the window with this issue already open
         else {
-            projectManager.getViewIssueWindowOf(newID).toFront();
+            projectManager.getViewIssueWindowOf(identifier).toFront();
             this.dispose();
         }
     }
