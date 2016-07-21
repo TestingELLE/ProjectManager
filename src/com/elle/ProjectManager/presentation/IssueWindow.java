@@ -1036,19 +1036,21 @@ public class IssueWindow extends JFrame {
         
         // remove this id from the openIssuesList and CustomIdList
         projectManager.getOpeningIssuesList().remove(table.getName() + oldID, this);
-        //projectManager.getSelectedTabCustomIdList(table.getName()).delete(issue.getId());
+        tab.getFilter().getCustomIdListFilter().remove((Object)oldID);
+        
+        int newID = issue.getId();
 
-        String newID = table.getName() + issue.getId();
+        String identifier = table.getName() + newID;
 
         // if issue is not open
-        if (!projectManager.getOpeningIssuesList().containsKey(newID)) {
-            projectManager.getOpeningIssuesList().put(newID, this);
-            //projectManager.getSelectedTabCustomIdList(table.getName()).add(issue.getId());
-
+        if (!projectManager.getOpeningIssuesList().containsKey(identifier)) {
+            projectManager.getOpeningIssuesList().put(identifier, this);
+            tab.getFilter().getCustomIdListFilter().add(newID);
+         
         } 
         // use the window with this issue already open
         else {
-            projectManager.getViewIssueWindowOf(newID).toFront();
+            projectManager.getViewIssueWindowOf(identifier).toFront();
             this.dispose();
         }
     }
@@ -1150,7 +1152,10 @@ public class IssueWindow extends JFrame {
             row--;
             
             int newId = (int)table.getValueAt(row, 0);
-            issue = dataManager.getIssueEntity(newId);
+            if (table.getName().equals("References")) 
+                issue = dataManager.getReferenceEntity(newId);
+            else
+                issue = dataManager.getIssueEntity(newId);
             
             updateCustomIdList(oldId);
                 
@@ -1178,6 +1183,7 @@ public class IssueWindow extends JFrame {
                 if (table.getValueAt(i, 0).toString().equals(Integer.toString(issue.getId()))) {
                     row = i;
                     rowFound = true;
+                    
                 }
             }
         }
@@ -1194,13 +1200,17 @@ public class IssueWindow extends JFrame {
             row++;
             
             int newId = (int)table.getValueAt(row, 0);
-            issue = dataManager.getIssueEntity(newId);
+            if (table.getName().equals("References")) 
+                issue = dataManager.getReferenceEntity(newId);
+            else
+                issue = dataManager.getIssueEntity(newId);
             
             updateCustomIdList(oldId);
             
             setComponentValuesFromIssue(this);
             
             table.setRowSelectionInterval(row, row);
+            
             
         }
     }//GEN-LAST:event_BtnNextActionPerformed
@@ -1828,8 +1838,12 @@ public class IssueWindow extends JFrame {
         if (addIssueMode) {
             projectManager.setAddIssueWindowShow(false);
         } else {
-            projectManager.getOpeningIssuesList().remove(table.getName()+ originalId, this); 
-            
+            //if it is offline update
+            if (issue.getId() == originalId + 9000)
+                projectManager.getOpeningIssuesList().remove(table.getName()+ originalId, this); 
+            else
+                projectManager.getOpeningIssuesList().remove(table.getName()+ issue.getId(), this); 
+            System.out.println(projectManager.getOpeningIssuesList().keySet());
             //convert id to Object ,otherwise, remove uses id as index.
             tab.getFilter().getCustomIdListFilter().remove((Object) issue.getId());
         }

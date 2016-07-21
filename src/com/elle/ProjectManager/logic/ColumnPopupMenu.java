@@ -147,6 +147,8 @@ public class ColumnPopupMenu extends JPopupMenu {
      */
     public void showPopupMenu(MouseEvent e) {
 
+        //each time, load all check box items to update
+        loadAllCheckBoxItems();
         // Determine the header and column model that was clicked
         JTableHeader header = (JTableHeader) (e.getSource());
         TableColumnModel colModel = header.getTable().getColumnModel();
