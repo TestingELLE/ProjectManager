@@ -68,6 +68,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private String database;
     private String server;
 
+    //timestampe 
+    private String lastAccessDbTime;
 
     // components
     private static ProjectManagerWindow instance;
@@ -221,6 +223,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // authorize user for this component
         Authorization.authorize(this);
         
+       
     
         //if there are conflicted issues and is in online mode
         //open reconcile window in the dispatch thread , thus not delaying the main window
@@ -325,6 +328,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemManageALs = new javax.swing.JMenuItem();
         menuItemDeleteRecord = new javax.swing.JMenuItem();
         menuItemLoadDataFromTXT = new javax.swing.JMenuItem();
+        menuItemNewDataInquiry = new javax.swing.JMenuItem();
         menuView = new javax.swing.JMenu();
         menuItemLogChkBx = new javax.swing.JCheckBoxMenuItem();
         menuItemSQLCmdChkBx = new javax.swing.JCheckBoxMenuItem();
@@ -737,9 +741,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         labelTimeLastUpdate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         labelTimeLastUpdate.setText("Last updated:");
         labelTimeLastUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        labelTimeLastUpdate.setMaximumSize(new java.awt.Dimension(67, 14));
-        labelTimeLastUpdate.setMinimumSize(new java.awt.Dimension(67, 14));
-        labelTimeLastUpdate.setPreferredSize(new java.awt.Dimension(67, 14));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -760,7 +761,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addGap(5, 5, 5)
                 .addComponent(status)
                 .addGap(2, 2, 2)
-                .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(labelTimeLastUpdate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -943,6 +944,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuEdit.add(menuItemLoadDataFromTXT);
+
+        menuItemNewDataInquiry.setText("New Data Inquiry");
+        menuItemNewDataInquiry.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemNewDataInquiryActionPerformed(evt);
+            }
+        });
+        menuEdit.add(menuItemNewDataInquiry);
 
         menuBar.add(menuEdit);
 
@@ -2002,6 +2011,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
        
         scrolldownTables();
+        
         LoggingAspect.afterReturn("All tabs are reloaded.");
 
     }
@@ -2330,6 +2340,49 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
   
     }//GEN-LAST:event_menuItemExportIssueToReferenceActionPerformed
 
+    private void menuItemNewDataInquiryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemNewDataInquiryActionPerformed
+        Map<String, ArrayList<Integer>> issueChanges = dataManager.checkIssueUpdates();
+        Map<String, ArrayList<Integer>> refChanges = dataManager.checkRefUpdates();
+        String info = "No new updates from database. ";
+        if (isChanged(issueChanges ) || isChanged(refChanges)) {
+            reloadAllData();
+            info = compileChanges(issueChanges, "issues");
+            info = info + compileChanges(refChanges, "references");
+        }
+        
+        JOptionPane.showMessageDialog(this, info, "Check Updates",
+        JOptionPane.INFORMATION_MESSAGE);
+  
+    }//GEN-LAST:event_menuItemNewDataInquiryActionPerformed
+
+   private boolean isChanged(Map<String, ArrayList<Integer>> changes) {
+       for(ArrayList<Integer> temp: changes.values()) {
+           if (temp.size() > 0) return true;
+       }
+       
+       return false;
+   }
+   
+   private String compileChanges(Map<String, ArrayList<Integer>> changes, String tableName) {
+       if (isChanged(changes)) {
+           StringBuilder info = new StringBuilder("Table: " + tableName);
+           info.append(System.getProperty("line.separator"));
+           if(changes.get("update").size() > 0) {
+               info.append("\tupdated : " + changes.get("update").toString());
+               info.append(System.getProperty("line.separator"));
+           }
+           if(changes.get("delete").size() > 0) {
+               info.append("\tdeleted : " + changes.get("delete").toString());
+               info.append(System.getProperty("line.separator"));
+           }
+           
+           return info.toString();
+       }
+       else {
+           return "";
+       }
+   }
+    
    private Issue copyIssueToRef(Issue issue) {
        Issue ref = new Issue();
        ref.setId(-1);
@@ -2813,6 +2866,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemManageALs;
     private javax.swing.JMenuItem menuItemManageDBs;
     private javax.swing.JMenuItem menuItemMoveSeletedRowsToEnd;
+    private javax.swing.JMenuItem menuItemNewDataInquiry;
     private javax.swing.JCheckBoxMenuItem menuItemOfflineMode;
     private javax.swing.JMenuItem menuItemPrintDisplay;
     private javax.swing.JMenuItem menuItemPrintGUI;

@@ -12,9 +12,11 @@ import com.elle.ProjectManager.logic.ITableConstants;
 import com.elle.ProjectManager.logic.LoggingAspect;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -30,6 +32,10 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     protected Mode opMode;
     protected String tableName;
     protected boolean offlineEnabled;
+    
+    //keep the server access time to monitor new updates
+    protected String lastAccessTime;
+    protected ArrayList<Integer> clientChanges; 
    
     
     public DBTableController() {
@@ -38,7 +44,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
         conflictItems = new ArrayList();
         opMode = Mode.ONLINE;
         offlineEnabled = false;
-        
+        clientChanges = new ArrayList();
     }
     
     
@@ -47,8 +53,11 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     */
     private boolean insertOnline(T item) {
         if(onlineDAO.insert(item)) {
-            onlineItems.put(item.getId(), item);   
-            LoggingAspect.afterReturn("New record #" + item.getId() + " is saved locally.");
+            onlineItems.put(item.getId(), item);  
+            //keep record of clientChanges
+            clientChanges.add(item.getId());
+            LoggingAspect.afterReturn("New record #" + item.getId() + " is inserted into table " + tableName + ".");
+            
             return true;
                 
         }
@@ -58,6 +67,8 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     private boolean updateOnline(T item) {
         if(onlineDAO.update(item)) {
             onlineItems.put(item.getId(), item);
+            //keep record of clientChanges
+            clientChanges.add(item.getId());
             LoggingAspect.afterReturn("Record #" + item.getId() + " is updated in table " + tableName + ".");
             return true;
         }
@@ -83,7 +94,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     private boolean insertOffline(T item) {
         if(offlineDAO.insert(item)) {
             offlineItems.put(item.getId(), item);   
-            LoggingAspect.afterReturn("New record #" + item.getId() + " is inserted into table " + tableName + ".");
+            LoggingAspect.afterReturn("New record #" + item.getId() + " is saved locally.");
             return true;
                 
         }
@@ -115,7 +126,11 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     //populate data from db and local folder
     public void getAll() {
         if (opMode == Mode.ONLINE) {
-             List<T> items =  onlineDAO.getAll();
+            List<T> items =  onlineDAO.getAll();
+            //record the access time and clear the clientChanges
+            lastAccessTime = onlineDAO.getCurrentServerTimeStamp();
+            clientChanges = new ArrayList();
+            
             for(T item: items) {
                 onlineItems.put(item.getId(), item);
             }
@@ -134,6 +149,113 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
         
         System.out.println("Table " + tableName +" is loaded from database.");
     }
+    
+    //get update from database
+    public Map<String, ArrayList<Integer>> getUpdateFromDb() {
+        Map<String, ArrayList<Integer>> changes = new HashMap();
+        
+        //for keeping the actual changes
+        ArrayList<Integer> changedList = new ArrayList();
+        ArrayList<Integer> deletions = new ArrayList();
+        
+        if (opMode == Mode.ONLINE) {
+            
+            //get update items
+            ArrayList<T> updatedItems = (ArrayList<T>) onlineDAO.getUpdate(lastAccessTime);
+            
+            //reset the lastAccessTime
+            lastAccessTime = onlineDAO.getCurrentServerTimeStamp();
+            
+            //if there are updated items after the timestamp
+            if (updatedItems.size() > 0)  {
+                
+                for(T item : updatedItems) {
+                    //if it is in localChanges
+                    if (clientChanges.contains(item.getId())) {
+                        int id = item.getId();
+                        T local = onlineItems.get(id);
+                        
+                        // if updated copy is newer, update it; else pass
+                        if (checkConflict(local, item)) {
+                            onlineItems.put(id,item);
+                            changedList.add(id);
+                            LoggingAspect.addLogMsgWthDate("Record #" + id + " is updated since" + lastAccessTime + ".");
+                            
+                            
+                        }
+                     
+                    }
+                    //if it is not in clientChanges
+                    else{
+                        onlineItems.put(item.getId(), item);
+                        LoggingAspect.addLogMsgWthDate("Record #" + item.getId() + " is updated since" + lastAccessTime + ".");
+                        changedList.add(item.getId());
+                    }
+                     
+                }
+               
+            }
+            
+            //Now start deletion checkings
+            
+            int dbCnt = onlineDAO.getTotalCnt();
+            if (dbCnt == 0 ) 
+                LoggingAspect.addLogMsg("Error retreiving the correct rows count from database, skip checking deletions.");
+            
+            else {
+                if (onlineItems.size() == dbCnt) 
+                    LoggingAspect.addLogMsg("No deletions since " + lastAccessTime + ".");
+                
+                else {
+                    //deletions happened online
+                    if (onlineItems.size() > dbCnt) {
+                        ArrayList<Integer> dbIDs = (ArrayList<Integer>) onlineDAO.getIDs();
+                        deletions = checkDeletions(dbIDs);
+                        
+                        
+                        for(Integer id : deletions) {
+                            onlineItems.remove(id);
+                            LoggingAspect.addLogMsgWthDate("Record #" + id + " is deleted since " + lastAccessTime + ".");
+                            
+                        }
+                        
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            
+            //reset clientChanges
+            clientChanges = new ArrayList();
+            
+            
+            
+        }
+    
+        else{
+            LoggingAspect.addLogMsgWthDate("Offline mode do not support updating from database.");
+        }
+        
+        changes.put("update", changedList);
+        changes.put("delete", deletions);
+        return changes;
+    }
+    
+    private ArrayList<Integer> checkDeletions(ArrayList<Integer> dbIDs) {
+        //convert dbIDs to hashset, this is for performance in finding id.
+        Set idSet = new HashSet(dbIDs);
+        ArrayList<Integer> deletions = new ArrayList();
+        for(Integer id : onlineItems.keySet()) {
+            if (!idSet.contains(id)) {
+                
+                deletions.add(id);
+            }
+        }
+        return deletions;
+    }
+    
     
    
     public T get(int id) {
@@ -223,6 +345,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     //if with conflicts, return true
     //no conflicts, return false;
     //this function can be implemented differently for different tables, eg lastmodtime
+    // in terms of timestamp , if db copy is newer, return true, else, return false;
     public abstract boolean checkConflict(T onlineItem, T offlineItem);
     
     
@@ -366,6 +489,14 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
 
     public void setConflictItems(ArrayList<ConflictItemPair<T>> conflictItems) {
         this.conflictItems = conflictItems;
+    }
+
+    public String getLastAccessTime() {
+        return lastAccessTime;
+    }
+
+    public void setLastAccessTime(String lastAccessTime) {
+        this.lastAccessTime = lastAccessTime;
     }
     
     
