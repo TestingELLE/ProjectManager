@@ -335,7 +335,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuitemViewOneIssue = new javax.swing.JMenuItem();
         menuItemViewSplashScreen = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
-        menuItemReloadSelectedData = new javax.swing.JMenuItem();
         menuItemReloadData = new javax.swing.JMenuItem();
         menuItemReloadAllData = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -995,15 +994,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         menuTools.setText("Tools");
 
-        menuItemReloadSelectedData.setText("Reload Selected data");
-        menuItemReloadSelectedData.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemReloadSelectedDataActionPerformed(evt);
-            }
-        });
-        menuTools.add(menuItemReloadSelectedData);
-
-        menuItemReloadData.setText("Reload Tab data");
+        menuItemReloadData.setText("Force Reload Tab data");
         menuItemReloadData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemReloadDataActionPerformed(evt);
@@ -1011,7 +1002,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuTools.add(menuItemReloadData);
 
-        menuItemReloadAllData.setText("Reload ALL data");
+        menuItemReloadAllData.setText("Force Reload ALL data");
         menuItemReloadAllData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemReloadAllDataActionPerformed(evt);
@@ -2078,15 +2069,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
     }//GEN-LAST:event_menuItemDeleteRecordActionPerformed
 
-    private void menuItemReloadSelectedDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadSelectedDataActionPerformed
-
-       
-        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
-        currentTab.reloadSelectedData();
-
-        
-    }//GEN-LAST:event_menuItemReloadSelectedDataActionPerformed
-
     private void menuItemSyncLocalDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSyncLocalDataActionPerformed
         // Sync local data
         LoggingAspect.addLogMsgWthDate("Preparing to sync local data to db server.....");
@@ -2873,7 +2855,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemReconcileConflict;
     private javax.swing.JMenuItem menuItemReloadAllData;
     private javax.swing.JMenuItem menuItemReloadData;
-    private javax.swing.JMenuItem menuItemReloadSelectedData;
     private javax.swing.JMenuItem menuItemRepBugSugg;
     private javax.swing.JCheckBoxMenuItem menuItemSQLCmdChkBx;
     private javax.swing.JMenuItem menuItemSaveFile;

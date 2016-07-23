@@ -178,17 +178,9 @@
             <Property name="text" type="java.lang.String" value="Tools"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="menuItemReloadSelectedData">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Reload Selected data"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemReloadSelectedDataActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemReloadData">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Reload Tab data"/>
+                <Property name="text" type="java.lang.String" value="Force Reload Tab data"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemReloadDataActionPerformed"/>
@@ -196,7 +188,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemReloadAllData">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Reload ALL data"/>
+                <Property name="text" type="java.lang.String" value="Force Reload ALL data"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemReloadAllDataActionPerformed"/>
