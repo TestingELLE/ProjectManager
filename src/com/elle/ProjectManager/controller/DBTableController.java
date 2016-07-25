@@ -125,6 +125,11 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
     
     //populate data from db and local folder
     public void getAll() {
+        //reset data
+        onlineItems = new HashMap();
+        offlineItems = new HashMap();
+        
+        //get data
         if (opMode == Mode.ONLINE) {
             List<T> items =  onlineDAO.getAll();
             //record the access time and clear the clientChanges
@@ -176,7 +181,7 @@ public abstract class DBTableController<T extends DbEntity> implements ITableCon
                         T local = onlineItems.get(id);
                         
                         // if updated copy is newer, update it; else pass
-                        if (checkConflict(local, item)) {
+                        if (checkConflict(item, local)) {
                             onlineItems.put(id,item);
                             changedList.add(id);
                             LoggingAspect.addLogMsgWthDate("Record #" + id + " is updated since" + lastAccessTime + ".");

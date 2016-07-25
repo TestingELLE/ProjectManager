@@ -38,6 +38,19 @@ public class PMDataManager{
         instance = this;
     }
     
+    //hard reload all data
+    public void hardReload() {
+        issueController.getAll();
+        refController.getAll();
+    }
+    
+    //hard reload table
+    public void hardReload(String tableName) {
+        if (tableName.equals("References")) refController.getAll();
+        else issueController.getAll();
+      
+    }
+    
     public void setOpMode(boolean online) {
         if(online) {
             issueController.setOpMode(Mode.ONLINE);

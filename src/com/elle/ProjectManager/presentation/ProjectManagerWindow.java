@@ -343,6 +343,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemCompIssues = new javax.swing.JMenuItem();
         menuItemBackup = new javax.swing.JMenuItem();
         menuItemSyncLocalData = new javax.swing.JMenuItem();
+        menuItemSoftReload = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         menuItemReconcileConflict = new javax.swing.JMenuItem();
         menuItemExportIssueToReference = new javax.swing.JMenuItem();
@@ -1050,6 +1051,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemSyncLocalData);
+
+        menuItemSoftReload.setText("Reload Data Locally");
+        menuItemSoftReload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSoftReloadActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemSoftReload);
         menuTools.add(jSeparator2);
 
         menuItemReconcileConflict.setText("Reconcile Conflict Issue");
@@ -1625,7 +1634,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void menuItemReloadDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadDataActionPerformed
      
+        
         Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        //hard reload tab data
+        String tableName = currentTab.getTable().getName();
+        dataManager.hardReload(tableName);
+        
+        //reload in JTable
         currentTab.reloadTable();
         //scroll down the table
         JTable table = currentTab.getTable();
@@ -1987,7 +2002,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemBackupActionPerformed
 
     private void menuItemReloadAllDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadAllDataActionPerformed
-        
+       
+       //hard reload all data
+       dataManager.hardReload();
        reloadAllData();
        
 
@@ -2336,6 +2353,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         JOptionPane.INFORMATION_MESSAGE);
   
     }//GEN-LAST:event_menuItemNewDataInquiryActionPerformed
+
+    private void menuItemSoftReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSoftReloadActionPerformed
+        reloadAllData();
+    }//GEN-LAST:event_menuItemSoftReloadActionPerformed
 
    private boolean isChanged(Map<String, ArrayList<Integer>> changes) {
        for(ArrayList<Integer> temp: changes.values()) {
@@ -2858,6 +2879,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemRepBugSugg;
     private javax.swing.JCheckBoxMenuItem menuItemSQLCmdChkBx;
     private javax.swing.JMenuItem menuItemSaveFile;
+    private javax.swing.JMenuItem menuItemSoftReload;
     private javax.swing.JMenuItem menuItemSyncLocalData;
     private javax.swing.JMenuItem menuItemTurnEditModeOff;
     private javax.swing.JMenuItem menuItemVersion;
