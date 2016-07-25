@@ -171,6 +171,27 @@ public class OfflineIssueDAO implements AbstractDAO<Issue>{
         }
         return null;
     }
+
+    //following functions no implementation as not required.
+    @Override
+    public String getCurrentServerTimeStamp() {
+        return null;
+    }
+
+    @Override
+    public List<Issue> getUpdate(String timestamp) {
+        return null;
+    }
+
+    @Override
+    public List<Integer> getIDs() {
+        return null;
+    }
+
+    @Override
+    public int getTotalCnt() {
+        return 0;
+    }
     
     
 }

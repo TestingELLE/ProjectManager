@@ -68,6 +68,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private String database;
     private String server;
 
+    //timestampe 
+    private String lastAccessDbTime;
 
     // components
     private static ProjectManagerWindow instance;
@@ -221,6 +223,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         // authorize user for this component
         Authorization.authorize(this);
         
+       
     
         //if there are conflicted issues and is in online mode
         //open reconcile window in the dispatch thread , thus not delaying the main window
@@ -325,13 +328,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemManageALs = new javax.swing.JMenuItem();
         menuItemDeleteRecord = new javax.swing.JMenuItem();
         menuItemLoadDataFromTXT = new javax.swing.JMenuItem();
+        menuItemNewDataInquiry = new javax.swing.JMenuItem();
         menuView = new javax.swing.JMenu();
         menuItemLogChkBx = new javax.swing.JCheckBoxMenuItem();
         menuItemSQLCmdChkBx = new javax.swing.JCheckBoxMenuItem();
         menuitemViewOneIssue = new javax.swing.JMenuItem();
         menuItemViewSplashScreen = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
-        menuItemReloadSelectedData = new javax.swing.JMenuItem();
         menuItemReloadData = new javax.swing.JMenuItem();
         menuItemReloadAllData = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -340,6 +343,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemCompIssues = new javax.swing.JMenuItem();
         menuItemBackup = new javax.swing.JMenuItem();
         menuItemSyncLocalData = new javax.swing.JMenuItem();
+        menuItemSoftReload = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         menuItemReconcileConflict = new javax.swing.JMenuItem();
         menuItemExportIssueToReference = new javax.swing.JMenuItem();
@@ -737,9 +741,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         labelTimeLastUpdate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         labelTimeLastUpdate.setText("Last updated:");
         labelTimeLastUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        labelTimeLastUpdate.setMaximumSize(new java.awt.Dimension(67, 14));
-        labelTimeLastUpdate.setMinimumSize(new java.awt.Dimension(67, 14));
-        labelTimeLastUpdate.setPreferredSize(new java.awt.Dimension(67, 14));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -760,7 +761,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 .addGap(5, 5, 5)
                 .addComponent(status)
                 .addGap(2, 2, 2)
-                .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(labelTimeLastUpdate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -944,6 +945,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuEdit.add(menuItemLoadDataFromTXT);
 
+        menuItemNewDataInquiry.setText("New Data Inquiry");
+        menuItemNewDataInquiry.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemNewDataInquiryActionPerformed(evt);
+            }
+        });
+        menuEdit.add(menuItemNewDataInquiry);
+
         menuBar.add(menuEdit);
 
         menuView.setText("View");
@@ -986,15 +995,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         menuTools.setText("Tools");
 
-        menuItemReloadSelectedData.setText("Reload Selected data");
-        menuItemReloadSelectedData.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemReloadSelectedDataActionPerformed(evt);
-            }
-        });
-        menuTools.add(menuItemReloadSelectedData);
-
-        menuItemReloadData.setText("Reload Tab data");
+        menuItemReloadData.setText("Force Reload Tab data");
         menuItemReloadData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemReloadDataActionPerformed(evt);
@@ -1002,7 +1003,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuTools.add(menuItemReloadData);
 
-        menuItemReloadAllData.setText("Reload ALL data");
+        menuItemReloadAllData.setText("Force Reload ALL data");
         menuItemReloadAllData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemReloadAllDataActionPerformed(evt);
@@ -1050,6 +1051,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemSyncLocalData);
+
+        menuItemSoftReload.setText("Reload Data Locally");
+        menuItemSoftReload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSoftReloadActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemSoftReload);
         menuTools.add(jSeparator2);
 
         menuItemReconcileConflict.setText("Reconcile Conflict Issue");
@@ -1625,7 +1634,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     private void menuItemReloadDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadDataActionPerformed
      
+        
         Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        //hard reload tab data
+        String tableName = currentTab.getTable().getName();
+        dataManager.hardReload(tableName);
+        
+        //reload in JTable
         currentTab.reloadTable();
         //scroll down the table
         JTable table = currentTab.getTable();
@@ -1987,7 +2002,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemBackupActionPerformed
 
     private void menuItemReloadAllDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadAllDataActionPerformed
-        
+       
+       //hard reload all data
+       dataManager.hardReload();
        reloadAllData();
        
 
@@ -2002,6 +2019,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
        
         scrolldownTables();
+        
         LoggingAspect.afterReturn("All tabs are reloaded.");
 
     }
@@ -2067,15 +2085,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             // no rows are selected
         }
     }//GEN-LAST:event_menuItemDeleteRecordActionPerformed
-
-    private void menuItemReloadSelectedDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReloadSelectedDataActionPerformed
-
-       
-        Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
-        currentTab.reloadSelectedData();
-
-        
-    }//GEN-LAST:event_menuItemReloadSelectedDataActionPerformed
 
     private void menuItemSyncLocalDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSyncLocalDataActionPerformed
         // Sync local data
@@ -2330,6 +2339,53 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
   
     }//GEN-LAST:event_menuItemExportIssueToReferenceActionPerformed
 
+    private void menuItemNewDataInquiryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemNewDataInquiryActionPerformed
+        Map<String, ArrayList<Integer>> issueChanges = dataManager.checkIssueUpdates();
+        Map<String, ArrayList<Integer>> refChanges = dataManager.checkRefUpdates();
+        String info = "No new updates from database. ";
+        if (isChanged(issueChanges ) || isChanged(refChanges)) {
+            reloadAllData();
+            info = compileChanges(issueChanges, "issues");
+            info = info + compileChanges(refChanges, "references");
+        }
+        
+        JOptionPane.showMessageDialog(this, info, "Check Updates",
+        JOptionPane.INFORMATION_MESSAGE);
+  
+    }//GEN-LAST:event_menuItemNewDataInquiryActionPerformed
+
+    private void menuItemSoftReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSoftReloadActionPerformed
+        reloadAllData();
+    }//GEN-LAST:event_menuItemSoftReloadActionPerformed
+
+   private boolean isChanged(Map<String, ArrayList<Integer>> changes) {
+       for(ArrayList<Integer> temp: changes.values()) {
+           if (temp.size() > 0) return true;
+       }
+       
+       return false;
+   }
+   
+   private String compileChanges(Map<String, ArrayList<Integer>> changes, String tableName) {
+       if (isChanged(changes)) {
+           StringBuilder info = new StringBuilder("Table: " + tableName);
+           info.append(System.getProperty("line.separator"));
+           if(changes.get("update").size() > 0) {
+               info.append("\tupdated : " + changes.get("update").toString());
+               info.append(System.getProperty("line.separator"));
+           }
+           if(changes.get("delete").size() > 0) {
+               info.append("\tdeleted : " + changes.get("delete").toString());
+               info.append(System.getProperty("line.separator"));
+           }
+           
+           return info.toString();
+       }
+       else {
+           return "";
+       }
+   }
+    
    private Issue copyIssueToRef(Issue issue) {
        Issue ref = new Issue();
        ref.setId(-1);
@@ -2813,16 +2869,17 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemManageALs;
     private javax.swing.JMenuItem menuItemManageDBs;
     private javax.swing.JMenuItem menuItemMoveSeletedRowsToEnd;
+    private javax.swing.JMenuItem menuItemNewDataInquiry;
     private javax.swing.JCheckBoxMenuItem menuItemOfflineMode;
     private javax.swing.JMenuItem menuItemPrintDisplay;
     private javax.swing.JMenuItem menuItemPrintGUI;
     private javax.swing.JMenuItem menuItemReconcileConflict;
     private javax.swing.JMenuItem menuItemReloadAllData;
     private javax.swing.JMenuItem menuItemReloadData;
-    private javax.swing.JMenuItem menuItemReloadSelectedData;
     private javax.swing.JMenuItem menuItemRepBugSugg;
     private javax.swing.JCheckBoxMenuItem menuItemSQLCmdChkBx;
     private javax.swing.JMenuItem menuItemSaveFile;
+    private javax.swing.JMenuItem menuItemSoftReload;
     private javax.swing.JMenuItem menuItemSyncLocalData;
     private javax.swing.JMenuItem menuItemTurnEditModeOff;
     private javax.swing.JMenuItem menuItemVersion;
