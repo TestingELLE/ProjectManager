@@ -382,6 +382,30 @@ public class ReferenceDAO implements AbstractDAO<Issue> {
         return issue;
     }
     
+    public String getCurrentServerTimeStamp(){
+        String sql = " SELECT current_timestamp";
+        ResultSet rs = null;
+        String timeStamp = null;
+        
+        try {
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while (rs.next()) {
+                timeStamp = rs.getString(1);
+            }
+            
+            LoggingAspect.addLogMsg("The latest loading time for table " + DB_TABLE_NAME + " is " + timeStamp);
+        }
+        
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+            
+        }
+        
+        return timeStamp;
+        
+    }
     
 
     @Override
@@ -443,7 +467,96 @@ public class ReferenceDAO implements AbstractDAO<Issue> {
         
         return issues;
     }
-    
+
+    @Override
+    public List<Issue> getUpdate(String timestamp) {
+       
+        ArrayList<Issue> issues = new ArrayList<>();
+        ResultSet rs = null;
+        String sql = " SELECT * FROM " + DB_TABLE_NAME +
+                " WHERE " + COL_LASTMODTIME + ">" + "'" + timestamp + "'";
+        
+        
+        try {
+
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while(rs.next()){
+                Issue issue = new Issue();
+                issue.setId(rs.getInt(COL_PK_ID));
+                issue.setTitle(rs.getString(COL_TITLE));
+                issue.setDescription(rs.getBytes(COL_DESCRIPTION));
+                issue.setProgrammer(rs.getString(COL_PROGRAMMER));
+                issue.setDateOpened(rs.getString(COL_DATE_OPENED));
+                issue.setLocked(rs.getString(COL_LOCKED));
+                issue.setLastmodtime(rs.getString(COL_LASTMODTIME));
+                issue.setIssueType("REFERENCE");
+                issues.add(issue);
+            }
+            if (issues.size() > 0)
+                LoggingAspect.afterReturn("Loaded updates from " + DB_TABLE_NAME);
+
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return issues;
+    }
+    @Override
+    public List<Integer> getIDs() {
+        ArrayList<Integer> ids = new ArrayList<>();
+        ResultSet rs = null;
+        String sql = " SELECT " + COL_PK_ID +  " FROM " + DB_TABLE_NAME ;
+              
+       
+        try {
+            
+            
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while(rs.next()){
+                ids.add(rs.getInt(COL_PK_ID));
+                
+            }
+            
+        } 
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+        }
+        
+        return ids;
+        
+    }
+
+    @Override
+    public int getTotalCnt() {
+        String sql = "SELECT COUNT(*) FROM " + DB_TABLE_NAME;
+        ResultSet rs = null;
+        int cnt = 0;
+        
+        try {
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while (rs.next()) {
+                cnt = rs.getInt(1);
+            }
+            
+        }
+        
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+            
+        }
+        
+        return cnt;
+        
+        
+    }
+
     
     
     

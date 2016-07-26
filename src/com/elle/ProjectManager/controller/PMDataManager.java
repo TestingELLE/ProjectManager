@@ -9,8 +9,10 @@ import com.elle.ProjectManager.entities.AccessLevel;
 import com.elle.ProjectManager.entities.Issue;
 import com.elle.ProjectManager.logic.ConflictItemPair;
 import com.elle.ProjectManager.logic.IssueConverter;
+import com.elle.ProjectManager.logic.LoggingAspect;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -34,6 +36,19 @@ public class PMDataManager{
         issueConverter = new IssueConverter();
         
         instance = this;
+    }
+    
+    //hard reload all data
+    public void hardReload() {
+        issueController.getAll();
+        refController.getAll();
+    }
+    
+    //hard reload table
+    public void hardReload(String tableName) {
+        if (tableName.equals("References")) refController.getAll();
+        else issueController.getAll();
+      
     }
     
     public void setOpMode(boolean online) {
@@ -228,6 +243,24 @@ public class PMDataManager{
     public void syncLocalData() {
         issueController.syncOfflineItems();
         refController.syncOfflineItems();
+    }
+    
+    public Map<String, ArrayList<Integer>> checkIssueUpdates() {
+        LoggingAspect.addLogMsg("Start to check update for table issues : ");
+        Map<String, ArrayList<Integer>> issueChanges = issueController.getUpdateFromDb();
+        LoggingAspect.addLogMsg("Check update for table issues done . ");
+        
+        return issueChanges;
+    }
+    
+    public Map<String, ArrayList<Integer>> checkRefUpdates() {
+    
+        LoggingAspect.addLogMsg("Start to check update for table references : ");
+        Map<String, ArrayList<Integer>> refChanges =refController.getUpdateFromDb();
+        LoggingAspect.addLogMsg("Check update for table references done. ");
+        
+        return refChanges;
+        
     }
     
     

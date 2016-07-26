@@ -12,12 +12,10 @@ import com.elle.ProjectManager.database.DBConnection;
 import com.elle.ProjectManager.database.Database;
 import com.elle.ProjectManager.database.Server;
 import static com.elle.ProjectManager.presentation.LogWindow.HYPHENS;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -398,7 +396,7 @@ public class LoginWindow extends JFrame {
             // create an projectManager object
            projectManager = new ProjectManagerWindow(userName, true);
            
-           projectManager.setUserName(userName.substring(7));
+           projectManager.setUserName(userName);
             // pass the log window to projectManager
            projectManager.setLogWindow(logWindow);
 

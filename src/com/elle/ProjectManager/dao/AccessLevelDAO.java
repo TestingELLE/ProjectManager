@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * AccessLevelDAO
@@ -265,6 +266,51 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
         
         return accessLevel;
         
+    }
+
+    
+    @Override
+    public String getCurrentServerTimeStamp() {
+        String sql = " SELECT current_timestamp";
+        ResultSet rs = null;
+        String timeStamp = null;
+        
+        try {
+            DBConnection.close();
+            DBConnection.open();
+            rs = DBConnection.getStatement().executeQuery(sql);
+            while (rs.next()) {
+                timeStamp = rs.getString(1);
+            }
+            
+            LoggingAspect.addLogMsg("The latest loading time for table " + DB_TABLE_NAME + " is " + timeStamp);
+        }
+        
+        catch (SQLException e) {
+            LoggingAspect.afterThrown(e);
+            
+        }
+        
+        return timeStamp;
+    }
+
+    
+    //no support
+    @Override
+    public List<AccessLevel> getUpdate(String timestamp) {
+        return null;
+    }
+
+    //no support
+    @Override
+    public List<Integer> getIDs() {
+        return null;
+    }
+
+    //no support
+    @Override
+    public int getTotalCnt() {
+        return 0;
     }
     
     
