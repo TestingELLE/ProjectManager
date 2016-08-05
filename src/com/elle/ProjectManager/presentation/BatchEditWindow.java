@@ -20,6 +20,8 @@ import javax.swing.JTextField;
  * @author Carlos Igreja
  * @since June 10, 2015
  * @version 0.6.3
+ * @author Yi
+ * @07/28/2016
  */
 public class BatchEditWindow extends JFrame {
 

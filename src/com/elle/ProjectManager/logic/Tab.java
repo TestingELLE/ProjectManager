@@ -221,14 +221,15 @@ public class Tab implements ITableConstants {
         for (ModifiedData modifiedData : modifiedDataList) {
             int id = modifiedData.getId();
             
+            int rowIndex = getRowIndex(id);
             //get the row data
-            if (getRowIndex(id) != -1) {
+            if (rowIndex != -1) {
                 Object[] rowData = new Object[table.getColumnCount()];
                 for (int i = 0; i < table.getColumnCount(); i++) {
                     //set null to description field
                     if( i == 3) rowData[i] = null;
                     else
-                        rowData[i] = table.getValueAt(0, i);
+                        rowData[i] = table.getValueAt(rowIndex, i);
                 }
                 changedRowsData.add(rowData);
             }
@@ -427,7 +428,9 @@ public class Tab implements ITableConstants {
 
     public void deleteRow(int rowIndex){
         DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.removeRow(rowIndex);
+        //need to convert to model index in case table is sorted
+        int index  = table.convertRowIndexToModel(rowIndex);
+        model.removeRow(index);
         subtractFromTotalRowCount(1);
         
     }
