@@ -1299,6 +1299,8 @@ public class IssueWindow extends JFrame {
             versionText.setText("");
             dateClosedText.setText("");
             btnCloseIssue.setText("Close Issue");
+            
+            rtftext.requestFocus();
         }
         
         System.out.println(newrtfstring);

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.9.4
 Created-By: 1.8.0_45-b15 (Oracle Corporation)
-creation-date: 2016-08-04
-version: 2.3.1b
+creation-date: 2016-08-08
+version: 2.3.1c
 
