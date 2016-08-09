@@ -303,8 +303,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnCloseSQL = new javax.swing.JButton();
         addPanel_control = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
+		recordsShownLabel = new javax.swing.JLabel();
+        labelTimeLastUpdate = new javax.swing.JLabel();
+        totalRecordsLabel = new javax.swing.JLabel();
         status = new javax.swing.JLabel();
-        labelRecords = new javax.swing.JLabel();
         labelTimeLastUpdate = new javax.swing.JLabel();
         searchPanel = new javax.swing.JPanel();
         btnSearch = new javax.swing.JButton();
@@ -449,7 +451,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 2, 0);
+        gridBagConstraints.insets = new java.awt.Insets(7, 4, 2, 0);
         jPanelEdit.add(informationLabel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -730,130 +732,156 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jPanel5, gridBagConstraints);
 
-        addPanel_control.setPreferredSize(new java.awt.Dimension(1045, 120));
+       addPanel_control.setMinimumSize(new java.awt.Dimension(1071, 55));
+        addPanel_control.setName(""); // NOI18N
+        addPanel_control.setPreferredSize(new java.awt.Dimension(1045, 55));
+        addPanel_control.setLayout(new java.awt.GridBagLayout());
 
-        status.setText("status");
+        jPanel1.setMinimumSize(new java.awt.Dimension(300, 50));
+        jPanel1.setPreferredSize(new java.awt.Dimension(300, 40));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        labelRecords.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labelRecords.setText("labelRecords");
-        labelRecords.setPreferredSize(new java.awt.Dimension(61, 20));
+        recordsShownLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        recordsShownLabel.setText("recordsShownLabel");
+        recordsShownLabel.setToolTipText("");
+        recordsShownLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        recordsShownLabel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        recordsShownLabel.setMaximumSize(new java.awt.Dimension(300, 15));
+        recordsShownLabel.setMinimumSize(new java.awt.Dimension(300, 15));
+        recordsShownLabel.setPreferredSize(new java.awt.Dimension(300, 15));
+        recordsShownLabel.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        jPanel1.add(recordsShownLabel, gridBagConstraints);
 
         labelTimeLastUpdate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         labelTimeLastUpdate.setText("Last updated:");
         labelTimeLastUpdate.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        labelTimeLastUpdate.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        labelTimeLastUpdate.setMaximumSize(new java.awt.Dimension(300, 15));
+        labelTimeLastUpdate.setMinimumSize(new java.awt.Dimension(300, 14));
+        labelTimeLastUpdate.setPreferredSize(new java.awt.Dimension(300, 14));
+        labelTimeLastUpdate.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        jPanel1.add(labelTimeLastUpdate, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(273, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(status)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(labelTimeLastUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
-                        .addComponent(labelRecords, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(0, 0, 0))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(status)
-                .addGap(2, 2, 2)
-                .addComponent(labelTimeLastUpdate)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelRecords, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        totalRecordsLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        totalRecordsLabel.setText("totalRecordsLabel");
+        totalRecordsLabel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        totalRecordsLabel.setMaximumSize(new java.awt.Dimension(300, 15));
+        totalRecordsLabel.setMinimumSize(new java.awt.Dimension(300, 15));
+        totalRecordsLabel.setPreferredSize(new java.awt.Dimension(300, 15));
+        totalRecordsLabel.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        jPanel1.add(totalRecordsLabel, gridBagConstraints);
 
-        searchPanel.setPreferredSize(new java.awt.Dimension(584, 76));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        addPanel_control.add(jPanel1, gridBagConstraints);
+
+        searchPanel.setMinimumSize(new java.awt.Dimension(700, 55));
+        searchPanel.setPreferredSize(new java.awt.Dimension(700, 55));
+        searchPanel.setLayout(new java.awt.GridBagLayout());
 
         btnSearch.setText("Search");
+        btnSearch.setMaximumSize(new java.awt.Dimension(100, 27));
+        btnSearch.setMinimumSize(new java.awt.Dimension(100, 27));
+        btnSearch.setPreferredSize(new java.awt.Dimension(80, 27));
+
         btnSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSearchActionPerformed(evt);
             }
         });
+		
+		gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
+        searchPanel.add(btnSearch, gridBagConstraints);
 
         comboBoxField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "programmer", "title", "description", "dateOpened", "dateClosed", "rk", "version" }));
+        comboBoxField.setMinimumSize(new java.awt.Dimension(120, 30));
+        comboBoxField.setPreferredSize(new java.awt.Dimension(120, 27));
         comboBoxField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxFieldActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
+        searchPanel.add(comboBoxField, gridBagConstraints);
 
         btnClearAllFilter.setText("Clear All Filters");
+        btnClearAllFilter.setMaximumSize(new java.awt.Dimension(150, 30));
+        btnClearAllFilter.setMinimumSize(new java.awt.Dimension(120, 27));
+        btnClearAllFilter.setPreferredSize(new java.awt.Dimension(120, 27));
         btnClearAllFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClearAllFilterActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        searchPanel.add(btnClearAllFilter, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.ipadx = 371;
+        gridBagConstraints.ipady = 22;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+        searchPanel.add(searchInformationLabel, gridBagConstraints);
 
         comboBoxValue.setEditable(true);
         comboBoxValue.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        comboBoxValue.setMinimumSize(new java.awt.Dimension(123, 27));
+        comboBoxValue.setPreferredSize(new java.awt.Dimension(175, 27));
         comboBoxValue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxValueActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
-        searchPanel.setLayout(searchPanelLayout);
-        searchPanelLayout.setHorizontalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchPanelLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(searchPanelLayout.createSequentialGroup()
-                        .addComponent(btnClearAllFilter)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(comboBoxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSearch))
-                    .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 201, Short.MAX_VALUE))
-        );
-        searchPanelLayout.setVerticalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnClearAllFilter)
-                    .addComponent(comboBoxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSearch)
-                    .addComponent(comboBoxValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchInformationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
-        );
-
-        javax.swing.GroupLayout addPanel_controlLayout = new javax.swing.GroupLayout(addPanel_control);
-        addPanel_control.setLayout(addPanel_controlLayout);
-        addPanel_controlLayout.setHorizontalGroup(
-            addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(addPanel_controlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 645, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        addPanel_controlLayout.setVerticalGroup(
-            addPanel_controlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
+        searchPanel.add(comboBoxValue, gridBagConstraints);
+		
+		gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+        addPanel_control.add(searchPanel, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 2, 2);
         getContentPane().add(addPanel_control, gridBagConstraints);
+		
+
 
         menuFile.setText("File");
 
@@ -1362,9 +1390,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                         count++;
                     }
 
-                    // set label record information
-                    String recordsLabel = tab.getRecordsLabel();
-                    labelRecords.setText(recordsLabel);
+                   
                 }
             }
             if (count == 4) {
@@ -1493,7 +1519,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnAddIssue.setText("Add issue to " + tab.getTable().getName());
             
         //labelRecords reset for # of records andn # of records shown
-        labelRecords.setText(tab.getRecordsLabel());
+        tab.setRecordsShownLabel();
+        tab.setTotalRecordsLabel();
         
         //set buttons state
         setButtonsState(tab);
@@ -1625,7 +1652,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         }
         
         Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
-        currentTab.setLabelRecords();
+        currentTab.setRecordsShownLabel();
 
     }//GEN-LAST:event_btnClearAllFilterActionPerformed
 
@@ -2082,8 +2109,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         
             // update records label
-            String recordsLabel = currentTab.getRecordsLabel();
-            labelRecords.setText(recordsLabel); // update label
+            currentTab.setRecordsShownLabel();
+            currentTab.setTotalRecordsLabel();
         }
         else{
             // no rows are selected
@@ -2893,11 +2920,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenu menuTools;
     private javax.swing.JMenu menuView;
     private javax.swing.JMenuItem menuitemViewOneIssue;
+	private javax.swing.JLabel recordsShownLabel;
     private javax.swing.JTable referenceTable;
     public static javax.swing.JLabel searchInformationLabel;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JLabel status;
     private javax.swing.JTabbedPane tabbedPanel;
+	private javax.swing.JLabel totalRecordsLabel;
     // End of variables declaration//GEN-END:variables
     // @formatter:on
 
@@ -3323,6 +3352,22 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public JLabel getRecordsShownLabel() {
+        return recordsShownLabel;
+    }
+
+    public void setRecordsShownLabel(JLabel recordsShownLabel) {
+        this.recordsShownLabel = recordsShownLabel;
+    }
+
+    public JLabel getTotalRecordsLabel() {
+        return totalRecordsLabel;
+    }
+
+    public void setTotalRecordsLabel(JLabel totalRecordsLabel) {
+        this.totalRecordsLabel = totalRecordsLabel;
     }
 
 

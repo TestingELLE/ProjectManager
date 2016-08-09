@@ -162,7 +162,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
         table.setRowSorter(sorter);
         sorter.setRowFilter(this);
         //each time , after filter applied, reset PM window labelRecords
-        tab.setLabelRecords();
+        tab.setRecordsShownLabel();
     }
 
     /**
@@ -175,7 +175,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
         table.setRowSorter(sorter);
         
         //each time , after filter applied, reset PM window labelRecords
-        tab.setLabelRecords();
+        tab.setRecordsShownLabel();
     }
 
     /**
