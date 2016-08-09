@@ -365,8 +365,8 @@ public class Tab implements ITableConstants {
         modTableData.reloadData();
 
         // set label record information
-        setLabelRecords();
-
+        setRecordsShownLabel();
+        setTotalRecordsLabel();
     }
     
     /*
@@ -717,8 +717,7 @@ public class Tab implements ITableConstants {
         
         filter.clearColFilter(columnIndex);
         filter.applyFilter();
-        //reset recordsLabel
-        setLabelRecords();
+        
     }
     
     //filter a cell value by double click
@@ -732,8 +731,7 @@ public class Tab implements ITableConstants {
             filter.addFilterItem(columnIndex, selectedField);
             filter.applyFilter();
             
-            //need to reset labelRecords
-            setLabelRecords();
+            
         }
     }
     
@@ -750,14 +748,7 @@ public class Tab implements ITableConstants {
         pmWindow.getLabelTimeLastUpdate().setText("Last updated: " + time);
     }
     
-    //set up labelRecoreds
-    public void setLabelRecords() {
-        pmWindow.getLabelRecords().setText(getRecordsLabel());
-    } 
-    
-    
-    
-    
+   
     /*
     **table-related helper functions 
     */
@@ -920,57 +911,6 @@ public class Tab implements ITableConstants {
         totalRecords = totalRecords + amountOfRecordsAdded;
     }
 
-    /**
-     * This method returns a string that displays the records.
-     *
-     * @return String This returns a string that has the records for both total
-     * and shown
-     */
-    public String getRecordsLabel() {
-
-        String output;
-
-        switch (table.getName()) {
-
-            case "PM":
-            case "ELLEGUI":
-            case "Analyster":
-            case "Other":
-                output = "<html><pre>"
-                        + "     Number of records shown: " + getRecordsShown()
-                        + "<br/> Number of records in Issues: " + getTotalRecords()
-                        + "</pre></html>";
-                break;
-
-            
-            case "References":
-                output = "<html><pre>"
-                        + "      Number of records shown: " + getRecordsShown()
-                        + "<br/> Number of records in References: " + getTotalRecords()
-                        + "</pre></html>";
-                break;
-            default:
-                // this means an invalid table name constant was passed
-                // this exception will be handled and thrown here
-                // the program will still run and show the stack trace for debugging
-                output = "<html><pre>"
-                        + "*******ATTENTION*******"
-                        + "<br/>Not a valid table name constant entered"
-                        + "</pre></html>";
-                try {
-                    String errorMessage = "ERROR: unknown table";
-                    throw new NoSuchFieldException(errorMessage);
-                } catch (NoSuchFieldException ex) {
-                    // post to log.txt
-                    LoggingAspect.addLogMsgWthDate("1:" + ex.getMessage());
-                    LoggingAspect.afterThrown(ex);
-                }
-
-                break;
-        }
-
-        return output;
-    }
     
     //get the unique values for search columns
     public Map loadingDropdownList() {
@@ -1039,7 +979,67 @@ public class Tab implements ITableConstants {
         }
         table.setRowSelectionInterval(rowNum - count, rowNum - 1);
     }
+     
+     
+    public String getTotalRecordsLabel(){
+       String output;
 
+        switch (table.getName()) {
+
+            case "PM":
+            case "ELLEGUI":
+            case "Analyster":
+            case "Other":
+                output = "Number of records in Issues: " + getTotalRecords();
+                break;
+
+            
+            case "References":
+                output = "Number of records in References: " + getTotalRecords();
+                break;
+            default:
+                // this means an invalid table name constant was passed
+                // this exception will be handled and thrown here
+                // the program will still run and show the stack trace for debugging
+                output = "<html><pre>"
+                        + "*******ATTENTION*******"
+                        + "<br/>Not a valid table name constant entered"
+                        + "</pre></html>";
+                try {
+                    String errorMessage = "ERROR: unknown table";
+                    throw new NoSuchFieldException(errorMessage);
+                } catch (NoSuchFieldException ex) {
+                    // post to log.txt
+                    LoggingAspect.addLogMsgWthDate("1:" + ex.getMessage());
+                    LoggingAspect.afterThrown(ex);
+                }
+
+                break;
+        }
+
+        return output; 
+    }
+     
+     
+    public String getRecordsShownLabel() {
+
+        String output;        
+        output =  "Number of records shown: " + getRecordsShown();
+               
+        return output;
+    }
+    
+    
+     
+     //set up recordsShownLabel
+    public void setRecordsShownLabel() {
+        pmWindow.getRecordsShownLabel().setText(getRecordsShownLabel());
+    }
+    
+    public void setTotalRecordsLabel(){
+       pmWindow.getTotalRecordsLabel().setText(getTotalRecordsLabel());  
+    }
+     
     /**
      * ************************************************************************
      ********************** Setters & Getters *********************************
