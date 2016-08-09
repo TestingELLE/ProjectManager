@@ -84,8 +84,6 @@ public class Tab implements ITableConstants {
     private ButtonsState state;
     
    
-    
-
     /**
      * CONSTRUCTOR Tab This is used if no table is ready such as before
      * initComponents of a frame.
@@ -109,6 +107,8 @@ public class Tab implements ITableConstants {
         this.table = table;  
         //setup tab data
         setUpTabData();
+        
+        
         
     }
     
@@ -457,7 +457,8 @@ public class Tab implements ITableConstants {
         for (MouseListener ml: listeners)
         {
             String className = ml.getClass().toString();
-            if (className.contains("BasicTableHeaderUI.MouseInputHandler"))
+            System.out.println(className);
+            if (className.contains("BasicTableHeaderUI$MouseInputHandler"))
                 header.removeMouseListener(ml);
         }
 
@@ -558,26 +559,27 @@ public class Tab implements ITableConstants {
                 // if right mouse clicks
                 else if (SwingUtilities.isRightMouseButton(e)) {
                     if (e.getClickCount() == 2) {
-                        
-                        state.enableEdit(true);
-                        
-                        pmWindow.changeTabbedPanelState(localTab);
-                        
-                        EditableTableModel model = ((EditableTableModel) table.getModel());
-                        
-                        // get selected cell for editing
-                        int columnIndex = table.columnAtPoint(e.getPoint()); // this returns the column index
-                        int rowIndex = table.rowAtPoint(e.getPoint()); // this returns the rowIndex index
-                        
-                        //column 3 : description column cannot be edited
-                        if (rowIndex != -1 && columnIndex != -1 && columnIndex != 3) {
-                            // make it the active editing cell
+                        //this is to enable table edit
+                        //commented out as requested by Professor
+//                        state.enableEdit(true);
+//                        
+//                        pmWindow.changeTabbedPanelState(localTab);
+//                        
+//                        EditableTableModel model = ((EditableTableModel) table.getModel());
+//                        
+//                        // get selected cell for editing
+//                        int columnIndex = table.columnAtPoint(e.getPoint()); // this returns the column index
+//                        int rowIndex = table.rowAtPoint(e.getPoint()); // this returns the rowIndex index
+//                        
+//                        //column 3 : description column cannot be edited
+//                        if (rowIndex != -1 && columnIndex != -1 && columnIndex != 3) {
+//                            // make it the active editing cell
+//                            
+//                            table.changeSelection(rowIndex, columnIndex, false, false);
+//                            model.setCellEditable(true);
+//                            selectAllText(e);
                             
-                            table.changeSelection(rowIndex, columnIndex, false, false);
-                            model.setCellEditable(true);
-                            selectAllText(e);
-                            
-                        } // end not null condition
+                       // } // end not null condition
 
                     } // end of is tab editing conditions
 
@@ -1147,7 +1149,7 @@ public class Tab implements ITableConstants {
     public void setState(ButtonsState state) {
         this.state = state;
     }
-    
+
     
 
 }// end Tab

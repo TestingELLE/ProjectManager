@@ -1332,6 +1332,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * textForSearchKeyPressed method
      */
     public void filterBySearch() {
+       
         String text = "";
 
         int count = 0;
@@ -1480,6 +1481,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         if (searchFields != null) {
             comboBoxField.setModel(new DefaultComboBoxModel(searchFields));
         }
+        
+        
         //populate comboxValue drop down
         String searchContent = comboBoxField.getSelectedItem().toString();
         this.updateComboList(searchContent, tab);
@@ -1908,8 +1911,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         searchValue = comboBoxValue.getSelectedItem().toString();
         // update the dropdown list when we change a searchable item
         Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
+        
         updateComboList(searchColName, currentTab);
-
+        
         comboBoxValue.setSelectedItem(searchValue);
 
         comboBoxStartToSearch = true;
