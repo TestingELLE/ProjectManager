@@ -112,6 +112,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private String userName;
     private String searchValue = null;
     private String searchColName = "programmer";
+    private JLabel labelRecords;
+    private JLabel status;
 
     private ArrayList<String> programmersActiveForSearching;
     
@@ -133,7 +135,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         this.userName = userName;
         online = mode;
         
-        
+        status = new JLabel();
         initComponents(); // generated code
         
         // initialize tabs 
@@ -285,8 +287,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnRevertChanges = new javax.swing.JButton();
         informationLabel = new javax.swing.JLabel();
         tabbedPanel = new javax.swing.JTabbedPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        PMTable = new javax.swing.JTable();
         jScrollPane6 = new javax.swing.JScrollPane();
         ELLEGUITable = new javax.swing.JTable();
         jScrollPane7 = new javax.swing.JScrollPane();
@@ -295,6 +295,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         OtherTable = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         referenceTable = new javax.swing.JTable();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        PMTable = new javax.swing.JTable();
+        SummarizerPane = new javax.swing.JScrollPane();
+        SummarizerTable = new javax.swing.JTable();
         jPanelSQL = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaSQL = new javax.swing.JTextArea();
@@ -303,11 +307,9 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnCloseSQL = new javax.swing.JButton();
         addPanel_control = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-		recordsShownLabel = new javax.swing.JLabel();
+        recordsShownLabel = new javax.swing.JLabel();
         labelTimeLastUpdate = new javax.swing.JLabel();
         totalRecordsLabel = new javax.swing.JLabel();
-        status = new javax.swing.JLabel();
-        labelTimeLastUpdate = new javax.swing.JLabel();
         searchPanel = new javax.swing.JPanel();
         btnSearch = new javax.swing.JButton();
         comboBoxField = new javax.swing.JComboBox();
@@ -330,13 +332,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemManageALs = new javax.swing.JMenuItem();
         menuItemDeleteRecord = new javax.swing.JMenuItem();
         menuItemLoadDataFromTXT = new javax.swing.JMenuItem();
-        menuItemNewDataInquiry = new javax.swing.JMenuItem();
         menuView = new javax.swing.JMenu();
         menuItemLogChkBx = new javax.swing.JCheckBoxMenuItem();
         menuItemSQLCmdChkBx = new javax.swing.JCheckBoxMenuItem();
         menuitemViewOneIssue = new javax.swing.JMenuItem();
         menuItemViewSplashScreen = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
+        menuItemReloadSelectedData = new javax.swing.JMenuItem();
         menuItemReloadData = new javax.swing.JMenuItem();
         menuItemReloadAllData = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -345,7 +347,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemCompIssues = new javax.swing.JMenuItem();
         menuItemBackup = new javax.swing.JMenuItem();
         menuItemSyncLocalData = new javax.swing.JMenuItem();
-        menuItemSoftReload = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         menuItemReconcileConflict = new javax.swing.JMenuItem();
         menuItemExportIssueToReference = new javax.swing.JMenuItem();
@@ -472,37 +473,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
 
-        PMTable.setAutoCreateRowSorter(true);
-        PMTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodTime"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, true, false, true, true, true, true, true, true, true, true, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        PMTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        PMTable.setMinimumSize(new java.awt.Dimension(10, 240));
-        PMTable.setName("PM"); // NOI18N
-        jScrollPane1.setViewportView(PMTable);
-
-        tabbedPanel.addTab("PM", jScrollPane1);
-
         ELLEGUITable.setAutoCreateRowSorter(true);
         ELLEGUITable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -625,6 +595,68 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         tabbedPanel.addTab("References", jScrollPane3);
 
+        PMTable.setAutoCreateRowSorter(true);
+        PMTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodTime"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, true, false, true, true, true, true, true, true, true, true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        PMTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        PMTable.setMinimumSize(new java.awt.Dimension(10, 240));
+        PMTable.setName("PM"); // NOI18N
+        jScrollPane1.setViewportView(PMTable);
+
+        tabbedPanel.addTab("PM", jScrollPane1);
+
+        SummarizerTable.setAutoCreateRowSorter(true);
+        SummarizerTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodTime"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, true, false, true, true, true, true, true, true, true, true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        SummarizerTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        SummarizerTable.setMinimumSize(new java.awt.Dimension(10, 240));
+        SummarizerTable.setName("Summarizer");
+        SummarizerPane.setViewportView(SummarizerTable);
+
+        tabbedPanel.addTab("Summarizer", SummarizerPane);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -732,7 +764,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jPanel5, gridBagConstraints);
 
-       addPanel_control.setMinimumSize(new java.awt.Dimension(1071, 55));
+        addPanel_control.setMinimumSize(new java.awt.Dimension(1071, 55));
         addPanel_control.setName(""); // NOI18N
         addPanel_control.setPreferredSize(new java.awt.Dimension(1045, 55));
         addPanel_control.setLayout(new java.awt.GridBagLayout());
@@ -797,14 +829,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnSearch.setMaximumSize(new java.awt.Dimension(100, 27));
         btnSearch.setMinimumSize(new java.awt.Dimension(100, 27));
         btnSearch.setPreferredSize(new java.awt.Dimension(80, 27));
-
         btnSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSearchActionPerformed(evt);
             }
         });
-		
-		gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -866,8 +896,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
         searchPanel.add(comboBoxValue, gridBagConstraints);
-		
-		gridBagConstraints = new java.awt.GridBagConstraints();
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -880,8 +910,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 2, 2, 2);
         getContentPane().add(addPanel_control, gridBagConstraints);
-		
-
 
         menuFile.setText("File");
 
@@ -973,14 +1001,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuEdit.add(menuItemLoadDataFromTXT);
 
-        menuItemNewDataInquiry.setText("New Data Inquiry");
-        menuItemNewDataInquiry.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemNewDataInquiryActionPerformed(evt);
-            }
-        });
-        menuEdit.add(menuItemNewDataInquiry);
-
         menuBar.add(menuEdit);
 
         menuView.setText("View");
@@ -1023,7 +1043,15 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         menuTools.setText("Tools");
 
-        menuItemReloadData.setText("Force Reload Tab data");
+        menuItemReloadSelectedData.setText("Reload Selected data");
+        menuItemReloadSelectedData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemReloadSelectedDataActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemReloadSelectedData);
+
+        menuItemReloadData.setText("Reload Tab data");
         menuItemReloadData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemReloadDataActionPerformed(evt);
@@ -1031,7 +1059,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuTools.add(menuItemReloadData);
 
-        menuItemReloadAllData.setText("Force Reload ALL data");
+        menuItemReloadAllData.setText("Reload ALL data");
         menuItemReloadAllData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemReloadAllDataActionPerformed(evt);
@@ -1079,14 +1107,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         menuTools.add(menuItemSyncLocalData);
-
-        menuItemSoftReload.setText("Reload Data Locally");
-        menuItemSoftReload.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemSoftReloadActionPerformed(evt);
-            }
-        });
-        menuTools.add(menuItemSoftReload);
         menuTools.add(jSeparator2);
 
         menuItemReconcileConflict.setText("Reconcile Conflict Issue");
@@ -2853,6 +2873,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JTable ELLEGUITable;
     private javax.swing.JTable OtherTable;
     private javax.swing.JTable PMTable;
+    private javax.swing.JScrollPane SummarizerPane;
+    private javax.swing.JTable SummarizerTable;
     private javax.swing.ButtonGroup TableFilterBtnGroup;
     private javax.swing.JPanel addPanel_control;
     private javax.swing.JButton btnAddIssue;
@@ -2883,7 +2905,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JTextArea jTextAreaSQL;
     private javax.swing.JLabel labelEditMode;
     private javax.swing.JLabel labelEditModeState;
-    private javax.swing.JLabel labelRecords;
     private javax.swing.JLabel labelTimeLastUpdate;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuEdit;
@@ -2900,17 +2921,16 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenuItem menuItemManageALs;
     private javax.swing.JMenuItem menuItemManageDBs;
     private javax.swing.JMenuItem menuItemMoveSeletedRowsToEnd;
-    private javax.swing.JMenuItem menuItemNewDataInquiry;
     private javax.swing.JCheckBoxMenuItem menuItemOfflineMode;
     private javax.swing.JMenuItem menuItemPrintDisplay;
     private javax.swing.JMenuItem menuItemPrintGUI;
     private javax.swing.JMenuItem menuItemReconcileConflict;
     private javax.swing.JMenuItem menuItemReloadAllData;
     private javax.swing.JMenuItem menuItemReloadData;
+    private javax.swing.JMenuItem menuItemReloadSelectedData;
     private javax.swing.JMenuItem menuItemRepBugSugg;
     private javax.swing.JCheckBoxMenuItem menuItemSQLCmdChkBx;
     private javax.swing.JMenuItem menuItemSaveFile;
-    private javax.swing.JMenuItem menuItemSoftReload;
     private javax.swing.JMenuItem menuItemSyncLocalData;
     private javax.swing.JMenuItem menuItemTurnEditModeOff;
     private javax.swing.JMenuItem menuItemVersion;
@@ -2920,13 +2940,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenu menuTools;
     private javax.swing.JMenu menuView;
     private javax.swing.JMenuItem menuitemViewOneIssue;
-	private javax.swing.JLabel recordsShownLabel;
+    private javax.swing.JLabel recordsShownLabel;
     private javax.swing.JTable referenceTable;
     public static javax.swing.JLabel searchInformationLabel;
     private javax.swing.JPanel searchPanel;
-    private javax.swing.JLabel status;
     private javax.swing.JTabbedPane tabbedPanel;
-	private javax.swing.JLabel totalRecordsLabel;
+    private javax.swing.JLabel totalRecordsLabel;
     // End of variables declaration//GEN-END:variables
     // @formatter:on
 
@@ -3344,6 +3363,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         DefaultTableModel model = (DefaultTableModel)table.getModel();        
         EditableTableModel etm = new EditableTableModel(model);
         table.setModel(etm);
+    }
+    private void menuItemReloadSelectedDataActionPerformed(java.awt.event.ActionEvent evt)
+    {
+       reloadAllData();
     }
 
     public boolean isOnline() {
