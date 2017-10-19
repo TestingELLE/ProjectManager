@@ -2223,6 +2223,12 @@ public class IssueWindow extends JFrame {
                 ArrayList<Object> dropDownList = (ArrayList<Object>) comboBoxForSearchValue.get(col);
                 
                 if (colName.equalsIgnoreCase("rk")) {
+                    /*
+                    Author:Swapna
+                    Date;18th October 2017
+                    Comments: Check empty dropdown list
+                    */
+                    if(!dropDownList.isEmpty()) {
                     if (dropDownList.get(0) == "") {
                         ArrayList<Object> list = new ArrayList<Object>();
 
@@ -2234,7 +2240,7 @@ public class IssueWindow extends JFrame {
                         dropDownList = list;
                     }
                    
-                }   
+                }   }
                     
                 if (colName.equalsIgnoreCase("programmer") || colName.equalsIgnoreCase("app") ) {
                     Object nullValue = "";
