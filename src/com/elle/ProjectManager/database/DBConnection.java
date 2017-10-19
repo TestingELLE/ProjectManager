@@ -75,7 +75,7 @@ public class DBConnection {
                 if(server.getName().equals(selectedServer))
                     url = server.getUrl();
             }
-            
+            url = "jdbc:mysql://serve658.arvixevps.com:3306/";
             url += selectedDB;
             
             // connect to server
