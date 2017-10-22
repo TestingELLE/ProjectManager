@@ -989,6 +989,7 @@ public class Tab implements ITableConstants {
             case "PM":
             case "ELLEGUI":
             case "Analyster":
+            case "Summarizer":
             case "Other":
                 output = "Number of records in Issues: " + getTotalRecords();
                 break;
