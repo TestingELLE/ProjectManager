@@ -287,18 +287,18 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnRevertChanges = new javax.swing.JButton();
         informationLabel = new javax.swing.JLabel();
         tabbedPanel = new javax.swing.JTabbedPane();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        ELLEGUITable = new javax.swing.JTable();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        PMTable = new javax.swing.JTable();
         jScrollPane7 = new javax.swing.JScrollPane();
         AnalysterTable = new javax.swing.JTable();
+        SummarizerPane = new javax.swing.JScrollPane();
+        SummarizerTable = new javax.swing.JTable();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        ELLEGUITable = new javax.swing.JTable();
         jScrollPane5 = new javax.swing.JScrollPane();
         OtherTable = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         referenceTable = new javax.swing.JTable();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        PMTable = new javax.swing.JTable();
-        SummarizerPane = new javax.swing.JScrollPane();
-        SummarizerTable = new javax.swing.JTable();
         jPanelSQL = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaSQL = new javax.swing.JTextArea();
@@ -473,8 +473,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
 
-        ELLEGUITable.setAutoCreateRowSorter(true);
-        ELLEGUITable.setModel(new javax.swing.table.DefaultTableModel(
+        PMTable.setAutoCreateRowSorter(true);
+        PMTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -497,12 +497,12 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                 return canEdit [columnIndex];
             }
         });
-        ELLEGUITable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        ELLEGUITable.setMinimumSize(new java.awt.Dimension(10, 240));
-        ELLEGUITable.setName("ELLEGUI"); // NOI18N
-        jScrollPane6.setViewportView(ELLEGUITable);
+        PMTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        PMTable.setMinimumSize(new java.awt.Dimension(10, 240));
+        PMTable.setName("PM"); // NOI18N
+        jScrollPane1.setViewportView(PMTable);
 
-        tabbedPanel.addTab("ELLEGUI", jScrollPane6);
+        tabbedPanel.addTab("PM", jScrollPane1);
 
         AnalysterTable.setAutoCreateRowSorter(true);
         AnalysterTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -534,6 +534,68 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jScrollPane7.setViewportView(AnalysterTable);
 
         tabbedPanel.addTab("Analyster", jScrollPane7);
+
+        SummarizerTable.setAutoCreateRowSorter(true);
+        SummarizerTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodTime"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, true, false, true, true, true, true, true, true, true, true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        SummarizerTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        SummarizerTable.setMinimumSize(new java.awt.Dimension(10, 240));
+        SummarizerTable.setName("Summarizer");
+        SummarizerPane.setViewportView(SummarizerTable);
+
+        tabbedPanel.addTab("Summarizer", SummarizerPane);
+
+        ELLEGUITable.setAutoCreateRowSorter(true);
+        ELLEGUITable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodTime"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, true, false, true, true, true, true, true, true, true, true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        ELLEGUITable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        ELLEGUITable.setMinimumSize(new java.awt.Dimension(10, 240));
+        ELLEGUITable.setName("ELLEGUI"); // NOI18N
+        jScrollPane6.setViewportView(ELLEGUITable);
+
+        tabbedPanel.addTab("ELLEGUI", jScrollPane6);
 
         OtherTable.setAutoCreateRowSorter(true);
         OtherTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -594,68 +656,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         jScrollPane3.setViewportView(referenceTable);
 
         tabbedPanel.addTab("References", jScrollPane3);
-
-        PMTable.setAutoCreateRowSorter(true);
-        PMTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodTime"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, true, false, true, true, true, true, true, true, true, true, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        PMTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        PMTable.setMinimumSize(new java.awt.Dimension(10, 240));
-        PMTable.setName("PM"); // NOI18N
-        jScrollPane1.setViewportView(PMTable);
-
-        tabbedPanel.addTab("PM", jScrollPane1);
-
-        SummarizerTable.setAutoCreateRowSorter(true);
-        SummarizerTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "app", "title", "description", "programmer", "dateOpened", "rk", "version", "dateClosed", "issueType", "submitter", "locked", "lastmodTime"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, true, false, true, true, true, true, true, true, true, true, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        SummarizerTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        SummarizerTable.setMinimumSize(new java.awt.Dimension(10, 240));
-        SummarizerTable.setName("Summarizer");
-        SummarizerPane.setViewportView(SummarizerTable);
-
-        tabbedPanel.addTab("Summarizer", SummarizerPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
