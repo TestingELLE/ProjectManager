@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.text.BadLocationException;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import org.jdesktop.swingx.JXTextField;
 
 /**
  * ProjectManagerWindow
@@ -316,6 +317,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         btnClearAllFilter = new javax.swing.JButton();
         searchInformationLabel = new javax.swing.JLabel();
         comboBoxValue = new javax.swing.JComboBox();
+        openisuuesrd = new javax.swing.JRadioButton();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemVersion = new javax.swing.JMenuItem();
@@ -835,7 +837,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -896,6 +898,14 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 0);
         searchPanel.add(comboBoxValue, gridBagConstraints);
+
+        openisuuesrd.setText("Open Issues");
+        openisuuesrd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openisuuesrdActionPerformed(evt);
+            }
+        });
+        searchPanel.add(openisuuesrd, new java.awt.GridBagConstraints());
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1380,39 +1390,69 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
      * textForSearchKeyPressed method
      */
     public void filterBySearch() {
-       
+    
         String text = "";
-
         int count = 0;
+        int row = 0;
+        int col = 0;
+        ArrayList<Object> openIssueList = new ArrayList<Object>();
+        
+        if(comboBoxValue.getSelectedItem().toString().equals("Enter search value here"))
+            {
+               JOptionPane.showMessageDialog(this,
+                    "Select an option",
+                    "Error Message",
+                   JOptionPane.ERROR_MESSAGE);
+            }
+        else {
         for (Map.Entry<Integer, Tab> entry : tabs.entrySet()) {
             Tab tab = tabs.get(entry.getKey());
             JTable table = tab.getTable();
-
+            
             String searchColName = comboBoxField.getSelectedItem().toString();
-            String searchBoxValue = comboBoxValue.getSelectedItem().toString();  // store string from text box
-
+            String searchBoxValue = comboBoxValue.getSelectedItem().toString();// store string from combobox
             // this matches the combobox newValue with the column name newValue to get the column index
-            for (int col = 0; col < table.getColumnCount(); col++) {
+            TableFilter filter = tab.getFilter();
+            filter.clearAllFilters();
+            if(openisuuesrd.isSelected())
+            {               
+                while(row < table.getRowCount())
+                {
+                    
+                    if((table.getValueAt(row, 8) == null || 
+                            table.getValueAt(row, 8).toString().equals(""))
+                            &&(table.getValueAt(row, 4).equals(searchBoxValue)))
+                    {
+                        openIssueList.add(table.getValueAt(row,0));
+                        
+                    }
+                     row++;
+                }
+                row = 0;
+                filter.clearAllFilters();
+                filter.addOpenItems(col, openIssueList);
+                filter.applyFilter();
+                openIssueList.clear();
+            }
+            else { 
+            for (col = 0; col < table.getColumnCount(); col++) {
                 String tableColName = table.getColumnName(col);
                 if (tableColName.equalsIgnoreCase(searchColName)) {
 
                     // add item to filter
-                    TableFilter filter = tab.getFilter();
+                    
                     filter.clearAllFilters();
                     filter.applyFilter();
 
                     boolean isValueInTable = false;
                     isValueInTable = checkValueInTableCell(col, searchBoxValue, table);
-
-                    filter.addFilterItem(col, searchBoxValue);
-                    filter.applyFilter();
+                        filter.addFilterItem(col,searchBoxValue);
+                        filter.applyFilter();
                     if (!isValueInTable) {
                         count++;
                     }
-
-                   
                 }
-            }
+            }}
             if (count == 4) {
                 text = "There is no " + searchBoxValue
                         + " under " + searchColName + " in all tables";
@@ -1422,7 +1462,39 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             LoggingAspect.afterReturn(text);
 
         }
-    }
+    }}
+    /*
+    Author:Swapna
+    Date:29th October 2017
+    Comments:Implement openIssue feature
+    */
+    
+public void filterByOpenIssues() {   
+    for (Map.Entry<Integer, Tab> entry : tabs.entrySet()) 
+        {
+            Tab tab = tabs.get(entry.getKey());
+            JTable table = tab.getTable();
+            int row = 0;
+            int col = 0;
+
+            TableFilter filter = tab.getFilter();
+            ArrayList<Object> openIssuesList = new ArrayList<Object>();
+            while(row < table.getRowCount())
+            {
+                    
+                    if(table.getValueAt(row, 8) == null || table.getValueAt(row, 8).toString().equals(""))
+                    {
+                        openIssuesList.add(table.getValueAt(row,col));
+                        
+                    }
+                     row++;
+            }         
+        filter.clearAllFilters();
+        filter.addOpenItems(col, openIssuesList);
+        filter.applyFilter();
+        openIssuesList.clear();
+        }
+}
 
     private boolean checkValueInTableCell(int col, String target, JTable table) {
         int count = 0;
@@ -1530,6 +1602,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         
         
         //populate comboxValue drop down
+        openisuuesrd.setSelected(false);
         String searchContent = comboBoxField.getSelectedItem().toString();
         this.updateComboList(searchContent, tab);
         this.comboBoxValue.setSelectedItem("Enter search value here");
@@ -1669,6 +1742,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             TableFilter filter = tab.getFilter();
             filter.clearAllFilters();
             filter.applyFilter();
+            
         }
         
         Tab currentTab = tabs.get(tabbedPanel.getSelectedIndex());
@@ -1953,7 +2027,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         
 
     private void comboBoxFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxFieldActionPerformed
-        System.out.println("here" + comboBoxStartToSearch);
         searchColName = comboBoxField.getSelectedItem().toString();
         searchValue = comboBoxValue.getSelectedItem().toString();
         // update the dropdown list when we change a searchable item
@@ -1964,8 +2037,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         comboBoxValue.setSelectedItem(searchValue);
 
         comboBoxStartToSearch = true;
-//        System.out.println("there" + comboBoxStartToSearch);
-
     }//GEN-LAST:event_comboBoxFieldActionPerformed
 
     /* By Yi */
@@ -2062,6 +2133,22 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     }//GEN-LAST:event_menuItemReloadAllDataActionPerformed
 
     public void reloadAllData() {
+        for (Map.Entry<Integer, Tab> entry : tabs.entrySet()) {
+            
+            Tab tab = tabs.get(entry.getKey());         
+            tab.reloadTable();
+        }
+        scrolldownTables();
+        
+        LoggingAspect.afterReturn("All tabs are reloaded.");
+
+    }
+    /*
+    Author:Swapna
+    Date:25th October 2017
+    Comments: implement load open issues
+    */
+    public void loadOpenIssues() {
 
         for (Map.Entry<Integer, Tab> entry : tabs.entrySet()) {
             
@@ -2071,7 +2158,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
        
         scrolldownTables();
         
-        LoggingAspect.afterReturn("All tabs are reloaded.");
+        LoggingAspect.afterReturn("Load Open Issues");
 
     }
     /**
@@ -2211,7 +2298,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
             File file = fc.getSelectedFile();
             String filename = fc.getSelectedFile().getName();
             String extension = filename.substring(filename.lastIndexOf("."), filename.length());
-            //System.out.println(filename);
 
             if (!".txt".equals(extension)) {
                 JOptionPane.showMessageDialog(fc, "Invalid filetype! Please choose a txt file!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -2239,13 +2325,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         int currentstartline = 0;
         int currentendline = 0;
         List<Integer> hyphenlines = new ArrayList<>();
-                    
-        System.out.println(importedfile.get(0));
-        System.out.println(importedfile.get(1));
         if (importedfile != null) {
             
             for(int i=0; i<importedfile.size(); i++){
-                //System.out.println(importedfile.get(i));
+                
                 String currentstring = importedfile.get(i);
                 
                 if (currentstring != null) {
@@ -2254,7 +2337,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     }
                 }     
             }
-            System.out.println(hyphenlines.size());
             for(int i=0; i<hyphenlines.size(); i++){
                 currentendline = hyphenlines.get(i) - 1;
                 IssueDAO dao = new IssueDAO();
@@ -2269,8 +2351,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                     String filestring = importedfile.get(j);
                     if (filestring.indexOf("ID:") != -1){
                         String[] splited = filestring.split(" ");
-                        
-                        System.out.println(splited[1]);
                         
                         if (splited[1] != null) {
                             issue.setId(Integer.parseInt(splited[1]));
@@ -2408,6 +2488,11 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private void menuItemSoftReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSoftReloadActionPerformed
         reloadAllData();
     }//GEN-LAST:event_menuItemSoftReloadActionPerformed
+
+    private void openisuuesrdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openisuuesrdActionPerformed
+        // TODO add your handling code here:
+        filterByOpenIssues();
+    }//GEN-LAST:event_openisuuesrdActionPerformed
 
    private boolean isChanged(Map<String, ArrayList<Integer>> changes) {
        for(ArrayList<Integer> temp: changes.values()) {
@@ -2940,6 +3025,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private javax.swing.JMenu menuTools;
     private javax.swing.JMenu menuView;
     private javax.swing.JMenuItem menuitemViewOneIssue;
+    private javax.swing.JRadioButton openisuuesrd;
     private javax.swing.JLabel recordsShownLabel;
     private javax.swing.JTable referenceTable;
     public static javax.swing.JLabel searchInformationLabel;
@@ -3333,7 +3419,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
    
     /**
      * Yi
-     * for offline data, remove the offline data from table if it gets pushed to server.
+     * for offline data, remove the offline data from table if it gets pushed to arch rver.
      */
 
     public void removeTableRow(JTable table, int issueId) {
@@ -3342,10 +3428,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         int recordCnt = model.getRowCount();
         
         for (int i = recordCnt - 1; i >=0; i--) {
-            
-            System.out.println(model.getValueAt(i,0).toString());
-            System.out.println(model.getValueAt(i,1).toString());
-            
             int id = Integer.parseInt(model.getValueAt(i, 0).toString());
             if (id == issueId) {
                 model.removeRow(i);
