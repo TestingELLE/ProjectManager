@@ -1400,7 +1400,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         if(comboBoxValue.getSelectedItem().toString().equals("Enter search value here"))
             {
                JOptionPane.showMessageDialog(this,
-                    "Select an option",
+                    "Enter text into searchbox",
                     "Error Message",
                    JOptionPane.ERROR_MESSAGE);
             }
