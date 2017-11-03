@@ -85,9 +85,7 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
         {
             selectedField = "";                    // no reason not to
         }
-        System.out.println("add " + selectedField + " to filter");
         filterItems.get(col).add(selectedField);   // add passed item
-
         addColorHeader(col);                       // highlight header
     }
 
@@ -122,7 +120,31 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
             addColorHeader(col);                      // highlight header
         }
     }
+    /**/
+public void addOpenItems(int col, ArrayList<Object> items) {
 
+        if (!items.isEmpty()) {
+            // if not filtering then all filters are cleared (full table)
+            // this is to not clear other filtered columns
+            if (isFiltering == false) {
+                removeAllFilterItems();                // this empties all column filters
+                isFiltering = true;
+            } else {
+                filterItems.get(col).clear();              // remove all items from this column
+            }
+
+            for (Object item : items) {
+
+                if (item == null) // check for null just in case
+                {
+                    item = "";                        // no reason not to
+                }
+                filterItems.get(col).add(item);       // add item to list
+            }
+
+            addColorHeader(col);                      // highlight header
+        }
+    }
  
     public void addCustomIdListToFilterItem(CustomIDList customIdList) {
         this.customIdListFilter = customIdList;
@@ -387,8 +409,6 @@ public class TableFilter extends RowFilter<TableModel, Integer> {
                 }
             }
             
-            System.out.println("itemsFound = " + itemsFound);
-            System.out.println("numColsfiltered = "+ numColsfiltered);
             if (emptyFilterCols == model.getColumnCount()) {
                 isFiltering = false;
                 return true;
