@@ -121,9 +121,15 @@ public class Tab implements ITableConstants {
             setBatchEditFields(REFERENCES_BATCHEDIT_CB_FIELDS);
             setColWidthPercent(COL_WIDTH_PER_REFERENCES);
         }
+        else if(table.getName().equals("Other"))
+        {
+            setSearchFields(TASKS_SEARCH_FIELDS);
+            setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
+            setColWidthPercent(COL_WIDTH_PER_TASKS);
+        }
         
         else{
-            setSearchFields(TASKS_SEARCH_FIELDS);
+            setSearchFields(TABLE_SEARCH_FIELDS);
             setBatchEditFields(TASKS_BATCHEDIT_CB_FIELDS);
             setColWidthPercent(COL_WIDTH_PER_TASKS);
         }
@@ -795,7 +801,8 @@ public class Tab implements ITableConstants {
             // Set the format for tableSelected task.
             case "PM": 
             case "ELLEGUI": 
-            case "Analyster": 
+            case "Analyster":
+            case "Summarizer":
             case "Other": {
                 for (int i = 0; i < colWidthPercent.length; i++) {
                     int pWidth = Math.round(colWidthPercent[i]);
@@ -804,11 +811,24 @@ public class Tab implements ITableConstants {
                     
                     //Fixes the width of all columns except description 
                     String name = table.getColumnName(i);
+                    /*
+                    Author:Swapna
+                    Date:3rd Nov 2017
+                    Comments:Hide app colums
+                    */
+                    if(name.equals("app"))
+                    {
+                        if(!table.getName().equals("Other")) {
+                        column.setMinWidth(0);
+                        column.setMaxWidth(0);
+                    }
+                    }
                     if(!table.getColumnName(i).equalsIgnoreCase("description")){
                         column.setMinWidth(pWidth);
                         column.setMaxWidth(pWidth);
                     }
-              
+                    /* */
+                                  
                     if (i == 2 || i == 3) {
                         table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
                     } else {
@@ -824,11 +844,11 @@ public class Tab implements ITableConstants {
             
             case "References": {
                 // hide columns
-                Set<Integer> hideCols = new HashSet();
-                hideCols.add(1);
-                for(int temp = 6; temp<=12; temp++)
-                    hideCols.add(temp);
-                
+               
+                 //Set<Integer> hideCols = new HashSet();
+                //hideCols.add(1);
+                //for(int temp = 6; temp<=12; temp++)
+                  //  hideCols.add(temp);
                for (int i = 0; i < colWidthPercent.length; i++) {
                     int pWidth = Math.round(colWidthPercent[i]);
                     TableColumn column = table.getColumnModel().getColumn(i);
@@ -916,7 +936,7 @@ public class Tab implements ITableConstants {
     public Map loadingDropdownList() {
 
         Map<Integer, ArrayList<Object>> valueListMap = new HashMap();
-
+       
         for (String searchField : searchFields) {
 
             for (int i = 0; i < table.getColumnCount(); i++) {
