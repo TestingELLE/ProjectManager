@@ -252,8 +252,13 @@ public class IssueWindow extends JFrame {
         addInputMappingsAndShortcuts(textComponentList);
         updateComboList("programmer");
         updateComboList("rk");
+        
+        /*Author:Swapna
+        Date:3rd novemeber
+        Comments:app column is available only for Other tab*/
+        if(table.getName().equals("Other")){
         updateComboList("app");
-
+        }
         setComponentValuesFromIssue(this); 
         setOpenCloseIssueBtnText();
         setIssueWindowMode();
@@ -2241,9 +2246,9 @@ public class IssueWindow extends JFrame {
                     }
                    
                 }   }
-                    
-                if (colName.equalsIgnoreCase("programmer") || colName.equalsIgnoreCase("app") ) {
-                    Object nullValue = "";
+                
+                if (colName.equalsIgnoreCase("programmer") || colName.equalsIgnoreCase("app")) {
+                    Object nullValue = "";                  
                     
                     Collections.sort(dropDownList, new Comparator<Object>() {
                         public int compare(Object o1, Object o2) {

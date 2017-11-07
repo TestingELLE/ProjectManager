@@ -26,7 +26,9 @@ public interface ITableConstants {
 //    public static final float[] COL_WIDTH_PER_ARCHIVE = {60, 60, 115, 845, 105};
     
     // search fields for the comboBox for each table
-    public static final String[] TASKS_SEARCH_FIELDS = {"programmer", "app", "title", "description", "dateOpened", "dateClosed", "rk", "version"};
+    public static final String[] TASKS_SEARCH_FIELDS = {"programmer", "app","title", "description", "dateOpened", "dateClosed", "rk", "version"};
+    public static final String[] TABLE_SEARCH_FIELDS = {"programmer","title", "description", "dateOpened", "dateClosed", "rk", "version"};
+   
     public static final String[] REFERENCES_SEARCH_FIELDS = {"programmer","title", "description", "dateOpened"};
  //   public static final String[] TASKFILES_SEARCH_FIELDS = {"submitter"};
     public static final String[] TASKS_SEARCH_FIELDS_OTHERS = {"app","programmer","title", "description", "dateOpened", "dateClosed", "rk", "version"};
