@@ -13,7 +13,7 @@
     </server>
     <server>
         <server-name>pupone</server-name>
-        <server-url>jdbc:mysql://rendertech.com:3306/</server-url>
+        <server-url>jdbc:mysql://serve658.arvixevps.com:3306/</server-url>
         <server-default>false</server-default>
         <database>
             <db-name>pupone_PM</db-name>

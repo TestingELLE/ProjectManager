@@ -1184,9 +1184,6 @@
                     <Property name="rows" type="int" value="5"/>
                     <Property name="text" type="java.lang.String" value="Please input an SQL statement:\u005cn&gt;&gt;" postCode="((AbstractDocument) jTextAreaSQL.getDocument())&#xa;    .setDocumentFilter(new CreateDocumentFilter(33));" containsInvalidXMLChars="true"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
-                    <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-                      <Insets value="[0, 0, 0, 0]"/>
-                    </Property>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[1590, 100]"/>
                     </Property>
