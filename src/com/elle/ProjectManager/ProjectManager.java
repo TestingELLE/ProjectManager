@@ -19,7 +19,7 @@ import java.util.jar.Manifest;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import static com.elle.ProjectManager.presentation.ProjectManagerWindow.version;
-import static com.elle.ProjectManager.presentation.ProjectManagerWindow.creationDate;
+import static com.elle.ProjectManager.presentation.ProjectManagerWindow.versionDate;
 
 /**
  * Main This is the class that starts the application from the main method
@@ -45,7 +45,7 @@ public class ProjectManager {
             JOptionPane.showMessageDialog(null, "error: " + ex.getMessage());
         }
         
-        // get the creation date and version from the manifest
+        // get the version date and version from the manifest
         Manifest mf = new Manifest();
         Attributes atts;
         String s = "MANIFEST.MF";
@@ -53,7 +53,7 @@ public class ProjectManager {
         try {
             mf.read(inputStream);
             atts = mf.getMainAttributes();
-            creationDate = atts.getValue("creation-date");
+            versionDate = atts.getValue("version-date");
             version = atts.getValue("version");
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
@@ -107,7 +107,7 @@ public class ProjectManager {
             loadingGraphics.setFont(font);
             g.setFont(font);
 
-            String information = "Version:" + version + "        CreationDate: " + creationDate;
+            String information = "Version:" + version + "        VersionDate: " + versionDate;
             loadingGraphics.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
             g.drawString(information, (int) loadingTextArea.getX() + 5, (int) loadingTextArea.getY());
 

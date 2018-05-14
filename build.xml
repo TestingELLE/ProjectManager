@@ -1,37 +1,37 @@
 <!-- You can set the version of Analyster here and then build the new jar.-->
 <project name="ProjectManager" default="dist" basedir=".">
     <description>Builds, tests, and runs the project ProjectManager.</description>
-    
+
     <!-- this is netbeans generated code -->
     <import file="nbproject/build-impl.xml"/>
-    
+
     <!-- set the date and version here -->
 
-    <property name="creation-date" value="2016-11-06"/>
-    <property name="version" value="1.9.2c"/>
+    <property name="version-date" value="2018-05-14"/>
+    <property name="version" value="1.9.2d"/>
 
-    
+
     <!-- this is the jar name when it is created -->
     <property name="jarname" value="ProjectManager-${version}"/>
 
     <!-- this creates a manifest to get the date and version of the jar -->
     <target name="-post-init">
         <manifest file="src/com/elle/ProjectManager/MANIFEST.MF">
-            <attribute name="creation-date" value="${creation-date}" />
+            <attribute name="version-date" value="${version-date}" />
             <attribute name="version" value="${version}" />
         </manifest>
     </target>
- 
+
     <!-- This creates the jar that we want with the included dependencies -->
     <!-- There should be no need to edit this code -->
     <!-- other than adding or removing dependencies-->
     <!-- Dependencies are kept in the lib folder in ProjectManager -->
-    <!-- The new jar will be in the target folder in ProjectManager --> 
-    <target name="-post-jar"> 
+    <!-- The new jar will be in the target folder in ProjectManager -->
+    <target name="-post-jar">
       <delete dir="target"/>
       <jar jarfile="target/${jarname}.jar">
           <zipfileset src="${dist.jar}" excludes="META-INF/*" />
-		
+
         	<zipgroupfileset dir="lib" excludes="META-INF/*" />
         <manifest>
             <attribute name="Main-Class" value="com.elle.ProjectManager.ProjectManager"/>
@@ -39,5 +39,5 @@
         </manifest>
       </jar>
       <delete dir="dist"/>
-    </target> 
+    </target>
 </project>

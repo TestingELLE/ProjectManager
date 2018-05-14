@@ -54,7 +54,7 @@ import org.jdesktop.swingx.JXTextField;
  */
 public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
-    public static String creationDate;  // set automatically from manifest
+    public static String versionDate;  // set automatically from manifest
     public static String version;       // set automatically from manifest
     
     //Data center
@@ -1159,8 +1159,8 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     
     private void menuItemVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemVersionActionPerformed
 
-        JOptionPane.showMessageDialog(this, "Creation Date: "
-                + creationDate + "\n"
+        JOptionPane.showMessageDialog(this, "Version Date: "
+                + versionDate + "\n"
                 + "Version: " + version);
     }//GEN-LAST:event_menuItemVersionActionPerformed
 
@@ -3074,8 +3074,8 @@ public void filterByOpenIssues() {
         return this.labelEditModeState;
     }
 
-    public String getCreationDate() {
-        return creationDate;
+    public String getVersionDate() {
+        return versionDate;
     }
 
     public String getVersion() {
