@@ -7,8 +7,8 @@
 
     <!-- set the date and version here -->
 
-    <property name="version-date" value="2018-05-16"/>
-    <property name="version" value="1.9.2e"/>
+    <property name="version-date" value="2018-05-17"/>
+    <property name="version" value="1.9.3"/>
 
 
     <!-- this is the jar name when it is created -->
