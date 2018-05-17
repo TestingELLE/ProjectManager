@@ -868,7 +868,7 @@ public class IssueWindow extends JFrame {
         Fsize.setMargin(new java.awt.Insets(1, 2, 0, 2));
         Fsize.setMaximumSize(new java.awt.Dimension(16, 16));
         Fsize.setMinimumSize(new java.awt.Dimension(16, 16));
-        Fsize.setPreferredSize(new java.awt.Dimension(16, 16));
+        Fsize.setPreferredSize(new java.awt.Dimension(22, 22));
         Fsize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 FsizeActionPerformed(evt);
@@ -887,7 +887,7 @@ public class IssueWindow extends JFrame {
         Italic.setMargin(new java.awt.Insets(1, 2, 0, 2));
         Italic.setMaximumSize(new java.awt.Dimension(16, 16));
         Italic.setMinimumSize(new java.awt.Dimension(16, 16));
-        Italic.setPreferredSize(new java.awt.Dimension(16, 16));
+        Italic.setPreferredSize(new java.awt.Dimension(22, 22));
         Italic.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ItalicActionPerformed(evt);
@@ -905,7 +905,7 @@ public class IssueWindow extends JFrame {
         StrikethroughBotton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         StrikethroughBotton.setMaximumSize(new java.awt.Dimension(16, 16));
         StrikethroughBotton.setMinimumSize(new java.awt.Dimension(16, 16));
-        StrikethroughBotton.setPreferredSize(new java.awt.Dimension(16, 16));
+        StrikethroughBotton.setPreferredSize(new java.awt.Dimension(22, 22));
         StrikethroughBotton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 StrikethroughBottonActionPerformed(evt);
@@ -924,7 +924,7 @@ public class IssueWindow extends JFrame {
         UnderlineBotton.setMargin(new java.awt.Insets(1, 2, 0, 2));
         UnderlineBotton.setMaximumSize(new java.awt.Dimension(16, 16));
         UnderlineBotton.setMinimumSize(new java.awt.Dimension(16, 16));
-        UnderlineBotton.setPreferredSize(new java.awt.Dimension(16, 16));
+        UnderlineBotton.setPreferredSize(new java.awt.Dimension(22, 22));
         UnderlineBotton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 UnderlineBottonActionPerformed(evt);
@@ -943,7 +943,7 @@ public class IssueWindow extends JFrame {
         B_Bold.setMargin(new java.awt.Insets(1, 2, 0, 2));
         B_Bold.setMaximumSize(new java.awt.Dimension(16, 16));
         B_Bold.setMinimumSize(new java.awt.Dimension(16, 16));
-        B_Bold.setPreferredSize(new java.awt.Dimension(16, 16));
+        B_Bold.setPreferredSize(new java.awt.Dimension(22, 22));
         B_Bold.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 B_BoldActionPerformed(evt);
@@ -961,7 +961,7 @@ public class IssueWindow extends JFrame {
         colorButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         colorButton1.setMaximumSize(new java.awt.Dimension(18, 18));
         colorButton1.setMinimumSize(new java.awt.Dimension(18, 18));
-        colorButton1.setPreferredSize(new java.awt.Dimension(16, 16));
+        colorButton1.setPreferredSize(new java.awt.Dimension(22, 22));
         colorButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 colorButton1ActionPerformed(evt);
@@ -980,7 +980,7 @@ public class IssueWindow extends JFrame {
         Plain.setMargin(new java.awt.Insets(1, 2, 0, 2));
         Plain.setMaximumSize(new java.awt.Dimension(16, 16));
         Plain.setMinimumSize(new java.awt.Dimension(16, 16));
-        Plain.setPreferredSize(new java.awt.Dimension(16, 16));
+        Plain.setPreferredSize(new java.awt.Dimension(22, 22));
         Plain.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PlainActionPerformed(evt);
@@ -999,7 +999,7 @@ public class IssueWindow extends JFrame {
         Hyperlink.setMargin(new java.awt.Insets(1, 2, 0, 2));
         Hyperlink.setMaximumSize(new java.awt.Dimension(16, 16));
         Hyperlink.setMinimumSize(new java.awt.Dimension(16, 16));
-        Hyperlink.setPreferredSize(new java.awt.Dimension(16, 16));
+        Hyperlink.setPreferredSize(new java.awt.Dimension(22, 22));
         Hyperlink.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 HyperlinkActionPerformed(evt);

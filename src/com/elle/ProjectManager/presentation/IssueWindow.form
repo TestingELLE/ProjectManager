@@ -677,7 +677,7 @@
                       <Dimension value="[16, 16]"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[16, 16]"/>
+                      <Dimension value="[22, 22]"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -710,7 +710,7 @@
                       <Dimension value="[16, 16]"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[16, 16]"/>
+                      <Dimension value="[22, 22]"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -740,7 +740,7 @@
                       <Dimension value="[16, 16]"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[16, 16]"/>
+                      <Dimension value="[22, 22]"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -773,7 +773,7 @@
                       <Dimension value="[16, 16]"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[16, 16]"/>
+                      <Dimension value="[22, 22]"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -806,7 +806,7 @@
                       <Dimension value="[16, 16]"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[16, 16]"/>
+                      <Dimension value="[22, 22]"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -836,7 +836,7 @@
                       <Dimension value="[18, 18]"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[16, 16]"/>
+                      <Dimension value="[22, 22]"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -867,7 +867,7 @@
                       <Dimension value="[16, 16]"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[16, 16]"/>
+                      <Dimension value="[22, 22]"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -898,7 +898,7 @@
                       <Dimension value="[16, 16]"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[16, 16]"/>
+                      <Dimension value="[22, 22]"/>
                     </Property>
                   </Properties>
                   <Events>
