@@ -464,6 +464,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         jPanel5.add(jPanelEdit, gridBagConstraints);
 
+        tabbedPanel.setToolTipText("");
         tabbedPanel.setAlignmentX(0.0F);
         tabbedPanel.setAlignmentY(0.0F);
         tabbedPanel.setMinimumSize(new java.awt.Dimension(2645, 787));
@@ -682,7 +683,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         ((AbstractDocument) jTextAreaSQL.getDocument())
         .setDocumentFilter(new CreateDocumentFilter(33));
         jTextAreaSQL.setWrapStyleWord(true);
-        jTextAreaSQL.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jTextAreaSQL.setMaximumSize(new java.awt.Dimension(1590, 100));
         jTextAreaSQL.setMinimumSize(new java.awt.Dimension(1590, 100));
         jTextAreaSQL.setPreferredSize(new java.awt.Dimension(1590, 100));
@@ -860,6 +860,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         searchPanel.add(comboBoxField, gridBagConstraints);
 
         btnClearAllFilter.setText("Clear All Filters");
+        btnClearAllFilter.setToolTipText("");
         btnClearAllFilter.setMaximumSize(new java.awt.Dimension(150, 30));
         btnClearAllFilter.setMinimumSize(new java.awt.Dimension(120, 27));
         btnClearAllFilter.setPreferredSize(new java.awt.Dimension(120, 27));
@@ -2090,8 +2091,8 @@ public void filterByOpenIssues() {
 
     private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
         try {
-            String fileName = FilePathFormat.supportFilePath() + "splashImage.png";
-            ImageIcon img = new ImageIcon(ImageIO.read(new File(fileName)));
+            //String fileName = FilePathFormat.supportFilePath() + "splashImage.png";
+            ImageIcon img = new ImageIcon(ImageIO.read(new File("src/com/elle/ProjectManager/image.png")));  //added for Splash image to show up.
             JFrame splashScreenImage = new JFrame();
             JLabel image = new JLabel(img);
             splashScreenImage.add(image);

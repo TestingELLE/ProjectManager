@@ -365,10 +365,11 @@ public class IssueWindow extends JFrame {
         idText = new javax.swing.JLabel();
         id = new javax.swing.JLabel();
         lockCheckBox = new javax.swing.JCheckBox();
+        comboBoxIssueType = new javax.swing.JComboBox<>();
         jPanel7 = new javax.swing.JPanel();
-        comboBoxIssueType = new javax.swing.JComboBox<String>();
         submitter = new javax.swing.JLabel();
         submitterText = new javax.swing.JTextField();
+        jPanel8 = new javax.swing.JPanel();
         dateOpenedText = new javax.swing.JTextField();
         dateOpened = new javax.swing.JLabel();
         programmerComboBox = new javax.swing.JComboBox();
@@ -616,35 +617,30 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(17, 30, 0, 0);
         jPanel6.add(lockCheckBox, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(15, 0, 0, 0);
-        jPanel3.add(jPanel6, gridBagConstraints);
-
-        jPanel7.setLayout(new java.awt.GridBagLayout());
-
-        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FEATURE", "BUG", "REFERENCE", "TEST ISSUE" }));
+        comboBoxIssueType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FEATURE", "BUG", "REFERENCE", "TEST ISSUE" }));
         comboBoxIssueType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxIssueTypeActionPerformed(evt);
             }
         });
+        jPanel6.add(comboBoxIssueType, new java.awt.GridBagConstraints());
+
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 0);
-        jPanel7.add(comboBoxIssueType, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(13, 0, 0, 0);
+        jPanel3.add(jPanel6, gridBagConstraints);
+
+        jPanel7.setLayout(new java.awt.GridBagLayout());
 
         submitter.setText(" submitter");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
         jPanel7.add(submitter, gridBagConstraints);
 
+        submitterText.setToolTipText("");
         submitterText.setMinimumSize(new java.awt.Dimension(90, 20));
         submitterText.setPreferredSize(new java.awt.Dimension(90, 28));
         submitterText.addActionListener(new java.awt.event.ActionListener() {
@@ -653,11 +649,13 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
         jPanel7.add(submitterText, gridBagConstraints);
+
+        jPanel8.setLayout(new java.awt.GridBagLayout());
 
         dateOpenedText.setText("jTextField1");
         dateOpenedText.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -676,23 +674,24 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel7.add(dateOpenedText, gridBagConstraints);
+        jPanel8.add(dateOpenedText, gridBagConstraints);
 
         dateOpened.setText(" dateOpened");
         dateOpened.setPreferredSize(new java.awt.Dimension(79, 12));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel7.add(dateOpened, gridBagConstraints);
+        jPanel8.add(dateOpened, gridBagConstraints);
 
         programmerComboBox.setEditable(true);
         programmerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        programmerComboBox.setToolTipText("");
         programmerComboBox.setMinimumSize(new java.awt.Dimension(90, 20));
         programmerComboBox.setName(""); // NOI18N
         programmerComboBox.setPreferredSize(new java.awt.Dimension(90, 28));
@@ -706,7 +705,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel7.add(programmerComboBox, gridBagConstraints);
+        jPanel8.add(programmerComboBox, gridBagConstraints);
 
         programmer.setText(" programmer");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -714,11 +713,18 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        jPanel7.add(programmer, gridBagConstraints);
+        jPanel8.add(programmer, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        jPanel7.add(jPanel8, gridBagConstraints);
 
         rk.setText(" rk");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
@@ -733,15 +739,14 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
         jPanel7.add(rkComboBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
         gridBagConstraints.weightx = 1.0;
         jPanel3.add(jPanel7, gridBagConstraints);
 
@@ -784,6 +789,7 @@ public class IssueWindow extends JFrame {
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
         BtnNext.setText(">");
+        BtnNext.setToolTipText("Next Issue");
         BtnNext.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         BtnNext.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         BtnNext.addActionListener(new java.awt.event.ActionListener() {
@@ -798,6 +804,7 @@ public class IssueWindow extends JFrame {
         jPanel5.add(BtnNext, gridBagConstraints);
 
         BtnPrevious.setText("<");
+        BtnPrevious.setToolTipText("Previous Issue");
         BtnPrevious.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         BtnPrevious.setIconTextGap(0);
         BtnPrevious.setMinimumSize(new java.awt.Dimension(41, 50));
@@ -816,7 +823,8 @@ public class IssueWindow extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
         jPanel5.add(BtnPrevious, gridBagConstraints);
 
-        description.setText(" description");
+        description.setText("Description");
+        description.setToolTipText("");
         description.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -829,11 +837,9 @@ public class IssueWindow extends JFrame {
         jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 100));
         jScrollPane1.setVerticalScrollBar(jScrollBar1);
 
-        rtftext.setEditorKit(new WrapEditorKit());
         rtftext.setContentType("text/rtf"); // NOI18N
         rtftext.setMinimumSize(new java.awt.Dimension(25, 25));
         rtftext.setPreferredSize(new java.awt.Dimension(100, 98));
-        rtftext.setRequestFocusEnabled(true);
         rtftext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 rtftextMouseClicked(evt);
@@ -857,6 +863,7 @@ public class IssueWindow extends JFrame {
         jPanel5.add(jScrollPane1, gridBagConstraints);
 
         Fsize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Font3.png"))); // NOI18N
+        Fsize.setToolTipText("Font Size");
         Fsize.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         Fsize.setMargin(new java.awt.Insets(1, 2, 0, 2));
         Fsize.setMaximumSize(new java.awt.Dimension(16, 16));
@@ -875,6 +882,7 @@ public class IssueWindow extends JFrame {
         jPanel5.add(Fsize, gridBagConstraints);
 
         Italic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Italic_os2.png"))); // NOI18N
+        Italic.setToolTipText("Italic");
         Italic.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         Italic.setMargin(new java.awt.Insets(1, 2, 0, 2));
         Italic.setMaximumSize(new java.awt.Dimension(16, 16));
@@ -893,6 +901,7 @@ public class IssueWindow extends JFrame {
         jPanel5.add(Italic, gridBagConstraints);
 
         StrikethroughBotton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Strike_os2.png"))); // NOI18N
+        StrikethroughBotton.setToolTipText("Strike Through");
         StrikethroughBotton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         StrikethroughBotton.setMaximumSize(new java.awt.Dimension(16, 16));
         StrikethroughBotton.setMinimumSize(new java.awt.Dimension(16, 16));
@@ -910,6 +919,7 @@ public class IssueWindow extends JFrame {
         jPanel5.add(StrikethroughBotton, gridBagConstraints);
 
         UnderlineBotton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Underline_os.png"))); // NOI18N
+        UnderlineBotton.setToolTipText("Underline");
         UnderlineBotton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         UnderlineBotton.setMargin(new java.awt.Insets(1, 2, 0, 2));
         UnderlineBotton.setMaximumSize(new java.awt.Dimension(16, 16));
@@ -928,6 +938,7 @@ public class IssueWindow extends JFrame {
         jPanel5.add(UnderlineBotton, gridBagConstraints);
 
         B_Bold.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Bold_os.png"))); // NOI18N
+        B_Bold.setToolTipText("Bold");
         B_Bold.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         B_Bold.setMargin(new java.awt.Insets(1, 2, 0, 2));
         B_Bold.setMaximumSize(new java.awt.Dimension(16, 16));
@@ -946,9 +957,10 @@ public class IssueWindow extends JFrame {
         jPanel5.add(B_Bold, gridBagConstraints);
 
         colorButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/elle/ProjectManager/presentation/Color3.png"))); // NOI18N
+        colorButton1.setToolTipText("Color Pallete");
         colorButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        colorButton1.setMaximumSize(new java.awt.Dimension(16, 16));
-        colorButton1.setMinimumSize(new java.awt.Dimension(16, 16));
+        colorButton1.setMaximumSize(new java.awt.Dimension(18, 18));
+        colorButton1.setMinimumSize(new java.awt.Dimension(18, 18));
         colorButton1.setPreferredSize(new java.awt.Dimension(16, 16));
         colorButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -963,6 +975,7 @@ public class IssueWindow extends JFrame {
         jPanel5.add(colorButton1, gridBagConstraints);
 
         Plain.setText("P");
+        Plain.setToolTipText("Plain");
         Plain.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         Plain.setMargin(new java.awt.Insets(1, 2, 0, 2));
         Plain.setMaximumSize(new java.awt.Dimension(16, 16));
@@ -981,6 +994,7 @@ public class IssueWindow extends JFrame {
         jPanel5.add(Plain, gridBagConstraints);
 
         Hyperlink.setText("H");
+        Hyperlink.setToolTipText("Hyper-Link");
         Hyperlink.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         Hyperlink.setMargin(new java.awt.Insets(1, 2, 0, 2));
         Hyperlink.setMaximumSize(new java.awt.Dimension(16, 16));
@@ -2714,6 +2728,7 @@ public class IssueWindow extends JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollBar jScrollBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lastmodTime;

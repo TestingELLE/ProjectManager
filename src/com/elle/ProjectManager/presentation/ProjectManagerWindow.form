@@ -429,6 +429,7 @@
         </Container>
         <Container class="javax.swing.JTabbedPane" name="tabbedPanel">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
             <Property name="alignmentX" type="float" value="0.0"/>
             <Property name="alignmentY" type="float" value="0.0"/>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1444,6 +1445,7 @@
             <Component class="javax.swing.JButton" name="btnClearAllFilter">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Clear All Filters"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[150, 30]"/>
                 </Property>
