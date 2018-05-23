@@ -320,7 +320,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         openisuuesrd = new javax.swing.JRadioButton();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
-        menuItemVersion = new javax.swing.JMenuItem();
+        About = new javax.swing.JMenuItem();
         menuSelectConn = new javax.swing.JMenu();
         menuItemAWSAssign = new javax.swing.JMenuItem();
         menuPrint = new javax.swing.JMenu();
@@ -338,7 +338,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         menuItemLogChkBx = new javax.swing.JCheckBoxMenuItem();
         menuItemSQLCmdChkBx = new javax.swing.JCheckBoxMenuItem();
         menuitemViewOneIssue = new javax.swing.JMenuItem();
-        menuItemViewSplashScreen = new javax.swing.JMenuItem();
         menuTools = new javax.swing.JMenu();
         menuItemReloadSelectedData = new javax.swing.JMenuItem();
         menuItemReloadData = new javax.swing.JMenuItem();
@@ -924,13 +923,13 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
         menuFile.setText("File");
 
-        menuItemVersion.setText("Version");
-        menuItemVersion.addActionListener(new java.awt.event.ActionListener() {
+        About.setText("About");
+        About.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemVersionActionPerformed(evt);
+                AboutActionPerformed(evt);
             }
         });
-        menuFile.add(menuItemVersion);
+        menuFile.add(About);
 
         menuSelectConn.setText("Select Connection");
         menuSelectConn.setEnabled(false);
@@ -1042,14 +1041,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         });
         menuView.add(menuitemViewOneIssue);
 
-        menuItemViewSplashScreen.setText("View Splash Screen");
-        menuItemViewSplashScreen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemViewSplashScreenActionPerformed(evt);
-            }
-        });
-        menuView.add(menuItemViewSplashScreen);
-
         menuBar.add(menuView);
 
         menuTools.setText("Tools");
@@ -1158,13 +1149,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
 
     
     
-    private void menuItemVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemVersionActionPerformed
-
-        JOptionPane.showMessageDialog(this, "Version Date: "
-                + versionDate + "\n"
-                + "Version: " + version);
-    }//GEN-LAST:event_menuItemVersionActionPerformed
-
 
     private void menuItemManageALsActionPerformed(java.awt.event.ActionEvent evt){
         // TODO add your handling code here:
@@ -2089,23 +2073,6 @@ public void filterByOpenIssues() {
 
     }//GEN-LAST:event_comboBoxValueActionPerformed
 
-    private void menuItemViewSplashScreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemViewSplashScreenActionPerformed
-        try {
-            //String fileName = FilePathFormat.supportFilePath() + "splashImage.png";
-            ImageIcon img = new ImageIcon(ImageIO.read(new File("src/com/elle/ProjectManager/image.png")));  //added for Splash image to show up.
-            JFrame splashScreenImage = new JFrame();
-            JLabel image = new JLabel(img);
-            splashScreenImage.add(image);
-            splashScreenImage.pack();
-            splashScreenImage.setLocationRelativeTo(this);
-            splashScreenImage.setVisible(true);
-            LoggingAspect.addLogMsgWthDate("3:" + "splash screen image show.");
-        } catch (IOException ex) {
-            LoggingAspect.addLogMsgWthDate("3:" + ex.getMessage());
-            LoggingAspect.afterThrown(ex);
-        }
-    }//GEN-LAST:event_menuItemViewSplashScreenActionPerformed
-
     private void menuItemCompIssuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCompIssuesActionPerformed
         CompIssuesListWindow frame = new CompIssuesListWindow();
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -2494,6 +2461,22 @@ public void filterByOpenIssues() {
         // TODO add your handling code here:
         filterByOpenIssues();
     }//GEN-LAST:event_openisuuesrdActionPerformed
+  /* New About Menu option found in the File menu.  
+     This will display the Splash Screen, Version Date and Version Number in a 
+     showMessageDialog box.
+     By Tom Tran
+    Date 2018-05-17
+    */
+    private void AboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutActionPerformed
+         // new image Icon object for the splash screen
+        ImageIcon bg = new ImageIcon ("src/com/elle/ProjectManager/image.png");  
+         
+        // Creates showMessageDialog box and shows the Splash Screen, Version Date and Version Number.
+        
+        JOptionPane.showMessageDialog(null,"Project Manager" + "\n" + "Version Date: "
+                + versionDate + "\n"
+                + "Version: " + version, "About", JOptionPane.PLAIN_MESSAGE, bg);
+    }//GEN-LAST:event_AboutActionPerformed
 
    private boolean isChanged(Map<String, ArrayList<Integer>> changes) {
        for(ArrayList<Integer> temp: changes.values()) {
@@ -2955,6 +2938,7 @@ public void filterByOpenIssues() {
 
     // @formatter:off
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem About;
     private javax.swing.JTable AnalysterTable;
     private javax.swing.JTable ELLEGUITable;
     private javax.swing.JTable OtherTable;
@@ -3019,8 +3003,6 @@ public void filterByOpenIssues() {
     private javax.swing.JMenuItem menuItemSaveFile;
     private javax.swing.JMenuItem menuItemSyncLocalData;
     private javax.swing.JMenuItem menuItemTurnEditModeOff;
-    private javax.swing.JMenuItem menuItemVersion;
-    private javax.swing.JMenuItem menuItemViewSplashScreen;
     private javax.swing.JMenu menuPrint;
     private javax.swing.JMenu menuSelectConn;
     private javax.swing.JMenu menuTools;
@@ -3315,19 +3297,9 @@ public void filterByOpenIssues() {
         return menuItemTurnEditModeOff;
     }
 
-    public JMenuItem getMenuItemVersion() {
-        return menuItemVersion;
-    }
-
-    public JMenuItem getMenuItemViewSplashScreen() {
-        return menuItemViewSplashScreen;
-    }
-
     public JMenu getMenuPrint() {
         return menuPrint;
     }
-
-
 
     public JMenu getMenuSelectConn() {
         return menuSelectConn;

@@ -393,6 +393,7 @@ public class IssueWindow extends JFrame {
         colorButton1 = new javax.swing.JButton();
         Plain = new javax.swing.JButton();
         Hyperlink = new javax.swing.JButton();
+        tipsButton = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -798,7 +799,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 10;
+        gridBagConstraints.gridx = 12;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         jPanel5.add(BtnNext, gridBagConstraints);
@@ -816,7 +817,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 9;
+        gridBagConstraints.gridx = 11;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
         gridBagConstraints.weightx = 1.0;
@@ -855,7 +856,7 @@ public class IssueWindow extends JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 11;
+        gridBagConstraints.gridwidth = 13;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -875,7 +876,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridx = 7;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
@@ -894,7 +895,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
@@ -912,7 +913,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
@@ -931,7 +932,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
@@ -950,7 +951,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
@@ -968,7 +969,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
@@ -987,7 +988,7 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridx = 9;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
@@ -1006,11 +1007,27 @@ public class IssueWindow extends JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
         jPanel5.add(Hyperlink, gridBagConstraints);
+
+        tipsButton.setText("?");
+        tipsButton.setToolTipText("Tips");
+        tipsButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        tipsButton.setPreferredSize(new java.awt.Dimension(22, 22));
+        tipsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tipsButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 1, 0);
+        jPanel5.add(tipsButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1531,7 +1548,16 @@ public class IssueWindow extends JFrame {
             }
         }
     }//GEN-LAST:event_rtftextMouseClicked
-        
+
+    private void tipsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipsButtonActionPerformed
+
+        TipsWindow tw = new TipsWindow();               // creates new object of TipsWindow
+        tw.setVisible(true);                            // sets its visiblity to true.
+
+    }//GEN-LAST:event_tipsButtonActionPerformed
+
+    
+       
     public static void openWebpage(URI uri) {
         
        if (!Desktop.isDesktopSupported()) return;
@@ -2742,6 +2768,7 @@ public class IssueWindow extends JFrame {
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JLabel submitter;
     private javax.swing.JTextField submitterText;
+    private javax.swing.JButton tipsButton;
     private javax.swing.JLabel title;
     private javax.swing.JTextField titleText;
     private javax.swing.JLabel version;
