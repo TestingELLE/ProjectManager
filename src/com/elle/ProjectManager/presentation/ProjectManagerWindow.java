@@ -2469,13 +2469,15 @@ public void filterByOpenIssues() {
     */
     private void AboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutActionPerformed
          // new image Icon object for the splash screen
-        ImageIcon bg = new ImageIcon ("src/com/elle/ProjectManager/image.png");  
+        //ImageIcon bg = new ImageIcon ("src/com/elle/ProjectManager/image.png");
          
         // Creates showMessageDialog box and shows the Splash Screen, Version Date and Version Number.
         
         JOptionPane.showMessageDialog(null,"Project Manager" + "\n" + "Version Date: "
                 + versionDate + "\n"
-                + "Version: " + version, "About", JOptionPane.PLAIN_MESSAGE, bg);
+                + "Version: " + version, "About", 
+                JOptionPane.PLAIN_MESSAGE, 
+                new ImageIcon(ProjectManagerWindow.class.getResource("image.png")));    // fixed this line to have the image show up in the jar 05-29-2018.  Ensure that the image is in the classes folder for this code to work.
     }//GEN-LAST:event_AboutActionPerformed
 
    private boolean isChanged(Map<String, ArrayList<Integer>> changes) {
