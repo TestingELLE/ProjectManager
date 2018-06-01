@@ -19,10 +19,10 @@ import java.util.List;
 public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
 
     // database table information
-    public static final String DB_TABLE_NAME = "accessLevels";
+    public static final String DB_ACCOUNTS = "accounts";
     private final String COL_PK_ID = "ID";
-    public static final String COL_USER = "user";
-    public static final String COL_ACCESS_LEVEL = "accessLevel";
+    public static final String COL_USERNAME = "username";
+    public static final String COL_TYPE= "type";
     
     
     /**
@@ -36,7 +36,7 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
         if(DBConnection.open()){
 
             String sql = "SELECT MAX(" + COL_PK_ID + ") "
-                       + "FROM " + DB_TABLE_NAME + ";";
+                       + "FROM " + DB_ACCOUNTS + ";";
 
             ResultSet result = null;
 
@@ -67,7 +67,7 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
             int id = account.getId();
             if (id < 0) {
                 String sql = "SELECT MAX(" + COL_PK_ID + ") "
-                       + "FROM " + DB_TABLE_NAME + ";";
+                       + "FROM " + DB_ACCOUNTS + ";";
 
                 ResultSet result = null;
                 int maxId = -1;
@@ -96,8 +96,8 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
             try {
                 
                 
-            String sql = "INSERT INTO " + DB_TABLE_NAME + " (" + COL_PK_ID + ", " 
-                    + COL_USER + ", " +  COL_ACCESS_LEVEL + ") " 
+            String sql = "INSERT INTO " + DB_ACCOUNTS + " (" + COL_PK_ID + ", " 
+                    + COL_USERNAME + ", " +  COL_TYPE + ") " 
                     + "VALUES (" + id + ", '" + user + "', '" +  accessLevel +  "') ";
             
                 Connection con = DBConnection.getConnection();
@@ -132,9 +132,9 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
             
 
             try {
-                String sql = "UPDATE " + DB_TABLE_NAME + " SET " 
-                    + COL_USER + " = '" + user + "', "
-                    + COL_ACCESS_LEVEL + " = '" + accessLevel +  "' "
+                String sql = "UPDATE " + DB_ACCOUNTS + " SET " 
+                    + COL_USERNAME + " = '" + user + "', "
+                    + COL_TYPE + " = '" + accessLevel +  "' "
                     + "WHERE " + COL_PK_ID + " = " + id + ";";
                 
                 System.out.println("update : " + sql );
@@ -157,7 +157,7 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
     public boolean delete(int id){
 
         
-        String sqlDelete = "DELETE FROM " + DB_TABLE_NAME
+        String sqlDelete = "DELETE FROM " + DB_ACCOUNTS
                 + " WHERE " + COL_PK_ID + " =" + id;
         try {
 
@@ -184,7 +184,7 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
         String sql = "";
         
         
-        sql = "SELECT * FROM " + DB_TABLE_NAME ;
+        sql = "SELECT * FROM " + DB_ACCOUNTS ;
         
         try {
 
@@ -194,8 +194,8 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
             while(rs.next()){
                 AccessLevel acct = new AccessLevel();
                 acct.setId(rs.getInt(COL_PK_ID));
-                acct.setUser(rs.getString(COL_USER));
-                acct.setAccessLevel(rs.getString(COL_ACCESS_LEVEL));
+                acct.setUser(rs.getString(COL_USERNAME));
+                acct.setAccessLevel(rs.getString(COL_TYPE));
                 
                 accounts.add(acct);
             }
@@ -211,8 +211,8 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
    
 
     public static String get(String user) {
-        String sql = "SELECT * FROM " + DB_TABLE_NAME +
-                      " WHERE " + COL_USER + " = '" + user +"';";
+        String sql = "SELECT * FROM " + DB_ACCOUNTS +
+                      " WHERE " + COL_USERNAME + " = '" + user +"';";
 
         ResultSet rs = null;
         AccessLevel accessLevel = new AccessLevel();
@@ -224,11 +224,11 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
             rs = DBConnection.getStatement().executeQuery(sql);
             
             while(rs.next()){
-                accessLevel.setUser(rs.getString(COL_USER));
-                accessLevel.setAccessLevel(rs.getString(COL_ACCESS_LEVEL));
+                accessLevel.setUser(rs.getString(COL_USERNAME));
+                accessLevel.setAccessLevel(rs.getString(COL_TYPE));
             }
             
-            LoggingAspect.afterReturn("Loaded access level from " + DB_TABLE_NAME + " for " + accessLevel.getUser());
+            LoggingAspect.afterReturn("Loaded access level from " + DB_ACCOUNTS + " for " + accessLevel.getUser());
         } 
         catch (SQLException e) {
             LoggingAspect.afterThrown(e);
@@ -239,7 +239,7 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
 
     @Override
     public AccessLevel get(int id) {
-        String sql = "SELECT * FROM " + DB_TABLE_NAME +
+        String sql = "SELECT * FROM " + DB_ACCOUNTS +
                       " WHERE " + COL_PK_ID + " = '" + id +"';";
 
         ResultSet rs = null;
@@ -254,8 +254,8 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
             while(rs.next()){
                 
                 accessLevel.setId(rs.getInt(COL_PK_ID));
-                accessLevel.setUser(rs.getString(COL_USER));
-                accessLevel.setAccessLevel(rs.getString(COL_ACCESS_LEVEL));
+                accessLevel.setUser(rs.getString(COL_USERNAME));
+                accessLevel.setAccessLevel(rs.getString(COL_TYPE));
                 
             }
             
@@ -283,7 +283,7 @@ public class AccessLevelDAO implements AbstractDAO<AccessLevel> {
                 timeStamp = rs.getString(1);
             }
             
-            LoggingAspect.addLogMsg("The latest loading time for table " + DB_TABLE_NAME + " is " + timeStamp);
+            LoggingAspect.addLogMsg("The latest loading time for table " + DB_ACCOUNTS + " is " + timeStamp);
         }
         
         catch (SQLException e) {
