@@ -112,7 +112,7 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
     private String currentTabName;
     private String userName;
     private String searchValue = null;
-    private String searchColName = "programmer";
+    private String searchColName= "programmer";
     private JLabel labelRecords;
     private JLabel status;
 
@@ -1237,7 +1237,6 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
                    Collections.sort(dropDownList, new NullComparator()); 
                 }
 
-//                System.out.println(dropDownList);
         comboBoxStartToSearch = false;
         for (Object item : dropDownList) {
 
@@ -1382,10 +1381,10 @@ public class ProjectManagerWindow extends JFrame implements ITableConstants {
         int col = 0;
         ArrayList<Object> openIssueList = new ArrayList<Object>();
         
-        if(comboBoxValue.getSelectedItem().toString().equals("Enter search value here"))
+        if(comboBoxValue.getSelectedItem().toString().equals(""))
             {
                JOptionPane.showMessageDialog(this,
-                    "Enter text into searchbox",
+                    "",
                     "Error Message",
                    JOptionPane.ERROR_MESSAGE);
             }
@@ -1580,17 +1579,20 @@ public void filterByOpenIssues() {
     public void changeTabbedPanelState(Tab tab) {
         
         //comboBoxField drop down reset
+        
         String[] searchFields = tab.getSearchFields();
+        /*
         if (searchFields != null) {
             comboBoxField.setModel(new DefaultComboBoxModel(searchFields));
-        }
+        }*/ //upon commenting out this section the combo box no longer reverts back to "programmer"
+            //when changing 
         
         
         //populate comboxValue drop down
         openisuuesrd.setSelected(false);
         String searchContent = comboBoxField.getSelectedItem().toString();
         this.updateComboList(searchContent, tab);
-        this.comboBoxValue.setSelectedItem("Enter search value here");
+        this.comboBoxValue.setSelectedItem("");
         
         
         //change addIssue button text
